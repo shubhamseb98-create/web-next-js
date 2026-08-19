@@ -1,0 +1,126 @@
+.section {
+  background: var(--clr-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.sectionWrapper {
+  background: var(--clr-dark);
+  position: relative;
+  padding-top: 60px;
+  padding-bottom: 2rem;
+}
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}
+
+.listItem {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--clr-border-dark);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+}
+
+.listItem:first-child {
+  border-top: 1px solid var(--clr-border-dark);
+}
+
+@media (min-width: 768px) {
+  .listItem {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.listItem:hover {
+  background: rgba(82, 164, 54, 0.02);
+  padding-left: 2rem;
+  padding-right: 2rem;
+  border-color: var(--clr-primary);
+}
+
+.itemNumber {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: var(--fw-bold);
+  color: var(--clr-primary-light);
+  min-width: 120px;
+  opacity: 0.5;
+  transition: all var(--transition-normal);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .itemNumber {
+    font-size: 4rem;
+    margin-bottom: 0;
+  }
+}
+
+.listItem:hover .itemNumber {
+  opacity: 1;
+  transform: translateX(10px);
+}
+
+.itemContent {
+  flex-grow: 1;
+  max-width: 800px;
+}
+
+.itemTitle {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: var(--fw-semibold);
+  color: var(--clr-white);
+  margin-bottom: 0.75rem;
+  transition: color var(--transition-normal);
+}
+
+@media (min-width: 768px) {
+  .itemTitle {
+    font-size: 2rem;
+  }
+}
+
+.listItem:hover .itemTitle {
+  color: var(--clr-primary-light);
+}
+
+.itemDesc {
+  color: var(--clr-text-light);
+  font-size: 1.1rem;
+  line-height: var(--lh-relaxed);
+  margin: 0;
+  transition: color var(--transition-normal);
+}
+
+.listItem:hover .itemDesc {
+  color: var(--clr-white);
+}
+
+.itemArrow {
+  display: none;
+  font-size: 2rem;
+  color: var(--clr-text-faint);
+  transition: all var(--transition-normal);
+  margin-left: 2rem;
+  transform: rotate(-45deg);
+}
+
+@media (min-width: 768px) {
+  .itemArrow {
+    display: block;
+  }
+}
+
+.listItem:hover .itemArrow {
+  color: var(--clr-primary);
+  transform: rotate(0);
+}

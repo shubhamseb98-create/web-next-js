@@ -1,0 +1,217 @@
+/* ── Testimonials Section ── */
+.sectionWrapper {
+  background: transparent;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle Ambient Glow */
+.sectionWrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.15) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  color: var(--clr-white);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.titleHighlight {
+  color: var(--clr-primary);
+}
+
+.intro {
+  font-size: 1.15rem;
+  color: var(--clr-text-light);
+  line-height: 1.7;
+}
+
+/* Carousel Container */
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.swiperWrapper {
+  width: 100%;
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+  overflow: hidden;
+}
+
+.swiperSlide {
+  width: 350px;
+  max-width: 90vw;
+}
+
+/* Testimonial Card */
+.card {
+  width: 100%;
+  height: 100%;
+  background: var(--clr-dark-2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 2.5rem;
+  backdrop-filter: blur(15px);
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Swiper Active Slide Enhancements */
+.swiperSlide {
+  width: 350px;
+  max-width: 90vw;
+  opacity: 0.4;
+  transition: opacity 0.5s ease;
+}
+
+.swiperSlide:global(.swiper-slide-active) {
+  opacity: 1;
+}
+
+.swiperSlide:global(.swiper-slide-active) .card {
+  border-color: rgba(82, 164, 54, 0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(82, 164, 54, 0.15);
+}
+
+@media (min-width: 768px) {
+  .swiperSlide {
+    width: 400px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .swiperSlide {
+    width: 450px;
+  }
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  border-color: rgba(82, 164, 54, 0.3);
+}
+
+.quoteIcon {
+  font-size: 2.5rem;
+  color: rgba(82, 164, 54, 0.2);
+  margin-bottom: 1.5rem;
+}
+
+.quoteText {
+  font-size: 1.1rem;
+  color: var(--clr-text-light);
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 2rem;
+  min-height: 150px;
+}
+
+.clientInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1.5rem;
+}
+
+.clientAvatar {
+  width: 55px;
+  height: 55px;
+  min-width: 55px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.clientDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.clientName {
+  color: var(--clr-white);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.clientRole {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
+  gap: 10px;
+}
+
+.pagination :global(.swiper-pagination-bullet) {
+  background: rgba(255, 255, 255, 0.3);
+  width: 10px;
+  height: 10px;
+  margin: 0 !important; /* Override Swiper default margins */
+  transition: all 0.3s ease;
+}
+
+.pagination :global(.swiper-pagination-bullet-active) {
+  background: var(--clr-primary);
+  transform: scale(1.3);
+}
+
+.controlBtn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--clr-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.controlBtn:hover {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+  color: #fff;
+}

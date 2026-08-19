@@ -1,0 +1,263 @@
+'use client'
+import { useState } from 'react'
+import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+import styles from '../../../../css/webtycoons/PortfolioPage.module.css'
+import { FaArrowRight, FaExternalLinkAlt, FaPlus, FaMinus, FaPaperPlane } from 'react-icons/fa'
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+}
+
+const PLACEHOLDER_PROJECTS = [
+  { _id: '1', title: 'Elite Corporate Portal', category: 'Dynamic Website', shortDesc: 'A powerful, enterprise-grade corporate website with custom CMS.', image: '/assets/img/service/featured-projects.png', slug: '#', technologies: ['Next.js', 'MongoDB', 'Tailwind CSS'] },
+  { _id: '2', title: 'Luxury Retail Platform', category: 'E-Commerce', shortDesc: 'Full-featured e-commerce store with advanced product filtering.', image: '/assets/img/service/featured-projects.png', slug: '#', technologies: ['Shopify', 'React', 'GraphQL'] },
+  { _id: '3', title: 'SaaS Dashboard', category: 'Dynamic Website', shortDesc: 'Analytics and reporting dashboard for a SaaS product.', image: '/assets/img/service/featured-projects.png', slug: '#', technologies: ['React', 'Node.js', 'Recharts'] },
+]
+
+const projectStyles = [
+  { gradient: 'linear-gradient(90deg, #4196ff 0%, #d4e8ff 100%)', textColor: '#111' },
+  { gradient: 'linear-gradient(90deg, #6a4cff 0%, #bca5ff 100%)', textColor: '#fff' },
+  { gradient: 'linear-gradient(90deg, #ffd600 0%, #fff4b3 100%)', textColor: '#111' },
+  { gradient: 'linear-gradient(90deg, #333333 0%, #888888 100%)', textColor: '#fff' },
+  { gradient: 'linear-gradient(90deg, #80c8ff 0%, #e0f2ff 100%)', textColor: '#111' }
+];
+
+const tagColors = ['#00a3ff', '#00ff88', '#ffb800', '#ff5c5c'];
+
+const faqs = [
+  {
+    question: "What development services do you specialize in?",
+    answer: "We specialize in developing robust static, dynamic, and complex e-commerce websites. We leverage cutting-edge frameworks like React, Next.js, and Node to deliver high-performance solutions."
+  },
+  {
+    question: "How do you roll out digital solutions for businesses?",
+    answer: "Our process includes Discovery (auditing your needs), Prototyping (building MVP), Optimization (fine-tuning UX/UI), and Deployment (launching with comprehensive monitoring)."
+  },
+  {
+    question: "Can you tailor web solutions to fit our specific needs?",
+    answer: "Absolutely. We build fully custom, highly scalable platforms tailored strictly to your industry requirements, from healthcare portals to luxury e-commerce."
+  },
+  {
+    question: "What kind of post-deployment support do you provide?",
+    answer: "We provide extensive maintenance packs including performance monitoring, security patching, feature scaling, and dedicated engineering support."
+  }
+];
+
+export default function PortfolioGrid({ items = [], categories = ['All'] }) {
+  const [active, setActive] = useState('All')
+  const [openFaq, setOpenFaq] = useState(0)
+  const projects = items.length > 0 ? items : PLACEHOLDER_PROJECTS
+
+  const filtered = active === 'All'
+    ? projects
+    : projects.filter(p => p.category === active)
+
+  return (
+    <main className={styles.pageWrapper}>
+      {/* Page Hero */}
+      <section className={styles.heroSection}>
+        <div className={styles.heroBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop)' }}></div>
+        <div className={styles.heroOverlay}></div>
+        <div className={`container-fluid-px ${styles.heroContent}`}>
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" className={styles.heroText}>
+            <div className={styles.breadcrumb}>
+              <Link href="/">Home</Link> / <span>Projects</span>
+            </div>
+            <h1 className={styles.heroTitle}>
+              Code That Delivers <br />
+              <span className={styles.textGreen}>– Real Results</span>
+            </h1>
+            <p className={styles.heroDesc}>Discover how we’ve crafted measurable success and digital excellence for leading brands.</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Grid */}
+      <section className={styles.projectsSection}>
+        <div className="container-fluid-px">
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionSub}><span className={styles.dot}></span> Our Projects</span>
+          </div>
+          <div className={styles.projectGrid}>
+            <AnimatePresence mode="wait">
+              {filtered.map((project, idx) => {
+                const pStyle = projectStyles[idx % projectStyles.length];
+                return (
+                  <motion.div
+                    key={project._id || idx}
+                    className={styles.projectCard}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.4, delay: idx * 0.06 }}
+                  >
+                    <div className={styles.cardTop} style={{ background: project.themeColor || pStyle.gradient }}>
+                      <div className={styles.cardSideTitle}>
+                        <h3 className={styles.verticalTitle} style={{ color: project.themeTextColor || pStyle.textColor }}>{project.title}</h3>
+                      </div>
+                      <div className={styles.projectImageWrapper}>
+                        <img src={project.image || '/assets/img/service/featured-projects.png'} alt={project.title} className={styles.projectImage} loading="lazy" />
+                        <div className={styles.projectOverlay}>
+                          <Link href={project.slug !== '#' ? `/projects/${project.slug}` : '#'} className={styles.viewBtn}>View</Link>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.cardBottom}>
+                      <div className={styles.detailCol}>
+                        <span className={styles.detailLabel}>Project Name:</span>
+                        <div className={styles.detailValueName}>
+                          {project.title} 
+                          {project.projectUrl && (
+                            <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className={styles.externalLinkBtn}>
+                              <FaExternalLinkAlt />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      <div className={styles.detailCol}>
+                        <span className={styles.detailLabel}>Industry:</span>
+                        <span className={styles.detailValue}>{project.category}</span>
+                      </div>
+                      <div className={styles.detailColTags}>
+                        {project.technologies?.length > 0 && (
+                          <div className={styles.tagsWrapper}>
+                            {project.technologies.slice(0,3).map((tech, tIdx) => (
+                              <span key={tech} className={styles.tagBadge} style={{ borderColor: tagColors[tIdx % tagColors.length], color: tagColors[tIdx % tagColors.length] }}>
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </AnimatePresence>
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-5">
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>No projects found in this category yet.</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ── FAQ Section ── */}
+      <section className={styles.faqSection}>
+        <div className="container-fluid-px">
+          <div className={styles.faqHeader}>
+            <span className={styles.sectionSub}><span className={styles.dot}></span> SOLUTIONS FAQ</span>
+            <h2 className={styles.faqTitle}>Technical Expertise, <br/><span className={styles.textGreen}>FAQs</span></h2>
+            <p className={styles.faqDesc}>Discover how our development process works and the tangible business benefits we provide through innovative web solutions.</p>
+          </div>
+
+          <div className={styles.faqContainer}>
+            {faqs.map((faq, index) => (
+              <div 
+                key={index} 
+                className={`${styles.faqItem} ${openFaq === index ? styles.faqOpen : ''}`}
+                onClick={() => setOpenFaq(index === openFaq ? -1 : index)}
+              >
+                <div className={styles.faqQuestion}>
+                  <div className={styles.faqQText}>
+                    <span className={styles.faqNum}>{(index + 1).toString().padStart(2, '0')}.</span>
+                    {faq.question}
+                  </div>
+                  <div className={styles.faqIcon}>
+                    {openFaq === index ? <FaMinus /> : <FaPlus />}
+                  </div>
+                </div>
+                <AnimatePresence>
+                  {openFaq === index && (
+                    <motion.div 
+                      className={styles.faqAnswer}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p>{faq.answer}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Let's Connect Section ── */}
+      <section className={styles.connectSection}>
+        <div className="container-fluid-px">
+          <div className={styles.connectWrapper}>
+            <div className={styles.connectLeft}>
+              <div className={styles.formCard}>
+                <h3 className={styles.formCardTitle}>Send Us a Message</h3>
+                <p className={styles.formCardSubtitle}>Fill out the form below and we'll be in touch shortly.</p>
+                
+                <form className={styles.contactForm} onSubmit={(e) => e.preventDefault()}>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>FULL NAME *</label>
+                      <input type="text" placeholder="John Doe" className={styles.inputCardField} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>EMAIL ADDRESS *</label>
+                      <input type="email" placeholder="john@example.com" className={styles.inputCardField} />
+                    </div>
+                  </div>
+                  
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>PHONE NUMBER</label>
+                      <input type="tel" placeholder="+91 8527458950" className={styles.inputCardField} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>SERVICE INTERESTED IN *</label>
+                      <select className={styles.selectCardField}>
+                        <option>Select a service...</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>ESTIMATED BUDGET</label>
+                    <select className={styles.selectCardField}>
+                      <option>Select a budget range...</option>
+                    </select>
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>TELL US ABOUT YOUR PROJECT *</label>
+                    <textarea placeholder="Describe your project goals, timeline, and any specific requirements..." className={styles.textCardArea} rows="4"></textarea>
+                  </div>
+                  
+                  <button type="submit" className={styles.submitBtnFull}>
+                    <FaPaperPlane /> Send Message
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div className={styles.connectRight}>
+              <div className={styles.connectImageWrapper}>
+                <video 
+                  src="/assets/img/portfolio/chips-vmake1.mp4" 
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                  className={styles.connectImg} 
+                  style={{ objectFit: 'cover', objectPosition: 'center', width: '100%', height: '100%' }} 
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}

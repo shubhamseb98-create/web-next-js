@@ -1,0 +1,428 @@
+/* ══════════════════════════════════════════════════════════
+   TEAM SECTION — Center-Stage Pill Carousel
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ── */
+.teamSection {
+  position: relative;
+  background: var(--clr-dark-2);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ══ Rich Background Elements ═════════════════════════════ */
+.bgElements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambientGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150vw;
+  height: 150vh;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center,
+      rgba(82, 164, 54, 0.08) 0%,
+      /* Theme green glow */
+      rgba(17, 19, 18, 0.95) 50%,
+      #050806 100%);
+  z-index: 1;
+}
+
+.techGrid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(82, 164, 54, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(82, 164, 54, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: center;
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 80%);
+  z-index: 2;
+}
+
+/* Cinematic Spotlight Beam */
+.lightBeam {
+  position: absolute;
+  top: -40%;
+  left: 10%;
+  width: 150%;
+  height: 500px;
+  background:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(82, 164, 54, 0.05) 2px,
+      rgba(82, 164, 54, 0.05) 4px),
+    linear-gradient(90deg,
+      transparent 0%,
+      rgba(82, 164, 54, 0.15) 35%,
+      rgba(82, 164, 54, 0.5) 50%,
+      rgba(82, 164, 54, 0.15) 65%,
+      transparent 100%);
+  transform: rotate(-35deg);
+  filter: blur(15px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.7;
+  mix-blend-mode: screen;
+  animation: pulseBeam 8s infinite alternate ease-in-out;
+}
+
+@keyframes pulseBeam {
+  0% {
+    opacity: 0.4;
+    filter: blur(15px);
+  }
+
+  100% {
+    opacity: 0.8;
+    filter: blur(25px);
+  }
+}
+
+/* ══ Decorative abstract background wave ═════════════════ */
+.waveBg {
+  position: absolute;
+  top: 60%;
+  /* Shifted down so it doesn't hit the top of the heads */
+  left: 50%;
+  width: 100vw;
+  /* Break out of container constraints */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.waveSvg {
+  width: 100%;
+  height: auto;
+  opacity: 0.9;
+}
+
+/* ══ Carousel outer ══════════════════════════════════════ */
+.carouselOuter {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* margin-top: 3.5rem; */
+  user-select: none;
+  cursor: grab;
+}
+
+.carouselOuter:active {
+  cursor: grabbing;
+}
+
+/* ── Track */
+.carouselTrack {
+  position: relative;
+  width: 100%;
+  /* height = card height + a bit of room for the upward scale of center card */
+  height: 420px;
+  display: flex;
+  align-items: flex-end;
+  /* bottom-align all cards so they sit on the same baseline */
+}
+
+/* ══ Card slot ═══════════════════════════════════════════ */
+.cardSlot {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  /* transform-origin at bottom-center so scaling grows upward */
+  transform-origin: bottom center;
+  will-change: transform, opacity;
+  /* horizontally centre the 200px card */
+  margin-left: -100px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PILL CARD
+   True stadium / capsule shape — equal rounding top & bottom
+   ══════════════════════════════════════════════════════════ */
+.pillCard {
+  background-image: url(/public/assets/img/shape/pp1.svg) !important;
+  background-position: center;
+  background-repeat: repeat !important;
+  background-size: 50px !important;
+  width: 200px;
+  /* Tall enough to show the photo well */
+  height: 320px;
+  /* TRUE pill / stadium shape */
+  border-radius: 9999px;
+  background: var(--card-color, #c8f5b0);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* top padding gives breathing room for the text before the photo */
+  padding: 20px 12px 0;
+  cursor: pointer;
+  position: relative;
+  transition:
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    transform 0.4s ease;
+  /* Crisp white border and solid green offset shadow */
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: -4px 4px 0px var(--clr-primary);
+  box-sizing: border-box;
+}
+
+/* Active (center) card */
+.pillCardActive {
+  border-color: #fff;
+  box-shadow: -8px 8px 0px var(--clr-primary);
+  cursor: default;
+
+}
+
+.pillCardActive:hover {
+  box-shadow: -10px 10px 0px var(--clr-primary);
+}
+
+/* ── Name + role text block ── */
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  /* Fixed height so the photo always starts at the same vertical point */
+  flex-shrink: 0;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.memberName {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: var(--fw-black);
+  color: #0a0e08;
+  text-align: center;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.memberRole {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: var(--fw-medium);
+  color: rgba(10, 14, 8, 0.58);
+  text-align: center;
+}
+
+/* ── Photo area ──
+   Takes all remaining height inside the pill.
+   We use a negative bottom margin trick so the photo bleeds to the
+   bottom of the pill while the pill's overflow:hidden + border-radius
+   clips it into the rounded pill shape naturally.
+*/
+.photoWrap {
+  width: 100%;
+  /* flex-grow fills the remaining space after the text block */
+  flex: 1 1 0;
+  overflow: hidden;
+  /* No explicit border-radius here — parent pill clips it */
+  position: relative;
+  /* Extend slightly past the bottom so the photo reaches the curved edge */
+  margin-bottom: -2px;
+}
+
+.memberPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Show face/upper-body */
+  object-position: top center;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.pillCardActive:hover .memberPhoto {
+  transform: scale(1.05);
+}
+
+/* ── Social bar (slides up on center card hover) ── */
+.socialBar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  z-index: 5;
+}
+
+.pillCardActive:hover .socialBar {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.socialBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(10, 14, 8, 0.78);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.socialBtn:hover {
+  background: var(--clr-primary);
+  transform: scale(1.14);
+}
+
+/* ══ Navigation arrows ═══════════════════════════════════ */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  color: var(--clr-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.navBtn:hover {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.navPrev {
+  left: 0;
+}
+
+.navNext {
+  right: 0;
+}
+
+/* ══ Dot indicators ══════════════════════════════════════ */
+.dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 2rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.22);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.dotActive {
+  width: 28px;
+  background: var(--clr-primary);
+}
+
+/* ══ Responsive ══════════════════════════════════════════ */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .carouselTrack {
+    height: 420px;
+  }
+
+  .pillCard {
+    width: 172px;
+    height: 280px;
+  }
+
+  .cardSlot {
+    margin-left: -86px;
+  }
+
+  .navPrev {
+    left: 0.5rem;
+  }
+
+  .navNext {
+    right: 0.5rem;
+  }
+
+  .waveBg {
+    top: 70%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .carouselTrack {
+    height: 360px;
+  }
+
+  .pillCard {
+    width: 148px;
+    height: 240px;
+    padding: 14px 8px 0;
+  }
+
+  .cardSlot {
+    margin-left: -74px;
+  }
+
+  .memberName {
+    font-size: 0.7rem;
+  }
+
+  .memberRole {
+    font-size: 0.62rem;
+  }
+
+  .navBtn {
+    width: 38px;
+    height: 38px;
+    font-size: 0.8rem;
+  }
+
+  .navPrev {
+    left: -0.25rem;
+  }
+
+  .navNext {
+    right: -0.25rem;
+  }
+
+  .waveBg {
+    top: 70%;
+  }
+}

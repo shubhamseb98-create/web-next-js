@@ -1,0 +1,47 @@
+.section {
+  background: var(--clr-dark);
+  border-bottom: 1px solid var(--clr-border-dark);
+  overflow: hidden;
+}
+
+.marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* Soft fade on edges */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.track {
+  display: flex;
+  gap: 4rem;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+.logoItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: opacity var(--transition-normal);
+  padding: 1rem;
+}
+
+.logoItem:hover {
+  opacity: 1;
+}
+
+.logoText {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: var(--fw-bold);
+  color: var(--clr-text-light);
+  letter-spacing: 0.1em;
+}
+
+/* Pause animation on hover */
+.marquee:hover .track {
+  animation-play-state: paused;
+}

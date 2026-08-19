@@ -3,6 +3,7 @@ import Footer from "src/components/layout/WebTycoonsFooter/Footer";
 import MaintenanceScreen from "src/components/core/MaintenanceScreen";
 import Script from "next/script";
 import FloatingContactButtons from "src/components/layout/FloatingContactButtons";
+import ScrollToTopButton from "src/components/layout/ScrollToTopButton";
 import SmoothScroller from "src/components/animations/SmoothScroller";
 import Preloader from "src/components/features/webtycoons/Preloader";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -113,6 +114,7 @@ export default async function PublicLayout({ children }) {
         phoneNumber={globalSettings?.primaryPhone || "+91 8527458950"}
         socialLinks={globalSettings?.socialLinks || []}
       />
+      <ScrollToTopButton />
     </SmoothScroller>
   );
 }

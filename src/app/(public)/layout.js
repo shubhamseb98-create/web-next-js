@@ -21,7 +21,7 @@ const BASE_NAV = [
   { id: 1, title: "Home", slug: "/", children: [] },
   { id: 2, title: "About", slug: "/about", children: [] },
   {
-    id: 3,
+    id: 3,        
     title: "Services",
     slug: "/services",
     children: [], // To be populated dynamically

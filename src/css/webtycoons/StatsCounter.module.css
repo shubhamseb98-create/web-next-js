@@ -1,0 +1,200 @@
+.section {
+  background-color: #0b0f0c;
+  /* Deep dark green/black tint */
+  background-image:
+    /* Soft radial glow to highlight the center */
+    radial-gradient(circle at center, rgba(0, 255, 136, 0.03) 0%, transparent 70%),
+    /* The large grid texture */
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 80px 80px, 80px 80px;
+  background-position: center center;
+  border-top: 1px solid var(--clr-border-dark);
+  border-bottom: 1px solid var(--clr-border-dark);
+  position: relative;
+  overflow: hidden;
+  padding: 60px 0;
+}
+
+.cardGrid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 0rem 0 4rem;
+}
+
+.statCardWrapper {
+  perspective: 1000px;
+}
+
+.statCard {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.statCard:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cardBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
+
+.statCard:hover .cardBg {
+  opacity: 0.9;
+}
+
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.7) 100%);
+  z-index: 1;
+  transition: opacity 0.4s ease;
+}
+
+.statCard:hover .cardOverlay {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.cardLabel {
+  align-self: flex-end;
+  text-align: right;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: pre-line;
+  line-height: 1.2;
+}
+
+.cardBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.cardValue {
+  font-size: 3.5rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: #fff;
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.suffix {
+  font-size: 2rem;
+  margin-left: 2px;
+}
+
+.cardArrow {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  transform: rotate(-45deg);
+  transition: all 0.3s ease;
+}
+
+.statCard:hover .cardArrow {
+  color: #fff;
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Staggering effect for the row layout */
+.statCardWrapper:nth-child(even) .statCard {
+  transform: translateY(40px);
+}
+
+.statCardWrapper:nth-child(even) .statCard:hover {
+  transform: translateY(30px) scale(1.05);
+}
+
+@media (max-width: 1200px) {
+  .cardGrid {
+    gap: 1rem;
+  }
+
+  .statCard {
+    width: 220px;
+    height: 220px;
+  }
+
+  .cardValue {
+    font-size: 2.8rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .cardGrid {
+    flex-wrap: wrap;
+    padding: 2rem 0;
+    gap: 2rem;
+  }
+
+  .statCardWrapper:nth-child(even) .statCard {
+    transform: translateY(0);
+  }
+
+  .statCardWrapper:nth-child(even) .statCard:hover {
+    transform: translateY(-10px) scale(1.05);
+  }
+}
+
+@media (max-width: 768px) {
+  .statCard {
+    width: 280px;
+    height: 280px;
+  }
+  .cardValue {
+    font-size: 3.2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .statCardWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .statCard {
+    width: 100%;
+    max-width: 340px;
+    height: 300px;
+  }
+  
+  .cardValue {
+    font-size: 3.5rem;
+  }
+}

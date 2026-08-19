@@ -1,0 +1,174 @@
+.section {
+  padding: 60px 0;
+  background: var(--clr-dark);
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px; 
+  display: flex;
+  flex-direction: column;
+  height: 424px;
+  width: 100%;
+  max-width: 276px;
+  margin: 0 auto; /* Centers the card within its grid column */
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  z-index: 1;
+  background: var(--bg-color, #090b0a);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.cardBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.cardImage {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  opacity: 1; /* Fully visible image, no washed out overlay */
+  transition: opacity 0.4s ease, transform 0.6s ease;
+}
+
+/* 1st, 3rd, 5th... cards: Small images (illustrations at bottom) */
+.imageSmall .cardImage {
+  height: 55%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+/* 2nd, 4th, 6th... cards: Full bleed images (background photos) */
+.imageFull .cardImage {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.card:hover .cardImage {
+  opacity: 0; /* Fade out image entirely */
+  transform: translateY(40px); /* Image fades DOWN instead of scaling up */
+}
+
+.cardContent {
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.label {
+  color: var(--hover-text, #ffffff);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--hover-text, #ffffff);
+  margin-bottom: 0;
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+.description {
+  color: var(--hover-text, #ffffff);
+  margin-top: 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.slideLeft .description {
+  transform: translateX(20px);
+}
+
+.slideRight .description {
+  transform: translateX(-20px);
+}
+
+.card:hover .description {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cardHoverArrow {
+  color: var(--hover-text, #ffffff);
+  margin-top: auto;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateX(-15px);
+  transition: all 0.4s ease;
+}
+
+.expandText {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+}
+
+.card:hover .cardHoverArrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- TEXT COLORS ON HOVER --- */
+/* Dynamically color the text based on the CSS variable passed from React */
+.card:hover .label,
+.card:hover .title,
+.card:hover .description,
+.card:hover .cardHoverArrow {
+  color: var(--hover-text, #ffffff);
+}
+
+/* Grid Layout */
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .gridContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .gridContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .gridContainer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

@@ -1,0 +1,653 @@
+/* ── Page Wrapper ── */
+.pageWrapper {
+  background: var(--clr-dark, #0a0a0a);
+  color: var(--clr-white);
+  min-height: 100vh;
+  padding-bottom: 5rem;
+}
+
+/* ── Common Typography ── */
+.textGreen {
+  color: var(--clr-primary, #00ff88);
+}
+
+.sectionSub {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: var(--clr-text-light, #a0a0a0);
+  margin-bottom: 1rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: var(--clr-primary);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ── Hero Section ── */
+.heroSection {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  padding-top: 130px;
+  /* Offset for header */
+  overflow: hidden;
+  padding-bottom: 45px;
+}
+
+.heroBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  /* filter: blur(8px) brightness(0.2); */
+  /* Make it very dark so text pops */
+  z-index: 1;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(10 10 10 / 71%) 0%, rgb(10 10 10 / 54%) 100%);
+  z-index: 2;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+}
+
+.heroText {
+  max-width: 800px;
+}
+
+.breadcrumb {
+  font-size: 0.85rem;
+  color: var(--clr-text-light, #a0a0a0);
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.breadcrumb a {
+  color: var(--clr-primary, #00ff88);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+  color: #fff;
+}
+
+.breadcrumb span {
+  color: var(--clr-text-light, #a0a0a0);
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.heroDesc {
+  font-size: 0.95rem;
+  color: var(--clr-text-light);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* ── Projects Section ── */
+.projectsSection {
+  padding: 60px 0 0px;
+  background: var(--clr-dark);
+}
+
+.sectionHeader {
+  margin-bottom: 3rem;
+}
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 992px) {
+  .projectGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 1st card in the repeating group of 3 */
+  .projectCard:nth-child(3n + 1) {
+    grid-column: span 2;
+  }
+
+  /* If the 2nd card in a group is the last item, make it full width */
+  .projectCard:nth-child(3n + 2):last-child {
+    grid-column: span 2;
+  }
+
+  /* Wider aspect ratio for all full-width cards */
+  .projectCard:nth-child(3n + 1) .projectImageWrapper,
+  .projectCard:nth-child(3n + 2):last-child .projectImageWrapper {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+/* ── New Project Card Styles ── */
+.projectCard {
+  background: #151515;
+  /* Dark background for the card */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.projectCard:hover {
+  transform: translateY(-5px);
+}
+
+.cardTop {
+  display: flex;
+  width: 100%;
+}
+
+.cardSideTitle {
+  width: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verticalTitle {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  /* color is now applied inline via JSX */
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
+
+.projectImageWrapper {
+  flex: 1;
+  position: relative;
+  aspect-ratio: 16/10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  /* Add padding on all sides */
+}
+
+.projectImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  /* Show the top of the website mockup */
+  border-radius: 8px;
+  /* Mockup style rounded corners */
+  box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.15);
+  /* Drop shadow against gradient */
+  transition: transform 0.5s ease;
+}
+
+.projectCard:hover .projectImage {
+  transform: scale(1.03) translateY(-5px);
+}
+
+.projectOverlay {
+  position: absolute;
+  inset: 1.5rem;
+  /* Match padding so overlay only covers image */
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  /* Match image border radius */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.projectCard:hover .projectOverlay {
+  opacity: 1;
+}
+
+.viewBtn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: scale(0.8);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.projectCard:hover .viewBtn {
+  transform: scale(1);
+}
+
+.viewBtn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.cardBottom {
+  background: #111;
+  /* Very dark background for the bottom row */
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.detailCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detailColTags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1.5;
+  /* Give tags slightly more room */
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  color: var(--clr-text-light, #a0a0a0);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detailValueName {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.externalLinkBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.externalLinkBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--clr-primary, #00ff88);
+  border-color: var(--clr-primary, #00ff88);
+}
+
+.detailValue {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.tagsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tagBadge {
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* ── FAQ Section ── */
+.faqSection {
+  padding: 60px 0 0px;
+  background: var(--clr-dark, #0a0a0a);
+}
+
+.sectionSub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--clr-primary, #00ff88);
+  border-radius: 50%;
+}
+
+.faqHeader {
+  max-width: 700px;
+  margin: 0 auto 4rem auto;
+  text-align: center;
+}
+
+.faqTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.faqDesc {
+  color: var(--clr-text-light);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.faqContainer {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faqItem {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem 0;
+  cursor: pointer;
+}
+
+.faqQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.faqItem:hover .faqQuestion,
+.faqOpen .faqQuestion {
+  color: var(--clr-primary);
+}
+
+.faqNum {
+  color: var(--clr-primary);
+  margin-right: 1rem;
+  font-family: var(--font-heading);
+}
+
+.faqIcon {
+  color: var(--clr-primary);
+  font-size: 1rem;
+}
+
+.faqAnswer {
+  overflow: hidden;
+  color: var(--clr-text-light);
+  line-height: 1.6;
+  padding-top: 1rem;
+  padding-left: 2.5rem;
+}
+
+/* ── Connect Section ── */
+.connectSection {
+  padding: 60px 0 0px;
+}
+
+.connectWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rem;
+  align-items: stretch;
+}
+
+.connectLeft {
+  flex: 1;
+  min-width: 300px;
+}
+
+.formCard {
+  background: #141612;
+  padding: 3rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.formCardTitle {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.formCardSubtitle {
+  color: var(--clr-text-light, #a0a0a0);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.formLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #888;
+}
+
+.inputCardField,
+.selectCardField,
+.textCardArea {
+  width: 100%;
+  background: #1a1c18;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.inputCardField:focus,
+.selectCardField:focus,
+.textCardArea:focus {
+  border-color: var(--clr-primary, #00ff88);
+}
+
+.selectCardField {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1.2rem center;
+  background-size: 1em;
+}
+
+.textCardArea {
+  resize: vertical;
+}
+
+.submitBtnFull {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #5ab447;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.submitBtnFull:hover {
+  background: #4a9839;
+  transform: translateY(-2px);
+}
+
+.connectRight {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connectImageWrapper {
+  width: 100%;
+  max-height: 550px;
+  /* Constrain height so tall images don't stretch the page */
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  /* Align image to top */
+  justify-content: center;
+}
+
+.connectImg {
+  width: 100%;
+  height: 100%;
+  /* Force image to stay within wrapper height */
+  object-fit: cover;
+  object-position: center;
+  /* Show the center of the media */
+}
+
+/* ── Responsive Adjustments ── */
+@media (max-width: 768px) {
+  .heroSection {
+    padding-top: 120px;
+  }
+
+  .formRow {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .faqQuestion {
+    font-size: 1.1rem;
+  }
+
+  .cardBottom {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .verticalTitle {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+
+  .cardSideTitle {
+    width: 50px;
+  }
+
+  .projectImageWrapper {
+    aspect-ratio: 4/3;
+    padding: 1rem;
+  }
+
+  .projectOverlay {
+    inset: 1rem;
+  }
+}/* -- Filters -- */
+.filterSection {
+  background: var(--clr-dark);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 1.25rem 0;
+}
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.filterBtn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: var(--clr-text-light, #a0a0a0);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.filterBtn:hover { border-color: var(--clr-primary, #00ff88); color: var(--clr-primary, #00ff88); }
+.active {
+  background: var(--clr-primary, #00ff88);
+  border-color: var(--clr-primary, #00ff88);
+  color: #fff;
+}

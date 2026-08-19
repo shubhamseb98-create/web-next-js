@@ -1,0 +1,222 @@
+.footer {
+  background: #000;
+  padding-top: 6rem;
+  padding-bottom: 2rem;
+  color: #fff;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-bottom: 5rem;
+}
+
+.footerCol {
+  flex: 1;
+  min-width: 200px;
+}
+
+.footerColCenter {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 300px;
+}
+
+.footerColRight {
+  flex: 1;
+  min-width: 200px;
+  text-align: right;
+}
+
+.colTitle {
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.footerLinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footerLinksRight {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.footerLinks a,
+.footerLinksRight a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.footerLinks a:hover,
+.footerLinksRight a:hover {
+  color: #4CAF50;
+}
+
+.contactInfo {
+  color: #fff;
+  font-size: clamp(1.2rem, 4vw, 2.5rem);
+  font-weight: 400;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s ease;
+  word-break: break-word;
+  /* Ensure it wraps nicely instead of overflowing */
+}
+
+.contactInfo:hover {
+  color: #4CAF50;
+}
+
+.btnWrapper {
+  margin-top: 2rem;
+}
+
+.connectBtn {
+  background: linear-gradient(90deg, #4CAF50 0%, #2E7D32 100%);
+  color: #fff;
+  padding: 1.2rem 3rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.connectBtn:hover {
+  transform: translateY(-3px);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+}
+
+.footerMiddle {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 2rem;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footerBottom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bigBrandText {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 11vw, 12.5vw);
+  /* Responsive to exactly screen width */
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.brandChar {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease;
+}
+
+.brandChar:hover {
+  transform: translateY(-20px) scale(1.15);
+  color: #fff;
+}
+
+.scrollTopBtn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.scrollTopBtn:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .footerColCenter {
+    order: -1;
+    margin-bottom: 3rem;
+  }
+
+  .contactInfo {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footerTop {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footerColRight {
+    text-align: center;
+  }
+
+  .footerLinksRight {
+    align-items: center;
+  }
+
+  .footerMiddle {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+}

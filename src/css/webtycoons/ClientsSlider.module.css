@@ -1,0 +1,72 @@
+.section {
+  padding: 60px 0;
+  background: var(--clr-dark);
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--clr-text-light, #aaaaaa);
+  line-height: 1.6;
+}
+
+.sliderContainer {
+  position: relative;
+  width: 100%;
+}
+
+.clientSwiper {
+  width: 100%;
+}
+
+/* Linear easing for smooth continuous autoplay */
+.clientSwiper .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
+.slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logoWrapper {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  /* Removed white/grey backgrounds */
+}
+
+.placeholderLogo {
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.clientLogo {
+  max-width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  opacity: 0.6;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.clientLogo:hover {
+  opacity: 1;
+}

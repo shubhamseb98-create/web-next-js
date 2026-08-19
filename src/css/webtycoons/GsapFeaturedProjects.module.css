@@ -1,0 +1,330 @@
+/* ── GSAP Featured Projects Section ── */
+.featuredSection {
+  background: transparent;
+  position: relative;
+  /* overflow: hidden removed to fix position: sticky */
+  padding: 60px 0;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+  padding: 0 1rem;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  color: var(--clr-white);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.titleHighlight {
+  color: var(--clr-primary);
+}
+
+.intro {
+  font-size: 1.15rem;
+  color: var(--clr-text-light);
+  line-height: 1.7;
+}
+
+/* Horizontal Track -> Vertical Stack Container */
+.trackWrapper {
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Project Card */
+.projectCard {
+  cursor: none; /* Hide default cursor */
+  text-decoration: none;
+  width: 100%;
+  position: sticky;
+  top: 12vh;
+  display: flex;
+  flex-direction: column;
+  background: #111312;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform-origin: top center;
+  will-change: transform, opacity;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Ensure no child elements show a default cursor */
+.projectCard * {
+  cursor: none !important;
+}
+
+.projectCard:hover {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 992px) {
+  .projectCard {
+    flex-direction: row;
+    height: 420px;
+    /* Restored fixed height to make all cards equal size */
+    align-items: stretch;
+  }
+}
+
+/* Card Content (Left Side) */
+.cardContent {
+  width: 100%;
+  padding: 2rem 1.5rem 1rem 1.5rem; /* Reduced padding for mobile */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+
+@media (min-width: 992px) {
+  .cardContent {
+    width: 45%;
+    padding: 4rem 3rem 4rem 5rem;
+  }
+}
+
+.projectTitle {
+  font-family: var(--font-heading);
+  font-size: 30px;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.projectSubtitle {
+  font-size: 0.85rem;
+  color: var(--clr-primary, #00ff88);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.projectSubtitle::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--clr-primary, #00ff88);
+  border-radius: 2px;
+}
+
+.projectDesc {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  /* Fixed typo 1s.5rem -> 1.5rem */
+  max-width: 95%;
+}
+
+.techStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 3rem;
+}
+
+.techItem {
+  font-size: 0.85rem;
+  color: #ffffff;
+  padding: 0.45rem 1.1rem;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background-image: linear-gradient(#111312, #111312), var(--tag-gradient, linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.15)));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.projectCard:hover .techItem:hover {
+  background-image: var(--tag-gradient), var(--tag-gradient);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Custom Follower Cursor */
+.cursorWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.customCursor {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.3);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.customCursor.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Image Wrapper (Right Side) */
+.imageWrapper {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  padding: 0 1.5rem 2rem 1.5rem; /* Reduced padding for mobile */
+}
+
+@media (min-width: 992px) {
+  .imageWrapper {
+    width: 55%;
+    height: 100%;
+    padding: 1.5rem 1.5rem 1.5rem 0;
+  }
+}
+
+.gradientBg {
+  width: 100%;
+  background: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* Center vertically so wrapper hugs the image */
+  padding: 1.5rem 1rem; /* Smaller padding for mobile */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .gradientBg {
+    padding: 2.5rem 2rem 2.5rem 1.5rem;
+  }
+}
+
+.verticalTitle {
+  display: none; /* Hide on mobile to give image more space */
+}
+
+@media (min-width: 992px) {
+  .verticalTitle {
+    display: flex;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    font-family: var(--font-heading);
+    font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+    font-weight: 500;
+    letter-spacing: 4px;
+    white-space: normal;
+    line-height: 1.4;
+    text-align: center;
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+    user-select: none;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.innerImageWrapper {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+}
+
+.projectImage {
+  width: 100%;
+  height: auto;
+  /* Prevent cropping, maintain aspect ratio */
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+@media (min-width: 992px) {
+  .projectImage {
+    width: 100%;
+  }
+}
+
+.projectCard:hover .projectImage {
+  transform: scale(1.04);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+/* Removed View Bubble styles */
+
+/* Responsive */
+@media (max-width: 768px) {
+  .projectCard {
+    position: relative;
+    top: auto;
+  }
+}
+
+/* ── View All Projects Button ── */
+.viewMoreWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.viewMoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--clr-primary, #00ff88);
+  color: #fff;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.viewMoreBtn:hover {
+  background: var(--clr-white);
+  color: var(--clr-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+}

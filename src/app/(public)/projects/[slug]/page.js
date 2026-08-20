@@ -228,7 +228,7 @@ export default async function ProjectDetailPage({ params }) {
                   top: '50%',
                   transform: 'translateY(-50%) rotate(180deg)',
                   writingMode: 'vertical-rl',
-                  color: 'rgba(255,255,255,0.9)',
+                  color: project.themeTextColor || 'rgba(255,255,255,0.9)',
                   fontSize: '20px',
                   fontWeight: 500,
                   letterSpacing: '3px',

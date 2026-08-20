@@ -22,6 +22,24 @@
   z-index: 2;
 }
 
+.logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.logoImg {
+  max-width: 140px;
+  height: auto;
+  object-fit: contain;
+}
+@media (min-width: 768px) {
+  .logoImg {
+    max-width: 200px;
+  }
+}
+
 /* ── 5-layer backdrop-blur band (CodePen nav blur) ── */
 .headerBlur {
   display: block;

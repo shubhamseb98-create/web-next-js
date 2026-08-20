@@ -125,11 +125,6 @@ export default async function WebTycoonsHomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaObj) }}
       />
-      {seoData?.h1 && (
-        <h1 style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)' }}>
-          {seoData.h1}
-        </h1>
-      )}
       
       {/* Hero - Client Component for GSAP animations */}
       <Hero bannerData={serialize(banners)} />

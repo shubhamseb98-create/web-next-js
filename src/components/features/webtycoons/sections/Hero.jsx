@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import Image from 'next/image'
 import styles from '../../../../css/webtycoons/Hero.module.css'
 
 /* ══════════════════════════════════════════════════════════
@@ -299,11 +300,14 @@ const Hero = ({ bannerData }) => {
                 autoPlay muted loop playsInline
               />
             ) : (
-              <img
+              <Image
                 className={styles.bg}
                 src={slide.image || slide.video}
                 alt={slide.heading}
-                style={{ objectFit: 'cover' }}
+                fill
+                priority={idx === 0}
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                sizes="100vw"
               />
             )}
             <div className={styles.gradient} />

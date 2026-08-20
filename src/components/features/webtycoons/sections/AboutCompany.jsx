@@ -15,9 +15,12 @@ const AboutCompany = ({ aboutData }) => {
     // If they provided literal HTML, just use it (for backwards compatibility if any old HTML is in DB)
     if (text.includes('<span')) return text;
     
-    // Convert *text* to span with titleHighlight, wrap everything else in titleSecondary
-    // Split by asterisks, every odd index is inside asterisks
-    const parts = text.split('*');
+    // Convert [text] or *text* to span with titleHighlight, wrap everything else in titleSecondary
+    // Split by asterisks or brackets
+    let parts = text.split('*');
+    if (parts.length === 1) {
+       parts = text.split(/\[|\]/);
+    }
     let formatted = '';
     
     for (let i = 0; i < parts.length; i++) {

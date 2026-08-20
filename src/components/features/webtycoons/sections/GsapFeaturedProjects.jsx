@@ -5,6 +5,7 @@ import { FaArrowRight } from 'react-icons/fa'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import Image from 'next/image';
 import styles from '../../../../css/webtycoons/GsapFeaturedProjects.module.css'
 
 // Register GSAP Plugin
@@ -188,7 +189,15 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
                   {project.title}
                 </span>
                 <div className={styles.innerImageWrapper}>
-                  <img src={project.image} alt={project.title} className={styles.projectImage} loading="lazy" />
+                  <Image 
+                    src={project.image} 
+                    alt={project.title} 
+                    width={800}
+                    height={600}
+                    sizes="(max-width: 992px) 100vw, 50vw"
+                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                    className={styles.projectImage} 
+                  />
                 </div>
               </div>
             </div>

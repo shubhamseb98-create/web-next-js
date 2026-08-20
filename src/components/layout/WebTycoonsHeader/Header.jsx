@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation'
 import { FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -87,7 +88,7 @@ const Header = () => {
 
         <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.headerInner}`}>
           <Link href="/" className={styles.logo}>
-            <img src="/assets/img/logo-new.png" alt="WebTycoons Logo" className={styles.logoImg} />
+            <Image src="/assets/img/logo-new.png" alt="WebTycoons Logo" width={200} height={50} style={{ objectFit: 'contain' }} className={styles.logoImg} />
           </Link>
 
           {/* Desktop Nav */}
@@ -218,7 +219,7 @@ const Header = () => {
         {/* Menu top bar */}
         <div className={styles.menuHeader}>
           <Link href="/" className={styles.logo} onClick={closeMenu}>
-            <img src="/assets/img/logo-new.png" alt="WebTycoons Logo" className={styles.logoImg} />
+            <Image src="/assets/img/logo-new.png" alt="WebTycoons Logo" width={200} height={50} style={{ objectFit: 'contain' }} className={styles.logoImg} />
           </Link>
           <button className={styles.mobileToggle} onClick={closeMenu} aria-label="Close menu">
             <svg width="20" height="21" viewBox="0 0 22 23" fill="none">

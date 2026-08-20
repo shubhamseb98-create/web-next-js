@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import { fadeUp, fadeLeft, staggerContainer, viewportOptions } from '../animations/variants'
 import styles from '../../../../css/webtycoons/AboutCompany.module.css'
+import Image from 'next/image';
 
 const AboutCompany = ({ aboutData }) => {
   const title = aboutData?.title || '*Scale at Speed™* with WebTycoons';
@@ -67,9 +68,12 @@ const AboutCompany = ({ aboutData }) => {
             variants={fadeLeft}
           >
             <div className={styles.imageWrapper}>
-              <img 
+              <Image 
                 src={image} 
                 alt={alt} 
+                fill
+                sizes="(max-width: 992px) 100vw, 50vw"
+                style={{ objectFit: 'cover' }}
                 className={styles.image} 
               />
             </div>

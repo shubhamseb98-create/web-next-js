@@ -3,6 +3,7 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { FaLinkedinIn, FaTwitter, FaInstagram, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import SectionHeading from '../SectionHeading'
+import Image from 'next/image';
 import styles from '../../../../css/webtycoons/TeamSection.module.css'
 import { fadeUp } from '../animations/variants'
 
@@ -295,12 +296,14 @@ const TeamSection = ({ teamData, homeExtraData }) => {
 
                     {/* photo */}
                     <div className={styles.photoWrap}>
-                      <img
+                      <Image
                         src={member.image || member.img}
                         alt={member.name.replace(/<br\s*\/?>/gi, ' ')}
                         className={styles.memberPhoto}
                         draggable={false}
-                        loading="lazy"
+                        fill
+                        sizes="(max-width: 768px) 50vw, 20vw"
+                        style={{ objectFit: 'cover' }}
                       />
                     </div>
 

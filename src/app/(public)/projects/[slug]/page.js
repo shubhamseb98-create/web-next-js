@@ -99,10 +99,32 @@ export default async function ProjectDetailPage({ params }) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <article style={{ background: '#0a0e08', color: '#fff', minHeight: '100vh', paddingBottom: '100px' }}>
+      <article style={{ 
+        backgroundColor: '#0a0e08', 
+        color: '#fff', 
+        minHeight: '100vh', 
+        paddingBottom: '100px',
+        position: 'relative',
+        overflowX: 'hidden'
+      }}>
         
+        {/* Ambient Glows */}
+        <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%)', filter: 'blur(120px)', zIndex: 0, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)', filter: 'blur(100px)', zIndex: 0, pointerEvents: 'none' }} />
+
         {/* HERO SECTION */}
-        <section style={{ paddingTop: '180px', paddingBottom: '80px', position: 'relative', overflow: 'hidden' }}>
+        <section className="fade-up" style={{ 
+          paddingTop: '180px', 
+          paddingBottom: '80px', 
+          position: 'relative', 
+          zIndex: 1,
+          backgroundImage: `
+            radial-gradient(circle at 50% 100%, rgba(82, 164, 54, 0.15) 0%, transparent 60%),
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '100% 100%, 60px 60px, 60px 60px'
+        }}>
           <div className="container-fluid-px">
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
@@ -113,12 +135,13 @@ export default async function ProjectDetailPage({ params }) {
               </div>
               <h1 style={{ 
                 fontFamily: 'var(--font-heading)', 
-                fontSize: 'clamp(3rem, 7vw, 6.5rem)', 
+                fontSize: 'clamp(3.5rem, 8vw, 7.5rem)', 
                 fontWeight: 800, 
                 lineHeight: 1.05, 
-                letterSpacing: '-0.03em',
+                letterSpacing: '-0.04em',
                 marginBottom: '40px',
-                textTransform: 'uppercase'
+                textTransform: 'uppercase',
+                textShadow: '0 20px 40px rgba(0,0,0,0.5)'
               }}>
                 {project.title}
               </h1>
@@ -127,38 +150,54 @@ export default async function ProjectDetailPage({ params }) {
         </section>
 
         {/* METADATA GRID */}
-        <section style={{ borderTop: '1px solid rgba(255,255,255,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <section className="fade-up" style={{ position: 'relative', zIndex: 1, paddingTop: '40px', paddingBottom: '80px' }}>
           <div className="container-fluid-px">
             <div style={{ 
               maxWidth: '1200px', 
               margin: '0 auto', 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-              gap: '40px',
-              padding: '40px 0'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
+              gap: '24px'
             }}>
               {project.clientName && (
-                <div>
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>Client</h4>
+                <div className="meta-card">
+                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px' }}>Client</h4>
                   <p style={{ fontSize: '18px', fontWeight: 600 }}>{project.clientName}</p>
                 </div>
               )}
               {project.category && (
-                <div>
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>Services</h4>
+                <div className="meta-card">
+                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px' }}>Services</h4>
                   <p style={{ fontSize: '18px', fontWeight: 600 }}>{project.category}</p>
                 </div>
               )}
               {project.technologies?.length > 0 && (
-                <div>
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>Tech Stack</h4>
-                  <p style={{ fontSize: '18px', fontWeight: 600 }}>{project.technologies.slice(0,3).join(', ')}</p>
+                <div className="meta-card" style={{ gridColumn: 'span 2' }}>
+                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>Tech Stack</h4>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {project.technologies.slice(0,4).map(t => (
+                      <span key={t} style={{ 
+                        background: 'rgba(82, 164, 54, 0.1)', 
+                        color: 'var(--clr-primary)', 
+                        border: '1px solid rgba(82, 164, 54, 0.2)', 
+                        borderRadius: '100px', 
+                        padding: '6px 16px', 
+                        fontSize: '13px', 
+                        fontWeight: 600,
+                        letterSpacing: '0.5px'
+                      }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
               {project.projectUrl && (
-                <div>
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '10px' }}>Live Site</h4>
-                  <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '18px', fontWeight: 600, color: 'var(--clr-primary)', textDecoration: 'none' }}>Visit Website ↗</a>
+                <div className="meta-card flex flex-col justify-center items-start">
+                  <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="live-site-link">
+                    Visit Website 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '8px' }}><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                  </a>
                 </div>
               )}
             </div>
@@ -167,13 +206,22 @@ export default async function ProjectDetailPage({ params }) {
 
         {/* MAIN SHOWCASE IMAGE */}
         {project.image && (
-          <section style={{ padding: '60px 0' }}>
+          <section className="fade-up" style={{ padding: '0 0 0px', position: 'relative', zIndex: 2 }}>
             <div className="container-fluid-px">
-              <div style={{ maxWidth: '1400px', margin: '0 auto', borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
+              <div style={{ 
+                maxWidth: '1400px', 
+                margin: '0 auto', 
+                borderRadius: '32px', 
+                overflow: 'hidden', 
+                position: 'relative',
+                boxShadow: '0 50px 100px rgba(0,0,0,0.8), 0 0 60px rgba(82, 164, 54, 0.15)',
+                border: '1px solid rgba(255,255,255,0.05)',
+                transform: 'translateY(-40px)'
+              }}>
                 <img 
                   src={project.image} 
                   alt={project.title} 
-                  style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover', maxHeight: '800px' }} 
+                  style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} 
                 />
               </div>
             </div>
@@ -182,28 +230,61 @@ export default async function ProjectDetailPage({ params }) {
 
         {/* 2-COLUMN OVERVIEW & RICH TEXT */}
         {(project.shortDesc || project.description) && (
-          <section style={{ padding: '100px 0' }}>
+          <section className="fade-up" style={{ padding: '60px 0', position: 'relative', zIndex: 1 }}>
+            
+            {/* Section Ambient Glow */}
+            <div style={{ position: 'absolute', top: '10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(82, 164, 54, 0.04) 0%, transparent 70%)', filter: 'blur(100px)', zIndex: 0, pointerEvents: 'none' }} />
+
             <div className="container-fluid-px">
               <div style={{ 
                 maxWidth: '1200px', 
                 margin: '0 auto', 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-                gap: '80px',
-                alignItems: 'start'
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+                gap: '100px',
+                alignItems: 'start',
+                position: 'relative',
+                zIndex: 1
               }}>
                 {/* Left Side: Sticky Title */}
-                <div style={{ position: 'sticky', top: '120px' }}>
-                  <h2 style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontFamily: 'var(--font-heading)', fontWeight: 800, lineHeight: 1.1, marginBottom: '30px' }}>
+                <div style={{ position: 'sticky', top: '140px' }}>
+                  
+                  {/* Huge Ghost Typography Watermark */}
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: '-40px', 
+                    left: '-20px', 
+                    fontSize: 'clamp(6rem, 15vw, 12rem)', 
+                    fontWeight: 900, 
+                    color: 'transparent',
+                    WebkitTextStroke: '2px rgba(255,255,255,0.03)',
+                    zIndex: -1,
+                    textTransform: 'uppercase',
+                    pointerEvents: 'none',
+                    fontFamily: 'var(--font-heading)',
+                    lineHeight: 0.8,
+                    letterSpacing: '-0.05em'
+                  }}>
+                    DETAILS
+                  </div>
+                  <div style={{ width: '60px', height: '3px', background: 'var(--clr-primary)', marginBottom: '30px' }}></div>
+                  <h2 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', fontFamily: 'var(--font-heading)', fontWeight: 800, lineHeight: 1.05, marginBottom: '30px', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
                     Project <br/><span style={{ color: 'var(--clr-primary)' }}>Overview</span>
                   </h2>
-                  <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase' }}>Deep Dive into the Process</p>
                 </div>
 
                 {/* Right Side: Rich Text Content */}
                 <div>
                   {project.shortDesc && (
-                    <p style={{ fontSize: '22px', lineHeight: 1.6, color: '#fff', marginBottom: '40px', fontWeight: 300 }}>
+                    <p style={{ 
+                      fontSize: '26px', 
+                      lineHeight: 1.6, 
+                      color: '#fff', 
+                      marginBottom: '50px', 
+                      fontWeight: 400,
+                      letterSpacing: '-0.01em'
+                    }}>
                       {project.shortDesc}
                     </p>
                   )}
@@ -227,35 +308,118 @@ export default async function ProjectDetailPage({ params }) {
         )}
 
         {/* FOOTER NAV */}
-        <section style={{ paddingTop: '80px' }}>
+        <section style={{ paddingTop: '0px', paddingBottom: '0px' }}>
           <div className="container-fluid-px text-center">
-            <Link href="/projects" className="premium-btn">
-              View All Work
+            <Link href="/projects" className="premium-btn-v2">
+              <span className="premium-btn-text">View All Work</span>
+              <span className="premium-btn-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
             </Link>
           </div>
         </section>
 
       </article>
       
-      {/* Premium Rich Text Styling specific to this page */}
+      {/* Premium CSS Styling */}
       <style dangerouslySetInnerHTML={{__html: `
-        .premium-btn {
-          display: inline-block;
-          padding: 16px 40px;
-          border: 1px solid rgba(255,255,255,0.2);
-          border-radius: 50px;
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up {
+          animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .meta-card {
+          background: rgba(255,255,255,0.02);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255,255,255,0.05);
+          border-radius: 20px;
+          padding: 32px;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .meta-card:hover {
+          background: rgba(255,255,255,0.04);
+          border-color: rgba(82, 164, 54, 0.4);
+          transform: translateY(-5px);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(82, 164, 54, 0.1);
+        }
+
+        .live-site-link {
+          display: inline-flex;
+          align-items: center;
+          font-size: 18px;
+          font-weight: 700;
           color: #fff;
-          font-size: 16px;
-          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        }
+        .live-site-link:hover {
+          color: var(--clr-primary);
+        }
+
+        .premium-btn-v2 {
+          display: inline-flex;
+          align-items: center;
+          gap: 20px;
+          padding: 12px 12px 12px 40px;
+          background: rgba(82, 164, 54, 0.1);
+          border: 1px solid rgba(82, 164, 54, 0.3);
+          border-radius: 100px;
+          color: #fff;
+          font-size: 15px;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 2px;
-          transition: all 0.3s ease;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           text-decoration: none;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 0 20px rgba(82, 164, 54, 0.05);
         }
-        .premium-btn:hover {
+        .premium-btn-v2::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background: var(--clr-primary);
+          z-index: 0;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-btn-v2:hover {
+          box-shadow: 0 15px 30px rgba(82, 164, 54, 0.3);
+          transform: translateY(-3px);
+          border-color: var(--clr-primary);
+        }
+        .premium-btn-v2:hover::before {
+          transform: scaleX(1);
+        }
+        .premium-btn-text, .premium-btn-icon {
+          position: relative;
+          z-index: 1;
+        }
+        .premium-btn-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
           background: #fff;
           color: #000;
+          border-radius: 50%;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .premium-btn-v2:hover .premium-btn-icon {
+          transform: translateX(4px);
+          background: #0a0e08;
+          color: #fff;
+        }
+
         .premium-rich-text {
           font-size: 18px;
           line-height: 1.9;

@@ -17,7 +17,7 @@
 
 .footerCol {
   flex: 1;
-  min-width: 200px;
+  min-width: min(200px, 100%);
 }
 
 .footerColCenter {
@@ -26,12 +26,12 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  min-width: 300px;
+  min-width: min(300px, 100%);
 }
 
 .footerColRight {
   flex: 1;
-  min-width: 200px;
+  min-width: min(200px, 100%);
   text-align: right;
 }
 
@@ -140,7 +140,7 @@
 
 .bigBrandText {
   font-family: var(--font-heading);
-  font-size: clamp(2.5rem, 11vw, 12.5vw);
+  font-size: clamp(1.5rem, 11vw, 12.5vw);
   /* Responsive to exactly screen width */
   font-weight: 800;
   color: rgba(255, 255, 255, 0.8);

@@ -28,7 +28,7 @@
 
 .titleHighlight {
   font-family: var(--font-heading);
-  font-size: 56px;
+  font-size: clamp(36px, 6vw, 56px);
   font-weight: var(--fw-bold);
   color: var(--clr-primary);
   line-height: 1.1;
@@ -37,7 +37,7 @@
 
 .titleSecondary {
   font-family: var(--font-heading);
-  font-size: 56px;
+  font-size: clamp(36px, 6vw, 56px);
   font-weight: var(--fw-normal);
   color: var(--clr-white);
   line-height: 1.1;

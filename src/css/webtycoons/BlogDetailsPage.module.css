@@ -148,6 +148,24 @@
   font-family: var(--font-heading);
 }
 
+.content img, 
+.content svg, 
+.content video, 
+.content iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.content pre,
+.content code,
+.content table {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 .dropCap {
   float: left;
   font-size: 4.5rem;

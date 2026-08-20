@@ -100,6 +100,7 @@
   /* Shifted down so it doesn't hit the top of the heads */
   left: 50%;
   width: 100vw;
+  max-width: 100%;
   /* Break out of container constraints */
   transform: translate(-50%, -50%);
   pointer-events: none;

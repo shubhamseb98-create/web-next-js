@@ -136,7 +136,7 @@ export default async function ProjectDetailPage({ params }) {
               </div>
               <h1 style={{ 
                 fontFamily: 'var(--font-heading)', 
-                fontSize: 'clamp(3.5rem, 8vw, 7.5rem)', 
+                fontSize: 'clamp(3.5rem, 8vw, 3.5rem)', 
                 fontWeight: 800, 
                 lineHeight: 1.05, 
                 letterSpacing: '-0.04em',
@@ -157,7 +157,7 @@ export default async function ProjectDetailPage({ params }) {
               maxWidth: '1200px', 
               margin: '0 auto', 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', 
               gap: '24px'
             }}>
               {project.clientName && (
@@ -210,19 +210,18 @@ export default async function ProjectDetailPage({ params }) {
           <section className="fade-up" style={{ padding: '0 0 60px', position: 'relative', zIndex: 2 }}>
             <div className="container-fluid-px">
               
-              {/* Solid Background Frame */}
               <div style={{
                 maxWidth: '1400px',
                 margin: '0 auto',
                 background: project.themeColor || 'linear-gradient(135deg, #4b9aff, #2a75d3)',
                 borderRadius: '16px',
-                padding: '24px 24px 24px 90px',
+                padding: 'clamp(16px, 4vw, 24px) clamp(16px, 4vw, 24px) clamp(16px, 4vw, 24px) clamp(16px, 8vw, 90px)',
                 position: 'relative',
                 boxShadow: '0 40px 80px rgba(0,0,0,0.6)'
               }}>
                 
                 {/* Vertical Text */}
-                <div style={{
+                <div className="hidden md:block" style={{
                   position: 'absolute',
                   left: '30px',
                   top: '50%',
@@ -239,7 +238,7 @@ export default async function ProjectDetailPage({ params }) {
                 </div>
 
                 {/* The Image */}
-                <div style={{ 
+                <div className="" style={{ 
                   width: '100%', 
                   borderRadius: '16px', 
                   overflow: 'hidden', 
@@ -248,7 +247,7 @@ export default async function ProjectDetailPage({ params }) {
                   <img 
                     src={project.image} 
                     alt={project.title} 
-                    style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} 
+                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'top' }} 
                   />
                 </div>
 
@@ -269,21 +268,21 @@ export default async function ProjectDetailPage({ params }) {
                 maxWidth: '1200px', 
                 margin: '0 auto', 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-                gap: '100px',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', 
+                // gap: '100px',
                 alignItems: 'start',
                 position: 'relative',
                 zIndex: 1
               }}>
                 {/* Left Side: Sticky Title */}
-                <div style={{ position: 'sticky', top: '140px' }}>
+                <div className="md:sticky md:top-[140px]">
                   
                   {/* Huge Ghost Typography Watermark */}
                   <div style={{ 
                     position: 'absolute', 
                     top: '-40px', 
                     left: '-20px', 
-                    fontSize: 'clamp(6rem, 15vw, 12rem)', 
+                    fontSize: 'clamp(3rem, 15vw, 12rem)', 
                     fontWeight: 900, 
                     color: 'transparent',
                     WebkitTextStroke: '2px rgba(255,255,255,0.03)',

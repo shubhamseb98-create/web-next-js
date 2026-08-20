@@ -185,7 +185,7 @@
   margin: 0;
   font-family: var(--font-heading);
   font-size: 1.5rem;
-  white-space: nowrap;
+  /* Removed white-space: nowrap to prevent breaking card height */
   letter-spacing: 2px;
 }
 
@@ -266,9 +266,16 @@
   /* Very dark background for the bottom row */
   padding: 1.5rem;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 1rem;
+}
+
+@media (min-width: 576px) {
+  .cardBottom {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
 }
 
 .detailCol {

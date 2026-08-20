@@ -102,8 +102,12 @@
   color: var(--clr-text-light);
   margin: 0;
   line-height: 1.6;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.infoCard > div {
+  min-width: 0;
 }
 
 .socialRow {

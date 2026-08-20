@@ -3,6 +3,7 @@ import { useRef, useEffect } from 'react'
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion'
 import { fadeUp, staggerContainer, staggerItem } from '../animations/variants'
 import { FaArrowRight } from 'react-icons/fa'
+import Image from 'next/image';
 import SectionHeading from '../SectionHeading'
 import styles from '../../../../css/webtycoons/StatsCounter.module.css'
 
@@ -70,7 +71,14 @@ const StatsCounter = ({ achievementsData, homeExtraData }) => {
           {displayStats.map((stat, index) => (
             <motion.div key={index} className={styles.statCardWrapper} variants={staggerItem}>
               <div className={styles.statCard}>
-                <img src={typeof stat.image === 'string' ? stat.image : (stat.image?.src || stat.image)} alt="Abstract Background" className={styles.cardBg} />
+                <Image 
+                  src={typeof stat.image === 'string' ? stat.image : (stat.image?.src || stat.image)} 
+                  alt="Abstract Background" 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  style={{ objectFit: 'cover' }}
+                  className={styles.cardBg} 
+                />
                 <div className={styles.cardOverlay}></div>
                 
                 <div className={styles.cardContent}>

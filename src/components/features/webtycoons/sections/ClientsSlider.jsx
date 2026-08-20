@@ -2,6 +2,7 @@
 import React from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
+import Image from 'next/image';
 import 'swiper/css'
 import styles from '../../../../css/webtycoons/ClientsSlider.module.css'
 
@@ -76,9 +77,12 @@ const ClientsSlider = ({ clientsData, homeExtraData }) => {
               <SwiperSlide key={index} className={styles.slide}>
                 <div className={`${styles.logoWrapper} ${client.hasBg ? styles.withBg : ''}`}>
                   {client.image ? (
-                    <img 
+                    <Image 
                       src={typeof client.image === 'string' ? client.image : (client.image?.src || client.image)} 
-                      alt={client.name} 
+                      alt={client.name}
+                      width={180}
+                      height={80}
+                      style={{ objectFit: 'contain', width: '100%', height: '100%' }}
                       className={styles.clientLogo} 
                     />
                   ) : (

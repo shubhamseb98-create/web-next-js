@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { FaArrowRight } from 'react-icons/fa'
 import { fadeUp, viewportOptions } from '../animations/variants'
 import styles from '../../../../css/webtycoons/LatestThinking.module.css'
+import Image from 'next/image';
 
 const fallbackBlogData = [
   {
@@ -87,7 +88,14 @@ const LatestThinking = ({ blogsData, homeExtraData }) => {
               style={{ gridArea }}
             >
               <div className={styles.imageWrapper}>
-                <img src={post.coverImage || post.image} alt={post.alt || post.title} className={styles.bgImage} />
+                <Image 
+                  src={post.coverImage || post.image} 
+                  alt={post.alt || post.title} 
+                  fill
+                  sizes="(max-width: 992px) 100vw, 50vw"
+                  style={{ objectFit: 'cover' }}
+                  className={styles.bgImage} 
+                />
                 <div className={styles.overlay}></div>
               </div>
 

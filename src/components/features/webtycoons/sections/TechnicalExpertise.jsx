@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { FaCode, FaServer, FaRobot, FaMobileAlt, FaDatabase, FaPaintBrush } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/TechnicalExpertise.module.css'
 import { fadeUp, staggerContainer } from '../animations/variants'
+import Image from 'next/image';
 
 const expertiseData = [
   {
@@ -82,7 +83,7 @@ const TechnicalExpertise = ({ capabilitiesData, homeExtraData }) => {
               <motion.div key={item._id || item.id || index} variants={fadeUp} className={styles.expertCard}>
                 <div className={styles.cardNumber}>{item.idNumber || item.id}</div>
                 {item.image ? (
-                  <img src={item.image} alt={item.title} className={styles.cardIcon} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                  <Image src={item.image} alt={item.title} width={40} height={40} className={styles.cardIcon} style={{ objectFit: 'contain' }} />
                 ) : (
                   IconComp && <IconComp className={styles.cardIcon} />
                 )}

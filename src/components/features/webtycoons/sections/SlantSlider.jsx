@@ -1,6 +1,7 @@
 'use client'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Navigation } from 'swiper/modules'
+import Image from 'next/image';
 import 'swiper/css'
 import 'swiper/css/navigation'
 import styles from '../../../../css/webtycoons/SlantSlider.module.css'
@@ -103,16 +104,22 @@ const SlantSlider = ({ workData, homeExtraData }) => {
                 <div className={`${styles.cardWrapper} ${isActive ? styles.activeCard : ''}`}>
                   <div className={styles.cardInner}>
                     {/* Background Image (Unskewed) */}
-                    <div 
-                      className={styles.bgImage} 
-                      style={{ backgroundImage: `url(${slide.image || ''})` }}
-                    ></div>
+                    {slide.image && (
+                      <Image 
+                        src={slide.image}
+                        alt={slide.title || 'Work image'}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 30vw"
+                        style={{ objectFit: 'cover' }}
+                        className={styles.bgImage}
+                      />
+                    )}
                     <div className={styles.overlay}></div>
                     
                     {/* Content (Unskewed) */}
                     <div className={styles.content}>
                       <div className={styles.logoContainer}>
-                        <img src={slide.logo || "/assets/img/logo-new.png"} alt={slide.title} className={styles.cardLogo} style={{ objectFit: 'contain' }} />
+                        <Image src={slide.logo || "/assets/img/logo-new.png"} alt={slide.title} width={120} height={40} style={{ objectFit: 'contain', width: '100%', height: 'auto' }} className={styles.cardLogo} />
                       </div>
                       <div>
                         <p className={styles.category}>{slide.category}</p>

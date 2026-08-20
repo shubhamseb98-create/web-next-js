@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, EffectCoverflow, Autoplay } from 'swiper/modules'
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import Image from 'next/image';
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -160,7 +161,7 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
                   <p className={styles.quoteText}>"{quote}"</p>
                   
                   <div className={styles.clientInfo}>
-                    <img src={t.avatar} alt={t.name} className={styles.clientAvatar} />
+                    <Image src={t.avatar} alt={t.name} width={60} height={60} style={{ objectFit: 'cover', borderRadius: '50%' }} className={styles.clientAvatar} />
                     <div className={styles.clientDetails}>
                       <span className={styles.clientName}>{t.name}</span>
                       <span className={styles.clientRole}>{role}</span>

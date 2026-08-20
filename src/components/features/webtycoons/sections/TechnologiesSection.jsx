@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../animations/variants'
 import styles from '../../../../css/webtycoons/TechnologiesSection.module.css'
+import Image from 'next/image';
 import { 
   SiReact, SiNextdotjs, SiVuedotjs, SiTailwindcss, SiFigma, SiGreensock, SiTypescript, SiSass,
   SiNodedotjs, SiPython, SiMongodb, SiDocker, SiPostgresql, SiGraphql, SiFirebase
@@ -104,7 +105,7 @@ const TechnologiesSection = ({ technologiesData, homeExtraData }) => {
               return (
               <div key={`front-${index}`} className={styles.techCard}>
                 {tech.image ? (
-                  <img src={tech.image} alt={tech.name} className={styles.techIcon} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                  <Image src={tech.image} alt={tech.name} width={40} height={40} className={styles.techIcon} style={{ objectFit: 'contain' }} />
                 ) : (
                   IconComp && <IconComp className={styles.techIcon} style={{ color: tech.color }} />
                 )}
@@ -125,7 +126,7 @@ const TechnologiesSection = ({ technologiesData, homeExtraData }) => {
               return (
               <div key={`back-${index}`} className={styles.techCard}>
                 {tech.image ? (
-                  <img src={tech.image} alt={tech.name} className={styles.techIcon} style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                  <Image src={tech.image} alt={tech.name} width={40} height={40} className={styles.techIcon} style={{ objectFit: 'contain' }} />
                 ) : (
                   IconComp && <IconComp className={styles.techIcon} style={{ color: tech.color }} />
                 )}

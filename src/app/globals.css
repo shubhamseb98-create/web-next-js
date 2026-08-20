@@ -42,8 +42,8 @@
   --gradient-text: linear-gradient(135deg, #6bc24b, #e8bd63);
 
   /* ── Typography ── */
-  --font-heading: 'Rajdhani', sans-serif;
-  --font-body: 'Rajdhani', sans-serif;
+  --font-heading: var(--font-poppins), sans-serif;
+  --font-body: var(--font-poppins), sans-serif;
 
   --fs-display: clamp(2.5rem, 6vw, 4.5rem);
   --fs-h1: clamp(2rem, 5vw, 3.5rem);
@@ -159,7 +159,7 @@ html.lenis body {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-body);
   background-color: var(--clr-dark);
   color: var(--clr-white);
   overflow-x: clip;

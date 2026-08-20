@@ -41,10 +41,10 @@ const SHAPE_NAMES = ['circle', 'flower', 'hexagon', 'square']
    STATIC FALLBACK SLIDES
 ══════════════════════════════════════════════════════════ */
 const fallbackSlides = [
-  { video: '/assets/img/v1.mp4', heading: 'We Build Digital Experiences', cta: 'Get Started',      ctaHref: '/contact' },
-  { video: '/assets/img/v2.mp4', heading: 'Creative Design & Branding',   cta: 'See Our Work',     ctaHref: '/projects' },
-  { video: '/assets/img/v3.mp4', heading: 'Full-Stack Development',        cta: 'Explore Services', ctaHref: '/services/static-website-development' },
-  { video: '/assets/img/v1.mp4', heading: 'SEO & Digital Growth',          cta: "Let's Talk",       ctaHref: '/contact' },
+  { video: '/assets/img/v1.mp4', image: '/assets/img/bn-1.jpg', heading: 'We Build Digital Experiences', cta: 'Get Started',      ctaHref: '/contact' },
+  { video: '/assets/img/v2.mp4', image: '/assets/img/bn-2.jpg', heading: 'Creative Design & Branding',   cta: 'See Our Work',     ctaHref: '/projects' },
+  { video: '/assets/img/v3.mp4', image: '/assets/img/b-2.jpg', heading: 'Full-Stack Development',        cta: 'Explore Services', ctaHref: '/services/static-website-development' },
+  { video: '/assets/img/v1.mp4', image: '/assets/img/bn-1.jpg', heading: 'SEO & Digital Growth',          cta: "Let's Talk",       ctaHref: '/contact' },
 ]
 
 const AUTOPLAY_MS = 5000
@@ -82,6 +82,8 @@ function clearMask(el) {
 /* ══════════════════════════════════════════════════════════
    COMPONENT
 ══════════════════════════════════════════════════════════ */
+const isVideo = (url) => typeof url === 'string' && (url.endsWith('.mp4') || url.endsWith('.webm'))
+
 const Hero = ({ bannerData }) => {
   const [active, setActive] = useState(0)
 
@@ -89,6 +91,7 @@ const Hero = ({ bannerData }) => {
   const slides = bannerData?.length > 0 
     ? bannerData.map(b => ({
         image: b.image,
+        video: b.video || (isVideo(b.image) ? b.image : null),
         heading: b.title,
         cta: b.buttonText || 'Learn More',
         ctaHref: b.url || '#'
@@ -196,6 +199,15 @@ const Hero = ({ bannerData }) => {
     if (inInner) gsap.set(inInner, { rotation: 0 })
     if (inText)  gsap.set(inText,  { opacity: 0, y: 40 })
 
+    // ── Play incoming video if it exists ──
+    const inVideo = inEl.querySelector('video')
+    if (inVideo) {
+      if (!inVideo.src && inVideo.dataset.src) {
+        inVideo.src = inVideo.dataset.src;
+      }
+      inVideo.play().catch(() => {});
+    }
+
     // ── GSAP Timeline ──
     const proxy = { pct: 0 }
 
@@ -206,6 +218,10 @@ const Hero = ({ bannerData }) => {
         gsap.set(inEl,    { rotation: 0, zIndex: 3 })
         if (inInner) gsap.set(inInner, { rotation: 0 })
         if (currEl)  gsap.set(currEl,  { opacity: 0, zIndex: 0 })
+        // Pause outgoing video to save resources
+        const curVideo = currEl?.querySelector('video')
+        if (curVideo) curVideo.pause();
+
         // Reset outgoing text for re-use
         if (curText) gsap.set(curText, { opacity: 1, y: 0 })
         incomingRef.current = null
@@ -284,8 +300,6 @@ const Hero = ({ bannerData }) => {
     startProgress(0)
   }, [COUNT, startProgress])
 
-  const isVideo = (url) => url && (url.endsWith('.mp4') || url.endsWith('.webm'))
-
   return (
     <section className={styles.hero} aria-label="Hero Slider">
 
@@ -293,25 +307,33 @@ const Hero = ({ bannerData }) => {
       {slides.map((slide, idx) => (
         <div key={idx} id={`hs-${idx}`} className={styles.slide}>
           <div ref={el => { innerRefs.current[idx] = el }} className={styles.inner}>
-            {isVideo(slide.video || slide.image) ? (
-              <video
-                className={styles.bg}
-                src={slide.video || slide.image}
-                autoPlay muted loop playsInline
-              />
-            ) : (
+            {/* Always render Image if available for instant LCP */}
+            {slide.image && !isVideo(slide.image) && (
               <Image
                 className={styles.bg}
-                src={slide.image || slide.video}
+                src={slide.image}
                 alt={slide.heading}
                 fill
                 priority={idx === 0}
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                style={{ objectFit: 'cover', objectPosition: 'center', zIndex: 0 }}
                 sizes="100vw"
               />
             )}
-            <div className={styles.gradient} />
-            <div className={styles.textWrap}>
+            
+            {/* Render video on top if video exists */}
+            {(slide.video || isVideo(slide.image)) && (
+              <video
+                className={styles.bg}
+                data-src={slide.video || slide.image}
+                src={idx === 0 ? (slide.video || slide.image) : undefined}
+                poster={slide.image && !isVideo(slide.image) ? slide.image : undefined}
+                autoPlay={idx === 0}
+                muted loop playsInline
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
+              />
+            )}
+            <div className={styles.gradient} style={{ zIndex: 2 }} />
+            <div className={styles.textWrap} style={{ zIndex: 3 }}>
               <div
                 ref={el => { textRefs.current[idx] = el }}
                 className={styles.textInner}

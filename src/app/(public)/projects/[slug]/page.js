@@ -104,13 +104,14 @@ export default async function ProjectDetailPage({ params }) {
         color: '#fff', 
         minHeight: '100vh', 
         paddingBottom: '100px',
-        position: 'relative',
-        overflowX: 'hidden'
+        position: 'relative'
       }}>
         
-        {/* Ambient Glows */}
-        <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%)', filter: 'blur(120px)', zIndex: 0, pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)', filter: 'blur(100px)', zIndex: 0, pointerEvents: 'none' }} />
+        {/* Ambient Glows Container (prevents horizontal scroll without breaking sticky) */}
+        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+          <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%)', filter: 'blur(120px)' }} />
+          <div style={{ position: 'absolute', bottom: '10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+        </div>
 
         {/* HERO SECTION */}
         <section className="fade-up" style={{ 
@@ -150,7 +151,7 @@ export default async function ProjectDetailPage({ params }) {
         </section>
 
         {/* METADATA GRID */}
-        <section className="fade-up" style={{ position: 'relative', zIndex: 1, paddingTop: '40px', paddingBottom: '80px' }}>
+        <section className="fade-up" style={{ position: 'relative', zIndex: 1, paddingTop: '40px', paddingBottom: '40px' }}>
           <div className="container-fluid-px">
             <div style={{ 
               maxWidth: '1200px', 
@@ -206,23 +207,51 @@ export default async function ProjectDetailPage({ params }) {
 
         {/* MAIN SHOWCASE IMAGE */}
         {project.image && (
-          <section className="fade-up" style={{ padding: '0 0 0px', position: 'relative', zIndex: 2 }}>
+          <section className="fade-up" style={{ padding: '0 0 60px', position: 'relative', zIndex: 2 }}>
             <div className="container-fluid-px">
-              <div style={{ 
-                maxWidth: '1400px', 
-                margin: '0 auto', 
-                borderRadius: '32px', 
-                overflow: 'hidden', 
+              
+              {/* Solid Background Frame */}
+              <div style={{
+                maxWidth: '1400px',
+                margin: '0 auto',
+                background: project.themeColor || 'linear-gradient(135deg, #4b9aff, #2a75d3)',
+                borderRadius: '16px',
+                padding: '24px 24px 24px 90px',
                 position: 'relative',
-                boxShadow: '0 50px 100px rgba(0,0,0,0.8), 0 0 60px rgba(82, 164, 54, 0.15)',
-                border: '1px solid rgba(255,255,255,0.05)',
-                transform: 'translateY(-40px)'
+                boxShadow: '0 40px 80px rgba(0,0,0,0.6)'
               }}>
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} 
-                />
+                
+                {/* Vertical Text */}
+                <div style={{
+                  position: 'absolute',
+                  left: '30px',
+                  top: '50%',
+                  transform: 'translateY(-50%) rotate(180deg)',
+                  writingMode: 'vertical-rl',
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '20px',
+                  fontWeight: 500,
+                  letterSpacing: '3px',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {project.title}
+                </div>
+
+                {/* The Image */}
+                <div style={{ 
+                  width: '100%', 
+                  borderRadius: '16px', 
+                  overflow: 'hidden', 
+                  boxShadow: '-10px 10px 30px #00000026'
+                }}>
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }} 
+                  />
+                </div>
+
               </div>
             </div>
           </section>

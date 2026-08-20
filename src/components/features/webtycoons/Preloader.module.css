@@ -35,8 +35,8 @@
 .letter {
   font-family: var(--font-rajdhani), sans-serif;
   font-weight: 700;
-  font-size: 3rem;
-  letter-spacing: 0.2rem;
+  font-size: clamp(1.5rem, 8vw, 3rem);
+  letter-spacing: clamp(0.05rem, 0.5vw, 0.2rem);
   text-transform: uppercase;
   color: #ffffff;
   display: inline-block;

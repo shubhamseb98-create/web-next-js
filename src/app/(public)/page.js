@@ -17,9 +17,9 @@ import LatestThinking from "src/components/features/webtycoons/sections/LatestTh
 
 import dynamic from "next/dynamic";
 import Hero from "src/components/features/webtycoons/sections/Hero";
+import SlantSlider from "src/components/features/webtycoons/sections/SlantSlider";
 
 // Dynamically import heavy client components (below the fold)
-const SlantSlider = dynamic(() => import("src/components/features/webtycoons/sections/SlantSlider"));
 const ClientsSlider = dynamic(() => import("src/components/features/webtycoons/sections/ClientsSlider"));
 const StatsCounter = dynamic(() => import("src/components/features/webtycoons/sections/StatsCounter"));
 const GsapFeaturedProjects = dynamic(() => import("src/components/features/webtycoons/sections/GsapFeaturedProjects"));

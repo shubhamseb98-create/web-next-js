@@ -86,6 +86,11 @@ const isVideo = (url) => typeof url === 'string' && (url.endsWith('.mp4') || url
 
 const Hero = ({ bannerData }) => {
   const [active, setActive] = useState(0)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Map dynamic banner data or use fallback
   const slides = bannerData?.length > 0 
@@ -307,33 +312,30 @@ const Hero = ({ bannerData }) => {
       {slides.map((slide, idx) => (
         <div key={idx} id={`hs-${idx}`} className={styles.slide}>
           <div ref={el => { innerRefs.current[idx] = el }} className={styles.inner}>
-            {/* Always render Image if available for instant LCP */}
-            {slide.image && !isVideo(slide.image) && (
+            {/* If video exists, defer src loading to post-hydration. The poster image will act as an instant LCP. */}
+            {(slide.video || isVideo(slide.image)) ? (
+              <video
+                className={styles.bg}
+                data-src={slide.video || slide.image}
+                src={(idx === 0 && isMounted) ? (slide.video || slide.image) : undefined}
+                poster={slide.image && !isVideo(slide.image) ? slide.image : undefined}
+                autoPlay={idx === 0}
+                muted loop playsInline
+                style={{ objectFit: 'cover' }}
+              />
+            ) : (
               <Image
                 className={styles.bg}
                 src={slide.image}
                 alt={slide.heading}
                 fill
                 priority={idx === 0}
-                style={{ objectFit: 'cover', objectPosition: 'center', zIndex: 0 }}
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
                 sizes="100vw"
               />
             )}
-            
-            {/* Render video on top if video exists */}
-            {(slide.video || isVideo(slide.image)) && (
-              <video
-                className={styles.bg}
-                data-src={slide.video || slide.image}
-                src={idx === 0 ? (slide.video || slide.image) : undefined}
-                poster={slide.image && !isVideo(slide.image) ? slide.image : undefined}
-                autoPlay={idx === 0}
-                muted loop playsInline
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
-              />
-            )}
-            <div className={styles.gradient} style={{ zIndex: 2 }} />
-            <div className={styles.textWrap} style={{ zIndex: 3 }}>
+            <div className={styles.gradient} />
+            <div className={styles.textWrap}>
               <div
                 ref={el => { textRefs.current[idx] = el }}
                 className={styles.textInner}

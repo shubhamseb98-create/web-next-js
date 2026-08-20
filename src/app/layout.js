@@ -6,6 +6,7 @@ import NavigationProgress from "src/components/core/NavigationProgress";
 import ClientTracker from "src/components/core/ClientTracker";
 import FloatingContactButtons from "src/components/layout/FloatingContactButtons";
 import SmoothScroller from "src/components/animations/SmoothScroller";
+import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -111,6 +112,7 @@ export default function RootLayout({ children }) {
         <NavigationProgress />
         <ClientTracker />
         {children}
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

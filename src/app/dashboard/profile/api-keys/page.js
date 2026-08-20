@@ -269,9 +269,10 @@ export default function ManageAPIKeysPage() {
         </div>
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-        {toasts.map(t => <Toast key={t.id} message={t.message} type={t.type} onClose={() => setToasts(ts => ts.filter(x => x.id !== t.id))} />)}
-      </div>
+      <Toast 
+        toasts={toasts} 
+        onRemove={(id) => setToasts(ts => ts.filter(x => x.id !== id))} 
+      />
     </div>
   );
 }

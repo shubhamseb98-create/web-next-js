@@ -15,14 +15,16 @@ import TechnologiesSection from "src/components/features/webtycoons/sections/Tec
 import CallToAction from "src/components/features/webtycoons/sections/CallToAction";
 import LatestThinking from "src/components/features/webtycoons/sections/LatestThinking";
 
-// Client Components (need browser APIs / animations)
+import dynamic from "next/dynamic";
 import Hero from "src/components/features/webtycoons/sections/Hero";
-import SlantSlider from "src/components/features/webtycoons/sections/SlantSlider";
-import ClientsSlider from "src/components/features/webtycoons/sections/ClientsSlider";
-import StatsCounter from "src/components/features/webtycoons/sections/StatsCounter";
-import GsapFeaturedProjects from "src/components/features/webtycoons/sections/GsapFeaturedProjects";
-import TeamSection from "src/components/features/webtycoons/sections/TeamSection";
-import TestimonialsSection from "src/components/features/webtycoons/sections/TestimonialsSection";
+
+// Dynamically import heavy client components (below the fold)
+const SlantSlider = dynamic(() => import("src/components/features/webtycoons/sections/SlantSlider"));
+const ClientsSlider = dynamic(() => import("src/components/features/webtycoons/sections/ClientsSlider"));
+const StatsCounter = dynamic(() => import("src/components/features/webtycoons/sections/StatsCounter"));
+const GsapFeaturedProjects = dynamic(() => import("src/components/features/webtycoons/sections/GsapFeaturedProjects"));
+const TeamSection = dynamic(() => import("src/components/features/webtycoons/sections/TeamSection"));
+const TestimonialsSection = dynamic(() => import("src/components/features/webtycoons/sections/TestimonialsSection"));
 
 // ISR: rebuild at most every 5 minutes
 export const revalidate = 300;

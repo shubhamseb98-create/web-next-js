@@ -129,12 +129,12 @@
 
 @media (max-width: 991px) {
   .imageCol {
-    min-height: 400px;
     margin-top: 3rem;
   }
   .imageWrapper {
     width: 100%;
     position: relative;
+    height: 400px; /* Give explicit height so next/image fill works */
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Remove clip on mobile */
   }
 }

@@ -48,11 +48,11 @@
 
 .contactGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4rem;
 }
 @media (min-width: 1024px) {
-  .contactGrid { grid-template-columns: 1fr 1.4fr; gap: 5rem; }
+  .contactGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 5rem; }
 }
 
 /* Info Side */
@@ -75,6 +75,8 @@
   border-radius: 1rem;
   margin-bottom: 1.25rem;
   transition: border-color 0.3s, transform 0.3s;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 @media (max-width: 576px) {
@@ -113,6 +115,9 @@
 
 .infoCard > div {
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .socialRow {
@@ -162,8 +167,8 @@
 }
 .formTitle p { font-size: 0.9rem; color: var(--clr-text-light); margin: 0; }
 
-.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-@media (max-width: 600px) { .formRow { grid-template-columns: 1fr; } }
+.formRow { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 1.5rem; }
+@media (max-width: 600px) { .formRow { grid-template-columns: minmax(0, 1fr); } }
 
 .formGroup { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
 .formGroup label {

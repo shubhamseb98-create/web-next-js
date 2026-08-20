@@ -20,7 +20,8 @@ const featuredProjects = [
     desc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting ',
     tech: ['React', 'Next.js', 'Tailwind CSS'],
     image: '/assets/img/service/featured-projects.png',
-    link: '/projects',
+    slug: 'elite-corporate-portal',
+    link: '/projects/elite-corporate-portal',
     gradient: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)',
     textColor: 'rgba(15, 23, 42, 0.8)',
     themeColor: 'rgba(226, 232, 240, 0.6)'
@@ -32,7 +33,8 @@ const featuredProjects = [
     desc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting',
     tech: ['Shopify Plus', 'React', 'GraphQL'],
     image: '/assets/img/service/featured-projects.png',
-    link: '/projects',
+    slug: 'luxury-retail-platform',
+    link: '/projects/luxury-retail-platform',
     gradient: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
     textColor: 'rgba(255, 255, 255, 0.9)',
     themeColor: 'rgba(168, 85, 247, 0.6)'
@@ -44,7 +46,8 @@ const featuredProjects = [
     desc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting',
     tech: ['HTML/CSS', 'GSAP', 'Framer Motion'],
     image: '/assets/img/service/featured-projects.png',
-    link: '/projects',
+    slug: 'saas-launchpad',
+    link: '/projects/saas-launchpad',
     gradient: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
     textColor: 'rgba(255, 255, 255, 0.9)',
     themeColor: 'rgba(245, 158, 11, 0.6)'
@@ -56,7 +59,8 @@ const featuredProjects = [
     desc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting',
     tech: ['Vue.js', 'Node.js', 'PostgreSQL'],
     image: '/assets/img/service/featured-projects.png',
-    link: '/projects',
+    slug: 'fintech-dashboard',
+    link: '/projects/fintech-dashboard',
     gradient: 'linear-gradient(135deg, #00ff88 0%, #0088ff 100%)',
     textColor: 'rgba(255, 255, 255, 0.9)',
     themeColor: 'rgba(0, 255, 136, 0.6)'

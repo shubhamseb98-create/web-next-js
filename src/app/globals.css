@@ -522,3 +522,34 @@ input[type="file"]::-webkit-file-upload-button {
 .gap-2 { gap: 0.5rem !important; }
 .gap-4 { gap: 1rem !important; }
 .gap-6 { gap: 1.5rem !important; }
+
+/* ============================================================
+   RICH TEXT OVERRIDES (Dark Theme)
+   ============================================================ */
+.rich-text-content * {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+.rich-text-content {
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+
+.rich-text-content a {
+  color: var(--clr-primary) !important;
+  text-decoration: underline;
+}
+
+.rich-text-content p {
+  margin-bottom: 1.5rem;
+}
+
+.rich-text-content ul, .rich-text-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.rich-text-content li {
+  margin-bottom: 0.5rem;
+}

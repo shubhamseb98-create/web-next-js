@@ -381,8 +381,9 @@ export default function BlogManagementPage() {
       fd.append('isPublished', (!currentStatus).toString())
       const res = await fetch(`${BASE_URL}/api/blogs/${id}`, { method: 'PUT', body: fd })
       if (!res.ok) throw new Error(await res.text())
-      setRows(r => r.map(x => x._id === id ? { ...x, isPublished: !currentStatus } : x))
-      addToast('Status updated!')
+      const newPublished = !currentStatus
+      setRows(r => r.map(x => x._id === id ? { ...x, isPublished: newPublished } : x))
+      addToast(newPublished ? 'Blog published!' : 'Blog unpublished!', newPublished ? 'success' : 'error')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {

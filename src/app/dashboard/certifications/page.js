@@ -207,7 +207,7 @@ export default function CertificationsPage() {
       const res = await fetch(`/api/company-certifications/${id}`, { method: 'PUT', body: fd })
       if (!res.ok) throw new Error('Failed to update status')
       setCerts(c => c.map(x => x._id === id ? { ...x, status: newStatus } : x))
-      addToast('Status updated!')
+      addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {

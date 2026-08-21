@@ -184,8 +184,9 @@ export default function CustomPages() {
       formData.append('isActive', !currentStatus)
       const res = await fetch(`${BASE_URL}/api/custom-pages/${id}`, { method: 'PUT', body: formData })
       if (!res.ok) throw new Error('Failed to update status')
-      setRows(r => r.map(x => x._id === id ? { ...x, isActive: !currentStatus } : x))
-      addToast('Status updated')
+      const newStatus = !currentStatus
+      setRows(r => r.map(x => x._id === id ? { ...x, isActive: newStatus } : x))
+      addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {

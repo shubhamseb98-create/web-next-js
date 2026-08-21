@@ -187,10 +187,12 @@ export default function PortfolioPage() {
 
   async function handleToggleStatus(id, currentStatus) {
     try {
+      const newStatus = currentStatus === 'active' ? 'draft' : 'active'
       const fd = new FormData()
-      fd.append('status', currentStatus === 'active' ? 'draft' : 'active')
+      fd.append('status', newStatus)
       await fetch(`${BASE_URL}/api/portfolio/${id}`, { method: 'PUT', body: fd })
-      setRows(r => r.map(x => x._id === id ? { ...x, status: currentStatus === 'active' ? 'draft' : 'active' } : x))
+      setRows(r => r.map(x => x._id === id ? { ...x, status: newStatus } : x))
+      addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error')
     } catch (err) {}
   }
 

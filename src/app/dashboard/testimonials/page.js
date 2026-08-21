@@ -114,7 +114,7 @@ export default function TestimonialsPage() {
   const columns = [
     { key: 'avatar', label: 'Avatar', render: r => <div className="w-10 h-10 bg-muted rounded-full overflow-hidden">{r.avatar && <img src={r.avatar} className="w-full h-full object-cover"/>}</div> },
     { key: 'name', label: 'Client', render: r => <div><div className="font-semibold">{r.name}</div><div className="text-xs text-muted-foreground">{r.designation || r.role}</div></div> },
-    { key: 'status', label: 'Active', render: r => <Switch checked={r.isActive} onCheckedChange={async () => { const fd = new FormData(); fd.append('isActive', (!r.isActive).toString()); await fetch(`${BASE_URL}/api/testimonials/${r._id}`, { method: 'PUT', body: fd }); fetchItems(); }} /> },
+    { key: 'status', label: 'Active', render: r => <Switch checked={r.isActive} onCheckedChange={async () => { const newStatus = !r.isActive; setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: newStatus } : x)); try { const fd = new FormData(); fd.append('isActive', newStatus.toString()); await fetch(`${BASE_URL}/api/testimonials/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: r.isActive } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex gap-2 justify-end">
         <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-blue-500/10 text-blue-600 rounded"><Edit2 className="w-4 h-4" /></button>

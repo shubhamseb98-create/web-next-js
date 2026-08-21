@@ -209,11 +209,12 @@ export default function TeamPage() {
 
   async function handleToggleStatus(id, currentStatus) {
     try {
+      const newStatus = currentStatus === 'active' ? 'draft' : 'active'
       const fd = new FormData()
-      fd.append('status', currentStatus === 'active' ? 'draft' : 'active')
+      fd.append('status', newStatus)
       await fetch(`${BASE_URL}/api/team/${id}`, { method: 'PUT', body: fd })
-      setMembers(m => m.map(x => x._id === id ? { ...x, status: currentStatus === 'active' ? 'draft' : 'active' } : x))
-      addToast('Status updated!')
+      setMembers(m => m.map(x => x._id === id ? { ...x, status: newStatus } : x))
+      addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error')
     } catch (err) {}
   }
 

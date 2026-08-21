@@ -347,7 +347,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
         style={{ backgroundColor: '#080e06', borderColor: 'rgba(255, 255, 255, 0.05)' }}
       >
         {/* ── Logo header ── */}
-        <div className="logo-header h-24 flex items-center gap-4 px-5 lg:group-hover:px-6 shrink-0 mt-2 transition-all duration-300">
+        <div className="logo-header h-24 flex items-center gap-3 px-5 lg:group-hover:px-6 shrink-0 mt-2 transition-all duration-300">
           <div className="w-10 h-10 shrink-0 bg-white rounded-xl flex items-center justify-center shadow overflow-hidden relative">
             <Image
               src={globalSettings.adminLogo || '/logo.png'}
@@ -356,7 +356,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
               className="object-contain p-1"
             />
           </div>
-          <span className="logo-text font-bold text-xl tracking-tight text-white whitespace-nowrap overflow-hidden transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:w-0 lg:group-hover:w-auto">
+          <span className="logo-text font-bold text-base tracking-tight text-white transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
             {globalSettings.adminTitle || 'Jindal Metals'}
           </span>
         </div>

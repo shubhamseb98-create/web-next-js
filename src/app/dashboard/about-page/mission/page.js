@@ -85,9 +85,7 @@ export default function AboutMission() {
         </Button>
       </div>
 
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
-        {toasts.map(t => <Toast key={t.id} message={t.message} type={t.type} onClose={() => setToasts(prev => prev.filter(x => x.id !== t.id))} />)}
-      </div>
+        <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(x => x.id !== id))} />
 
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">

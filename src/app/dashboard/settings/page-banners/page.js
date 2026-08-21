@@ -141,8 +141,9 @@ export default function PageBanners() {
       
       const res = await fetch(`${BASE_URL}/api/page-banners`, { method: 'POST', body: fd })
       if (!res.ok) throw new Error('Failed to update status')
-      setBanners(b => b.map(x => x._id === id ? { ...x, isActive: !currentStatus } : x))
-      addToast('Status updated!')
+      const newStatus = !currentStatus
+      setBanners(b => b.map(x => x._id === id ? { ...x, isActive: newStatus } : x))
+      addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {

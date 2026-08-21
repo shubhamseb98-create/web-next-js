@@ -104,8 +104,9 @@ export default function ProductsPage() {
       fd.append('isActive', (!currentStatus).toString())
       const res = await fetch(`/api/products/${id}`, { method: 'PUT', body: fd })
       if (!res.ok) throw new Error(await res.text())
-      setProducts(r => r.map(x => x._id === id ? { ...x, isActive: !currentStatus } : x))
-      addToast('Status updated!')
+      const newStatus = !currentStatus
+      setProducts(r => r.map(x => x._id === id ? { ...x, isActive: newStatus } : x))
+      addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error')
     } catch (e) {
       addToast(e.message, 'danger')
     } finally {

@@ -134,7 +134,7 @@ export default function ServicesPage() {
 
   const columns = [
     { key: 'title', label: 'Service', render: r => <div className="font-semibold">{r.icon && <span className="mr-2">{r.icon}</span>}{r.title}</div> },
-    { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const fd = new FormData(); fd.append('status', r.status==='active'?'draft':'active'); await fetch(`${BASE_URL}/api/services/${r._id}`, { method: 'PUT', body: fd }); fetchItems(); }} /> },
+    { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/services/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'featured', label: 'Featured', render: r => r.isFeatured ? <Badge className="bg-amber-500/20 text-amber-600">Featured</Badge> : '-' },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex gap-2 justify-end">

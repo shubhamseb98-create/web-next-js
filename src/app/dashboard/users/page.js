@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
-import { Plus, ChevronRight } from 'lucide-react';
+import { Plus, ChevronRight, Check } from 'lucide-react';
 import DataTable from '../../../components/dashboard/DataTable';
 import TableToolbar from '../../../components/dashboard/TableToolbar';
 import Breadcrumb from '../../../components/dashboard/Breadcrumb';
@@ -238,14 +238,15 @@ export default function UserManagementPage() {
   async function toggleActive(u) {
     try {
       setTogglingId(u._id);
+      const newActive = !u.isActive;
       const res  = await fetch(`/api/user/${u._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-        body: JSON.stringify({ isActive: !u.isActive }),
+        body: JSON.stringify({ isActive: newActive }),
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.message);
-      showToast(!u.isActive ? 'User activated' : 'User deactivated');
+      showToast(newActive ? 'User activated!' : 'User deactivated!', newActive ? 'success' : 'error');
       fetchUsers();
     } catch (e) {
       showToast(e.message, 'error');
@@ -484,11 +485,12 @@ export default function UserManagementPage() {
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             className={cn(
               "fixed bottom-8 right-8 px-6 py-3 rounded-xl shadow-2xl text-white text-sm font-bold z-50 flex items-center gap-3",
-              toast.type === 'success' ? "bg-polaris-primary" : "bg-red-600"
+              toast.type === 'success' ? "bg-green-600" : "bg-red-600"
             )}
+            style={{ backgroundColor: toast.type === 'success' ? '#52a436' : '#dc2626' }}
           >
             <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-               {toast.type === 'success' ? <ChevronRight className="w-3 h-3" /> : <Plus className="w-3 h-3 rotate-45" />}
+               {toast.type === 'success' ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3 rotate-45" />}
             </div>
             {toast.msg}
           </motion.div>

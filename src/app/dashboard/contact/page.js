@@ -243,8 +243,9 @@ export default function ContactPageCMS() {
       const json = await res.json();
       if (!json.success) throw new Error(json.message);
 
+      const newActive = !currentStatus;
       setData({ ...data, locations: newLocations });
-      addToast("Location status updated!");
+      addToast(newActive ? "Location activated!" : "Location deactivated!", newActive ? "success" : "error");
     } catch (error) {
       addToast(error.message, "error");
     }

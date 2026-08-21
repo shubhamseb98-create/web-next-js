@@ -146,8 +146,9 @@ export default function GlobalSettingsCMS() {
       const json = await res.json();
       if (!json.success) throw new Error(json.message);
       
+      const newActive = newLinks[index].isActive;
       setData({ ...data, socialLinks: newLinks });
-      addToast("Social status updated!");
+      addToast(newActive ? "Social status activated!" : "Social status deactivated!", newActive ? "success" : "error");
     } catch (err) {
       addToast(err.message, "error");
     } finally {

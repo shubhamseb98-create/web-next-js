@@ -185,11 +185,7 @@ export default function HomeFeaturedProjectsSectionPage() {
         )}
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-        {toasts.map(toast => (
-          <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToasts(prev => prev.filter(t => t.id !== toast.id))} />
-        ))}
-      </div>
+        <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(x => x.id !== id))} />
     </div>
   )
 }

@@ -1,5 +1,6 @@
-﻿import { connectDB } from "../../lib/config";
+import { connectDB } from "../../lib/config";
 import Portfolio from "../../models/Portfolio";
+import ContactPage from "../../models/ContactPage";
 import HomeSeo from "../../models/HomeSeo";
 import PortfolioGrid from "src/components/features/webtycoons/pages/PortfolioGrid";
 
@@ -19,10 +20,15 @@ export async function generateMetadata() {
 
 export default async function ProjectsPage() {
   let portfolioItems = [];
+  let contactConfig = null;
   try {
     await connectDB();
-    portfolioItems = await Portfolio.find({ status: 'active' }).sort({ sort: 1, createdAt: -1 }).lean();
-    portfolioItems = JSON.parse(JSON.stringify(portfolioItems));
+    const [items, contact] = await Promise.all([
+      Portfolio.find({ status: 'active' }).sort({ sort: 1, createdAt: -1 }).lean(),
+      ContactPage.findOne().lean()
+    ]);
+    portfolioItems = JSON.parse(JSON.stringify(items || []));
+    if (contact) contactConfig = JSON.parse(JSON.stringify(contact));
   } catch (error) {
     console.error('Failed to load portfolio:', error);
   }
@@ -41,7 +47,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <PortfolioGrid items={portfolioItems} categories={categories} />
+      <PortfolioGrid items={portfolioItems} categories={categories} contactConfig={contactConfig} />
     </>
   );
 }

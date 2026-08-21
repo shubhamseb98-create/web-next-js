@@ -50,6 +50,28 @@ export async function PUT(request) {
             }
         }
 
+        // Process Video/Image Upload / URL
+        if (formData.has("connectVideo")) {
+            const connectVideo = formData.get("connectVideo");
+            if (isUploadFile(connectVideo)) {
+                if (page.connectVideoUrl && page.connectVideoUrl.startsWith("/uploads/")) {
+                    try {
+                        const oldPath = path.join(process.cwd(), "public", page.connectVideoUrl);
+                        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+                    } catch (fsErr) {
+                        console.warn("Could not delete old connect media:", fsErr.message);
+                    }
+                }
+                // Works for both video and image — uploadFile handles both MIME types
+                page.connectVideoUrl = await uploadFile(connectVideo, "videos", "connect");
+            } else if (typeof connectVideo === "string" && connectVideo !== "") {
+                page.connectVideoUrl = connectVideo;
+            }
+        }
+        if (formData.has("connectVideoUrl")) page.connectVideoUrl = formData.get("connectVideoUrl");
+        if (formData.has("connectFormTitle")) page.connectFormTitle = formData.get("connectFormTitle");
+        if (formData.has("connectFormSubtitle")) page.connectFormSubtitle = formData.get("connectFormSubtitle");
+
         // Text Fields
         if (formData.has("headerTitle")) page.headerTitle = formData.get("headerTitle");
         if (formData.has("headerDescription")) page.headerDescription = formData.get("headerDescription");

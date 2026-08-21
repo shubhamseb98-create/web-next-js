@@ -33,14 +33,14 @@ function getBar() {
     top: "0",
     left: "0",
     width: "0%",
-    height: "3px",
+    height: "1px",
     background:
-      "linear-gradient(90deg, var(--primary-color1, #c8a84b), var(--primary-color2, #e8c96a))",
+      "linear-gradient(90deg, #1f8a11, #39ff14)",
     zIndex: "99999",
     pointerEvents: "none",
     borderRadius: "0 3px 3px 0",
     boxShadow:
-      "0 0 8px var(--primary-color1, #c8a84b), 0 0 16px rgba(200,168,75,0.3)",
+      "0 0 8px #39ff14, 0 0 16px rgba(57,255,20,0.4)",
     transition: "width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease",
     opacity: "0",
     willChange: "width, opacity",

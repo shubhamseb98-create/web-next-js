@@ -161,7 +161,7 @@
 
 .brandChar:hover {
   transform: translateY(-20px) scale(1.15);
-  color: #fff;
+  color: #4CAF50;
 }
 
 .scrollTopBtn {

@@ -1,45 +1,56 @@
+import styles from "src/css/webtycoons/skeleton.module.css";
+
 /**
- * Contact page — instant loading shell.
- * Shown while the server fetches ContactPage and PageBanner data.
+ * Contact Us — Skeleton Loader
+ * Layout: Hero → Two-col (form + info)
  */
 export default function ContactLoading() {
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "#050505",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 99999,
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <h1
-          style={{
-            color: "#e5e5e5",
-            fontFamily: "Impact, 'Arial Black', sans-serif",
-            fontSize: "clamp(3rem, 6vw, 5rem)",
-            letterSpacing: "4px",
-            margin: "0 0 8px 0",
-            fontWeight: "normal",
-            textTransform: "uppercase",
-          }}
-        >
-          WEBTYCOONS
-        </h1>
-        <div
-          style={{
-            width: "120%",
-            height: "2px",
-            background: "linear-gradient(90deg, transparent 0%, #39ff14 50%, transparent 100%)",
-            boxShadow: "0 0 10px #39ff14, 0 0 20px #39ff14",
-            borderRadius: "50%",
-          }}
-        />
+    <div className={styles.skWrapper}>
+
+      {/* ── Hero Banner ── */}
+      <div className={styles.skHero}>
+        <div className={`${styles.sk} ${styles.skTag}`} />
+        <div className={styles.sk} style={{ width: "240px", height: "44px", borderRadius: "8px" }} />
+        <div className={styles.sk} style={{ width: "360px", maxWidth: "90%", height: "18px" }} />
       </div>
+
+      {/* ── Two-col: Form + Contact Info ── */}
+      <div className={styles.skSection}>
+        <div className={styles.skGrid2} style={{ gap: "60px" }}>
+
+          {/* Form side */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div className={styles.sk} style={{ width: "200px", height: "32px" }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div className={styles.sk} style={{ height: "52px", borderRadius: "8px" }} />
+              <div className={styles.sk} style={{ height: "52px", borderRadius: "8px" }} />
+            </div>
+            <div className={styles.sk} style={{ width: "100%", height: "52px", borderRadius: "8px" }} />
+            <div className={styles.sk} style={{ width: "100%", height: "52px", borderRadius: "8px" }} />
+            <div className={styles.sk} style={{ width: "100%", height: "140px", borderRadius: "8px" }} />
+            <div className={styles.sk} style={{ width: "160px", height: "52px", borderRadius: "999px" }} />
+          </div>
+
+          {/* Info side */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+            <div className={styles.sk} style={{ width: "220px", height: "32px" }} />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+                <div className={styles.sk} style={{ width: "48px", height: "48px", borderRadius: "12px", flexShrink: 0 }} />
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div className={styles.sk} style={{ width: "120px", height: "18px" }} />
+                  <div className={styles.sk} style={{ width: "90%", height: "14px" }} />
+                </div>
+              </div>
+            ))}
+            {/* Map placeholder */}
+            <div className={styles.sk} style={{ width: "100%", height: "220px", borderRadius: "16px", marginTop: "8px" }} />
+          </div>
+
+        </div>
+      </div>
+
     </div>
   );
 }

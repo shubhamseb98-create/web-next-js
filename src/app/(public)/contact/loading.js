@@ -22,7 +22,7 @@ export default function ContactLoading() {
           {/* Form side */}
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             <div className={styles.sk} style={{ width: "200px", height: "32px" }} />
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className={styles.skLayoutSplit} style={{ gap: "16px" }}>
               <div className={styles.sk} style={{ height: "52px", borderRadius: "8px" }} />
               <div className={styles.sk} style={{ height: "52px", borderRadius: "8px" }} />
             </div>

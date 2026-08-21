@@ -34,7 +34,7 @@ export default function ProjectDetailsLoading() {
 
       {/* ── Main Content Layout ── */}
       <div className={styles.skSection} style={{ paddingTop: 0 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px" }}>
+        <div className={styles.skLayoutSplit}>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 <div className={styles.sk} style={{ width: "80%", height: "36px" }} />

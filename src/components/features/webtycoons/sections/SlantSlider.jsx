@@ -174,11 +174,12 @@ const SlantSlider = ({ workData, homeExtraData }) => {
           ))}
         </Swiper>
 
-        {/* Custom Navigation (Bottom Left) */}
-        <div className={styles.navControls}>
-          <button className={`slant-prev ${styles.navBtn}`}>&lt;</button>
-          <button className={`slant-next ${styles.navBtn}`}>&gt;</button>
-        </div>
+      </div>
+
+      {/* Custom Navigation (Bottom) — outside sliderContainer so contain:paint doesn't clip it */}
+      <div className={styles.navControls}>
+        <button className={`slant-prev ${styles.navBtn}`}>&lt;</button>
+        <button className={`slant-next ${styles.navBtn}`}>&gt;</button>
       </div>
     </section>
   )

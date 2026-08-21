@@ -35,12 +35,14 @@ const Header = () => {
     setMobileDropdownOpen('')
     // Ensure scroll is unlocked if route changes unexpectedly (e.g., back button)
     document.documentElement.style.overflow = ''
+    document.body.style.overflow = ''
     if (window.lenis?.start) window.lenis.start()
   }, [location])
 
   const closeMenu = () => {
     setIsMenuOpen(false)
     document.documentElement.style.overflow = ''
+    document.body.style.overflow = ''
     if (window.lenis?.start) window.lenis.start()
   }
 
@@ -48,14 +50,17 @@ const Header = () => {
   useEffect(() => {
     if (isMenuOpen) {
       document.documentElement.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden'
       if (window.lenis?.stop) window.lenis.stop()
     } else {
       document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
       if (window.lenis?.start) window.lenis.start()
     }
     
     return () => {
       document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
       if (window.lenis?.start) window.lenis.start()
     }
   }, [isMenuOpen])

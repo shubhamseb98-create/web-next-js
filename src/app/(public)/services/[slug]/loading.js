@@ -23,7 +23,7 @@ export default function ServiceDetailsLoading() {
 
       {/* ── Main Content Area ── */}
       <div className={styles.skSection}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "40px" }}>
+        <div className={styles.skLayoutSidebar}>
             
             {/* Left Content */}
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>

@@ -37,7 +37,7 @@ export default function BlogDetailsLoading() {
 
       {/* ── Main Layout ── */}
       <div className={styles.skSection}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "48px" }}>
+        <div className={styles.skLayoutSidebar}>
             
             {/* Left Content (Article) */}
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>

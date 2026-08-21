@@ -1,7 +1,23 @@
 import Link from 'next/link';
-import styles from './Footer.module.css'
+import styles from './Footer.module.css';
+import GlobalSetting from "src/app/models/GlobalSetting";
+import { connectDB } from "src/app/lib/config";
 
-const Footer = () => {
+const Footer = async () => {
+  let settings = null;
+  try {
+    await connectDB();
+    settings = await GlobalSetting.findOne().lean();
+  } catch (error) {
+    console.error("Error fetching global settings for footer:", error);
+  }
+
+  // Filter active social links from DB or fallback to defaults
+  const dynamicSocialLinks = settings?.socialLinks?.filter(link => link.isActive !== false) || [
+    { platform: "LINKEDIN", url: "https://linkedin.com/company/thewebtycoons" },
+    { platform: "FACEBOOK", url: "https://facebook.com/thewebtycoons" },
+    { platform: "INSTAGRAM", url: "https://instagram.com/thewebtycoons" }
+  ];
 
   return (
     <footer className={styles.footer}>
@@ -20,8 +36,8 @@ const Footer = () => {
           
           <div className={styles.footerColCenter}>
             <h5 className={styles.colTitle}>REACH OUT TO US</h5>
-            <a href="tel:+918527458950" className={styles.contactInfo}>+91 8527458950</a>
-            <a href="mailto:info@thewebtycoons.com" className={styles.contactInfo}>info@thewebtycoons.com</a>
+            <a href={`tel:${settings?.footerPhone || "+918527458950"}`} className={styles.contactInfo}>{settings?.footerPhone || "+91 8527458950"}</a>
+            <a href={`mailto:${settings?.primaryEmail || "info@thewebtycoons.com"}`} className={styles.contactInfo}>{settings?.primaryEmail || "info@thewebtycoons.com"}</a>
             <div className={styles.btnWrapper}>
               <Link href="/contact" className={styles.connectBtn}>
                 Let's Connect ↗
@@ -32,16 +48,20 @@ const Footer = () => {
           <div className={styles.footerColRight}>
             <h5 className={styles.colTitle}>SOCIAL</h5>
             <ul className={styles.footerLinksRight}>
-              <li><a href="#">↗ LINKEDIN</a></li>
-              <li><a href="#">↗ FACEBOOK</a></li>
-              <li><a href="#">↗ INSTAGRAM</a></li>
+              {dynamicSocialLinks.map((social, index) => (
+                <li key={index}>
+                  <a href={social.url || social.href || "#"} target="_blank" rel="noopener noreferrer">
+                    ↗ {social.platform?.toUpperCase() || social.name?.toUpperCase() || "LINK"}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
           
         </div>
         
         <div className={styles.footerMiddle}>
-          <div className={styles.copyright}>&copy; 2026 ALL RIGHTS RESERVED</div>
+          <div className={styles.copyright}>&copy; {new Date().getFullYear()} ALL RIGHTS RESERVED</div>
           <div className={styles.location}>BASED IN INDIA 🇮🇳</div>
         </div>
 
@@ -57,4 +77,4 @@ const Footer = () => {
   )
 }
 
-export default Footer
+export default Footer;

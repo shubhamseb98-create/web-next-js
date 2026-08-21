@@ -234,9 +234,10 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             className={cn(
-              'fixed bottom-8 right-8 px-6 py-3 rounded-xl shadow-2xl text-white text-sm font-bold z-50 flex items-center gap-3',
-              toast.type === 'success' ? 'bg-blue-600' : 'bg-red-600'
+              "fixed bottom-8 right-8 px-6 py-3 rounded-xl shadow-2xl text-white text-sm font-bold z-50 flex items-center gap-3",
+              toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'
             )}
+            style={{ backgroundColor: toast.type === 'success' ? '#52a436' : '#dc2626' }}
           >
             <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
               <Check className="w-3 h-3" />

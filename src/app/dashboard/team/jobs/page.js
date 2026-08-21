@@ -133,7 +133,7 @@ export default function JobsPage() {
   function handleToggleStatus(id, currentStatus) {
     const newStatus = currentStatus === 'open' ? 'closed' : 'open'
     setJobs(j => j.map(x => x.id === id ? { ...x, status: newStatus } : x))
-    addToast('Status updated!')
+    addToast(newStatus === 'open' ? 'Status activated!' : 'Status deactivated!', newStatus === 'open' ? 'success' : 'error')
   }
 
   const toggleSelectAll = () => {

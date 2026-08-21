@@ -113,7 +113,7 @@ export default function ClientsPage() {
   const columns = [
     { key: 'logo', label: 'Logo', render: r => r.image ? <img src={r.image} alt={r.name} className="h-10 w-auto object-contain bg-white rounded p-1" /> : <div className="h-10 w-10 bg-slate-800 rounded flex items-center justify-center text-xs">No img</div> },
     { key: 'name', label: 'Client Name', render: r => <div className="font-semibold">{r.name}</div> },
-    { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const fd = new FormData(); fd.append('status', r.status==='active'?'draft':'active'); await fetch(`${BASE_URL}/api/clients/${r._id}`, { method: 'PUT', body: fd }); fetchItems(); }} /> },
+    { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/clients/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex gap-2 justify-end">
         <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-blue-500/10 text-blue-600 rounded"><Edit2 className="w-4 h-4" /></button>

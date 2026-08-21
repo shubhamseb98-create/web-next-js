@@ -179,7 +179,7 @@ export default function OurWorkPage() {
       if (!res.ok) throw new Error(data.message || 'Status update failed')
       
       setRows(r => r.map(x => x._id === row._id ? { ...x, status: newStatus } : x))
-      addToast('Status updated.')
+      addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {
@@ -414,8 +414,9 @@ export default function OurWorkPage() {
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             className={cn(
               "fixed bottom-8 right-8 px-6 py-3 rounded-xl shadow-2xl text-white text-sm font-bold z-50 flex items-center gap-3",
-              toast.type === 'success' ? "bg-polaris-primary" : "bg-red-600"
+              toast.type === 'success' ? "bg-green-600" : "bg-red-600"
             )}
+            style={{ backgroundColor: toast.type === 'success' ? '#52a436' : '#dc2626' }}
           >
             <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
                {toast.type === 'success' ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3 rotate-45" />}

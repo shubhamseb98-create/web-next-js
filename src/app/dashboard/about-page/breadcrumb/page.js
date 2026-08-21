@@ -9,7 +9,7 @@ import { FloatingInput, FloatingTextarea } from "../../../../components/ui/float
 import { Save } from "lucide-react";
 
 export default function AboutBreadcrumb() {
-  const [data, setData] = useState({ heroTitle: "", heroDescription: "" });
+  const [data, setData] = useState({ heroTitle: "", heroDescription: "", heroImage: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toasts, setToasts] = useState([]);
@@ -33,6 +33,26 @@ export default function AboutBreadcrumb() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('upload', file);
+    addToast('Uploading image...', 'info');
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const responseData = await res.json();
+      if (res.ok && responseData.url) {
+        setData(p => ({ ...p, [field]: responseData.url }));
+        addToast('Image uploaded successfully', 'success');
+      } else {
+        throw new Error(responseData.error?.message || 'Upload failed');
+      }
+    } catch (err) {
+      addToast(err.message, 'error');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -65,9 +85,7 @@ export default function AboutBreadcrumb() {
         </Button>
       </div>
 
-      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
-        {toasts.map(t => <Toast key={t.id} message={t.message} type={t.type} onClose={() => setToasts(prev => prev.filter(x => x.id !== t.id))} />)}
-      </div>
+      <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
 
       <form onSubmit={handleSubmit}>
         <Card className="border-border shadow-sm">
@@ -83,6 +101,14 @@ export default function AboutBreadcrumb() {
               label="Hero Description" name="heroDescription" value={data.heroDescription} onChange={handleChange} rows={4}
               rightElement={<AIAssistantButton context="About Page Hero Description" field="Description" onGenerate={(val) => setData(p => ({...p, heroDescription: val}))} />}
             />
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Hero Background Image</label>
+              <div className="flex gap-4 items-center">
+                {data.heroImage && <img src={data.heroImage} alt="Preview" className="w-16 h-16 object-cover rounded shadow" />}
+                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'heroImage')} className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </form>

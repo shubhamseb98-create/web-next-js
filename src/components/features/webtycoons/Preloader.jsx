@@ -48,18 +48,15 @@ const Preloader = () => {
     return () => clearTimeout(timer)
   }, [])
 
-  // Lock scrolling while preloader is active
+  // Lock scrolling while preloader is active — only via lenis, NOT body overflow
   useEffect(() => {
-    if (isLoading) {
-      document.documentElement.style.overflow = 'hidden'
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.documentElement.style.overflow = ''
-      document.body.style.overflow = ''
-    }
+    // The fullscreen preloader visually blocks the page; lenis handles scroll locking
+    // We avoid touching body/html overflow to prevent scrollbar-induced layout shifts
     return () => {
-      document.documentElement.style.overflow = ''
-      document.body.style.overflow = ''
+      // Ensure lenis is always restarted when preloader unmounts
+      if (typeof window !== 'undefined' && window.lenis?.start) {
+        window.lenis.start()
+      }
     }
   }, [isLoading])
 

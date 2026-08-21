@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
     if (!item) return { title: 'Project Not Found | WebTycoons' };
     
     return {
-      title: `${item.metaTitle || item.title} | WebTycoons`,
+      title: `${item.metaTitle || item.title} | WebTycoons Case Study`,
       description: item.metaDescription || item.shortDesc || `View our ${item.category} project: ${item.title}`,
       alternates: { canonical: `https://thewebtycoons.com/projects/${item.slug}` },
       openGraph: {
@@ -41,50 +41,91 @@ export async function generateMetadata({ params }) {
 export default async function ProjectDetailPage({ params }) {
   const resolvedParams = await params;
   await connectDB();
-  let item = await Portfolio.findOne({ slug: resolvedParams.slug, status: 'active' }).lean();
   
-  // If not in DB, check if it's one of the placeholder featured projects
+  // Fetch active projects for navigation & current item
+  let allProjects = [];
+  try {
+    allProjects = await Portfolio.find({ status: 'active' })
+      .sort({ sort: 1, createdAt: -1 })
+      .select('title slug category image shortDesc themeColor themeTextColor')
+      .lean();
+  } catch (err) {
+    allProjects = [];
+  }
+
+  let item = allProjects.find(p => p.slug === resolvedParams.slug);
+
+  // If not in DB, check fallback demo projects
+  const fallbackProjects = [
+    {
+      slug: 'elite-corporate-portal',
+      title: 'Elite Corporate Portal',
+      category: 'Corporate Website',
+      shortDesc: 'A high-performance corporate portal built for enterprise scalability, featuring ultra-fast page transitions, dynamic CMS content, and interactive GSAP animations.',
+      description: '<h3>The Challenge</h3><p>The client needed a modern, resilient corporate platform to replace their legacy portal. The goal was to drastically improve performance scores, modernize their digital brand identity, and provide a frictionless content management workflow.</p><h3>Our Solution</h3><p>We engineered a cutting-edge Next.js application integrated with a streamlined dashboard, custom animations, and responsive micro-interactions. The result is a stunning 99+ Lighthouse performance score and enhanced user engagement across all global offices.</p>',
+      technologies: ['React', 'Next.js', 'Tailwind CSS', 'Node.js', 'MongoDB'],
+      image: '/assets/img/service/featured-projects.png',
+      clientName: 'Elite Corp Global',
+      projectUrl: 'https://thewebtycoons.com',
+      themeColor: 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)',
+      themeTextColor: '#000000'
+    },
+    {
+      slug: 'luxury-retail-platform',
+      title: 'Luxury Retail Platform',
+      category: 'E-Commerce Website',
+      shortDesc: 'An immersive digital storefront for high-end luxury goods with dynamic product customization, seamless checkout, and rich visual storytelling.',
+      description: '<h3>The Challenge</h3><p>Deliver an editorial-quality shopping experience that matches the exclusivity and aesthetic prestige of in-store luxury shopping.</p><h3>Our Solution</h3><p>Custom e-commerce frontend architecture with headless checkout, lightning-fast product filtering, and fluid image zoom galleries.</p>',
+      technologies: ['Shopify Plus', 'React', 'GraphQL', 'Tailwind CSS'],
+      image: '/assets/img/service/featured-projects.png',
+      clientName: 'Maison Luxe',
+      projectUrl: 'https://thewebtycoons.com',
+      themeColor: 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
+      themeTextColor: '#ffffff'
+    },
+    {
+      slug: 'saas-launchpad',
+      title: 'SaaS Launchpad',
+      category: 'Landing Page',
+      shortDesc: 'High-conversion marketing landing page with interactive pricing calculators, live product tour walkthroughs, and custom 3D web graphics.',
+      description: '<h3>The Challenge</h3><p>Accelerate customer acquisition with a modern, authoritative landing experience that clearly demonstrates SaaS software capabilities.</p><h3>Our Solution</h3><p>Engineered interactive component showcases with Framer Motion animations and direct CRM lead capture integrations.</p>',
+      technologies: ['Next.js', 'GSAP', 'Framer Motion', 'TypeScript'],
+      image: '/assets/img/service/featured-projects.png',
+      clientName: 'Launchpad Inc',
+      projectUrl: 'https://thewebtycoons.com',
+      themeColor: 'linear-gradient(135deg, #00ff88 0%, #00b4d8 100%)',
+      themeTextColor: '#0f172a'
+    },
+    {
+      slug: 'fintech-dashboard',
+      title: 'FinTech Dashboard',
+      category: 'Custom Web Application',
+      shortDesc: 'A powerful real-time analytics and portfolio management interface designed for institutional wealth managers and active investors.',
+      description: '<h3>The Challenge</h3><p>Process and visualize real-time market data streams with sub-second latency while keeping the interface intuitive and responsive.</p><h3>Our Solution</h3><p>Modular dashboard components with real-time websocket updates, SVG financial charts, and dark-mode first design system.</p>',
+      technologies: ['Vue.js', 'Node.js', 'PostgreSQL', 'Chart.js'],
+      image: '/assets/img/service/featured-projects.png',
+      clientName: 'Apex Wealth',
+      projectUrl: 'https://thewebtycoons.com',
+      themeColor: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
+      themeTextColor: '#ffffff'
+    }
+  ];
+
   if (!item) {
-    const fallbackProjects = [
-      {
-        slug: 'elite-corporate-portal',
-        title: 'Elite Corporate Portal',
-        category: 'Corporate Website',
-        shortDesc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting ',
-        technologies: ['React', 'Next.js', 'Tailwind CSS'],
-        image: '/assets/img/service/featured-projects.png',
-      },
-      {
-        slug: 'luxury-retail-platform',
-        title: 'Luxury Retail Platform',
-        category: 'E-Commerce Website',
-        shortDesc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting',
-        technologies: ['Shopify Plus', 'React', 'GraphQL'],
-        image: '/assets/img/service/featured-projects.png',
-      },
-      {
-        slug: 'saas-launchpad',
-        title: 'SaaS Launchpad',
-        category: 'Landing Page',
-        shortDesc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting',
-        technologies: ['HTML/CSS', 'GSAP', 'Framer Motion'],
-        image: '/assets/img/service/featured-projects.png',
-      },
-      {
-        slug: 'fintech-dashboard',
-        title: 'FinTech Dashboard',
-        category: 'Custom Web Application',
-        shortDesc: 'Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting Lorem Ipsum is simply dummy text of the printing and typesetting',
-        technologies: ['Vue.js', 'Node.js', 'PostgreSQL'],
-        image: '/assets/img/service/featured-projects.png',
-      }
-    ];
     item = fallbackProjects.find(p => p.slug === resolvedParams.slug);
+    if (allProjects.length === 0) {
+      allProjects = fallbackProjects;
+    }
   }
 
   if (!item) notFound();
   
   const project = JSON.parse(JSON.stringify(item));
+
+  // Determine Next & Previous Projects
+  const currentIndex = allProjects.findIndex(p => p.slug === project.slug);
+  const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : (allProjects.length > 1 ? allProjects[allProjects.length - 1] : null);
+  const nextProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : (allProjects.length > 1 ? allProjects[0] : null);
 
   const schema = {
     "@context": "https://schema.org",
@@ -96,384 +137,914 @@ export default async function ProjectDetailPage({ params }) {
     "creator": { "@type": "Organization", "name": "WebTycoons" }
   };
 
+  const currentThemeBg = project.themeColor || 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)';
+  const currentThemeTextColor = project.themeTextColor || '#000000';
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <article style={{ 
-        backgroundColor: '#0a0e08', 
-        color: '#fff', 
-        minHeight: '100vh', 
-        paddingBottom: '100px',
-        position: 'relative'
-      }}>
-        
-        {/* Ambient Glows Container (prevents horizontal scroll without breaking sticky) */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%)', filter: 'blur(120px)' }} />
-          <div style={{ position: 'absolute', bottom: '10%', right: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+      
+      <article className="project-detail-wrapper">
+        {/* Ambient Glows */}
+        <div className="ambient-container">
+          <div className="glow-top-left" />
+          <div className="glow-bottom-right" />
+        </div>
+
+        {/* TOP UNIFIED BREADCRUMB & NAVIGATION BAR */}
+        <div className="top-nav-bar fade-up">
+          <div className="container-fluid-px">
+            <div className="top-nav-inner">
+              
+              {/* Back Button & Breadcrumbs Combined */}
+              <div className="unified-nav-left">
+                <Link href="/projects" className="back-btn-pill">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  <span>All Projects</span>
+                </Link>
+
+                <div className="breadcrumb-glass-pill">
+                  <Link href="/">Home</Link>
+                  <span className="crumb-sep">›</span>
+                  <Link href="/projects">Projects</Link>
+                  <span className="crumb-sep">›</span>
+                  <span className="crumb-current">{project.title}</span>
+                </div>
+              </div>
+
+              {/* Category Pill Tag on Right */}
+              <div className="category-tag">
+                <span className="status-dot"></span>
+                <span>{project.category || 'Featured Project'}</span>
+              </div>
+
+            </div>
+          </div>
         </div>
 
         {/* HERO SECTION */}
-        <section className="fade-up" style={{ 
-          paddingTop: '180px', 
-          paddingBottom: '80px', 
-          position: 'relative', 
-          zIndex: 1,
-          backgroundImage: `
-            radial-gradient(circle at 50% 100%, rgba(82, 164, 54, 0.15) 0%, transparent 60%),
-            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: '100% 100%, 60px 60px, 60px 60px'
-        }}>
+        <header className="project-hero-section fade-up">
           <div className="container-fluid-px">
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
-                <div style={{ width: '40px', height: '2px', background: 'var(--clr-primary)' }}></div>
-                <span style={{ color: 'var(--clr-primary)', fontWeight: 600, letterSpacing: '4px', textTransform: 'uppercase', fontSize: '13px' }}>
-                  {project.category || 'Featured Case Study'}
-                </span>
-              </div>
-              <h1 style={{ 
-                fontFamily: 'var(--font-heading)', 
-                fontSize: 'clamp(3.5rem, 8vw, 3.5rem)', 
-                fontWeight: 800, 
-                lineHeight: 1.05, 
-                letterSpacing: '-0.04em',
-                marginBottom: '40px',
-                textTransform: 'uppercase',
-                textShadow: '0 20px 40px rgba(0,0,0,0.5)'
-              }}>
+            <div className="hero-content-box">
+              {/* Main Title */}
+              <h1 className="hero-project-title">
                 {project.title}
               </h1>
+
+              {/* Lead Summary */}
+              {project.shortDesc && (
+                <p className="hero-lead-text">
+                  {project.shortDesc}
+                </p>
+              )}
             </div>
           </div>
-        </section>
+        </header>
 
-        {/* METADATA GRID */}
-        <section className="fade-up" style={{ position: 'relative', zIndex: 1, paddingTop: '40px', paddingBottom: '40px' }}>
+        {/* QUICK SPECS / METADATA MATRIX */}
+        <section className="specs-section fade-up">
           <div className="container-fluid-px">
-            <div style={{ 
-              maxWidth: '1200px', 
-              margin: '0 auto', 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', 
-              gap: '24px'
-            }}>
-              {project.clientName && (
-                <div className="meta-card">
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px' }}>Client</h4>
-                  <p style={{ fontSize: '18px', fontWeight: 600 }}>{project.clientName}</p>
+            <div className="specs-grid">
+              
+              {/* Client Card */}
+              <div className="spec-card">
+                <div className="spec-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
                 </div>
-              )}
-              {project.category && (
-                <div className="meta-card">
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '12px' }}>Services</h4>
-                  <p style={{ fontSize: '18px', fontWeight: 600 }}>{project.category}</p>
+                <div>
+                  <h4 className="spec-label">Client</h4>
+                  <p className="spec-value">{project.clientName || 'Private Enterprise'}</p>
                 </div>
-              )}
+              </div>
+
+              {/* Services Card */}
+              <div className="spec-card">
+                <div className="spec-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="spec-label">Services</h4>
+                  <p className="spec-value">{project.category || 'Digital Engineering'}</p>
+                </div>
+              </div>
+
+              {/* Tech Stack Card */}
               {project.technologies?.length > 0 && (
-                <div className="meta-card" style={{ gridColumn: 'span 2' }}>
-                  <h4 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '16px' }}>Tech Stack</h4>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {project.technologies.slice(0,4).map(t => (
-                      <span key={t} style={{ 
-                        background: 'rgba(82, 164, 54, 0.1)', 
-                        color: 'var(--clr-primary)', 
-                        border: '1px solid rgba(82, 164, 54, 0.2)', 
-                        borderRadius: '100px', 
-                        padding: '6px 16px', 
-                        fontSize: '13px', 
-                        fontWeight: 600,
-                        letterSpacing: '0.5px'
-                      }}>
-                        {t}
-                      </span>
-                    ))}
+                <div className="spec-card tech-spec-card">
+                  <div className="spec-icon-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  </div>
+                  <div className="tech-pills-wrapper">
+                    <h4 className="spec-label">Technologies</h4>
+                    <div className="tech-pills-list">
+                      {project.technologies.map(t => (
+                        <span key={t} className="tech-pill">{t}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
+
+              {/* Live Preview Button Card */}
               {project.projectUrl && (
-                <div className="meta-card flex flex-col justify-center items-start">
-                  <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="live-site-link">
-                    Visit Website 
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '8px' }}><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                <div className="spec-card cta-spec-card">
+                  <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="live-preview-btn">
+                    <span>Visit Live Site</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"></line>
+                      <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
                   </a>
                 </div>
               )}
+
             </div>
           </div>
         </section>
 
-        {/* MAIN SHOWCASE IMAGE */}
+        {/* MAIN SHOWCASE STAGE (Refined & Proportional Browser Mockup) */}
         {project.image && (
-          <section className="fade-up" style={{ padding: '0 0 60px', position: 'relative', zIndex: 2 }}>
+          <section className="showcase-stage-section fade-up">
             <div className="container-fluid-px">
-              
-              <div style={{
-                maxWidth: '1400px',
-                margin: '0 auto',
-                background: project.themeColor || 'linear-gradient(135deg, #4b9aff, #2a75d3)',
-                borderRadius: '16px',
-                padding: 'clamp(16px, 4vw, 24px) clamp(16px, 4vw, 24px) clamp(16px, 4vw, 24px) clamp(16px, 8vw, 90px)',
-                position: 'relative',
-                boxShadow: '0 40px 80px rgba(0,0,0,0.6)'
-              }}>
-                
-                {/* Vertical Text */}
-                <div className="hidden md:block" style={{
-                  position: 'absolute',
-                  left: '30px',
-                  top: '50%',
-                  transform: 'translateY(-50%) rotate(180deg)',
-                  writingMode: 'vertical-rl',
-                  color: project.themeTextColor || 'rgba(255,255,255,0.9)',
-                  fontSize: '20px',
-                  fontWeight: 500,
-                  letterSpacing: '3px',
-                  textTransform: 'uppercase',
-                  whiteSpace: 'nowrap'
-                }}>
+              <div 
+                className="showcase-stage-outer"
+                style={{ background: currentThemeBg }}
+              >
+                {/* Vertical Decorative Badge */}
+                <div 
+                  className="vertical-title-badge hidden md:block"
+                  style={{ color: currentThemeTextColor }}
+                >
                   {project.title}
                 </div>
 
-                {/* The Image */}
-                <div className="" style={{ 
-                  width: '100%', 
-                  borderRadius: '16px', 
-                  overflow: 'hidden', 
-                  boxShadow: '-10px 10px 30px #00000026'
-                }}>
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'top' }} 
-                  />
-                </div>
+                {/* Modern macOS-Style Browser Frame */}
+                <div className="browser-mockup-frame">
+                  {/* Browser Header Bar */}
+                  <div className="browser-header-bar">
+                    <div className="browser-dots">
+                      <span className="dot dot-red"></span>
+                      <span className="dot dot-yellow"></span>
+                      <span className="dot dot-green"></span>
+                    </div>
 
-              </div>
-            </div>
-          </section>
-        )}
+                    <div className="browser-url-bar">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      <span className="url-text">
+                        {project.projectUrl ? project.projectUrl.replace(/^https?:\/\//, '') : `thewebtycoons.com/projects/${project.slug}`}
+                      </span>
+                    </div>
 
-        {/* 2-COLUMN OVERVIEW & RICH TEXT */}
-        {(project.shortDesc || project.description) && (
-          <section className="fade-up" style={{ padding: '60px 0', position: 'relative', zIndex: 1 }}>
-            
-            {/* Section Ambient Glow */}
-            <div style={{ position: 'absolute', top: '10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(82, 164, 54, 0.04) 0%, transparent 70%)', filter: 'blur(100px)', zIndex: 0, pointerEvents: 'none' }} />
-
-            <div className="container-fluid-px">
-              <div style={{ 
-                maxWidth: '1200px', 
-                margin: '0 auto', 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', 
-                // gap: '100px',
-                alignItems: 'start',
-                position: 'relative',
-                zIndex: 1
-              }}>
-                {/* Left Side: Sticky Title */}
-                <div className="md:sticky md:top-[140px]">
-                  
-                  {/* Huge Ghost Typography Watermark */}
-                  <div style={{ 
-                    position: 'absolute', 
-                    top: '-40px', 
-                    left: '-20px', 
-                    fontSize: 'clamp(3rem, 15vw, 12rem)', 
-                    fontWeight: 900, 
-                    color: 'transparent',
-                    WebkitTextStroke: '2px rgba(255,255,255,0.03)',
-                    zIndex: -1,
-                    textTransform: 'uppercase',
-                    pointerEvents: 'none',
-                    fontFamily: 'var(--font-heading)',
-                    lineHeight: 0.8,
-                    letterSpacing: '-0.05em'
-                  }}>
-                    DETAILS
+                    <div className="browser-actions">
+                      <span className="action-pill">Live Preview</span>
+                    </div>
                   </div>
-                  <div style={{ width: '60px', height: '3px', background: 'var(--clr-primary)', marginBottom: '30px' }}></div>
-                  <h2 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', fontFamily: 'var(--font-heading)', fontWeight: 800, lineHeight: 1.05, marginBottom: '30px', letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-                    Project <br/><span style={{ color: 'var(--clr-primary)' }}>Overview</span>
-                  </h2>
-                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', letterSpacing: '1px', textTransform: 'uppercase' }}>Deep Dive into the Process</p>
+
+                  {/* Browser Screen / Image Display */}
+                  <div className="browser-screen">
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="browser-screen-img"
+                    />
+                  </div>
                 </div>
 
-                {/* Right Side: Rich Text Content */}
-                <div>
-                  {project.shortDesc && (
-                    <p style={{ 
-                      fontSize: '26px', 
-                      lineHeight: 1.6, 
-                      color: '#fff', 
-                      marginBottom: '50px', 
-                      fontWeight: 400,
-                      letterSpacing: '-0.01em'
-                    }}>
-                      {project.shortDesc}
-                    </p>
-                  )}
-                  
-                  {project.description && (
-                    <div 
-                      className="premium-rich-text"
-                      dangerouslySetInnerHTML={{ 
-                        __html: project.description
-                          .replace(/style="[^"]*"/gi, '')
-                          .replace(/class="[^"]*"/gi, '')
-                          .replace(/color:[^;"]+;?/gi, '')
-                          .replace(/background-color:[^;"]+;?/gi, '')
-                      }} 
-                    />
-                  )}
-                </div>
               </div>
             </div>
           </section>
         )}
 
-        {/* FOOTER NAV */}
-        <section style={{ paddingTop: '0px', paddingBottom: '0px' }}>
-          <div className="container-fluid-px text-center">
-            <Link href="/projects" className="premium-btn-v2">
-              <span className="premium-btn-text">View All Work</span>
-              <span className="premium-btn-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
+        {/* 2-COLUMN PROJECT OVERVIEW & PROCESS */}
+        <section className="overview-section fade-up">
+          <div className="container-fluid-px">
+            <div className="overview-layout-grid">
+              
+              {/* Left Column: Sticky Title & Key Takeaways */}
+              <div className="overview-sidebar">
+                <div className="sticky-sidebar-box">
+                  <div className="watermark-details">PROJECT</div>
+                  <div className="green-accent-bar" />
+                  <h2 className="overview-heading">
+                    Project <br />
+                    <span className="accent-text">Overview</span>
+                  </h2>
+                  <p className="overview-subtext">The Challenge & Process</p>
+
+                  {/* Quick Highlights Card */}
+                  <div className="highlights-card">
+                    <h5 className="highlights-title">Key Deliverables</h5>
+                    <ul className="highlights-list">
+                      <li>Bespoke Architecture & Design</li>
+                      <li>Mobile-First Responsive Layout</li>
+                      <li>High Performance Optimization</li>
+                      <li>Interactive Motion & Micro-interactions</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Detailed Rich Text */}
+              <div className="overview-content">
+                {project.description ? (
+                  <div 
+                    className="premium-rich-text"
+                    dangerouslySetInnerHTML={{ 
+                      __html: project.description
+                        .replace(/style="[^"]*"/gi, '')
+                        .replace(/class="[^"]*"/gi, '')
+                        .replace(/color:[^;"]+;?/gi, '')
+                        .replace(/background-color:[^;"]+;?/gi, '')
+                    }} 
+                  />
+                ) : (
+                  <div className="premium-rich-text">
+                    <h3>The Vision</h3>
+                    <p>{project.shortDesc || 'Comprehensive case study breakdown showcasing our end-to-end design, architecture, and deployment.'}</p>
+                    <h3>Impact & Results</h3>
+                    <p>Designed to deliver exceptional conversion rates, brand authority, and lightning-fast loading speeds across all device viewports.</p>
+                  </div>
+                )}
+
+                {/* Action Row */}
+                {project.projectUrl && (
+                  <div className="overview-actions-row">
+                    <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="primary-glow-btn">
+                      <span>Launch Live Website</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                      </svg>
+                    </a>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* REDESIGNED PREV / NEXT CASE STUDY NAVIGATION */}
+        <section className="adjacent-projects-section fade-up">
+          <div className="container-fluid-px">
+            <div className="adjacent-nav-wrapper">
+              
+              {/* Previous Project Card */}
+              {prevProject ? (
+                <Link href={`/projects/${prevProject.slug}`} className="adjacent-card prev-card group">
+                  <div className="adjacent-arrow">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                  </div>
+
+                  {prevProject.image && (
+                    <div className="adjacent-thumb">
+                      <img src={prevProject.image} alt={prevProject.title} />
+                    </div>
+                  )}
+
+                  <div className="adjacent-info">
+                    <span className="adjacent-tag">Previous Project</span>
+                    <h4 className="adjacent-title">{prevProject.title}</h4>
+                    <span className="adjacent-category">{prevProject.category}</span>
+                  </div>
+                </Link>
+              ) : <div />}
+
+              {/* View All Projects Center Pill */}
+              <Link href="/projects" className="view-all-center-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
                 </svg>
-              </span>
-            </Link>
+                <span>Browse All</span>
+              </Link>
+
+              {/* Next Project Card */}
+              {nextProject ? (
+                <Link href={`/projects/${nextProject.slug}`} className="adjacent-card next-card group">
+                  <div className="adjacent-info text-right">
+                    <span className="adjacent-tag">Next Project</span>
+                    <h4 className="adjacent-title">{nextProject.title}</h4>
+                    <span className="adjacent-category">{nextProject.category}</span>
+                  </div>
+
+                  {nextProject.image && (
+                    <div className="adjacent-thumb">
+                      <img src={nextProject.image} alt={nextProject.title} />
+                    </div>
+                  )}
+
+                  <div className="adjacent-arrow">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </div>
+                </Link>
+              ) : <div />}
+
+            </div>
+          </div>
+        </section>
+
+        {/* REFINED BOTTOM CTA BANNER (Proportional & Elegant) */}
+        <section className="project-cta-banner-section fade-up">
+          <div className="container-fluid-px">
+            <div className="cta-banner-box">
+              <div className="cta-glow-effect" />
+              <div className="cta-content">
+                <span className="cta-eyebrow">READY TO SCALE YOUR BRAND?</span>
+                <h3 className="cta-headline">
+                  Let's Build Something <span className="accent-text">Extraordinary</span> Together.
+                </h3>
+                <p className="cta-description">
+                  Have an ambitious project in mind? We design and engineer high-performance web experiences tailored for your business growth.
+                </p>
+                <div className="cta-buttons-row">
+                  <Link href="/contact" className="cta-primary-btn">
+                    <span>Start Your Project</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                  <Link href="/services" className="cta-secondary-btn">
+                    Explore Services
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
       </article>
-      
-      {/* Premium CSS Styling */}
+
+      {/* SCOPED PREMIUM CSS */}
       <style dangerouslySetInnerHTML={{__html: `
+        :root {
+          --clr-primary: #52a436;
+          --clr-primary-glow: rgba(82, 164, 54, 0.4);
+        }
+
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(40px); }
+          from { opacity: 0; transform: translateY(24px); }
           to { opacity: 1; transform: translateY(0); }
         }
+
         .fade-up {
-          animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .meta-card {
-          background: rgba(255,255,255,0.02);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 20px;
-          padding: 32px;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .meta-card:hover {
-          background: rgba(255,255,255,0.04);
-          border-color: rgba(82, 164, 54, 0.4);
-          transform: translateY(-5px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(82, 164, 54, 0.1);
+        .project-detail-wrapper {
+          background-color: #070a06;
+          color: #ffffff;
+          min-height: 100vh;
+          padding-bottom: 100px;
+          position: relative;
+          overflow-x: hidden;
         }
 
-        .live-site-link {
+        /* Ambient Glows */
+        .ambient-container {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .glow-top-left {
+          position: absolute;
+          top: -10%;
+          left: -10%;
+          width: 50vw;
+          height: 50vw;
+          background: radial-gradient(circle, rgba(82, 164, 54, 0.1) 0%, transparent 65%);
+          filter: blur(140px);
+        }
+        .glow-bottom-right {
+          position: absolute;
+          bottom: 10%;
+          right: -10%;
+          width: 45vw;
+          height: 45vw;
+          background: radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%);
+          filter: blur(120px);
+        }
+
+        /* Top Nav Bar - Unified Breadcrumb */
+        .top-nav-bar {
+          padding-top: 130px;
+          padding-bottom: 20px;
+          position: relative;
+          z-index: 10;
+        }
+        .top-nav-inner {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 14px;
+        }
+        .unified-nav-left {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        .back-btn-pill {
           display: inline-flex;
           align-items: center;
-          font-size: 18px;
-          font-weight: 700;
-          color: #fff;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-        .live-site-link:hover {
-          color: var(--clr-primary);
-        }
-
-        .premium-btn-v2 {
-          display: inline-flex;
-          align-items: center;
-          gap: 20px;
-          padding: 12px 12px 12px 40px;
+          gap: 8px;
+          padding: 6px 16px;
+          border-radius: 100px;
           background: rgba(82, 164, 54, 0.1);
           border: 1px solid rgba(82, 164, 54, 0.3);
+          color: #ffffff;
+          font-size: 12px;
+          font-weight: 700;
+          text-decoration: none;
+          transition: all 0.25s ease;
+        }
+        .back-btn-pill:hover {
+          background: var(--clr-primary);
+          color: #ffffff;
+          transform: translateX(-3px);
+          box-shadow: 0 4px 15px rgba(82, 164, 54, 0.4);
+        }
+        .breadcrumb-glass-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 14px;
           border-radius: 100px;
-          color: #fff;
-          font-size: 15px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.5);
+        }
+        .breadcrumb-glass-pill a {
+          color: rgba(255, 255, 255, 0.7);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .breadcrumb-glass-pill a:hover {
+          color: var(--clr-primary);
+        }
+        .crumb-sep {
+          color: rgba(255, 255, 255, 0.25);
+          font-size: 11px;
+        }
+        .crumb-current {
+          color: #ffffff;
+          font-weight: 600;
+          max-width: 220px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .category-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 5px 14px;
+          border-radius: 100px;
+          background: rgba(82, 164, 54, 0.1);
+          border: 1px solid rgba(82, 164, 54, 0.25);
+          color: var(--clr-primary);
+          font-size: 11px;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 2px;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-          text-decoration: none;
+          letter-spacing: 1px;
+        }
+        .status-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background-color: var(--clr-primary);
+          box-shadow: 0 0 8px var(--clr-primary);
+        }
+
+        /* Hero Section */
+        .project-hero-section {
+          padding-top: 10px;
+          padding-bottom: 40px;
           position: relative;
-          overflow: hidden;
-          box-shadow: 0 0 20px rgba(82, 164, 54, 0.05);
+          z-index: 10;
         }
-        .premium-btn-v2::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: var(--clr-primary);
-          z-index: 0;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        .hero-content-box {
+          max-width: 1100px;
+          margin: 0 auto;
         }
-        .premium-btn-v2:hover {
-          box-shadow: 0 15px 30px rgba(82, 164, 54, 0.3);
+        .hero-project-title {
+          font-family: var(--font-heading, sans-serif);
+          font-size: clamp(2.2rem, 5vw, 3.8rem);
+          font-weight: 900;
+          line-height: 1.08;
+          letter-spacing: -0.02em;
+          text-transform: uppercase;
+          margin-bottom: 18px;
+          color: #ffffff;
+        }
+        .hero-lead-text {
+          font-size: clamp(1rem, 1.6vw, 1.2rem);
+          line-height: 1.65;
+          color: rgba(255, 255, 255, 0.7);
+          max-width: 850px;
+          font-weight: 400;
+        }
+
+        /* Specs Section */
+        .specs-section {
+          padding-bottom: 50px;
+          position: relative;
+          z-index: 10;
+        }
+        .specs-grid {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 16px;
+        }
+        .spec-card {
+          background: rgba(255, 255, 255, 0.025);
+          backdrop-filter: blur(15px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 18px;
+          padding: 20px;
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .spec-card:hover {
+          background: rgba(255, 255, 255, 0.04);
+          border-color: rgba(82, 164, 54, 0.4);
           transform: translateY(-3px);
-          border-color: var(--clr-primary);
+          box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
         }
-        .premium-btn-v2:hover::before {
-          transform: scaleX(1);
-        }
-        .premium-btn-text, .premium-btn-icon {
-          position: relative;
-          z-index: 1;
-        }
-        .premium-btn-icon {
+        .spec-icon-box {
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          background: rgba(82, 164, 54, 0.1);
+          border: 1px solid rgba(82, 164, 54, 0.2);
+          color: var(--clr-primary);
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 48px;
-          height: 48px;
-          background: #fff;
-          color: #000;
-          border-radius: 50%;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          shrink-0;
         }
-        .premium-btn-v2:hover .premium-btn-icon {
-          transform: translateX(4px);
-          background: #0a0e08;
-          color: #fff;
-        }
-
-        .premium-rich-text {
-          font-size: 18px;
-          line-height: 1.9;
-          color: rgba(255,255,255,0.7);
-        }
-        .premium-rich-text h2, .premium-rich-text h3 {
-          font-family: var(--font-heading);
-          color: #fff;
-          font-size: 32px;
-          margin-top: 40px;
-          margin-bottom: 20px;
+        .spec-label {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          color: rgba(255, 255, 255, 0.4);
+          margin-bottom: 4px;
           font-weight: 700;
         }
-        .premium-rich-text p {
+        .spec-value {
+          font-size: 15px;
+          font-weight: 700;
+          color: #ffffff;
+          line-height: 1.3;
+        }
+        .tech-spec-card {
+          grid-column: span 1;
+        }
+        @media (min-width: 992px) {
+          .tech-spec-card {
+            grid-column: span 2;
+          }
+        }
+        .tech-pills-wrapper {
+          flex: 1;
+        }
+        .tech-pills-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        .tech-pill {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 100px;
+          padding: 3px 10px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #e2e8f0;
+        }
+        .cta-spec-card {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 14px;
+        }
+        .live-preview-btn {
+          width: 100%;
+          height: 100%;
+          min-height: 52px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          background: var(--clr-primary);
+          color: #ffffff;
+          border-radius: 14px;
+          font-size: 14px;
+          font-weight: 700;
+          text-decoration: none;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          box-shadow: 0 6px 20px -3px rgba(82, 164, 54, 0.5);
+          transition: all 0.25s ease;
+        }
+        .live-preview-btn:hover {
+          background: #448c2c;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(82, 164, 54, 0.7);
+        }
+
+        /* Showcase Stage - Refined & Balanced Dimensions */
+        .showcase-stage-section {
+          padding-bottom: 70px;
+          position: relative;
+          z-index: 10;
+        }
+        .showcase-stage-outer {
+          max-width: 1050px;
+          margin: 0 auto;
+          border-radius: 24px;
+          padding: clamp(14px, 2.5vw, 28px) clamp(14px, 2.5vw, 28px) clamp(14px, 2.5vw, 28px) clamp(14px, 4vw, 64px);
+          position: relative;
+          box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .vertical-title-badge {
+          position: absolute;
+          left: 22px;
+          top: 50%;
+          transform: translateY(-50%) rotate(180deg);
+          writing-mode: vertical-rl;
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+          white-space: nowrap;
+          opacity: 0.85;
+        }
+        .browser-mockup-frame {
+          width: 100%;
+          border-radius: 16px;
+          overflow: hidden;
+          background: #0f1410;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        }
+        .browser-header-bar {
+          background: rgba(20, 26, 20, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 10px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          gap: 10px;
+        }
+        .browser-dots {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          width: 70px;
+        }
+        .dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url-bar {
+          flex: 1;
+          max-width: 420px;
+          background: rgba(0, 0, 0, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 6px;
+          padding: 5px 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          font-size: 11px;
+          font-family: monospace;
+          color: rgba(255, 255, 255, 0.6);
+        }
+        .lock-icon {
+          color: var(--clr-primary);
+        }
+        .url-text {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .browser-actions {
+          width: 70px;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .action-pill {
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: var(--clr-primary);
+          background: rgba(82, 164, 54, 0.1);
+          padding: 2px 7px;
+          border-radius: 4px;
+        }
+        .browser-screen {
+          width: 100%;
+          max-height: 520px;
+          background: #000;
+          overflow: hidden;
+          line-height: 0;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+        }
+        .browser-screen-img {
+          width: 100%;
+          height: auto;
+          max-height: 520px;
+          display: block;
+          object-fit: cover;
+          object-position: top;
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-mockup-frame:hover .browser-screen-img {
+          transform: scale(1.015);
+        }
+
+        /* Overview & Details Section */
+        .overview-section {
+          padding: 40px 0 70px;
+          position: relative;
+          z-index: 10;
+        }
+        .overview-layout-grid {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+        @media (min-width: 992px) {
+          .overview-layout-grid {
+            grid-template-columns: 340px 1fr;
+            gap: 60px;
+          }
+        }
+        .sticky-sidebar-box {
+          position: relative;
+        }
+        @media (min-width: 992px) {
+          .sticky-sidebar-box {
+            position: sticky;
+            top: 130px;
+          }
+        }
+        .watermark-details {
+          position: absolute;
+          top: -30px;
+          left: -10px;
+          font-size: clamp(3.5rem, 8vw, 6.5rem);
+          font-weight: 900;
+          color: transparent;
+          -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.04);
+          z-index: -1;
+          pointer-events: none;
+          font-family: var(--font-heading, sans-serif);
+          line-height: 0.8;
+          text-transform: uppercase;
+        }
+        .green-accent-bar {
+          width: 44px;
+          height: 3px;
+          background: var(--clr-primary);
+          margin-bottom: 20px;
+        }
+        .overview-heading {
+          font-family: var(--font-heading, sans-serif);
+          font-size: clamp(2rem, 3.5vw, 2.8rem);
+          font-weight: 800;
+          line-height: 1.12;
+          letter-spacing: -0.02em;
+          text-transform: uppercase;
+          margin-bottom: 10px;
+        }
+        .accent-text {
+          color: var(--clr-primary);
+        }
+        .overview-subtext {
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 1.8px;
+          color: rgba(255, 255, 255, 0.45);
           margin-bottom: 24px;
+          font-weight: 600;
+        }
+        .highlights-card {
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 16px;
+          padding: 20px;
+          margin-top: 24px;
+        }
+        .highlights-title {
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          color: var(--clr-primary);
+          font-weight: 800;
+          margin-bottom: 14px;
+        }
+        .highlights-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .highlights-list li {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.75);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .highlights-list li::before {
+          content: '✓';
+          color: var(--clr-primary);
+          font-weight: 900;
+        }
+
+        /* Rich Text Styling */
+        .premium-rich-text {
+          font-size: 16px;
+          line-height: 1.8;
+          color: rgba(255, 255, 255, 0.75);
+        }
+        .premium-rich-text h2, .premium-rich-text h3 {
+          font-family: var(--font-heading, sans-serif);
+          color: #ffffff;
+          font-size: clamp(20px, 2.5vw, 26px);
+          margin-top: 32px;
+          margin-bottom: 14px;
+          font-weight: 800;
+          letter-spacing: -0.01em;
+        }
+        .premium-rich-text h2:first-child, .premium-rich-text h3:first-child {
+          margin-top: 0;
+        }
+        .premium-rich-text p {
+          margin-bottom: 20px;
         }
         .premium-rich-text ul {
           list-style: none;
           padding: 0;
-          margin-bottom: 30px;
+          margin-bottom: 24px;
         }
         .premium-rich-text li {
           position: relative;
-          padding-left: 30px;
-          margin-bottom: 15px;
-          font-size: 17px;
+          padding-left: 24px;
+          margin-bottom: 12px;
+          font-size: 15px;
         }
         .premium-rich-text li::before {
           content: '→';
@@ -481,16 +1052,275 @@ export default async function ProjectDetailPage({ params }) {
           left: 0;
           top: 0;
           color: var(--clr-primary);
-          font-weight: bold;
+          font-weight: 900;
         }
         .premium-rich-text a {
           color: var(--clr-primary);
           text-decoration: none;
           border-bottom: 1px solid rgba(82, 164, 54, 0.3);
-          transition: all 0.3s ease;
+          transition: border-color 0.2s;
         }
         .premium-rich-text a:hover {
           border-bottom-color: var(--clr-primary);
+        }
+        .overview-actions-row {
+          margin-top: 32px;
+          padding-top: 24px;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .primary-glow-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 30px;
+          border-radius: 100px;
+          background: var(--clr-primary);
+          color: #ffffff;
+          font-size: 14px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          text-decoration: none;
+          box-shadow: 0 8px 25px -4px rgba(82, 164, 54, 0.6);
+          transition: all 0.3s ease;
+        }
+        .primary-glow-btn:hover {
+          background: #448c2c;
+          box-shadow: 0 12px 30px rgba(82, 164, 54, 0.8);
+          transform: translateY(-2px);
+        }
+
+        /* Adjacent Projects Navigation (Redesigned with Thumbnails) */
+        .adjacent-projects-section {
+          padding: 30px 0 50px;
+          position: relative;
+          z-index: 10;
+        }
+        .adjacent-nav-wrapper {
+          max-width: 1100px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          align-items: center;
+        }
+        @media (min-width: 768px) {
+          .adjacent-nav-wrapper {
+            grid-template-columns: 1fr auto 1fr;
+          }
+        }
+        .adjacent-card {
+          background: rgba(255, 255, 255, 0.025);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 18px;
+          padding: 16px 20px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          text-decoration: none;
+          color: #ffffff;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .adjacent-card:hover {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(82, 164, 54, 0.4);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+        .adjacent-arrow {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: var(--clr-primary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          shrink-0;
+          transition: all 0.25s ease;
+        }
+        .adjacent-card:hover .adjacent-arrow {
+          background: var(--clr-primary);
+          color: #ffffff;
+          transform: scale(1.08);
+        }
+        .adjacent-thumb {
+          width: 52px;
+          height: 40px;
+          border-radius: 8px;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: #000;
+          shrink-0;
+        }
+        .adjacent-thumb img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .adjacent-info {
+          flex: 1;
+          min-width: 0;
+        }
+        .adjacent-tag {
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1.2px;
+          color: var(--clr-primary);
+          display: block;
+          margin-bottom: 3px;
+        }
+        .adjacent-title {
+          font-size: 15px;
+          font-weight: 700;
+          margin: 0 0 2px 0;
+          line-height: 1.25;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .adjacent-category {
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.4);
+        }
+        .view-all-center-pill {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 10px 20px;
+          border-radius: 100px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.7);
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          margin: 0 auto;
+          transition: all 0.25s ease;
+          white-space: nowrap;
+        }
+        .view-all-center-pill:hover {
+          background: rgba(82, 164, 54, 0.15);
+          border-color: var(--clr-primary);
+          color: #ffffff;
+          transform: translateY(-2px);
+        }
+
+        /* Proportional Bottom CTA Banner */
+        .project-cta-banner-section {
+          padding-top: 30px;
+          position: relative;
+          z-index: 10;
+        }
+        .cta-banner-box {
+          max-width: 1050px;
+          margin: 0 auto;
+          background: linear-gradient(135deg, rgba(82, 164, 54, 0.1) 0%, rgba(15, 22, 15, 0.7) 100%);
+          border: 1px solid rgba(82, 164, 54, 0.25);
+          border-radius: 28px;
+          padding: clamp(30px, 5vw, 48px) clamp(20px, 4vw, 40px);
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+        .cta-glow-effect {
+          position: absolute;
+          top: -40%;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 450px;
+          height: 250px;
+          background: radial-gradient(circle, rgba(82, 164, 54, 0.25) 0%, transparent 70%);
+          filter: blur(70px);
+          pointer-events: none;
+        }
+        .cta-content {
+          position: relative;
+          z-index: 2;
+          max-width: 720px;
+          margin: 0 auto;
+        }
+        .cta-eyebrow {
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 2.5px;
+          text-transform: uppercase;
+          color: var(--clr-primary);
+          display: block;
+          margin-bottom: 12px;
+        }
+        .cta-headline {
+          font-family: var(--font-heading, sans-serif);
+          font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+          font-weight: 900;
+          line-height: 1.2;
+          letter-spacing: -0.015em;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+          color: #ffffff;
+        }
+        .cta-description {
+          font-size: 14px;
+          line-height: 1.65;
+          color: rgba(255, 255, 255, 0.65);
+          margin-bottom: 28px;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .cta-buttons-row {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          flex-wrap: wrap;
+        }
+        .cta-primary-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px 28px;
+          border-radius: 100px;
+          background: var(--clr-primary);
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          text-decoration: none;
+          box-shadow: 0 8px 25px -4px rgba(82, 164, 54, 0.6);
+          transition: all 0.25s ease;
+        }
+        .cta-primary-btn:hover {
+          background: #448c2c;
+          box-shadow: 0 12px 30px rgba(82, 164, 54, 0.8);
+          transform: translateY(-2px);
+        }
+        .cta-secondary-btn {
+          display: inline-flex;
+          align-items: center;
+          padding: 14px 26px;
+          border-radius: 100px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          text-decoration: none;
+          transition: all 0.25s ease;
+        }
+        .cta-secondary-btn:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(255, 255, 255, 0.25);
+          transform: translateY(-2px);
         }
       `}} />
     </>

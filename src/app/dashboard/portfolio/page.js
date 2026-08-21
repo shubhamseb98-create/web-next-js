@@ -15,6 +15,7 @@ import { SlugInput } from '../../../components/dashboard/SlugInput'
 import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2, ImageIcon } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import PortfolioThemePicker from '../../../components/dashboard/PortfolioThemePicker'
 
 const BASE_URL = ''
 const EMPTY = {
@@ -83,10 +84,13 @@ function PortfolioModal({ item, nextSort = 1, onClose, onSave, saving }) {
             <FloatingInput label="Client Name" value={form.clientName} onChange={e => f('clientName', e.target.value)} />
           </div>
           <FloatingInput label="Project URL" value={form.projectUrl} onChange={e => f('projectUrl', e.target.value)} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FloatingInput label="Background (Hex or Gradient)" value={form.themeColor || ''} onChange={e => f('themeColor', e.target.value)} />
-            <FloatingInput label="Hover Text Color" value={form.themeTextColor || ''} onChange={e => f('themeTextColor', e.target.value)} />
-          </div>
+          <PortfolioThemePicker
+            themeColor={form.themeColor}
+            themeTextColor={form.themeTextColor}
+            onThemeColorChange={v => f('themeColor', v)}
+            onThemeTextColorChange={v => f('themeTextColor', v)}
+            projectTitle={form.title}
+          />
           <FloatingInput label="Technologies (comma separated)" value={form.technologies} onChange={e => f('technologies', e.target.value)} />
           <FloatingTextarea label="Short Description" value={form.shortDesc} onChange={e => f('shortDesc', e.target.value)} rows={2} />
           

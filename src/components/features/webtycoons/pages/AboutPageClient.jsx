@@ -54,14 +54,14 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
     const section = sectionRef.current
 
     if (track && section) {
-      // Horizontal scroll animation
+      const getScrollDist = () => track.scrollWidth - window.innerWidth + window.innerWidth * 0.15;
       gsap.to(track, {
-        x: () => -(track.scrollWidth - window.innerWidth + window.innerWidth * 0.1),
+        x: () => -getScrollDist(),
         ease: 'none',
         scrollTrigger: {
           trigger: section,
           pin: true,
-          scrub: true,
+          scrub: 1,
           start: 'center center',
           end: () => `+=${track.scrollWidth}`,
           invalidateOnRefresh: true,
@@ -211,26 +211,149 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
         </div>
       </section>
 
-      {/* ── Our Story (Horizontal GSAP Scroll) ── */}
-      <section className={styles.storySection} ref={sectionRef}>
-        <div className={styles.storyHeadingContainer}>
-          <SectionHeading subtitle="OUR STORY" title={<>From a Small Studio to a <span className={styles.accent}>Trusted Agency</span></>} center={true} />
+      {/* ── Our Story (Horizontal Alternating Timeline with Line, Dots & Ghost Years) ── */}
+      <section className="story-section-pinned" ref={sectionRef} style={{ background: '#070a06', position: 'relative', overflow: 'hidden', padding: '60px 0 40px 0' }}>
+        <div className="container-fluid-px">
+          <div style={{ maxWidth: '750px', margin: '0 auto 10px auto', textAlign: 'center' }}>
+            <SectionHeading subtitle="OUR STORY" title={<>From a Small Studio to a <span className={styles.accent}>Trusted Agency</span></>} center={true} />
+          </div>
         </div>
         
-        <div className={styles.stickyContainer}>
-          <div className={styles.horizontalTrack} ref={trackRef}>
-            <div className={styles.trackLine}></div>
+        {/* Horizontal Timeline Viewport */}
+        <div style={{ width: '100%', height: '540px', position: 'relative', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
+          <div 
+            ref={trackRef}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              position: 'relative',
+              width: 'max-content',
+              padding: '0 45vw 0 12vw',
+              height: '100%',
+              willChange: 'transform'
+            }}
+          >
+            {/* Continuous Glowing Horizontal Line */}
+            <div 
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '8vw',
+                right: '0',
+                height: '2px',
+                background: 'linear-gradient(90deg, #52a436 0%, rgba(82, 164, 54, 0.4) 50%, #52a436 100%)',
+                boxShadow: '0 0 10px rgba(82, 164, 54, 0.4)',
+                transform: 'translateY(-50%)',
+                zIndex: 1
+              }}
+            />
             
-            {data.milestones?.map((m, i) => (
-              <div key={i} className={styles.hmCard}>
-                <div className={styles.hmDot}></div>
-                <div className={styles.hmYear}>{m.year}</div>
-                <div className={styles.hmContent}>
-                  <h3>{m.title}</h3>
-                  <p>{m.description}</p>
+            {data.milestones?.map((m, i) => {
+              const isTop = i % 2 === 0; // Alternates: 0=Top, 1=Bottom, 2=Top, 3=Bottom...
+              return (
+                <div 
+                  key={i} 
+                  style={{
+                    position: 'relative',
+                    width: '380px',
+                    height: '100%',
+                    marginRight: '80px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    zIndex: 2
+                  }}
+                >
+                  {/* Glowing Node on the line */}
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: '#52a436',
+                      border: '3px solid #070a06',
+                      boxShadow: '0 0 14px #52a436, 0 0 0 6px rgba(82, 164, 54, 0.2)',
+                      zIndex: 5,
+                      transition: 'all 0.3s ease'
+                    }}
+                  />
+
+                  {/* Giant Ghost Year Watermark */}
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      fontSize: '6.5rem',
+                      fontWeight: '900',
+                      color: 'rgba(255, 255, 255, 0.04)',
+                      fontFamily: 'var(--font-heading, sans-serif)',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                      lineHeight: 1,
+                      letterSpacing: '-2px',
+                      userSelect: 'none'
+                    }}
+                  >
+                    {m.year}
+                  </div>
+
+                  {/* Alternating Content Card */}
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      [isTop ? 'bottom' : 'top']: 'calc(50% + 28px)',
+                      left: 0,
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.025)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      backdropFilter: 'blur(15px)',
+                      borderRadius: '18px',
+                      padding: '22px 24px',
+                      boxShadow: '0 15px 35px rgba(0, 0, 0, 0.4)',
+                      zIndex: 4,
+                      transition: 'all 0.3s ease'
+                    }}
+                    className="timeline-card hover:border-emerald-500/50 hover:-translate-y-1"
+                  >
+                    {/* Header Row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <span 
+                        style={{
+                          padding: '3px 12px',
+                          borderRadius: '100px',
+                          background: 'rgba(82, 164, 54, 0.12)',
+                          border: '1px solid rgba(82, 164, 54, 0.3)',
+                          color: '#52a436',
+                          fontSize: '12px',
+                          fontWeight: '800',
+                          letterSpacing: '0.8px'
+                        }}
+                      >
+                        {m.year}
+                      </span>
+                      <span style={{ fontSize: '11px', fontWeight: '800', color: 'rgba(255, 255, 255, 0.3)' }}>
+                        PHASE 0{i + 1}
+                      </span>
+                    </div>
+
+                    <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff', margin: '0 0 6px 0', lineHeight: '1.3' }}>
+                      {m.title}
+                    </h3>
+                    <p style={{ fontSize: '13px', lineHeight: '1.6', color: 'rgba(255, 255, 255, 0.65)', margin: 0 }}>
+                      {m.description}
+                    </p>
+                  </div>
+
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

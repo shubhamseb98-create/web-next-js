@@ -77,8 +77,51 @@ export default function PortfolioGrid({ items = [], categories = ['All'] }) {
       {/* Grid */}
       <section className={styles.projectsSection}>
         <div className="container-fluid-px">
-          <div className={styles.sectionHeader}>
+          <div className={styles.sectionHeader} style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', marginBottom: '40px' }}>
             <span className={styles.sectionSub}><span className={styles.dot}></span> Our Projects</span>
+            
+            {/* Interactive Category Filter Pills */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+              {categories.map((cat) => {
+                const isCatActive = active === cat;
+                const count = cat === 'All' ? projects.length : projects.filter(p => p.category === cat).length;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setActive(cat)}
+                    style={{
+                      padding: '8px 20px',
+                      borderRadius: '100px',
+                      fontSize: '13px',
+                      fontWeight: isCatActive ? 700 : 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.25s ease',
+                      backgroundColor: isCatActive ? '#52a436' : 'rgba(255, 255, 255, 0.04)',
+                      border: isCatActive ? '1px solid #52a436' : '1px solid rgba(255, 255, 255, 0.1)',
+                      color: isCatActive ? '#ffffff' : '#94a3b8',
+                      boxShadow: isCatActive ? '0 4px 15px rgba(82, 164, 54, 0.4)' : 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span>{cat}</span>
+                    <span 
+                      style={{
+                        fontSize: '10px',
+                        padding: '2px 6px',
+                        borderRadius: '100px',
+                        backgroundColor: isCatActive ? 'rgba(0, 0, 0, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                        color: isCatActive ? '#ffffff' : '#64748b'
+                      }}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div className={styles.projectGrid}>
             <AnimatePresence mode="wait">
@@ -98,9 +141,11 @@ export default function PortfolioGrid({ items = [], categories = ['All'] }) {
                         <h3 className={styles.verticalTitle} style={{ color: project.themeTextColor || pStyle.textColor }}>{project.title}</h3>
                       </div>
                       <div className={styles.projectImageWrapper}>
-                        <img src={project.image || '/assets/img/service/featured-projects.png'} alt={project.title} className={styles.projectImage} loading="lazy" />
-                        <div className={styles.projectOverlay}>
-                          <Link href={project.slug !== '#' ? `/projects/${project.slug}` : '#'} className={styles.viewBtn}>View</Link>
+                        <div className={styles.projectImageInner}>
+                          <img src={project.image || '/assets/img/service/featured-projects.png'} alt={project.title} className={styles.projectImage} loading="lazy" />
+                          <div className={styles.projectOverlay}>
+                            <Link href={project.slug && project.slug !== '#' ? `/projects/${project.slug}` : '#'} className={styles.viewBtn}>View</Link>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -108,7 +153,9 @@ export default function PortfolioGrid({ items = [], categories = ['All'] }) {
                       <div className={styles.detailCol}>
                         <span className={styles.detailLabel}>Project Name:</span>
                         <div className={styles.detailValueName}>
-                          {project.title} 
+                          <Link href={project.slug && project.slug !== '#' ? `/projects/${project.slug}` : '#'} style={{ color: '#ffffff', textDecoration: 'none', transition: 'color 0.2s' }}>
+                            {project.title}
+                          </Link> 
                           {project.projectUrl && (
                             <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className={styles.externalLinkBtn}>
                               <FaExternalLinkAlt />

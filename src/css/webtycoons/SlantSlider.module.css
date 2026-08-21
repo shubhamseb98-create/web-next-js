@@ -2,6 +2,8 @@
   background: var(--clr-dark-2);
   padding: 60px 0;
   overflow: hidden;
+  /* Ensure section clips ALL content including transformed children */
+  contain: paint;
 }
 
 .header {
@@ -52,6 +54,10 @@
 .sliderContainer {
   position: relative;
   width: 100%;
+  /* Clip overflowing Swiper slides — critical for skewed card layout */
+  overflow: hidden;
+  /* contain:paint is stronger than overflow:hidden, clips even transformed children */
+  contain: paint;
 }
 
 .navControls {
@@ -94,6 +100,8 @@
 .slantSwiper {
   width: 100%;
   padding: 2rem 0 4rem 0; /* Extra bottom padding on mobile for arrows */
+  /* Swiper's built-in overflow:hidden — making it explicit */
+  overflow: hidden !important;
 }
 
 @media (min-width: 768px) {

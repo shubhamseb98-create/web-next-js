@@ -171,13 +171,29 @@ function ContactVideoModal({ onClose, onSaved }) {
                 </div>
 
                 {/* Preset Selector */}
-                <div className="pt-1">
-                  <span className="text-[11px] text-muted-foreground font-medium block mb-1.5">Quick Presets:</span>
-                  <div className="flex flex-wrap gap-2">
+                <div style={{ paddingTop: '6px' }}>
+                  <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', fontWeight: 500, display: 'block', marginBottom: '8px' }}>Quick Presets:</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     <button
                       type="button"
                       onClick={() => handleUrlChange('/assets/img/portfolio/chips-vmake1.mp4')}
-                      className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${videoUrl === '/assets/img/portfolio/chips-vmake1.mp4' && !videoFile ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-semibold' : 'bg-muted/30 border-white/5 hover:border-white/20 text-muted-foreground'}`}
+                      style={{
+                        fontSize: '12px',
+                        padding: '6px 14px',
+                        borderRadius: '8px',
+                        border: videoUrl === '/assets/img/portfolio/chips-vmake1.mp4' && !videoFile
+                          ? '1px solid rgba(82, 164, 54, 0.5)'
+                          : '1px solid rgba(255,255,255,0.1)',
+                        backgroundColor: videoUrl === '/assets/img/portfolio/chips-vmake1.mp4' && !videoFile
+                          ? 'rgba(82, 164, 54, 0.15)'
+                          : 'rgba(255,255,255,0.04)',
+                        color: videoUrl === '/assets/img/portfolio/chips-vmake1.mp4' && !videoFile
+                          ? '#86efac'
+                          : 'rgba(255,255,255,0.5)',
+                        fontWeight: videoUrl === '/assets/img/portfolio/chips-vmake1.mp4' && !videoFile ? 600 : 400,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
                     >
                       3D Torus Loop (Default)
                     </button>
@@ -464,10 +480,27 @@ export default function PortfolioPage() {
           <button 
             type="button"
             onClick={() => setVideoModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 font-semibold text-sm transition-all shadow-sm"
+            style={{
+              height: '40px',
+              padding: '0 16px',
+              borderRadius: '999px',
+              backgroundColor: 'rgba(82, 164, 54, 0.12)',
+              color: '#52a436',
+              border: '1px solid rgba(82, 164, 54, 0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '7px',
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.22)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
-            <Video className="w-4 h-4 text-emerald-400" />
-            <span>Manage Form Video</span>
+            <Video style={{ width: '15px', height: '15px' }} />
+            Manage Form Video
           </button>
         }
       />

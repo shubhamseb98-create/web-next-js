@@ -15,21 +15,31 @@ function RouteChangeListener() {
   const lenis = useLenis();
 
   useEffect(() => {
+    // Scroll to top
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
     } else {
       window.scrollTo(0, 0);
     }
 
-    // Force layout recalculations after route change DOM updates
-    const timer = setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-      if (typeof window !== "undefined" && window.ScrollTrigger) {
-        window.ScrollTrigger.refresh();
-      }
-    }, 150);
+    // Fire resize events at multiple intervals to catch all Swiper/GSAP recalculations.
+    // This is necessary because Next.js App Router keeps components mounted across
+    // navigations, so Swiper's cached dimensions can become stale.
+    const timers = [50, 150, 350, 600].map(delay =>
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, delay)
+    );
 
-    return () => clearTimeout(timer);
+    // Also refresh ScrollTrigger after a longer delay
+    const stTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 700);
+
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(stTimer);
+    };
   }, [pathname, lenis]);
 
   return null;

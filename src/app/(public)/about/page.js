@@ -5,7 +5,7 @@ import HomeSeo from "../../models/HomeSeo";
 // Import section components
 import AboutPageClient from "src/components/features/webtycoons/pages/AboutPageClient";
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata() {
   try {

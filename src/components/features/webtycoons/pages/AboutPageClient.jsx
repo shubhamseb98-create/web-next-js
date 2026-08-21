@@ -74,7 +74,10 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
     <main className={styles.aboutPage}>
       {/* ── Hero Banner ── */}
       <section className={styles.hero}>
-        <div className={styles.heroBg} />
+        <div 
+          className={styles.heroBg} 
+          style={{ backgroundImage: `url('${data?.heroImage || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop'}')` }}
+        />
         <div className="container-fluid-px">
           <motion.div
             className={styles.heroContent}

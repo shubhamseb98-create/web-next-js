@@ -1,5 +1,6 @@
 import { connectDB } from "@/app/lib/config";
 import AboutPageConfig from "@/app/models/AboutPageConfig";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,8 @@ export async function PUT(req) {
     } else {
       await AboutPageConfig.updateOne({ _id: config._id }, { $set: data });
     }
+
+    revalidatePath('/about');
 
     return Response.json({ success: true, message: "About Page Config updated successfully" });
   } catch (error) {

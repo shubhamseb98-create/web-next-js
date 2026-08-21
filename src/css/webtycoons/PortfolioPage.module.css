@@ -196,8 +196,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  /* Add padding on all sides */
+  padding: 1.25rem 1.25rem 1.25rem 0.5rem;
+}
+
+.projectImageInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.projectCard:hover .projectImageInner {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
 }
 
 .projectImage {
@@ -205,29 +219,26 @@
   height: 100%;
   object-fit: cover;
   object-position: top;
-  /* Show the top of the website mockup */
-  border-radius: 8px;
-  /* Mockup style rounded corners */
-  box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.15);
-  /* Drop shadow against gradient */
-  transition: transform 0.5s ease;
+  border-radius: 10px;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .projectCard:hover .projectImage {
-  transform: scale(1.03) translateY(-5px);
+  transform: scale(1.05);
 }
 
 .projectOverlay {
   position: absolute;
-  inset: 1.5rem;
-  /* Match padding so overlay only covers image */
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 8px;
-  /* Match image border radius */
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   transition: opacity 0.3s ease;
 }
 

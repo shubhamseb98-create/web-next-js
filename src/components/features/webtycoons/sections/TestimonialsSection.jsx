@@ -143,6 +143,8 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
               delay: 3500,
               disableOnInteraction: false,
             }}
+            observer={true}
+            observeParents={true}
             navigation={{
               nextEl: '.swiper-btn-next',
               prevEl: '.swiper-btn-prev',

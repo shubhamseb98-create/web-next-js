@@ -86,6 +86,8 @@ const SlantSlider = ({ workData, homeExtraData }) => {
           loop={true}
           speed={800}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
+          observer={true}
+          observeParents={true}
           navigation={{
             nextEl: '.slant-next',
             prevEl: '.slant-prev',

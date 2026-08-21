@@ -20,6 +20,16 @@ function RouteChangeListener() {
     } else {
       window.scrollTo(0, 0);
     }
+
+    // Force layout recalculations after route change DOM updates
+    const timer = setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+      if (typeof window !== "undefined" && window.ScrollTrigger) {
+        window.ScrollTrigger.refresh();
+      }
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, [pathname, lenis]);
 
   return null;

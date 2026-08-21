@@ -1,6 +1,8 @@
 'use client'
+import { useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay, Navigation } from 'swiper/modules'
+import { Autoplay, Navigation, Virtual } from 'swiper/modules'
 import Image from 'next/image';
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -66,6 +68,37 @@ const SlantSlider = ({ workData, homeExtraData }) => {
   const mainTitle = homeExtraData?.work_title || 'Trusted by Industry Leaders';
   const description = homeExtraData?.work_description || "WebTycoons is a pioneering digital firm dedicated to safeguarding your digital assets. With over two decades of experience, we've been at the forefront of innovation, providing comprehensive solutions.";
 
+  const swiperRef = useRef(null)
+  const pathname = usePathname()
+
+  // Force Swiper to recalculate its dimensions after every navigation
+  useEffect(() => {
+    if (!swiperRef.current) return
+    const swiper = swiperRef.current
+
+    // Small delay to ensure the DOM has settled after navigation
+    const t1 = setTimeout(() => {
+      if (swiper && !swiper.destroyed) {
+        swiper.update()
+        swiper.updateSize()
+        swiper.updateSlides()
+        swiper.updateProgress()
+        swiper.updateSlidesClasses()
+      }
+    }, 100)
+
+    const t2 = setTimeout(() => {
+      if (swiper && !swiper.destroyed) {
+        swiper.update()
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [pathname])
+
   return (
     <section className={styles.section}>
       <div className={styles.header}>
@@ -88,6 +121,7 @@ const SlantSlider = ({ workData, homeExtraData }) => {
           autoplay={{ delay: 3000, disableOnInteraction: false }}
           observer={true}
           observeParents={true}
+          resizeObserver={true}
           navigation={{
             nextEl: '.slant-next',
             prevEl: '.slant-prev',
@@ -99,6 +133,7 @@ const SlantSlider = ({ workData, homeExtraData }) => {
             1400: { slidesPerView: 5.5 },
           }}
           className={styles.slantSwiper}
+          onSwiper={(swiper) => { swiperRef.current = swiper }}
         >
           {allSlides.map((slide) => (
             <SwiperSlide key={slide.id || slide._id} className={styles.slide}>

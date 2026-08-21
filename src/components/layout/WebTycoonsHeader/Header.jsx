@@ -33,28 +33,22 @@ const Header = () => {
   useEffect(() => {
     setIsMenuOpen(false)
     setMobileDropdownOpen('')
-    // Only restart lenis — never touch body/html overflow (causes scrollbar layout shift)
-    if (window.lenis?.start) window.lenis.start()
+    // Do NOT call lenis.stop/start here — lenis-stopped adds overflow:hidden to html
+    // which causes the same scrollbar layout shift that breaks Swiper
   }, [location])
 
   const closeMenu = () => {
     setIsMenuOpen(false)
-    if (window.lenis?.start) window.lenis.start()
+    // No lenis.stop/start — the fixed overlay doesn't need a scroll lock
   }
 
-  /* Lock scroll — only via lenis.stop(), NOT body overflow manipulation */
+  /* Menu open state — NO scroll locking at all.
+     The fullscreen menu is position:fixed and covers the whole viewport.
+     Stopping lenis would add overflow:hidden to <html> via .lenis-stopped class,
+     causing a ~15px scrollbar layout shift that breaks all Swiper sliders. */
   useEffect(() => {
-    if (isMenuOpen) {
-      // Pause lenis so background doesn't scroll while menu is open
-      if (window.lenis?.stop) window.lenis.stop()
-    } else {
-      if (window.lenis?.start) window.lenis.start()
-    }
-    
-    return () => {
-      // Always ensure lenis is running on cleanup
-      if (window.lenis?.start) window.lenis.start()
-    }
+    // intentionally empty — just track isMenuOpen for UI state
+    return () => {}
   }, [isMenuOpen])
 
 

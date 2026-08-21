@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Preloader.module.css'
 
@@ -35,7 +36,8 @@ const letterVariants = {
   }),
 }
 
-const Preloader = () => {
+// Inner animation component — only mounts when on the home page
+const PreloaderAnimation = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -104,6 +106,16 @@ const Preloader = () => {
       )}
     </AnimatePresence>
   )
+}
+
+const Preloader = () => {
+  const pathname = usePathname()
+
+  // ✅ Inner pages (about, services, projects, blog, contact) → return null, no preloader at all
+  // ✅ Home page ('/') only → show the full preloader animation
+  if (pathname !== '/') return null
+
+  return <PreloaderAnimation />
 }
 
 export default Preloader

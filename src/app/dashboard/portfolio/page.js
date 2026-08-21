@@ -13,7 +13,7 @@ import { Switch } from '../../../components/ui/switch'
 import { FloatingInput, FloatingTextarea, FloatingSelect } from '../../../components/ui/floating-input'
 import { SlugInput } from '../../../components/dashboard/SlugInput'
 import { SortInput } from '../../../components/dashboard/SortInput'
-import { Edit2, Trash2, ImageIcon } from 'lucide-react'
+import { Edit2, Trash2, ImageIcon, Video, Sparkles, Upload, Play, RefreshCw } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 import PortfolioThemePicker from '../../../components/dashboard/PortfolioThemePicker'
 
@@ -23,6 +23,240 @@ const EMPTY = {
   clientName: '', projectUrl: '', technologies: '', sort: 0,
   isFeatured: false, status: 'active',
   themeColor: '', themeTextColor: ''
+}
+
+function ContactVideoModal({ onClose, onSaved }) {
+  const [videoUrl, setVideoUrl] = useState('/assets/img/portfolio/chips-vmake1.mp4')
+  const [videoFile, setVideoFile] = useState(null)
+  const [videoPreview, setVideoPreview] = useState('/assets/img/portfolio/chips-vmake1.mp4')
+  const [formTitle, setFormTitle] = useState('Send Us a Message')
+  const [formSubtitle, setFormSubtitle] = useState("Fill out the form below and we'll be in touch shortly.")
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true)
+        const res = await fetch('/api/contact-page')
+        const json = await res.json()
+        if (json.data) {
+          if (json.data.connectVideoUrl) {
+            setVideoUrl(json.data.connectVideoUrl)
+            setVideoPreview(json.data.connectVideoUrl)
+          }
+          if (json.data.connectFormTitle) setFormTitle(json.data.connectFormTitle)
+          if (json.data.connectFormSubtitle) setFormSubtitle(json.data.connectFormSubtitle)
+        }
+      } catch (e) {
+        console.error('Failed to load contact video settings:', e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  function handleFileChange(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setVideoFile(file)
+    const previewUrl = URL.createObjectURL(file)
+    setVideoPreview(previewUrl)
+  }
+
+  function isVideoSrc(src) {
+    if (!src) return true;
+    // Blob URL from file — detect from file type if videoFile is set
+    if (src.startsWith('blob:')) {
+      return videoFile ? videoFile.type.startsWith('video/') : true;
+    }
+    return /\.(mp4|webm|ogg|mov|avi|wmv)$/i.test(src);
+  }
+
+  function handleUrlChange(val) {
+    setVideoUrl(val)
+    setVideoFile(null)
+    setVideoPreview(val)
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    try {
+      setSaving(true)
+      const fd = new FormData()
+      if (videoFile) {
+        fd.append('connectVideo', videoFile)
+      } else {
+        fd.append('connectVideoUrl', videoUrl)
+      }
+      fd.append('connectFormTitle', formTitle)
+      fd.append('connectFormSubtitle', formSubtitle)
+
+      const res = await fetch('/api/contact-page', {
+        method: 'PUT',
+        body: fd
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.message || 'Failed to update video settings')
+      onSaved('Contact form video & settings updated successfully!')
+      onClose()
+    } catch (err) {
+      alert(err.message || 'Failed to save')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Dialog open={true} onOpenChange={(open) => !open && !saving && onClose()}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Video className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold">Contact Form 3D Video & Content</DialogTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Manage the 3D loop video and message text shown next to the contact form on the Projects page.
+              </p>
+            </div>
+          </div>
+        </DialogHeader>
+
+        {loading ? (
+          <div className="py-12 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+            <RefreshCw className="w-4 h-4 animate-spin" /> Loading video settings...
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left Column: Live Video Player Preview */}
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+                  Live Video Preview
+                </label>
+                <div className="relative rounded-2xl overflow-hidden bg-black border border-white/10 aspect-square flex items-center justify-center shadow-xl">
+                  {videoPreview ? (
+                    isVideoSrc(videoPreview) ? (
+                      <video 
+                        key={videoPreview}
+                        src={videoPreview} 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline 
+                        controls
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <img
+                        key={videoPreview}
+                        src={videoPreview}
+                        alt="Media preview"
+                        className="w-full h-full object-cover"
+                      />
+                    )
+                  ) : (
+                    <div className="text-center p-6 text-muted-foreground text-xs">
+                      <Video className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                      No media selected
+                    </div>
+                  )}
+                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 pointer-events-none">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Preview
+                  </div>
+                </div>
+
+                {/* Preset Selector */}
+                <div className="pt-1">
+                  <span className="text-[11px] text-muted-foreground font-medium block mb-1.5">Quick Presets:</span>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleUrlChange('/assets/img/portfolio/chips-vmake1.mp4')}
+                      className={`text-xs px-3 py-1.5 rounded-lg border transition-all ${videoUrl === '/assets/img/portfolio/chips-vmake1.mp4' && !videoFile ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 font-semibold' : 'bg-muted/30 border-white/5 hover:border-white/20 text-muted-foreground'}`}
+                    >
+                      3D Torus Loop (Default)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Upload & Form Fields */}
+              <div className="space-y-4">
+                {/* Upload File */}
+                <div className="border border-dashed border-input/80 rounded-2xl p-4 bg-muted/5 hover:bg-muted/10 transition-colors">
+                  <label className="text-xs font-bold text-foreground block mb-1.5 flex items-center gap-1.5">
+                    <Upload className="w-3.5 h-3.5 text-emerald-400" />
+                    Upload Video or Image (.mp4, .webm, .mov, .jpg, .png, .gif, .webp)
+                  </label>
+                  <input 
+                    type="file" 
+                    accept="video/mp4,video/webm,video/quicktime,video/ogg,image/jpeg,image/png,image/gif,image/webp,image/svg+xml" 
+                    onChange={handleFileChange}
+                    className="flex h-10 w-full rounded-xl border border-input/60 bg-background px-3 py-1.5 text-xs file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30 cursor-pointer"
+                  />
+                  {videoFile && (
+                    <p className="text-[11px] text-emerald-400 mt-1.5 font-medium flex items-center gap-1">
+                      {videoFile.type.startsWith('video/') ? '🎬' : '🖼️'}
+                      {videoFile.name} ({(videoFile.size / (1024 * 1024)).toFixed(2)} MB)
+                    </p>
+                  )}
+                </div>
+
+                {/* Direct URL */}
+                <div>
+                  <FloatingInput 
+                    label="Or Enter Media URL / Path (video or image)" 
+                    value={videoFile ? '' : videoUrl} 
+                    disabled={!!videoFile}
+                    onChange={e => handleUrlChange(e.target.value)} 
+                    placeholder="/assets/img/portfolio/my-video.mp4 or image.jpg"
+                  />
+                </div>
+
+                {/* Form Title */}
+                <div>
+                  <FloatingInput 
+                    label="Form Title *" 
+                    required 
+                    value={formTitle} 
+                    onChange={e => setFormTitle(e.target.value)} 
+                  />
+                </div>
+
+                {/* Form Subtitle */}
+                <div>
+                  <FloatingTextarea 
+                    label="Form Subtitle" 
+                    rows={2} 
+                    value={formSubtitle} 
+                    onChange={e => setFormSubtitle(e.target.value)} 
+                  />
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="pt-4 border-t gap-2">
+              <Button variant="ghost" type="button" onClick={onClose} disabled={saving}>
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={saving}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-600/30"
+              >
+                {saving ? 'Saving...' : 'Save Video Settings'}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 function PortfolioModal({ item, nextSort = 1, onClose, onSave, saving }) {
@@ -135,6 +369,7 @@ export default function PortfolioPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [modal, setModal] = useState(null)
+  const [videoModalOpen, setVideoModalOpen] = useState(false)
   
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('latest')
@@ -219,9 +454,26 @@ export default function PortfolioPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <Breadcrumb title="Portfolio Projects" crumbs={[{ label: 'Portfolio' }]} />
-      <TableToolbar search={search} onSearchChange={setSearch} selectedCount={selectedIds.length} onAdd={() => setModal('new')} addLabel="Add Project" />
+      <TableToolbar 
+        search={search} 
+        onSearchChange={setSearch} 
+        selectedCount={selectedIds.length} 
+        onAdd={() => setModal('new')} 
+        addLabel="Add Project"
+        extraActions={
+          <button 
+            type="button"
+            onClick={() => setVideoModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 font-semibold text-sm transition-all shadow-sm"
+          >
+            <Video className="w-4 h-4 text-emerald-400" />
+            <span>Manage Form Video</span>
+          </button>
+        }
+      />
       <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={selectedIds} onToggleSelectAll={() => setSelectedIds(selectedIds.length === filtered.length ? [] : filtered.map(x=>x._id))} onToggleSelectRow={id => setSelectedIds(p => p.includes(id) ? p.filter(x=>x!==id) : [...p, id])} />
       {modal && <PortfolioModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
+      {videoModalOpen && <ContactVideoModal onClose={() => setVideoModalOpen(false)} onSaved={msg => addToast(msg, 'success')} />}
       <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false, type: 'single' })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Project" message="Are you sure?" />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />
     </div>

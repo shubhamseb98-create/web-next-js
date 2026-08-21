@@ -21,6 +21,12 @@ const ContactPageSchema = new mongoose.Schema({
     contactDescription: { type: String, default: "Looking for reliable metal solutions? Our experts are ready to assist you." },
     mapIframeUrl: { type: String, default: "" },
 
+    // 3D Connect / Contact Form Video & Section Settings
+    connectVideoUrl: { type: String, default: "/assets/img/portfolio/chips-vmake1.mp4" },
+    connectVideoPoster: { type: String, default: "" },
+    connectFormTitle: { type: String, default: "Send Us a Message" },
+    connectFormSubtitle: { type: String, default: "Fill out the form below and we'll be in touch shortly." },
+
     // Office Info
     officeAddress: { type: String, default: "123, Digital Hub, Sector 18, Noida, Uttar Pradesh — 201301" },
     officePhone: { type: String, default: "+91 8527458950" },

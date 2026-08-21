@@ -10,6 +10,11 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 }
 
+function isVideoUrl(url) {
+  if (!url) return true; // default is video (the .mp4)
+  return /\.(mp4|webm|ogg|mov|avi|wmv)$/i.test(url);
+}
+
 const PLACEHOLDER_PROJECTS = [
   { _id: '1', title: 'Elite Corporate Portal', category: 'Dynamic Website', shortDesc: 'A powerful, enterprise-grade corporate website with custom CMS.', image: '/assets/img/service/featured-projects.png', slug: '#', technologies: ['Next.js', 'MongoDB', 'Tailwind CSS'] },
   { _id: '2', title: 'Luxury Retail Platform', category: 'E-Commerce', shortDesc: 'Full-featured e-commerce store with advanced product filtering.', image: '/assets/img/service/featured-projects.png', slug: '#', technologies: ['Shopify', 'React', 'GraphQL'] },
@@ -45,7 +50,7 @@ const faqs = [
   }
 ];
 
-export default function PortfolioGrid({ items = [], categories = ['All'] }) {
+export default function PortfolioGrid({ items = [], categories = ['All'], contactConfig = null }) {
   const [active, setActive] = useState('All')
   const [openFaq, setOpenFaq] = useState(0)
   const projects = items.length > 0 ? items : PLACEHOLDER_PROJECTS
@@ -243,8 +248,8 @@ export default function PortfolioGrid({ items = [], categories = ['All'] }) {
           <div className={styles.connectWrapper}>
             <div className={styles.connectLeft}>
               <div className={styles.formCard}>
-                <h3 className={styles.formCardTitle}>Send Us a Message</h3>
-                <p className={styles.formCardSubtitle}>Fill out the form below and we'll be in touch shortly.</p>
+                <h3 className={styles.formCardTitle}>{contactConfig?.connectFormTitle || "Send Us a Message"}</h3>
+                <p className={styles.formCardSubtitle}>{contactConfig?.connectFormSubtitle || "Fill out the form below and we'll be in touch shortly."}</p>
                 
                 <form className={styles.contactForm} onSubmit={(e) => e.preventDefault()}>
                   <div className={styles.formRow}>
@@ -291,15 +296,33 @@ export default function PortfolioGrid({ items = [], categories = ['All'] }) {
             </div>
             <div className={styles.connectRight}>
               <div className={styles.connectImageWrapper}>
-                <video 
-                  src="/assets/img/portfolio/chips-vmake1.mp4" 
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline
-                  className={styles.connectImg} 
-                  style={{ objectFit: 'cover', objectPosition: 'center', width: '100%', height: '100%' }} 
-                />
+                {(() => {
+                  const mediaUrl = contactConfig?.connectVideoUrl || "/assets/img/portfolio/chips-vmake1.mp4";
+                  if (isVideoUrl(mediaUrl)) {
+                    return (
+                      <video 
+                        key={mediaUrl}
+                        src={mediaUrl} 
+                        autoPlay 
+                        loop 
+                        muted 
+                        playsInline
+                        className={styles.connectImg} 
+                        style={{ objectFit: 'cover', objectPosition: 'center', width: '100%', height: '100%' }} 
+                      />
+                    );
+                  } else {
+                    return (
+                      <img 
+                        key={mediaUrl}
+                        src={mediaUrl} 
+                        alt="Contact section visual"
+                        className={styles.connectImg} 
+                        style={{ objectFit: 'cover', objectPosition: 'center', width: '100%', height: '100%' }} 
+                      />
+                    );
+                  }
+                })()}
               </div>
             </div>
           </div>

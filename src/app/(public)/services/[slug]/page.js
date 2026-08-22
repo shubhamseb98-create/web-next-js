@@ -10,6 +10,7 @@ const STATIC_SERVICES = [
   'static-website-development',
   'dynamic-website-development', 
   'e-commerce-website-development',
+  'real-estate-advisory',
 ];
 
 export async function generateStaticParams() {
@@ -50,6 +51,21 @@ const STATIC_SERVICE_DATA = {
     features: ['Seamless checkout flow', 'Payment gateway integration', 'Inventory management', 'Order tracking system', 'Mobile-first design', 'Advanced analytics'],
     icon: '🛒',
     image: '/assets/img/service/featured-projects.png',
+  },
+  'real-estate-advisory': {
+    title: 'Real Estate Business Growth & Scaling Advisory',
+    shortDesc: 'Strategic growth advisory, high-ticket buyer lead funnels, PropTech platforms, and sales automation for builders & agencies.',
+    description: 'We do not sell properties. We advise real estate builders, developers, agencies, and channel partners on how to generate 10x high-ticket buyer leads, automate sales funnels, and scale project revenues.',
+    features: [
+      'High-Ticket Buyer & NRI Lead Generation', 
+      'PropTech 3D Portals & Interactive Unit Selectors', 
+      'Instant WhatsApp CRM & Zero Lead Leakage Automation', 
+      'Project Launch GTM Playbooks & Rapid Inventory Absorption', 
+      'Channel Partner Network Scaling & Portals', 
+      'Local Micro-Market Domination SEO'
+    ],
+    icon: '🚀',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop',
   },
 };
 

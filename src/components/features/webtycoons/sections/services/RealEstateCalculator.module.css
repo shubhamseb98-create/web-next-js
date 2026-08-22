@@ -1,0 +1,436 @@
+.calculatorSection {
+  background: var(--clr-dark-3, #1a2217);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--clr-border-dark, rgba(255, 255, 255, 0.1));
+  border-bottom: 1px solid var(--clr-border-dark, rgba(255, 255, 255, 0.1));
+}
+
+.glowOrb {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.18) 0%, rgba(82, 164, 54, 0.04) 50%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  top: -100px;
+  right: -100px;
+}
+
+.calculatorContainer {
+  position: relative;
+  z-index: 1;
+  background: rgba(18, 24, 16, 0.85);
+  border: 1px solid rgba(82, 164, 54, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl, 24px);
+  padding: 3rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .calculatorContainer {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+.sectionHeader {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.2rem;
+  background: rgba(82, 164, 54, 0.12);
+  border: 1px solid rgba(82, 164, 54, 0.4);
+  color: #6bc24b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.calcTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.titleHighlight {
+  background: linear-gradient(135deg, #ffffff 20%, #6bc24b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.calcSubtitle {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.calcGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+@media (min-width: 992px) {
+  .calcGrid {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3.5rem;
+    align-items: stretch;
+  }
+}
+
+/* Controls Column */
+.controlsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.controlGroup {
+  background: rgba(26, 34, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-lg, 16px);
+  padding: 1.5rem;
+  transition: border-color 0.3s ease;
+}
+
+.controlGroup:hover {
+  border-color: rgba(82, 164, 54, 0.4);
+}
+
+.controlHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.controlLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.controlValue {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #6bc24b;
+}
+
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  accent-color: #52a436;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #6bc24b;
+  box-shadow: 0 0 15px rgba(107, 194, 75, 0.8), 0 0 0 4px rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.sliderTicks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 0.6rem;
+}
+
+.pillButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .pillButtons {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pillBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.9rem 1.1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md, 12px);
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+}
+
+.pillBtn:hover {
+  background: rgba(82, 164, 54, 0.12);
+  border-color: rgba(82, 164, 54, 0.35);
+  color: #ffffff;
+}
+
+.pillBtnActive {
+  background: linear-gradient(135deg, rgba(82, 164, 54, 0.25) 0%, rgba(82, 164, 54, 0.1) 100%) !important;
+  border-color: #6bc24b !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(82, 164, 54, 0.25);
+}
+
+.pillTitle {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.pillSub {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pillBtnActive .pillSub {
+  color: #6bc24b;
+}
+
+/* Results Column */
+.resultsColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(145deg, rgba(21, 28, 19, 0.9) 0%, rgba(10, 14, 8, 0.95) 100%);
+  border: 1px solid rgba(82, 164, 54, 0.3);
+  border-radius: var(--radius-xl, 20px);
+  padding: 2rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.resultsHeader {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resultsTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.resultsTag {
+  padding: 0.25rem 0.75rem;
+  background: rgba(82, 164, 54, 0.2);
+  color: #6bc24b;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bigMetricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .bigMetricsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metricCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md, 12px);
+  padding: 1.25rem;
+}
+
+.metricLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metricValue {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.metricValueAccent {
+  color: #ffffff;
+}
+
+.metricValuePrimary {
+  color: #6bc24b;
+}
+
+.metricFootnote {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.3rem;
+}
+
+.portfolioTotalBox {
+  background: linear-gradient(135deg, rgba(82, 164, 54, 0.15) 0%, rgba(82, 164, 54, 0.05) 100%);
+  border: 1px solid rgba(82, 164, 54, 0.35);
+  border-radius: var(--radius-lg, 16px);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.totalLabel {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.3rem;
+}
+
+.totalValue {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(2rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  color: #6bc24b;
+  line-height: 1.1;
+  margin-bottom: 0.4rem;
+}
+
+.totalSub {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+.insightsBox {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md, 10px);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  border-left: 3px solid #6bc24b;
+}
+
+.dossierBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #52a436 0%, #3e8027 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-full, 999px);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(82, 164, 54, 0.4);
+  text-decoration: none;
+}
+
+.dossierBtn:hover {
+  background: linear-gradient(135deg, #6bc24b 0%, #52a436 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(82, 164, 54, 0.6);
+  color: #ffffff;
+}
+
+/* ── 4-Column Track Record Metrics Bar (Bottom of Calculator) ── */
+.calculatorStatsBar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  background: rgba(18, 24, 16, 0.85);
+  border: 1px solid rgba(82, 164, 54, 0.25);
+  border-radius: var(--radius-lg, 16px);
+  padding: 1.75rem 2.5rem;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+@media (max-width: 992px) {
+  .calculatorStatsBar {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .calculatorStatsBar {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.statValue {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+  margin-bottom: 0.35rem;
+}
+
+.statValueAccent {
+  color: #6bc24b;
+}
+
+.statLabel {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+

@@ -77,13 +77,17 @@ export default function AboutBreadcrumb() {
   if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6 min-h-screen relative max-w-7xl mx-auto w-full">
-      <div className="flex items-center justify-between mb-8">
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'About Management' }, { label: 'About Breadcrumb' }]} />
-        <Button onClick={handleSubmit} disabled={saving} size="lg" className="shadow-lg hover:shadow-xl transition-all">
-          <Save className="w-5 h-5 mr-2" /> {saving ? "Saving..." : "Save Changes"}
-        </Button>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
+      <Breadcrumb 
+        title="About Breadcrumb" 
+        subtitle="Manage the hero title, description, and background image for the About Us page."
+        crumbs={[{ label: 'About Management' }, { label: 'About Breadcrumb' }]}
+        rightElement={
+          <Button onClick={handleSubmit} disabled={saving} size="lg" className="shadow-lg hover:shadow-xl transition-all">
+            <Save className="w-5 h-5 mr-2" /> {saving ? "Saving..." : "Save Changes"}
+          </Button>
+        }
+      />
 
       <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
 

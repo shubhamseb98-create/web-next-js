@@ -50,6 +50,8 @@ const ServiceSchema = new mongoose.Schema(
     metaTitle: { type: String, default: "" },
     metaDescription: { type: String, default: "" },
     canonicalUrl: { type: String, default: "" },
+    realEstateData: { type: mongoose.Schema.Types.Mixed, default: {} },
+    customData: { type: mongoose.Schema.Types.Mixed, default: {} },
   },
   { timestamps: true }
 );

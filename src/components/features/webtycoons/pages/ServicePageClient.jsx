@@ -10,10 +10,23 @@ import WhyChooseUsIconCards from '../sections/services/WhyChooseUsIconCards';
 import TechStack from '../sections/services/TechStack';
 import ServicePortfolio from '../sections/services/ServicePortfolio';
 import ServiceCTA from '../sections/services/ServiceCTA';
-import { whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, techStackGlobal } from 'src/data/servicesData';
+import RealEstateCalculator from '../sections/services/RealEstateCalculator';
+import RealEstateAdvisoryPage from './RealEstateAdvisoryPage';
+import { whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, realEstatePortfolioProjects, techStackGlobal } from 'src/data/servicesData';
 
 export default function ServicePageClient({ service, slug, globalTechStack }) {
   if (!service) return null;
+
+  const isRealEstate = slug.includes('real-estate') || slug.includes('realstate') || slug.includes('advisory');
+
+  // If this is the specialized Real Estate Advisory page, render the bespoke luxury layout!
+  if (isRealEstate) {
+    return (
+      <main>
+        <RealEstateAdvisoryPage service={service} />
+      </main>
+    );
+  }
 
   // Find fallback data from the old static data file based on slug keywords
   let oldData = servicesData.static;
@@ -22,8 +35,7 @@ export default function ServicePageClient({ service, slug, globalTechStack }) {
   if (slug.includes('dynamic')) {
     oldData = servicesData.dynamic;
     portfolioProjects = dynamicPortfolioProjects;
-  }
-  if (slug.includes('ecommerce') || slug.includes('e-commerce')) {
+  } else if (slug.includes('ecommerce') || slug.includes('e-commerce')) {
     oldData = servicesData.ecommerce;
     portfolioProjects = ecommercePortfolioProjects;
   }
@@ -51,7 +63,7 @@ export default function ServicePageClient({ service, slug, globalTechStack }) {
   const currentPortfolio = service.portfolio?.length > 0 ? service.portfolio : portfolioProjects;
   const processSteps = service.process?.length > 0 ? service.process : oldData?.process;
   const whyChooseUs = service.whyChooseUs?.length > 0 ? service.whyChooseUs : whyChooseUsGlobal;
-  const currentTechStack = globalTechStack?.length > 0 ? globalTechStack : techStackGlobal;
+  const currentTechStack = globalTechStack?.length > 0 ? globalTechStack : (oldData?.technologies || techStackGlobal);
 
   return (
     <main>
@@ -63,7 +75,6 @@ export default function ServicePageClient({ service, slug, globalTechStack }) {
       <DevelopmentProcess processSteps={processSteps} />
       <WhyChooseUsIconCards reasons={whyChooseUs} />
       <ServiceFAQs faqs={faqs} />
-      {/* Testimonials section can be added later if needed */}
       <ServiceCTA />
     </main>
   );

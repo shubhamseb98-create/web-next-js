@@ -8,29 +8,44 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '../../../../components/ui/button';
 import { FloatingInput, FloatingTextarea } from '../../../../components/ui/floating-input';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../../components/ui/card';
-import { Edit2, Trash2, Check, Plus, Save, Heart } from 'lucide-react';
+import { Plus, Edit2, Trash2, Check, Save, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
 
-const EMPTY_VALUE = {
+const EMPTY_PILLAR = {
   id: '',
-  icon: 'heart',
+  icon: 'FaChartLine',
   title: '',
-  description: '',
+  desc: '',
 };
 
-export default function AboutMission() {
+export default function RealEstateOverviewPage() {
   const [data, setData] = useState({
-    missionText: '',
-    visionText: '',
-    values: [],
+    description: '',
+    overviewImage: '',
+    realEstateData: {
+      overview: {
+        label: 'OUR SCALING STRATEGY',
+        title: 'How We Scale Real Estate Enterprises',
+        desc: '',
+        image: '',
+        floatingBadgeTitle: 'We Scale Real Estate Companies',
+        floatingBadgeText: '',
+        pillars: [
+          { id: 'p-1', icon: 'FaChartLine', title: 'High-Ticket Buyer & Investor Lead Generation', desc: 'We design high-converting Meta, Google Search, and YouTube ad campaigns targeting affluent homebuyers, NRI investors, and commercial buyers with verified purchasing power.' },
+          { id: 'p-2', icon: 'FaDesktop', title: 'High-Converting PropTech Web Portals & 3D Tech', desc: 'We build lightning-fast project landing pages, 3D interactive unit selectors, and virtual tour platforms that convert cold visitors into booked site visits.' },
+          { id: 'p-3', icon: 'FaCogs', title: 'Automated WhatsApp & Sales CRM Funnels', desc: 'Eliminate lead leakage with automated 60-second WhatsApp responses, instant sales executive call connects, and automated site-visit reminder cadences.' }
+        ],
+      },
+    },
   });
+  const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savingHeader, setSavingHeader] = useState(false);
   const [savingModal, setSavingModal] = useState(false);
   const [modal, setModal] = useState(null);
-  const [form, setForm] = useState({ ...EMPTY_VALUE });
+  const [form, setForm] = useState({ ...EMPTY_PILLAR });
   const [toasts, setToasts] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -50,94 +65,134 @@ export default function AboutMission() {
   }
 
   useEffect(() => {
-    fetchMission();
+    fetchOverview();
   }, []);
 
-  async function fetchMission() {
+  async function fetchOverview() {
     try {
       setLoading(true);
-      const res = await fetch('/api/about-page');
+      const res = await fetch('/api/services/real-estate-advisory');
       if (!res.ok) throw new Error('Failed to fetch data');
       const json = await res.json();
       if (json.success && json.data) {
+        setServiceId(json.data._id);
         setData(json.data);
       }
     } catch (err) {
-      addToast('Could not load mission: ' + err.message, 'error');
+      addToast('Could not load overview: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
   }
 
-  const rawValues = data.values || [];
-  const rows = rawValues.map((item, index) => ({
+  const overview = data.realEstateData?.overview || {};
+  const rawPillars = overview.pillars || [];
+  const rows = rawPillars.map((item, index) => ({
     ...item,
-    _id: item.id || `val-${index}`,
+    _id: item.id || `pillar-${index}`,
   }));
 
   function openCreate() {
-    setForm({ ...EMPTY_VALUE, id: `val-${Date.now()}` });
+    setForm({ ...EMPTY_PILLAR, id: `pillar-${Date.now()}` });
     setModal('new');
   }
 
-  function openEdit(val) {
-    setForm({ ...val });
-    setModal(val);
+  function openEdit(pillar) {
+    setForm({ ...pillar });
+    setModal(pillar);
   }
 
-  const handleSaveStatements = async (e) => {
+  async function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('upload', file);
+    addToast('Uploading overview image...', 'info');
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const responseData = await res.json();
+      if (res.ok && responseData.url) {
+        setData((p) => ({
+          ...p,
+          overviewImage: responseData.url,
+          realEstateData: {
+            ...(p.realEstateData || {}),
+            overview: {
+              ...(p.realEstateData?.overview || {}),
+              image: responseData.url,
+            },
+          },
+        }));
+        addToast('Image uploaded successfully', 'success');
+      } else {
+        throw new Error(responseData.error?.message || 'Upload failed');
+      }
+    } catch (err) {
+      addToast(err.message, 'error');
+    }
+  }
+
+  async function handleSaveHeader(e) {
     if (e && e.preventDefault) e.preventDefault();
     setSavingHeader(true);
     try {
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to save');
-      addToast('Mission & Vision Statements Saved!');
+      if (!res.ok) throw new Error(result.error || result.message || 'Failed to save');
+      addToast('Overview Header & Strategy Saved!');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
       setSavingHeader(false);
     }
-  };
+  }
 
-  async function handleSaveValue(e) {
+  async function handleSavePillar(e) {
     e.preventDefault();
     try {
       setSavingModal(true);
-      const currentValues = [...rawValues];
-      let updatedValues = [];
+      const currentPillars = [...rawPillars];
+      let updatedPillars = [];
 
       if (modal === 'new') {
-        updatedValues = [...currentValues, form];
+        updatedPillars = [...currentPillars, form];
       } else {
-        const itemIdx = currentValues.findIndex((x, idx) => (x.id || `val-${idx}`) === (modal.id || modal._id));
+        const itemIdx = currentPillars.findIndex((x, idx) => (x.id || `pillar-${idx}`) === (modal.id || modal._id));
         if (itemIdx >= 0) {
-          currentValues[itemIdx] = form;
-          updatedValues = currentValues;
+          currentPillars[itemIdx] = form;
+          updatedPillars = currentPillars;
         } else {
-          updatedValues = [...currentValues, form];
+          updatedPillars = [...currentPillars, form];
         }
       }
 
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          overview: {
+            ...overview,
+            pillars: updatedPillars,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Save failed');
+      if (!res.ok) throw new Error(result.error || result.message || 'Save failed');
 
       setData(updatedData);
-      addToast(modal === 'new' ? 'Core Value added successfully!' : 'Core Value updated successfully!');
+      addToast(modal === 'new' ? 'Strategic Pillar created successfully!' : 'Strategic Pillar updated successfully!');
       setModal(null);
     } catch (err) {
       addToast(err.message, 'error');
@@ -151,13 +206,20 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'single', id: null });
       setDeletingId(id);
 
-      const updatedValues = rawValues.filter((x, idx) => (x.id || `val-${idx}`) !== id);
+      const updatedPillars = rawPillars.filter((x, idx) => (x.id || `pillar-${idx}`) !== id);
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          overview: {
+            ...overview,
+            pillars: updatedPillars,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -166,7 +228,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds((s) => s.filter((x) => x !== id));
-      addToast('Core Value deleted.', 'warning');
+      addToast('Strategic Pillar deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -179,13 +241,20 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'bulk', id: null });
       setBulkDeleting(true);
 
-      const updatedValues = rawValues.filter((x, idx) => !selectedIds.includes(x.id || `val-${idx}`));
+      const updatedPillars = rawPillars.filter((x, idx) => !selectedIds.includes(x.id || `pillar-${idx}`));
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          overview: {
+            ...overview,
+            pillars: updatedPillars,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -194,7 +263,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds([]);
-      addToast('Selected values deleted.', 'warning');
+      addToast('Selected pillars deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -214,7 +283,7 @@ export default function AboutMission() {
   const filteredData = rows
     .filter((row) =>
       (row.title || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.description || '').toLowerCase().includes(search.toLowerCase()) ||
+      (row.desc || '').toLowerCase().includes(search.toLowerCase()) ||
       (row.icon || '').toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
@@ -226,31 +295,31 @@ export default function AboutMission() {
   const columns = [
     {
       key: 'icon',
-      label: 'Icon Key',
+      label: 'Icon / Key',
       render: (row) => (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <Heart className="w-3.5 h-3.5" />
-          {row.icon || 'heart'}
+          <Sparkles className="w-3.5 h-3.5" />
+          {row.icon || 'FaChartLine'}
         </span>
       ),
     },
     {
       key: 'title',
-      label: 'Value Title',
+      label: 'Strategic Pillar Title',
       render: (row) => (
         <div className="min-w-[180px]">
           <div className="font-bold text-foreground max-w-[240px] truncate" title={row.title}>
-            {row.title || 'Untitled Value'}
+            {row.title || 'Untitled Pillar'}
           </div>
         </div>
       ),
     },
     {
-      key: 'description',
+      key: 'desc',
       label: 'Description Preview',
       render: (row) => (
-        <div className="min-w-[220px] max-w-[380px] text-xs text-muted-foreground line-clamp-2" title={row.description}>
-          {row.description || 'No description entered'}
+        <div className="min-w-[220px] max-w-[350px] text-xs text-muted-foreground line-clamp-2" title={row.desc}>
+          {row.desc || 'No description entered'}
         </div>
       ),
     },
@@ -288,62 +357,130 @@ export default function AboutMission() {
     },
   ];
 
-  if (loading) return <div className="p-8 text-center">Loading Mission & Vision...</div>;
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
       <Breadcrumb
-        title="Mission & Vision"
-        subtitle="Manage company mission statements, vision declarations, and core corporate values."
-        crumbs={[{ label: 'About Management' }, { label: 'Mission & Vision' }]}
+        title="Overview & Strategic Pillars"
+        subtitle="Manage the scaling strategy overview, image, badge, and 3 strategic pillar cards."
+        crumbs={[{ label: 'Real Estate Management' }, { label: 'Overview & Pillars' }]}
       />
 
       {/* Top Header Card */}
       <Card className="border-border shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base font-semibold">Mission &amp; Vision Statements</CardTitle>
+          <CardTitle className="text-base font-semibold">Executive Strategy Overview</CardTitle>
           <Button
-            onClick={handleSaveStatements}
+            onClick={handleSaveHeader}
             disabled={savingHeader}
             size="sm"
             className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
           >
-            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Statements'}
+            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Overview'}
           </Button>
         </CardHeader>
         <CardContent style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FloatingInput
+              label="Section Tag Label"
+              placeholder="e.g. OUR SCALING STRATEGY"
+              value={overview.label || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    overview: { ...(p.realEstateData?.overview || {}), label: e.target.value },
+                  },
+                }))
+              }
+            />
+            <FloatingInput
+              label="Overview Section Title"
+              placeholder="e.g. How We Scale Real Estate Enterprises"
+              value={overview.title || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    overview: { ...(p.realEstateData?.overview || {}), title: e.target.value },
+                  },
+                }))
+              }
+            />
+          </div>
+
           <FloatingTextarea
-            label="Mission Statement"
-            name="missionText"
-            value={data.missionText}
-            onChange={(e) => setData({ ...data, missionText: e.target.value })}
+            label="Overview Section Description"
+            placeholder="Detailed description of scaling strategy..."
+            value={overview.desc || data.description || ''}
+            onChange={(e) => {
+              const val = e.target.value;
+              setData((p) => ({
+                ...p,
+                description: val,
+                realEstateData: {
+                  ...(p.realEstateData || {}),
+                  overview: { ...(p.realEstateData?.overview || {}), desc: val },
+                },
+              }));
+            }}
             rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Mission Statement"
-                field="Mission"
-                onGenerate={(val) => setData((p) => ({ ...p, missionText: val }))}
-              />
-            }
           />
-          <FloatingTextarea
-            label="Vision Statement"
-            name="visionText"
-            value={data.visionText}
-            onChange={(e) => setData({ ...data, visionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Vision Statement"
-                field="Vision"
-                onGenerate={(val) => setData((p) => ({ ...p, visionText: val }))}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FloatingInput
+              label="Floating Badge Title"
+              placeholder="e.g. We Scale Real Estate Companies"
+              value={overview.floatingBadgeTitle || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    overview: { ...(p.realEstateData?.overview || {}), floatingBadgeTitle: e.target.value },
+                  },
+                }))
+              }
+            />
+            <FloatingInput
+              label="Floating Badge Subtitle"
+              placeholder="e.g. From project launch campaigns..."
+              value={overview.floatingBadgeText || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    overview: { ...(p.realEstateData?.overview || {}), floatingBadgeText: e.target.value },
+                  },
+                }))
+              }
+            />
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <label className="text-sm font-medium text-foreground">Overview Section Cover Image</label>
+            <div className="flex gap-4 items-center">
+              {(overview.image || data.overviewImage) && (
+                <img
+                  src={overview.image || data.overviewImage}
+                  alt="Overview Preview"
+                  className="w-32 h-20 object-cover rounded-xl border border-white/10 shadow"
+                />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500"
               />
-            }
-          />
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Values Table Toolbar */}
+      {/* Strategic Pillars Table Toolbar */}
       <TableToolbar
         search={search}
         onSearchChange={setSearch}
@@ -353,7 +490,7 @@ export default function AboutMission() {
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
         onAdd={openCreate}
-        addLabel="Add Core Value"
+        addLabel="Add Strategic Pillar"
       />
 
       {/* Data Table */}
@@ -373,34 +510,35 @@ export default function AboutMission() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <DialogTitle style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
-              {modal === 'new' ? 'Add New Core Value' : 'Edit Core Value'}
+              {modal === 'new' ? 'Add Strategic Pillar' : 'Edit Strategic Pillar'}
             </DialogTitle>
             <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>
               {modal === 'new'
-                ? 'Create a core company value for the About section.'
-                : 'Modify value title, icon, and description.'}
+                ? 'Create a strategic pillar card to be displayed next to the executive overview.'
+                : 'Modify pillar details, icon, and description.'}
             </p>
           </DialogHeader>
 
-          <form onSubmit={handleSaveValue} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSavePillar} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FloatingInput
-                  label="Value Title *"
-                  placeholder="e.g. Client-First Focus"
+                  label="Pillar Title *"
+                  placeholder="e.g. High-Ticket Buyer Lead Gen"
                   required
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   rightElement={
                     <AIAssistantButton
-                      context="Company Core Value"
-                      field="Value Title"
+                      context="Strategic Real Estate Pillar"
+                      field="Pillar Title"
                       onGenerate={(val) => setForm({ ...form, title: val })}
                     />
                   }
                 />
                 <FloatingInput
-                  label="Icon Key (e.g. heart, shield, lightbulb)"
+                  label="Icon Class / Name"
+                  placeholder="e.g. FaChartLine, FaDesktop, FaCogs"
                   value={form.icon}
                   onChange={(e) => setForm({ ...form, icon: e.target.value })}
                 />
@@ -408,10 +546,10 @@ export default function AboutMission() {
 
               <FloatingTextarea
                 label="Description"
-                placeholder="Detailed description of this core corporate value..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3}
+                placeholder="Detailed description of this strategic scaling pillar..."
+                value={form.desc}
+                onChange={(e) => setForm({ ...form, desc: e.target.value })}
+                rows={4}
               />
             </div>
 
@@ -459,7 +597,7 @@ export default function AboutMission() {
                   boxShadow: '0 8px 25px -5px rgba(82, 164, 54, 0.6)',
                 }}
               >
-                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Value' : 'Save Changes'}
+                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Pillar' : 'Save Changes'}
               </button>
             </DialogFooter>
           </form>
@@ -472,11 +610,11 @@ export default function AboutMission() {
         isDeleting={confirmModal.type === 'single' ? deletingId === confirmModal.id : bulkDeleting}
         onClose={() => setConfirmModal({ isOpen: false, type: 'single', id: null })}
         onConfirm={() => (confirmModal.type === 'single' ? handleDelete(confirmModal.id) : handleBulkDelete())}
-        title={confirmModal.type === 'single' ? 'Delete Core Value' : 'Bulk Delete'}
+        title={confirmModal.type === 'single' ? 'Delete Strategic Pillar' : 'Bulk Delete'}
         message={
           confirmModal.type === 'single'
-            ? 'Are you sure you want to delete this core value? This action cannot be undone.'
-            : `Are you sure you want to delete ${selectedIds.length} values? This action cannot be undone.`
+            ? 'Are you sure you want to delete this strategic pillar? This action cannot be undone.'
+            : `Are you sure you want to delete ${selectedIds.length} pillars? This action cannot be undone.`
         }
       />
 

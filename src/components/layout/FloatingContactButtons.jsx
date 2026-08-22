@@ -28,6 +28,21 @@ export default function FloatingContactButtons({ phoneNumber, socialLinks = [] }
           gap: 12px;
           pointer-events: auto;
         }
+        @media (max-width: 600px) {
+          .floating-contact-container {
+            bottom: 60px;
+            right: 12px;
+            gap: 8px;
+          }
+          .floating-btn {
+            width: 40px !important;
+            height: 40px !important;
+          }
+          .floating-btn svg {
+            width: 17px !important;
+            height: 17px !important;
+          }
+        }
         .floating-btn {
           position: relative;
           display: flex;
@@ -75,6 +90,11 @@ export default function FloatingContactButtons({ phoneNumber, socialLinks = [] }
           white-space: nowrap;
           pointer-events: none;
           transition: opacity 0.3s;
+        }
+        @media (max-width: 600px) {
+          .floating-tooltip {
+            display: none;
+          }
         }
         .floating-btn:hover .floating-tooltip {
           opacity: 1;

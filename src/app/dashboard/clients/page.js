@@ -9,7 +9,7 @@ import { Button } from '../../../components/ui/button'
 import { Switch } from '../../../components/ui/switch'
 import { FloatingInput, FloatingSelect } from '../../../components/ui/floating-input'
 import { SortInput } from '../../../components/dashboard/SortInput'
-import { Edit2, Trash2 } from 'lucide-react'
+import { Edit2, Trash2, Image as ImageIcon } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 
 const BASE_URL = ''
@@ -29,8 +29,10 @@ function ClientModal({ item, nextSort = 1, onClose, onSave, saving }) {
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && !saving && onClose()}>
-      <DialogContent className="max-w-xl">
-        <DialogHeader><DialogTitle className="text-2xl font-bold">{item ? 'Edit Client' : 'Add Client'}</DialogTitle></DialogHeader>
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold">{item ? 'Edit Client' : 'Add Client'}</DialogTitle>
+        </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 mt-2">
           <FloatingInput label="Client Name *" required value={form.name} onChange={e => f('name', e.target.value)} />
           
@@ -44,17 +46,12 @@ function ClientModal({ item, nextSort = 1, onClose, onSave, saving }) {
                     const file = e.target.files[0]; if (!file) return; setImageFile(file); setImagePreview(URL.createObjectURL(file))
                   }} />
                 </label>
-                <span className="text-sm text-slate-400 truncate max-w-[200px]">{imageFile ? imageFile.name : 'No file chosen'}</span>
+                <span className="text-sm text-slate-400 truncate max-w-[140px]">{imageFile ? imageFile.name : 'No file chosen'}</span>
               </div>
             </div>
-            {imagePreview && imagePreview !== 'null' && imagePreview !== 'undefined' && (
-              <img src={imagePreview} alt="preview" className="h-16 w-auto max-w-[120px] rounded-lg object-contain border border-white/10 shrink-0 bg-white" onError={(e) => { e.target.style.display = 'none' }} />
+            {imagePreview && (
+              <img src={imagePreview} alt="preview" className="h-14 w-auto max-w-[100px] rounded-lg object-contain bg-white/10 p-1 border border-white/10 shrink-0" />
             )}
-          </div>
-
-          <div className="flex items-center gap-3 h-[50px] border border-input/60 rounded-xl px-4">
-            <Switch checked={form.hasBg} onCheckedChange={c => f('hasBg', c)} />
-            <label className="text-sm font-semibold">Logo has background? (Check if the logo requires a background box)</label>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -62,10 +59,15 @@ function ClientModal({ item, nextSort = 1, onClose, onSave, saving }) {
               <option value="active">Active</option>
               <option value="draft">Draft</option>
             </FloatingSelect>
-            <SortInput label="Sort Order" value={form.sort} isEditing={!!item} isAuto={!item} onChange={v => f('sort', v)} />
+            <SortInput label="Sort Order" value={form.sort} isEditing={!!item} isAuto={false} onManualEdit={() => {}} onChange={v => f('sort', v)} />
           </div>
 
-          <DialogFooter className="pt-6 border-t">
+          <div className="flex items-center gap-3">
+            <Switch checked={form.hasBg} onCheckedChange={c => f('hasBg', c)} />
+            <label className="text-sm text-slate-400">Display background on logo container</label>
+          </div>
+
+          <DialogFooter className="pt-6 border-t border-white/10">
             <Button variant="ghost" type="button" onClick={onClose} disabled={saving}>Cancel</Button>
             <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Client'}</Button>
           </DialogFooter>
@@ -84,7 +86,7 @@ export default function ClientsPage() {
   useEffect(() => { fetchItems() }, [])
 
   async function fetchItems() {
-    try { setLoading(true); const res = await fetch(`${BASE_URL}/api/clients?all=true`); const json = await res.json(); setRows(json.data || []); }
+    try { setLoading(true); const res = await fetch(`${BASE_URL}/api/clients`); const json = await res.json(); setRows(json.data || []); }
     catch (err) { addToast('Error: ' + err.message, 'error') } finally { setLoading(false) }
   }
 
@@ -111,13 +113,41 @@ export default function ClientsPage() {
   }
 
   const columns = [
-    { key: 'logo', label: 'Logo', render: r => r.image ? <img src={r.image} alt={r.name} className="h-10 w-auto object-contain bg-white rounded p-1" /> : <div className="h-10 w-10 bg-slate-800 rounded flex items-center justify-center text-xs">No img</div> },
-    { key: 'name', label: 'Client Name', render: r => <div className="font-semibold">{r.name}</div> },
+    { 
+      key: 'logo', 
+      label: 'Logo', 
+      render: r => (
+        <div className="w-16 h-10 rounded-md border border-white/10 overflow-hidden bg-black/40 flex items-center justify-center shrink-0 shadow-sm p-1">
+          {r.image ? (
+            <img src={r.image} alt={r.name} className="w-full h-full object-contain" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 flex items-center justify-center text-white/40">
+              <ImageIcon className="w-4 h-4 text-emerald-400/60" />
+            </div>
+          )}
+        </div>
+      )
+    },
+    { key: 'name', label: 'Client Name', render: r => <div className="font-semibold text-white text-sm">{r.name}</div> },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/clients/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
-      <div className="flex gap-2 justify-end">
-        <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-blue-500/10 text-blue-600 rounded"><Edit2 className="w-4 h-4" /></button>
-        <button onClick={e => { e.stopPropagation(); setConfirmModal({ isOpen: true, id: r._id }); }} className="p-2 bg-red-500/10 text-red-600 rounded"><Trash2 className="w-4 h-4" /></button>
+      <div className="flex items-center justify-end gap-3.5" onClick={e => e.stopPropagation()}>
+        <button 
+          type="button"
+          onClick={() => setModal(r)} 
+          className="p-1 text-blue-500 hover:text-blue-400 transition-colors" 
+          title="Edit Client"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
+        <button 
+          type="button"
+          onClick={() => setConfirmModal({ isOpen: true, id: r._id })} 
+          className="p-1 text-red-500 hover:text-red-400 transition-colors" 
+          title="Delete"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     )}
   ]

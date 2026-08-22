@@ -11,6 +11,7 @@ import { Edit2, Trash2, Check, Plus, Save, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
+import { DEFAULT_REAL_ESTATE_DATA, mergeRealEstateData } from '../../../../lib/realEstateDefaults';
 
 const EMPTY_FAQ = {
   id: '',
@@ -20,14 +21,9 @@ const EMPTY_FAQ = {
 
 export default function RealEstateFaqsPage() {
   const [data, setData] = useState({
-    realEstateData: {
-      faqs: {
-        label: 'CLEAR ANSWERS',
-        title: 'Frequently Asked Questions',
-        desc: 'Understand how our growth advisory, PropTech digital infrastructure, and lead generation funnels work for real estate firms.',
-        items: [],
-      },
-    },
+    title: 'Real Estate Business Growth & Scaling Advisory',
+    slug: 'real-estate-advisory',
+    realEstateData: DEFAULT_REAL_ESTATE_DATA,
   });
   const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,14 +57,25 @@ export default function RealEstateFaqsPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/services/real-estate-advisory');
-      if (!res.ok) throw new Error('Failed to fetch data');
-      const json = await res.json();
-      if (json.success && json.data) {
-        setServiceId(json.data._id);
-        setData(json.data);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setServiceId(json.data._id);
+          setData(mergeRealEstateData(json.data));
+          return;
+        }
+      }
+      const allRes = await fetch('/api/services');
+      if (allRes.ok) {
+        const allJson = await allRes.json();
+        const found = allJson.data?.find(s => s.slug === 'real-estate-advisory');
+        if (found) {
+          setServiceId(found._id);
+          setData(mergeRealEstateData(found));
+        }
       }
     } catch (err) {
-      addToast('Could not load FAQs: ' + err.message, 'error');
+      console.warn('Using default FAQs state:', err);
     } finally {
       setLoading(false);
     }

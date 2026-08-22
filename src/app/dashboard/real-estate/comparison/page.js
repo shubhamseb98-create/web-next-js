@@ -12,6 +12,7 @@ import { Edit2, Trash2, Check, Plus, Save, Scale, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
+import { DEFAULT_REAL_ESTATE_DATA, mergeRealEstateData } from '../../../../lib/realEstateDefaults';
 
 const EMPTY_ROW = {
   id: '',
@@ -22,14 +23,9 @@ const EMPTY_ROW = {
 
 export default function RealEstateComparisonPage() {
   const [data, setData] = useState({
-    realEstateData: {
-      comparison: {
-        label: 'WHY BUILDERS & AGENCIES CHOOSE US',
-        title: 'Real Estate Specialists vs. Generic Agencies',
-        desc: 'Why standard digital marketing agencies fail in real estate, and how our domain-specific growth systems deliver exponential ROI.',
-        items: [],
-      },
-    },
+    title: 'Real Estate Business Growth & Scaling Advisory',
+    slug: 'real-estate-advisory',
+    realEstateData: DEFAULT_REAL_ESTATE_DATA,
   });
   const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,14 +59,26 @@ export default function RealEstateComparisonPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/services/real-estate-advisory');
-      if (!res.ok) throw new Error('Failed to fetch comparison data');
-      const json = await res.json();
-      if (json.success && json.data) {
-        setServiceId(json.data._id);
-        setData(json.data);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setServiceId(json.data._id);
+          setData(mergeRealEstateData(json.data));
+          return;
+        }
+      }
+      
+      const allRes = await fetch('/api/services');
+      if (allRes.ok) {
+        const allJson = await allRes.json();
+        const found = allJson.data?.find(s => s.slug === 'real-estate-advisory');
+        if (found) {
+          setServiceId(found._id);
+          setData(mergeRealEstateData(found));
+        }
       }
     } catch (err) {
-      addToast('Could not load comparison matrix: ' + err.message, 'error');
+      console.warn('Using default comparison state:', err);
     } finally {
       setLoading(false);
     }

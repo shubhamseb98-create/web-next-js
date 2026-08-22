@@ -12,24 +12,20 @@ import { Edit2, Trash2, Check, Plus, Save } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
+import { DEFAULT_REAL_ESTATE_DATA, mergeRealEstateData } from '../../../../lib/realEstateDefaults';
 
 const EMPTY_STEP = {
   id: '',
-  num: '',
+  step: '01',
   title: '',
   desc: '',
 };
 
 export default function RealEstateFrameworkPage() {
   const [data, setData] = useState({
-    realEstateData: {
-      process: {
-        label: 'OUR BLUEPRINT',
-        title: 'The 5-Stage Business Scaling Framework',
-        desc: 'Our battle-tested roadmap for real estate builders and agencies to achieve rapid inventory sales, lower acquisition costs, and predictable business scale.',
-        items: [],
-      },
-    },
+    title: 'Real Estate Business Growth & Scaling Advisory',
+    slug: 'real-estate-advisory',
+    realEstateData: DEFAULT_REAL_ESTATE_DATA,
   });
   const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -63,14 +59,25 @@ export default function RealEstateFrameworkPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/services/real-estate-advisory');
-      if (!res.ok) throw new Error('Failed to fetch data');
-      const json = await res.json();
-      if (json.success && json.data) {
-        setServiceId(json.data._id);
-        setData(json.data);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setServiceId(json.data._id);
+          setData(mergeRealEstateData(json.data));
+          return;
+        }
+      }
+      const allRes = await fetch('/api/services');
+      if (allRes.ok) {
+        const allJson = await allRes.json();
+        const found = allJson.data?.find(s => s.slug === 'real-estate-advisory');
+        if (found) {
+          setServiceId(found._id);
+          setData(mergeRealEstateData(found));
+        }
       }
     } catch (err) {
-      addToast('Could not load framework: ' + err.message, 'error');
+      console.warn('Using default framework state:', err);
     } finally {
       setLoading(false);
     }

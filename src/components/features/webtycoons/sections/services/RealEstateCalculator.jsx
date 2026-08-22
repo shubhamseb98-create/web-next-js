@@ -145,8 +145,8 @@ export default function RealEstateCalculator({ stats: customStats, calcHeader })
                 />
                 <div className={styles.sliderTicks}>
                   <span>₹50K/mo</span>
-                  <span>₹3 Lakh/mo</span>
-                  <span>₹8 Lakh/mo</span>
+                  <span className={styles.hideOnMobile}>₹3 Lakh/mo</span>
+                  <span className={styles.hideOnMobile}>₹8 Lakh/mo</span>
                   <span>₹15 Lakh+/mo</span>
                 </div>
               </div>
@@ -176,12 +176,12 @@ export default function RealEstateCalculator({ stats: customStats, calcHeader })
                 <div className={styles.controlHeader}>
                   <span className={styles.controlLabel}>Scaling Horizon</span>
                 </div>
-                <div className="d-flex gap-2">
+                <div className={styles.timelineButtonGroup}>
                   {TIMELINES.map((t) => (
                     <button
                       key={t.value}
                       type="button"
-                      className={`${styles.pillBtn} flex-fill text-center ${timeline === t.value ? styles.pillBtnActive : ''}`}
+                      className={`${styles.pillBtn} ${styles.timelinePillBtn} ${timeline === t.value ? styles.pillBtnActive : ''}`}
                       onClick={() => setTimeline(t.value)}
                     >
                       <span className={styles.pillTitle}>{t.label}</span>
@@ -241,7 +241,8 @@ export default function RealEstateCalculator({ stats: customStats, calcHeader })
 
               {/* Action Button */}
               <a href="#consultation" className={styles.dossierBtn}>
-                Get Custom Scaling Blueprint for Your Business <FaArrowRight />
+                <span>Get Custom Scaling Blueprint</span>
+                <FaArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
               </a>
 
             </div>

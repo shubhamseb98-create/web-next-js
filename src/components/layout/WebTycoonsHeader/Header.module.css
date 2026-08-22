@@ -236,6 +236,16 @@
   letter-spacing: 0.02em;
 }
 
+@media (max-width: 576px) {
+  .floatingPill {
+    top: 14px;
+    right: 14px;
+    padding: 0.45rem 0.95rem;
+    font-size: 0.82rem;
+    gap: 0.45rem;
+  }
+}
+
 .floatingPill:hover {
   background: rgba(255,255,255,0.1);
   border-color: rgba(255,255,255,0.25);

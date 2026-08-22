@@ -571,24 +571,29 @@ export default function RealEstateAdvisoryPage({ service = {} }) {
             viewport={viewportOptions}
             variants={fadeUp}
           >
-            <table className={styles.comparisonTable}>
-              <thead>
-                <tr>
-                  <th style={{ width: '25%' }}>Key Capability</th>
-                  <th className={styles.thHighlighted} style={{ width: '40%' }}>✨ WebTycoons Real Estate Advisory</th>
-                  <th style={{ width: '35%' }}>Generic Digital Agency</th>
-                </tr>
-              </thead>
-              <tbody>
-                {comparisonList.map((row, idx) => (
-                  <tr key={idx}>
-                    <td className={styles.comparisonFeature}>{row.feature}</td>
-                    <td className={styles.tdHighlighted}>{row.advisor}</td>
-                    <td className={styles.traditionalBrokerText}>{row.broker}</td>
+            <div className={styles.mobileScrollHint}>
+              <span>⇄ Swipe horizontally to view full matrix</span>
+            </div>
+            <div className={styles.tableResponsiveWrap}>
+              <table className={styles.comparisonTable}>
+                <thead>
+                  <tr>
+                    <th style={{ minWidth: '180px', width: '28%' }}>Key Capability</th>
+                    <th className={styles.thHighlighted} style={{ minWidth: '240px', width: '40%' }}>WebTycoons Real Estate Advisory</th>
+                    <th style={{ minWidth: '200px', width: '32%' }}>Generic Digital Agency</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {comparisonList.map((row, idx) => (
+                    <tr key={idx}>
+                      <td className={styles.comparisonFeature}>{row.feature}</td>
+                      <td className={styles.tdHighlighted}>{row.advisor}</td>
+                      <td className={styles.traditionalBrokerText}>{row.broker}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </motion.div>
 
         </div>

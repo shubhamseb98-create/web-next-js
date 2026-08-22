@@ -304,15 +304,16 @@ select {
    SCROLLBAR
    ============================================================ */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--clr-dark);
+  background: rgba(0, 0, 0, 0.4);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--clr-primary);
+  background: rgba(82, 164, 54, 0.4);
   border-radius: var(--radius-full);
 }
 

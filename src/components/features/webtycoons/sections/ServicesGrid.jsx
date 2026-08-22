@@ -160,34 +160,56 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
               const description = isDynamic ? (service.shortDesc || service.description) : service.description;
               const imageSizeClass = (service.imageStyle === 'small' || service.image?.endsWith('.svg')) ? styles.imageSmall : styles.imageFull;
 
-              const targetSlug = service.slug || (service.title?.toLowerCase().includes('real') ? 'real-estate-advisory' : 'static-website-development');
+              const isRealEstate = service.slug === 'real-estate-advisory' || service.title?.toLowerCase().includes('real estate');
+
+              const cardInner = (
+                <>
+                  <div className={styles.cardBg}>
+                    {(service.image || service.breadcrumbImage) && (
+                      <img src={service.image || service.breadcrumbImage} alt={service.title} className={styles.cardImage} />
+                    )}
+                  </div>
+                  <div className={styles.cardContent}>
+                    <span className={styles.label}>SERVICE</span>
+                    <h3 className={styles.title}>{service.title}</h3>
+                    <div className={styles.description} dangerouslySetInnerHTML={{ __html: description }} />
+                    {isRealEstate && (
+                      <div className={styles.cardHoverArrow}>
+                        <span className={styles.expandText}>Explore Advisory</span> <FiArrowRight />
+                      </div>
+                    )}
+                  </div>
+                </>
+              );
 
               return (
                 <motion.div key={index} variants={fadeUp} className={styles.gridItem}>
-                  <Link 
-                    href={`/services/${targetSlug}`}
-                    className={`${styles.card} ${slideClass} ${imageSizeClass}`}
-                    style={{
-                      '--bg-color': bgColor,
-                      '--hover-text': hoverColor,
-                      textDecoration: 'none',
-                      display: 'block'
-                    }}
-                  >
-                    <div className={styles.cardBg}>
-                      {(service.image || service.breadcrumbImage) && (
-                        <img src={service.image || service.breadcrumbImage} alt={service.title} className={styles.cardImage} />
-                      )}
+                  {isRealEstate ? (
+                    <Link 
+                      href="/services/real-estate-advisory"
+                      className={`${styles.card} ${slideClass} ${imageSizeClass}`}
+                      style={{
+                        '--bg-color': bgColor,
+                        '--hover-text': hoverColor,
+                        textDecoration: 'none',
+                        display: 'block'
+                      }}
+                    >
+                      {cardInner}
+                    </Link>
+                  ) : (
+                    <div 
+                      className={`${styles.card} ${slideClass} ${imageSizeClass}`}
+                      style={{
+                        '--bg-color': bgColor,
+                        '--hover-text': hoverColor,
+                        display: 'block',
+                        cursor: 'default'
+                      }}
+                    >
+                      {cardInner}
                     </div>
-                    <div className={styles.cardContent}>
-                      <span className={styles.label}>SERVICE</span>
-                      <h3 className={styles.title}>{service.title}</h3>
-                      <div className={styles.description} dangerouslySetInnerHTML={{ __html: description }} />
-                      <div className={styles.cardHoverArrow}>
-                        <span className={styles.expandText}>Explore Service</span> <FiArrowRight />
-                      </div>
-                    </div>
-                  </Link>
+                  )}
                 </motion.div>
               )
             })}

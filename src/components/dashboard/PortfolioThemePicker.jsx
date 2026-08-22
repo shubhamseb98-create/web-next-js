@@ -36,7 +36,8 @@ export default function PortfolioThemePicker({
   themeTextColor = '', 
   onThemeColorChange, 
   onThemeTextColorChange,
-  projectTitle = 'Project Title'
+  projectTitle = 'Project Title',
+  title = 'Project Card Theme (Background & Text)'
 }) {
   const [mode, setMode] = useState('gradient'); // 'gradient' | 'solid' | 'custom'
   const [color1, setColor1] = useState('#e2e8f0');
@@ -122,7 +123,7 @@ export default function PortfolioThemePicker({
       >
         <div className="flex items-center gap-2">
           <Palette className="w-5 h-5" style={{ color: '#52a436' }} />
-          <h4 className="text-sm font-bold text-white tracking-wide">Project Card Theme (Background & Text)</h4>
+          <h4 className="text-sm font-bold text-white tracking-wide">{title}</h4>
         </div>
         
         {/* Mode Selector Tabs */}

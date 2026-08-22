@@ -10,6 +10,7 @@ import Testimonial from "../models/Testimonial";
 // WebTycoons section components - Server Components
 import AboutCompany from "src/components/features/webtycoons/sections/AboutCompany";
 import ServicesGrid from "src/components/features/webtycoons/sections/ServicesGrid";
+import RealEstateHighlight from "src/components/features/webtycoons/sections/RealEstateHighlight";
 import TechnicalExpertise from "src/components/features/webtycoons/sections/TechnicalExpertise";
 import TechnologiesSection from "src/components/features/webtycoons/sections/TechnologiesSection";
 import CallToAction from "src/components/features/webtycoons/sections/CallToAction";
@@ -139,6 +140,9 @@ export default async function WebTycoonsHomePage() {
 
       {/* Services Grid - Server Component */}
       <ServicesGrid servicesData={serialize(services)} homeExtraData={serialize(homeExtra)} />
+
+      {/* Real Estate Advisory Specialist Highlight - Client Component */}
+      <RealEstateHighlight />
 
       {/* Clients Slider - Client Component */}
       <ClientsSlider clientsData={serialize(clients)} homeExtraData={serialize(homeExtra)} />

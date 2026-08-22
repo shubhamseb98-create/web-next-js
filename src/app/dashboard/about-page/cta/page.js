@@ -57,15 +57,19 @@ export default function AboutCTA() {
   if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6 min-h-screen relative max-w-7xl mx-auto w-full">
-      <div className="flex items-center justify-between mb-8">
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'About Management' }, { label: 'Call To Action' }]} />
-        <Button onClick={handleSubmit} disabled={saving} size="lg" className="shadow-lg hover:shadow-xl transition-all">
-          <Save className="w-5 h-5 mr-2" /> {saving ? "Saving..." : "Save Changes"}
-        </Button>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
+      <Breadcrumb 
+        title="Call To Action" 
+        subtitle="Manage the closing Call To Action (CTA) block on the About Us page."
+        crumbs={[{ label: 'About Management' }, { label: 'Call To Action' }]}
+        rightElement={
+          <Button onClick={handleSubmit} disabled={saving} size="lg" className="shadow-lg hover:shadow-xl transition-all">
+            <Save className="w-5 h-5 mr-2" /> {saving ? "Saving..." : "Save Changes"}
+          </Button>
+        }
+      />
 
-        <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(x => x.id !== id))} />
+      <Toast toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(x => x.id !== id))} />
 
       <form onSubmit={handleSubmit}>
         <Card className="border-border shadow-sm">

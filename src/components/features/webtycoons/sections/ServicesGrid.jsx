@@ -1,13 +1,26 @@
 'use client';
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { fadeUp, staggerContainer, staggerItem, viewportOptions } from '../animations/variants'
 import { FiCode, FiCloud, FiShield, FiTrendingUp, FiSmartphone, FiCpu, FiMonitor, FiSearch, FiShoppingCart, FiPenTool, FiGlobe, FiMail, FiArrowRight } from 'react-icons/fi'
+import { FaBuilding } from 'react-icons/fa'
 
 import styles from '../../../../css/webtycoons/ServicesGrid.module.css'
 
 const services = [
   {
+    title: 'Real Estate Growth Advisory',
+    slug: 'real-estate-advisory',
+    description: 'We advise builders, developers, and agencies on scaling their business, generating 10x high-ticket leads, and PropTech sales automation.',
+    icon: <FaBuilding />,
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop',
+    bgColor: 'linear-gradient(135deg, #152213, #22381e, #3e6b32)', // Emerald Dark Luxury Gradient
+    hoverTextColor: '#ffffff',
+    imageStyle: 'full',
+  },
+  {
     title: 'Website Designing',
+    slug: 'static-website-development',
     description: 'Crafting visually stunning, user-centric interfaces that captivate your audience and reflect your brand identity.',
     icon: <FiMonitor />,
     image: './assets/img/homeservice/service2.svg',
@@ -17,6 +30,7 @@ const services = [
   },
   {
     title: 'Website Development',
+    slug: 'dynamic-website-development',
     description: 'Building robust, scalable, and high-performance websites using the latest technologies and architectures.',
     icon: <FiCode />,
     image: './assets/img/homeservice/service1.webp',
@@ -26,6 +40,7 @@ const services = [
   },
   {
     title: 'SEO',
+    slug: 'static-website-development',
     description: 'Data-driven search engine optimization strategies to boost your online visibility and drive organic traffic.',
     icon: <FiSearch />,
     image: './assets/img/homeservice/service3.svg',
@@ -35,6 +50,7 @@ const services = [
   },
   {
     title: 'Ecommerce Solution',
+    slug: 'e-commerce-website-development',
     description: 'End-to-end ecommerce platforms designed to maximize conversions and deliver seamless shopping experiences.',
     icon: <FiShoppingCart />,
     image: './assets/img/homeservice/service4.webp',
@@ -44,6 +60,7 @@ const services = [
   },
   {
     title: 'Logo Designing',
+    slug: 'static-website-development',
     description: 'Creating memorable, unique, and impactful logos that establish a strong and recognizable brand presence.',
     icon: <FiPenTool />,
     image: './assets/img/homeservice/service6.webp',
@@ -53,6 +70,7 @@ const services = [
   },
   {
     title: 'Domain',
+    slug: 'static-website-development',
     description: 'Secure and reliable domain registration services to help you establish your unique identity on the web.',
     icon: <FiGlobe />,
     image: './assets/img/homeservice/service5.svg',
@@ -62,6 +80,7 @@ const services = [
   },
   {
     title: 'Digital Marketing Solution',
+    slug: 'static-website-development',
     description: 'Comprehensive marketing campaigns spanning social media, content, and paid ads to grow your business.',
     icon: <FiTrendingUp />,
     image: './assets/img/homeservice/service7.webp',
@@ -71,6 +90,7 @@ const services = [
   },
   {
     title: 'Email Solution',
+    slug: 'static-website-development',
     description: 'Professional, secure, and scalable email hosting solutions tailored for seamless enterprise communication.',
     icon: <FiMail />,
     image: './assets/img/homeservice/service8.webp',
@@ -140,13 +160,18 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
               const description = isDynamic ? (service.shortDesc || service.description) : service.description;
               const imageSizeClass = (service.imageStyle === 'small' || service.image?.endsWith('.svg')) ? styles.imageSmall : styles.imageFull;
 
+              const targetSlug = service.slug || (service.title?.toLowerCase().includes('real') ? 'real-estate-advisory' : 'static-website-development');
+
               return (
                 <motion.div key={index} variants={fadeUp} className={styles.gridItem}>
-                  <div 
+                  <Link 
+                    href={`/services/${targetSlug}`}
                     className={`${styles.card} ${slideClass} ${imageSizeClass}`}
                     style={{
                       '--bg-color': bgColor,
-                      '--hover-text': hoverColor
+                      '--hover-text': hoverColor,
+                      textDecoration: 'none',
+                      display: 'block'
                     }}
                   >
                     <div className={styles.cardBg}>
@@ -159,10 +184,10 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
                       <h3 className={styles.title}>{service.title}</h3>
                       <div className={styles.description} dangerouslySetInnerHTML={{ __html: description }} />
                       <div className={styles.cardHoverArrow}>
-                        <span className={styles.expandText}>Expand</span> <FiArrowRight />
+                        <span className={styles.expandText}>Explore Service</span> <FiArrowRight />
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </motion.div>
               )
             })}

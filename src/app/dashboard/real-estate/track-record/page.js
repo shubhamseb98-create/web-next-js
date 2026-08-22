@@ -1,36 +1,37 @@
 'use client';
 import { useState, useEffect } from 'react';
-import AIAssistantButton from '../../../../components/dashboard/AIAssistantButton';
 import Breadcrumb from '../../../../components/dashboard/Breadcrumb';
 import DataTable from '../../../../components/dashboard/DataTable';
 import TableToolbar from '../../../../components/dashboard/TableToolbar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../../components/ui/dialog';
-import { Button } from '../../../../components/ui/button';
-import { FloatingInput, FloatingTextarea } from '../../../../components/ui/floating-input';
-import { Card, CardHeader, CardTitle, CardContent } from '../../../../components/ui/card';
-import { Edit2, Trash2, Check, Plus, Save, Heart } from 'lucide-react';
+import { FloatingInput } from '../../../../components/ui/floating-input';
+import { Edit2, Trash2, Check, Plus, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
 
-const EMPTY_VALUE = {
+const EMPTY_STAT = {
   id: '',
-  icon: 'heart',
-  title: '',
-  description: '',
+  value: '',
+  label: '',
 };
 
-export default function AboutMission() {
+export default function RealEstateTrackRecordPage() {
   const [data, setData] = useState({
-    missionText: '',
-    visionText: '',
-    values: [],
+    realEstateData: {
+      stats: [
+        { id: 'st-1', value: '150+', label: 'Real Estate Businesses Scaled' },
+        { id: 'st-2', value: '10x', label: 'Average Lead Volume Growth' },
+        { id: 'st-3', value: '₹2,500Cr+', label: 'Project Sales Marketed' },
+        { id: 'st-4', value: '45%', label: 'Lower Cost Per Acquisition' },
+      ],
+    },
   });
+  const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [savingHeader, setSavingHeader] = useState(false);
   const [savingModal, setSavingModal] = useState(false);
   const [modal, setModal] = useState(null);
-  const [form, setForm] = useState({ ...EMPTY_VALUE });
+  const [form, setForm] = useState({ ...EMPTY_STAT });
   const [toasts, setToasts] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -50,94 +51,80 @@ export default function AboutMission() {
   }
 
   useEffect(() => {
-    fetchMission();
+    fetchStats();
   }, []);
 
-  async function fetchMission() {
+  async function fetchStats() {
     try {
       setLoading(true);
-      const res = await fetch('/api/about-page');
-      if (!res.ok) throw new Error('Failed to fetch data');
+      const res = await fetch('/api/services/real-estate-advisory');
+      if (!res.ok) throw new Error('Failed to fetch stats');
       const json = await res.json();
       if (json.success && json.data) {
+        setServiceId(json.data._id);
         setData(json.data);
       }
     } catch (err) {
-      addToast('Could not load mission: ' + err.message, 'error');
+      addToast('Could not load track record: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
   }
 
-  const rawValues = data.values || [];
-  const rows = rawValues.map((item, index) => ({
+  const rawStats = data.realEstateData?.stats || [];
+  const rows = rawStats.map((item, index) => ({
     ...item,
-    _id: item.id || `val-${index}`,
+    _id: item.id || `stat-${index}`,
   }));
 
   function openCreate() {
-    setForm({ ...EMPTY_VALUE, id: `val-${Date.now()}` });
+    setForm({ ...EMPTY_STAT, id: `stat-${Date.now()}` });
     setModal('new');
   }
 
-  function openEdit(val) {
-    setForm({ ...val });
-    setModal(val);
+  function openEdit(stat) {
+    setForm({ ...stat });
+    setModal(stat);
   }
 
-  const handleSaveStatements = async (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    setSavingHeader(true);
-    try {
-      const res = await fetch('/api/about-page', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to save');
-      addToast('Mission & Vision Statements Saved!');
-    } catch (err) {
-      addToast(err.message, 'error');
-    } finally {
-      setSavingHeader(false);
-    }
-  };
-
-  async function handleSaveValue(e) {
+  async function handleSaveStat(e) {
     e.preventDefault();
     try {
       setSavingModal(true);
-      const currentValues = [...rawValues];
-      let updatedValues = [];
+      const currentStats = [...rawStats];
+      let updatedStats = [];
 
       if (modal === 'new') {
-        updatedValues = [...currentValues, form];
+        updatedStats = [...currentStats, form];
       } else {
-        const itemIdx = currentValues.findIndex((x, idx) => (x.id || `val-${idx}`) === (modal.id || modal._id));
+        const itemIdx = currentStats.findIndex((x, idx) => (x.id || `stat-${idx}`) === (modal.id || modal._id));
         if (itemIdx >= 0) {
-          currentValues[itemIdx] = form;
-          updatedValues = currentValues;
+          currentStats[itemIdx] = form;
+          updatedStats = currentStats;
         } else {
-          updatedValues = [...currentValues, form];
+          updatedStats = [...currentStats, form];
         }
       }
 
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          stats: updatedStats,
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Save failed');
+      if (!res.ok) throw new Error(result.error || result.message || 'Save failed');
 
       setData(updatedData);
-      addToast(modal === 'new' ? 'Core Value added successfully!' : 'Core Value updated successfully!');
+      addToast(modal === 'new' ? 'Metric created successfully!' : 'Metric updated successfully!');
       setModal(null);
     } catch (err) {
       addToast(err.message, 'error');
@@ -151,13 +138,17 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'single', id: null });
       setDeletingId(id);
 
-      const updatedValues = rawValues.filter((x, idx) => (x.id || `val-${idx}`) !== id);
+      const updatedStats = rawStats.filter((x, idx) => (x.id || `stat-${idx}`) !== id);
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          stats: updatedStats,
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -166,7 +157,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds((s) => s.filter((x) => x !== id));
-      addToast('Core Value deleted.', 'warning');
+      addToast('Metric deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -179,13 +170,17 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'bulk', id: null });
       setBulkDeleting(true);
 
-      const updatedValues = rawValues.filter((x, idx) => !selectedIds.includes(x.id || `val-${idx}`));
+      const updatedStats = rawStats.filter((x, idx) => !selectedIds.includes(x.id || `stat-${idx}`));
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          stats: updatedStats,
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -194,7 +189,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds([]);
-      addToast('Selected values deleted.', 'warning');
+      addToast('Selected metrics deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -213,44 +208,32 @@ export default function AboutMission() {
 
   const filteredData = rows
     .filter((row) =>
-      (row.title || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.description || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.icon || '').toLowerCase().includes(search.toLowerCase())
+      (row.value || '').toLowerCase().includes(search.toLowerCase()) ||
+      (row.label || '').toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
-      if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '');
-      if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '');
+      if (sort === 'a-z') return (a.label || '').localeCompare(b.label || '');
+      if (sort === 'z-a') return (b.label || '').localeCompare(a.label || '');
       return 0;
     });
 
   const columns = [
     {
-      key: 'icon',
-      label: 'Icon Key',
+      key: 'value',
+      label: 'Metric Value',
       render: (row) => (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <Heart className="w-3.5 h-3.5" />
-          {row.icon || 'heart'}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <TrendingUp className="w-4 h-4 text-emerald-400" />
+          {row.value || 'N/A'}
         </span>
       ),
     },
     {
-      key: 'title',
-      label: 'Value Title',
+      key: 'label',
+      label: 'Metric Label & Milestone Description',
       render: (row) => (
-        <div className="min-w-[180px]">
-          <div className="font-bold text-foreground max-w-[240px] truncate" title={row.title}>
-            {row.title || 'Untitled Value'}
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: 'description',
-      label: 'Description Preview',
-      render: (row) => (
-        <div className="min-w-[220px] max-w-[380px] text-xs text-muted-foreground line-clamp-2" title={row.description}>
-          {row.description || 'No description entered'}
+        <div className="font-semibold text-foreground max-w-[400px] truncate" title={row.label}>
+          {row.label || 'Untitled Metric'}
         </div>
       ),
     },
@@ -288,62 +271,15 @@ export default function AboutMission() {
     },
   ];
 
-  if (loading) return <div className="p-8 text-center">Loading Mission & Vision...</div>;
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
       <Breadcrumb
-        title="Mission & Vision"
-        subtitle="Manage company mission statements, vision declarations, and core corporate values."
-        crumbs={[{ label: 'About Management' }, { label: 'Mission & Vision' }]}
+        title="Track Record & Simulator Stats"
+        subtitle="Manage the 4 key business performance metrics and track record milestones."
+        crumbs={[{ label: 'Real Estate Management' }, { label: 'Track Record & Stats' }]}
       />
 
-      {/* Top Header Card */}
-      <Card className="border-border shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base font-semibold">Mission &amp; Vision Statements</CardTitle>
-          <Button
-            onClick={handleSaveStatements}
-            disabled={savingHeader}
-            size="sm"
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
-          >
-            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Statements'}
-          </Button>
-        </CardHeader>
-        <CardContent style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <FloatingTextarea
-            label="Mission Statement"
-            name="missionText"
-            value={data.missionText}
-            onChange={(e) => setData({ ...data, missionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Mission Statement"
-                field="Mission"
-                onGenerate={(val) => setData((p) => ({ ...p, missionText: val }))}
-              />
-            }
-          />
-          <FloatingTextarea
-            label="Vision Statement"
-            name="visionText"
-            value={data.visionText}
-            onChange={(e) => setData({ ...data, visionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Vision Statement"
-                field="Vision"
-                onGenerate={(val) => setData((p) => ({ ...p, visionText: val }))}
-              />
-            }
-          />
-        </CardContent>
-      </Card>
-
-      {/* Values Table Toolbar */}
+      {/* Table Toolbar */}
       <TableToolbar
         search={search}
         onSearchChange={setSearch}
@@ -353,7 +289,7 @@ export default function AboutMission() {
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
         onAdd={openCreate}
-        addLabel="Add Core Value"
+        addLabel="Add Metric"
       />
 
       {/* Data Table */}
@@ -370,48 +306,34 @@ export default function AboutMission() {
 
       {/* Create / Edit Dialog Modal */}
       <Dialog open={!!modal} onOpenChange={(open) => !open && !savingModal && setModal(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <DialogTitle style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
-              {modal === 'new' ? 'Add New Core Value' : 'Edit Core Value'}
+              {modal === 'new' ? 'Add Track Record Metric' : 'Edit Metric'}
             </DialogTitle>
             <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>
               {modal === 'new'
-                ? 'Create a core company value for the About section.'
-                : 'Modify value title, icon, and description.'}
+                ? 'Create a key business scaling result metric.'
+                : 'Modify metric value and label description.'}
             </p>
           </DialogHeader>
 
-          <form onSubmit={handleSaveValue} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSaveStat} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FloatingInput
-                  label="Value Title *"
-                  placeholder="e.g. Client-First Focus"
-                  required
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  rightElement={
-                    <AIAssistantButton
-                      context="Company Core Value"
-                      field="Value Title"
-                      onGenerate={(val) => setForm({ ...form, title: val })}
-                    />
-                  }
-                />
-                <FloatingInput
-                  label="Icon Key (e.g. heart, shield, lightbulb)"
-                  value={form.icon}
-                  onChange={(e) => setForm({ ...form, icon: e.target.value })}
-                />
-              </div>
+              <FloatingInput
+                label="Metric Value (e.g. 150+, ₹2,500Cr+) *"
+                placeholder="e.g. 150+"
+                required
+                value={form.value}
+                onChange={(e) => setForm({ ...form, value: e.target.value })}
+              />
 
-              <FloatingTextarea
-                label="Description"
-                placeholder="Detailed description of this core corporate value..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3}
+              <FloatingInput
+                label="Metric Label / Description *"
+                placeholder="e.g. Real Estate Businesses Scaled"
+                required
+                value={form.label}
+                onChange={(e) => setForm({ ...form, label: e.target.value })}
               />
             </div>
 
@@ -459,7 +381,7 @@ export default function AboutMission() {
                   boxShadow: '0 8px 25px -5px rgba(82, 164, 54, 0.6)',
                 }}
               >
-                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Value' : 'Save Changes'}
+                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Metric' : 'Save Changes'}
               </button>
             </DialogFooter>
           </form>
@@ -472,11 +394,11 @@ export default function AboutMission() {
         isDeleting={confirmModal.type === 'single' ? deletingId === confirmModal.id : bulkDeleting}
         onClose={() => setConfirmModal({ isOpen: false, type: 'single', id: null })}
         onConfirm={() => (confirmModal.type === 'single' ? handleDelete(confirmModal.id) : handleBulkDelete())}
-        title={confirmModal.type === 'single' ? 'Delete Core Value' : 'Bulk Delete'}
+        title={confirmModal.type === 'single' ? 'Delete Metric' : 'Bulk Delete'}
         message={
           confirmModal.type === 'single'
-            ? 'Are you sure you want to delete this core value? This action cannot be undone.'
-            : `Are you sure you want to delete ${selectedIds.length} values? This action cannot be undone.`
+            ? 'Are you sure you want to delete this metric? This action cannot be undone.'
+            : `Are you sure you want to delete ${selectedIds.length} metrics? This action cannot be undone.`
         }
       />
 

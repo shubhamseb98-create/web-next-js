@@ -24,7 +24,8 @@ import {
   Briefcase,
   Users,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  Building2
 } from 'lucide-react';
 
 /* ─── Navigation config ─────────────────────────────── */
@@ -67,6 +68,22 @@ const NAV = [
       { label: 'Dynamic Website',    href: '/dashboard/services/dynamic-website-development' },
       { label: 'Ecommerce Website',  href: '/dashboard/services/e-commerce-website-development' },
       { label: 'Static Website',     href: '/dashboard/services/static-website-development' },
+    ],
+  },
+  {
+    id: 'real-estate',
+    label: 'Real Estate Management',
+    icon: Building2,
+    permission: 'home',
+    children: [
+      { label: 'Breadcrumb & Banner', href: '/dashboard/real-estate/breadcrumb' },
+      { label: 'Overview & Pillars',   href: '/dashboard/real-estate/overview' },
+      { label: 'Growth Verticals',     href: '/dashboard/real-estate/verticals' },
+      { label: 'Track Record & Stats', href: '/dashboard/real-estate/track-record' },
+      { label: '5-Stage Framework',    href: '/dashboard/real-estate/framework' },
+      { label: 'Comparison Matrix',    href: '/dashboard/real-estate/comparison' },
+      { label: 'Contact & Audit',      href: '/dashboard/real-estate/contact' },
+      { label: 'FAQs Management',      href: '/dashboard/real-estate/faqs' },
     ],
   },
   { id: 'portfolio',     label: 'Portfolio Projects',    icon: Package,        permission: 'portfolio',      href: '/dashboard/portfolio' },

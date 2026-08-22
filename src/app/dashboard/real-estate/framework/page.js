@@ -8,29 +8,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '../../../../components/ui/button';
 import { FloatingInput, FloatingTextarea } from '../../../../components/ui/floating-input';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../../components/ui/card';
-import { Edit2, Trash2, Check, Plus, Save, Heart } from 'lucide-react';
+import { Edit2, Trash2, Check, Plus, Save } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
 
-const EMPTY_VALUE = {
+const EMPTY_STEP = {
   id: '',
-  icon: 'heart',
+  num: '',
   title: '',
-  description: '',
+  desc: '',
 };
 
-export default function AboutMission() {
+export default function RealEstateFrameworkPage() {
   const [data, setData] = useState({
-    missionText: '',
-    visionText: '',
-    values: [],
+    realEstateData: {
+      process: {
+        label: 'OUR BLUEPRINT',
+        title: 'The 5-Stage Business Scaling Framework',
+        desc: 'Our battle-tested roadmap for real estate builders and agencies to achieve rapid inventory sales, lower acquisition costs, and predictable business scale.',
+        items: [],
+      },
+    },
   });
+  const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savingHeader, setSavingHeader] = useState(false);
   const [savingModal, setSavingModal] = useState(false);
   const [modal, setModal] = useState(null);
-  const [form, setForm] = useState({ ...EMPTY_VALUE });
+  const [form, setForm] = useState({ ...EMPTY_STEP });
   const [toasts, setToasts] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -50,94 +56,105 @@ export default function AboutMission() {
   }
 
   useEffect(() => {
-    fetchMission();
+    fetchFramework();
   }, []);
 
-  async function fetchMission() {
+  async function fetchFramework() {
     try {
       setLoading(true);
-      const res = await fetch('/api/about-page');
+      const res = await fetch('/api/services/real-estate-advisory');
       if (!res.ok) throw new Error('Failed to fetch data');
       const json = await res.json();
       if (json.success && json.data) {
+        setServiceId(json.data._id);
         setData(json.data);
       }
     } catch (err) {
-      addToast('Could not load mission: ' + err.message, 'error');
+      addToast('Could not load framework: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
   }
 
-  const rawValues = data.values || [];
-  const rows = rawValues.map((item, index) => ({
+  const process = data.realEstateData?.process || {};
+  const rawItems = process.items || [];
+  const rows = rawItems.map((item, index) => ({
     ...item,
-    _id: item.id || `val-${index}`,
+    _id: item.id || `step-${index}`,
   }));
 
   function openCreate() {
-    setForm({ ...EMPTY_VALUE, id: `val-${Date.now()}` });
+    const nextNum = String(rawItems.length + 1).padStart(2, '0');
+    setForm({ ...EMPTY_STEP, num: nextNum, id: `step-${Date.now()}` });
     setModal('new');
   }
 
-  function openEdit(val) {
-    setForm({ ...val });
-    setModal(val);
+  function openEdit(step) {
+    setForm({ ...step });
+    setModal(step);
   }
 
-  const handleSaveStatements = async (e) => {
+  async function handleSaveHeader(e) {
     if (e && e.preventDefault) e.preventDefault();
     setSavingHeader(true);
     try {
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to save');
-      addToast('Mission & Vision Statements Saved!');
+      if (!res.ok) throw new Error(result.error || result.message || 'Failed to save');
+      addToast('Framework Section Header Saved!');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
       setSavingHeader(false);
     }
-  };
+  }
 
-  async function handleSaveValue(e) {
+  async function handleSaveStep(e) {
     e.preventDefault();
     try {
       setSavingModal(true);
-      const currentValues = [...rawValues];
-      let updatedValues = [];
+      const currentItems = [...rawItems];
+      let updatedItems = [];
 
       if (modal === 'new') {
-        updatedValues = [...currentValues, form];
+        updatedItems = [...currentItems, form];
       } else {
-        const itemIdx = currentValues.findIndex((x, idx) => (x.id || `val-${idx}`) === (modal.id || modal._id));
+        const itemIdx = currentItems.findIndex((x, idx) => (x.id || `step-${idx}`) === (modal.id || modal._id));
         if (itemIdx >= 0) {
-          currentValues[itemIdx] = form;
-          updatedValues = currentValues;
+          currentItems[itemIdx] = form;
+          updatedItems = currentItems;
         } else {
-          updatedValues = [...currentValues, form];
+          updatedItems = [...currentItems, form];
         }
       }
 
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          process: {
+            ...process,
+            items: updatedItems,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Save failed');
+      if (!res.ok) throw new Error(result.error || result.message || 'Save failed');
 
       setData(updatedData);
-      addToast(modal === 'new' ? 'Core Value added successfully!' : 'Core Value updated successfully!');
+      addToast(modal === 'new' ? 'Stage created successfully!' : 'Stage updated successfully!');
       setModal(null);
     } catch (err) {
       addToast(err.message, 'error');
@@ -151,13 +168,20 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'single', id: null });
       setDeletingId(id);
 
-      const updatedValues = rawValues.filter((x, idx) => (x.id || `val-${idx}`) !== id);
+      const updatedItems = rawItems.filter((x, idx) => (x.id || `step-${idx}`) !== id);
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          process: {
+            ...process,
+            items: updatedItems,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -166,7 +190,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds((s) => s.filter((x) => x !== id));
-      addToast('Core Value deleted.', 'warning');
+      addToast('Stage deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -179,13 +203,20 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'bulk', id: null });
       setBulkDeleting(true);
 
-      const updatedValues = rawValues.filter((x, idx) => !selectedIds.includes(x.id || `val-${idx}`));
+      const updatedItems = rawItems.filter((x, idx) => !selectedIds.includes(x.id || `step-${idx}`));
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          process: {
+            ...process,
+            items: updatedItems,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -194,7 +225,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds([]);
-      addToast('Selected values deleted.', 'warning');
+      addToast('Selected stages deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -214,43 +245,42 @@ export default function AboutMission() {
   const filteredData = rows
     .filter((row) =>
       (row.title || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.description || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.icon || '').toLowerCase().includes(search.toLowerCase())
+      (row.desc || '').toLowerCase().includes(search.toLowerCase()) ||
+      (row.num || '').toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '');
       if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '');
-      return 0;
+      return (Number(a.num) || 0) - (Number(b.num) || 0);
     });
 
   const columns = [
     {
-      key: 'icon',
-      label: 'Icon Key',
+      key: 'num',
+      label: 'Stage / Step',
       render: (row) => (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <Heart className="w-3.5 h-3.5" />
-          {row.icon || 'heart'}
+        <span className="inline-flex items-center justify-center w-10 h-10 text-sm font-black rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.num || '01'}
         </span>
       ),
     },
     {
       key: 'title',
-      label: 'Value Title',
+      label: 'Stage Title',
       render: (row) => (
         <div className="min-w-[180px]">
           <div className="font-bold text-foreground max-w-[240px] truncate" title={row.title}>
-            {row.title || 'Untitled Value'}
+            {row.title || 'Untitled Stage'}
           </div>
         </div>
       ),
     },
     {
-      key: 'description',
-      label: 'Description Preview',
+      key: 'desc',
+      label: 'Stage Description Preview',
       render: (row) => (
-        <div className="min-w-[220px] max-w-[380px] text-xs text-muted-foreground line-clamp-2" title={row.description}>
-          {row.description || 'No description entered'}
+        <div className="min-w-[220px] max-w-[380px] text-xs text-muted-foreground line-clamp-2" title={row.desc}>
+          {row.desc || 'No description entered'}
         </div>
       ),
     },
@@ -288,62 +318,76 @@ export default function AboutMission() {
     },
   ];
 
-  if (loading) return <div className="p-8 text-center">Loading Mission & Vision...</div>;
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
       <Breadcrumb
-        title="Mission & Vision"
-        subtitle="Manage company mission statements, vision declarations, and core corporate values."
-        crumbs={[{ label: 'About Management' }, { label: 'Mission & Vision' }]}
+        title="5-Stage Business Scaling Framework"
+        subtitle="Manage the step-by-step advisory methodology and stage descriptions."
+        crumbs={[{ label: 'Real Estate Management' }, { label: '5-Stage Framework' }]}
       />
 
-      {/* Top Header Card */}
+      {/* Section Header Card */}
       <Card className="border-border shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base font-semibold">Mission &amp; Vision Statements</CardTitle>
+          <CardTitle className="text-base font-semibold">5-Stage Framework Header</CardTitle>
           <Button
-            onClick={handleSaveStatements}
+            onClick={handleSaveHeader}
             disabled={savingHeader}
             size="sm"
             className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
           >
-            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Statements'}
+            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Header'}
           </Button>
         </CardHeader>
         <CardContent style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <FloatingTextarea
-            label="Mission Statement"
-            name="missionText"
-            value={data.missionText}
-            onChange={(e) => setData({ ...data, missionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Mission Statement"
-                field="Mission"
-                onGenerate={(val) => setData((p) => ({ ...p, missionText: val }))}
-              />
-            }
-          />
-          <FloatingTextarea
-            label="Vision Statement"
-            name="visionText"
-            value={data.visionText}
-            onChange={(e) => setData({ ...data, visionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Vision Statement"
-                field="Vision"
-                onGenerate={(val) => setData((p) => ({ ...p, visionText: val }))}
-              />
-            }
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FloatingInput
+              label="Section Tag Label"
+              placeholder="e.g. OUR BLUEPRINT"
+              value={process.label || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    process: { ...(p.realEstateData?.process || {}), label: e.target.value },
+                  },
+                }))
+              }
+            />
+            <FloatingInput
+              label="Section Title"
+              placeholder="e.g. The 5-Stage Business Scaling Framework"
+              value={process.title || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    process: { ...(p.realEstateData?.process || {}), title: e.target.value },
+                  },
+                }))
+              }
+            />
+            <FloatingInput
+              label="Section Description"
+              placeholder="Framework overview text..."
+              value={process.desc || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    process: { ...(p.realEstateData?.process || {}), desc: e.target.value },
+                  },
+                }))
+              }
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {/* Values Table Toolbar */}
+      {/* Table Toolbar */}
       <TableToolbar
         search={search}
         onSearchChange={setSearch}
@@ -353,7 +397,7 @@ export default function AboutMission() {
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
         onAdd={openCreate}
-        addLabel="Add Core Value"
+        addLabel="Add Framework Step"
       />
 
       {/* Data Table */}
@@ -373,45 +417,51 @@ export default function AboutMission() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <DialogTitle style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
-              {modal === 'new' ? 'Add New Core Value' : 'Edit Core Value'}
+              {modal === 'new' ? 'Add Framework Stage' : 'Edit Framework Stage'}
             </DialogTitle>
             <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>
               {modal === 'new'
-                ? 'Create a core company value for the About section.'
-                : 'Modify value title, icon, and description.'}
+                ? 'Create a new step in the real estate business scaling blueprint.'
+                : 'Modify step number, stage title, and description.'}
             </p>
           </DialogHeader>
 
-          <form onSubmit={handleSaveValue} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSaveStep} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FloatingInput
-                  label="Value Title *"
-                  placeholder="e.g. Client-First Focus"
-                  required
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  rightElement={
-                    <AIAssistantButton
-                      context="Company Core Value"
-                      field="Value Title"
-                      onGenerate={(val) => setForm({ ...form, title: val })}
-                    />
-                  }
-                />
-                <FloatingInput
-                  label="Icon Key (e.g. heart, shield, lightbulb)"
-                  value={form.icon}
-                  onChange={(e) => setForm({ ...form, icon: e.target.value })}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="md:col-span-1">
+                  <FloatingInput
+                    label="Step #"
+                    placeholder="e.g. 01"
+                    required
+                    value={form.num}
+                    onChange={(e) => setForm({ ...form, num: e.target.value })}
+                  />
+                </div>
+                <div className="md:col-span-3">
+                  <FloatingInput
+                    label="Stage Title *"
+                    placeholder="e.g. Business & Funnel Audit"
+                    required
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    rightElement={
+                      <AIAssistantButton
+                        context="Real Estate Framework Stage"
+                        field="Stage Title"
+                        onGenerate={(val) => setForm({ ...form, title: val })}
+                      />
+                    }
+                  />
+                </div>
               </div>
 
               <FloatingTextarea
-                label="Description"
-                placeholder="Detailed description of this core corporate value..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3}
+                label="Stage Description"
+                placeholder="Detailed description of activities and deliverables in this stage..."
+                value={form.desc}
+                onChange={(e) => setForm({ ...form, desc: e.target.value })}
+                rows={4}
               />
             </div>
 
@@ -459,7 +509,7 @@ export default function AboutMission() {
                   boxShadow: '0 8px 25px -5px rgba(82, 164, 54, 0.6)',
                 }}
               >
-                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Value' : 'Save Changes'}
+                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Stage' : 'Save Changes'}
               </button>
             </DialogFooter>
           </form>
@@ -472,11 +522,11 @@ export default function AboutMission() {
         isDeleting={confirmModal.type === 'single' ? deletingId === confirmModal.id : bulkDeleting}
         onClose={() => setConfirmModal({ isOpen: false, type: 'single', id: null })}
         onConfirm={() => (confirmModal.type === 'single' ? handleDelete(confirmModal.id) : handleBulkDelete())}
-        title={confirmModal.type === 'single' ? 'Delete Core Value' : 'Bulk Delete'}
+        title={confirmModal.type === 'single' ? 'Delete Stage' : 'Bulk Delete'}
         message={
           confirmModal.type === 'single'
-            ? 'Are you sure you want to delete this core value? This action cannot be undone.'
-            : `Are you sure you want to delete ${selectedIds.length} values? This action cannot be undone.`
+            ? 'Are you sure you want to delete this stage? This action cannot be undone.'
+            : `Are you sure you want to delete ${selectedIds.length} stages? This action cannot be undone.`
         }
       />
 

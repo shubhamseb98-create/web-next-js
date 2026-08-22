@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import AIAssistantButton from '../../../../components/dashboard/AIAssistantButton';
 import Breadcrumb from '../../../../components/dashboard/Breadcrumb';
 import DataTable from '../../../../components/dashboard/DataTable';
 import TableToolbar from '../../../../components/dashboard/TableToolbar';
@@ -8,29 +7,34 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from '../../../../components/ui/button';
 import { FloatingInput, FloatingTextarea } from '../../../../components/ui/floating-input';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../../components/ui/card';
-import { Edit2, Trash2, Check, Plus, Save, Heart } from 'lucide-react';
+import { Edit2, Trash2, Check, Plus, Save, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
 
-const EMPTY_VALUE = {
+const EMPTY_FAQ = {
   id: '',
-  icon: 'heart',
-  title: '',
-  description: '',
+  q: '',
+  a: '',
 };
 
-export default function AboutMission() {
+export default function RealEstateFaqsPage() {
   const [data, setData] = useState({
-    missionText: '',
-    visionText: '',
-    values: [],
+    realEstateData: {
+      faqs: {
+        label: 'CLEAR ANSWERS',
+        title: 'Frequently Asked Questions',
+        desc: 'Understand how our growth advisory, PropTech digital infrastructure, and lead generation funnels work for real estate firms.',
+        items: [],
+      },
+    },
   });
+  const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savingHeader, setSavingHeader] = useState(false);
   const [savingModal, setSavingModal] = useState(false);
   const [modal, setModal] = useState(null);
-  const [form, setForm] = useState({ ...EMPTY_VALUE });
+  const [form, setForm] = useState({ ...EMPTY_FAQ });
   const [toasts, setToasts] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -50,94 +54,104 @@ export default function AboutMission() {
   }
 
   useEffect(() => {
-    fetchMission();
+    fetchFaqs();
   }, []);
 
-  async function fetchMission() {
+  async function fetchFaqs() {
     try {
       setLoading(true);
-      const res = await fetch('/api/about-page');
+      const res = await fetch('/api/services/real-estate-advisory');
       if (!res.ok) throw new Error('Failed to fetch data');
       const json = await res.json();
       if (json.success && json.data) {
+        setServiceId(json.data._id);
         setData(json.data);
       }
     } catch (err) {
-      addToast('Could not load mission: ' + err.message, 'error');
+      addToast('Could not load FAQs: ' + err.message, 'error');
     } finally {
       setLoading(false);
     }
   }
 
-  const rawValues = data.values || [];
-  const rows = rawValues.map((item, index) => ({
+  const faqs = data.realEstateData?.faqs || {};
+  const rawItems = faqs.items || [];
+  const rows = rawItems.map((item, index) => ({
     ...item,
-    _id: item.id || `val-${index}`,
+    _id: item.id || `faq-${index}`,
   }));
 
   function openCreate() {
-    setForm({ ...EMPTY_VALUE, id: `val-${Date.now()}` });
+    setForm({ ...EMPTY_FAQ, id: `faq-${Date.now()}` });
     setModal('new');
   }
 
-  function openEdit(val) {
-    setForm({ ...val });
-    setModal(val);
+  function openEdit(faq) {
+    setForm({ ...faq });
+    setModal(faq);
   }
 
-  const handleSaveStatements = async (e) => {
+  async function handleSaveHeader(e) {
     if (e && e.preventDefault) e.preventDefault();
     setSavingHeader(true);
     try {
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to save');
-      addToast('Mission & Vision Statements Saved!');
+      if (!res.ok) throw new Error(result.error || result.message || 'Failed to save');
+      addToast('FAQs Section Header Saved!');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
       setSavingHeader(false);
     }
-  };
+  }
 
-  async function handleSaveValue(e) {
+  async function handleSaveFaq(e) {
     e.preventDefault();
     try {
       setSavingModal(true);
-      const currentValues = [...rawValues];
-      let updatedValues = [];
+      const currentItems = [...rawItems];
+      let updatedItems = [];
 
       if (modal === 'new') {
-        updatedValues = [...currentValues, form];
+        updatedItems = [...currentItems, form];
       } else {
-        const itemIdx = currentValues.findIndex((x, idx) => (x.id || `val-${idx}`) === (modal.id || modal._id));
+        const itemIdx = currentItems.findIndex((x, idx) => (x.id || `faq-${idx}`) === (modal.id || modal._id));
         if (itemIdx >= 0) {
-          currentValues[itemIdx] = form;
-          updatedValues = currentValues;
+          currentItems[itemIdx] = form;
+          updatedItems = currentItems;
         } else {
-          updatedValues = [...currentValues, form];
+          updatedItems = [...currentItems, form];
         }
       }
 
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          faqs: {
+            ...faqs,
+            items: updatedItems,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Save failed');
+      if (!res.ok) throw new Error(result.error || result.message || 'Save failed');
 
       setData(updatedData);
-      addToast(modal === 'new' ? 'Core Value added successfully!' : 'Core Value updated successfully!');
+      addToast(modal === 'new' ? 'FAQ created successfully!' : 'FAQ updated successfully!');
       setModal(null);
     } catch (err) {
       addToast(err.message, 'error');
@@ -151,13 +165,20 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'single', id: null });
       setDeletingId(id);
 
-      const updatedValues = rawValues.filter((x, idx) => (x.id || `val-${idx}`) !== id);
+      const updatedItems = rawItems.filter((x, idx) => (x.id || `faq-${idx}`) !== id);
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          faqs: {
+            ...faqs,
+            items: updatedItems,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -166,7 +187,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds((s) => s.filter((x) => x !== id));
-      addToast('Core Value deleted.', 'warning');
+      addToast('FAQ deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -179,13 +200,20 @@ export default function AboutMission() {
       setConfirmModal({ isOpen: false, type: 'bulk', id: null });
       setBulkDeleting(true);
 
-      const updatedValues = rawValues.filter((x, idx) => !selectedIds.includes(x.id || `val-${idx}`));
+      const updatedItems = rawItems.filter((x, idx) => !selectedIds.includes(x.id || `faq-${idx}`));
       const updatedData = {
         ...data,
-        values: updatedValues,
+        realEstateData: {
+          ...(data.realEstateData || {}),
+          faqs: {
+            ...faqs,
+            items: updatedItems,
+          },
+        },
       };
 
-      const res = await fetch('/api/about-page', {
+      const targetId = serviceId || 'real-estate-advisory';
+      const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -194,7 +222,7 @@ export default function AboutMission() {
 
       setData(updatedData);
       setSelectedIds([]);
-      addToast('Selected values deleted.', 'warning');
+      addToast('Selected FAQs deleted.', 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     } finally {
@@ -213,44 +241,34 @@ export default function AboutMission() {
 
   const filteredData = rows
     .filter((row) =>
-      (row.title || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.description || '').toLowerCase().includes(search.toLowerCase()) ||
-      (row.icon || '').toLowerCase().includes(search.toLowerCase())
+      (row.q || '').toLowerCase().includes(search.toLowerCase()) ||
+      (row.a || '').toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
-      if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '');
-      if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '');
+      if (sort === 'a-z') return (a.q || '').localeCompare(b.q || '');
+      if (sort === 'z-a') return (b.q || '').localeCompare(a.q || '');
       return 0;
     });
 
   const columns = [
     {
-      key: 'icon',
-      label: 'Icon Key',
+      key: 'question',
+      label: 'Question',
       render: (row) => (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <Heart className="w-3.5 h-3.5" />
-          {row.icon || 'heart'}
-        </span>
-      ),
-    },
-    {
-      key: 'title',
-      label: 'Value Title',
-      render: (row) => (
-        <div className="min-w-[180px]">
-          <div className="font-bold text-foreground max-w-[240px] truncate" title={row.title}>
-            {row.title || 'Untitled Value'}
+        <div className="min-w-[200px] flex items-center gap-2">
+          <HelpCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="font-bold text-foreground max-w-[320px] truncate" title={row.q}>
+            {row.q || 'Untitled Question'}
           </div>
         </div>
       ),
     },
     {
-      key: 'description',
-      label: 'Description Preview',
+      key: 'answer',
+      label: 'Answer Preview',
       render: (row) => (
-        <div className="min-w-[220px] max-w-[380px] text-xs text-muted-foreground line-clamp-2" title={row.description}>
-          {row.description || 'No description entered'}
+        <div className="min-w-[220px] max-w-[420px] text-xs text-muted-foreground line-clamp-2" title={row.a}>
+          {row.a || 'No answer entered'}
         </div>
       ),
     },
@@ -288,62 +306,76 @@ export default function AboutMission() {
     },
   ];
 
-  if (loading) return <div className="p-8 text-center">Loading Mission & Vision...</div>;
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
       <Breadcrumb
-        title="Mission & Vision"
-        subtitle="Manage company mission statements, vision declarations, and core corporate values."
-        crumbs={[{ label: 'About Management' }, { label: 'Mission & Vision' }]}
+        title="Real Estate FAQs Management"
+        subtitle="Manage frequently asked questions and answers for real estate advisory clients."
+        crumbs={[{ label: 'Real Estate Management' }, { label: 'FAQs Management' }]}
       />
 
-      {/* Top Header Card */}
+      {/* Section Header Card */}
       <Card className="border-border shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-base font-semibold">Mission &amp; Vision Statements</CardTitle>
+          <CardTitle className="text-base font-semibold">FAQs Section Header</CardTitle>
           <Button
-            onClick={handleSaveStatements}
+            onClick={handleSaveHeader}
             disabled={savingHeader}
             size="sm"
             className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
           >
-            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Statements'}
+            <Save className="w-4 h-4 mr-1.5" /> {savingHeader ? 'Saving...' : 'Save Header'}
           </Button>
         </CardHeader>
         <CardContent style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <FloatingTextarea
-            label="Mission Statement"
-            name="missionText"
-            value={data.missionText}
-            onChange={(e) => setData({ ...data, missionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Mission Statement"
-                field="Mission"
-                onGenerate={(val) => setData((p) => ({ ...p, missionText: val }))}
-              />
-            }
-          />
-          <FloatingTextarea
-            label="Vision Statement"
-            name="visionText"
-            value={data.visionText}
-            onChange={(e) => setData({ ...data, visionText: e.target.value })}
-            rows={3}
-            rightElement={
-              <AIAssistantButton
-                context="About Page Vision Statement"
-                field="Vision"
-                onGenerate={(val) => setData((p) => ({ ...p, visionText: val }))}
-              />
-            }
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FloatingInput
+              label="Section Tag Label"
+              placeholder="e.g. CLEAR ANSWERS"
+              value={faqs.label || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    faqs: { ...(p.realEstateData?.faqs || {}), label: e.target.value },
+                  },
+                }))
+              }
+            />
+            <FloatingInput
+              label="Section Title"
+              placeholder="e.g. Frequently Asked Questions"
+              value={faqs.title || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    faqs: { ...(p.realEstateData?.faqs || {}), title: e.target.value },
+                  },
+                }))
+              }
+            />
+            <FloatingInput
+              label="Section Description"
+              placeholder="FAQ section description..."
+              value={faqs.desc || ''}
+              onChange={(e) =>
+                setData((p) => ({
+                  ...p,
+                  realEstateData: {
+                    ...(p.realEstateData || {}),
+                    faqs: { ...(p.realEstateData?.faqs || {}), desc: e.target.value },
+                  },
+                }))
+              }
+            />
+          </div>
         </CardContent>
       </Card>
 
-      {/* Values Table Toolbar */}
+      {/* Table Toolbar */}
       <TableToolbar
         search={search}
         onSearchChange={setSearch}
@@ -353,7 +385,7 @@ export default function AboutMission() {
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
         onAdd={openCreate}
-        addLabel="Add Core Value"
+        addLabel="Add FAQ"
       />
 
       {/* Data Table */}
@@ -373,45 +405,32 @@ export default function AboutMission() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <DialogTitle style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
-              {modal === 'new' ? 'Add New Core Value' : 'Edit Core Value'}
+              {modal === 'new' ? 'Add Real Estate FAQ' : 'Edit FAQ'}
             </DialogTitle>
             <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>
               {modal === 'new'
-                ? 'Create a core company value for the About section.'
-                : 'Modify value title, icon, and description.'}
+                ? 'Create a new question and detailed answer for clients.'
+                : 'Modify question and answer content.'}
             </p>
           </DialogHeader>
 
-          <form onSubmit={handleSaveValue} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSaveFaq} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FloatingInput
-                  label="Value Title *"
-                  placeholder="e.g. Client-First Focus"
-                  required
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  rightElement={
-                    <AIAssistantButton
-                      context="Company Core Value"
-                      field="Value Title"
-                      onGenerate={(val) => setForm({ ...form, title: val })}
-                    />
-                  }
-                />
-                <FloatingInput
-                  label="Icon Key (e.g. heart, shield, lightbulb)"
-                  value={form.icon}
-                  onChange={(e) => setForm({ ...form, icon: e.target.value })}
-                />
-              </div>
+              <FloatingInput
+                label="Question *"
+                placeholder="e.g. How do you generate verified high-ticket buyer leads?"
+                required
+                value={form.q}
+                onChange={(e) => setForm({ ...form, q: e.target.value })}
+              />
 
               <FloatingTextarea
-                label="Description"
-                placeholder="Detailed description of this core corporate value..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3}
+                label="Answer *"
+                placeholder="Enter detailed answer here..."
+                required
+                value={form.a}
+                onChange={(e) => setForm({ ...form, a: e.target.value })}
+                rows={5}
               />
             </div>
 
@@ -459,7 +478,7 @@ export default function AboutMission() {
                   boxShadow: '0 8px 25px -5px rgba(82, 164, 54, 0.6)',
                 }}
               >
-                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Value' : 'Save Changes'}
+                {savingModal ? 'Saving...' : modal === 'new' ? 'Save FAQ' : 'Save Changes'}
               </button>
             </DialogFooter>
           </form>
@@ -472,11 +491,11 @@ export default function AboutMission() {
         isDeleting={confirmModal.type === 'single' ? deletingId === confirmModal.id : bulkDeleting}
         onClose={() => setConfirmModal({ isOpen: false, type: 'single', id: null })}
         onConfirm={() => (confirmModal.type === 'single' ? handleDelete(confirmModal.id) : handleBulkDelete())}
-        title={confirmModal.type === 'single' ? 'Delete Core Value' : 'Bulk Delete'}
+        title={confirmModal.type === 'single' ? 'Delete FAQ' : 'Bulk Delete'}
         message={
           confirmModal.type === 'single'
-            ? 'Are you sure you want to delete this core value? This action cannot be undone.'
-            : `Are you sure you want to delete ${selectedIds.length} values? This action cannot be undone.`
+            ? 'Are you sure you want to delete this FAQ? This action cannot be undone.'
+            : `Are you sure you want to delete ${selectedIds.length} FAQs? This action cannot be undone.`
         }
       />
 

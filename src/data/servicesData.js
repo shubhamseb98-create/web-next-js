@@ -10,11 +10,20 @@ import {
   FaCogs, 
   FaCreditCard, 
   FaUserShield, 
-  FaServer,
-  FaHeadset,
-  FaDollarSign,
-  FaTrophy,
-  FaDesktop
+  FaServer, 
+  FaHeadset, 
+  FaDollarSign, 
+  FaTrophy, 
+  FaDesktop, 
+  FaBuilding, 
+  FaCity, 
+  FaLandmark, 
+  FaBalanceScale, 
+  FaChartLine, 
+  FaCoins, 
+  FaHandshake, 
+  FaMapMarkedAlt, 
+  FaKey 
 } from 'react-icons/fa'
 
 export const servicesData = {
@@ -175,6 +184,54 @@ export const servicesData = {
       { q: 'Do you offer SEO for e-commerce?', a: 'Yes, we build our stores with technical SEO in mind, including product schema markup, optimized meta tags, and fast loading speeds.' },
       { q: 'What happens after the store goes live?', a: 'We offer post-launch support, conversion rate optimization (CRO) consulting, and ongoing technical maintenance to ensure your store runs flawlessly.' }
     ]
+  },
+  realEstateAdvisory: {
+    hero: {
+      title: 'Real Estate Business Growth & Scaling Advisory',
+      description: 'We do not sell properties. We advise real estate builders, developers, agencies, and channel partners on how to scale their business, generate high-ticket qualified leads, and accelerate sales velocity.',
+      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop'
+    },
+    overview: {
+      whatIsIt: 'Our Real Estate Business Growth Advisory is a specialized consulting vertical built exclusively for real estate developers, builders, agencies, and channel partners. We architect high-converting PropTech digital platforms, performance lead generation funnels, automated sales CRMs, and project launch marketing that scale your property business.',
+      whoNeedsIt: 'Real estate builders, developers launching new projects, real estate brokerage firms, channel partner networks, and property marketing agencies seeking predictable buyer pipelines and rapid inventory absorption.',
+      benefits: ['10x Qualified Buyer & Investor Lead Volume', 'PropTech Platforms with 3D Virtual Walkthroughs', 'Zero Lead Leakage with Instant WhatsApp & CRM Automation', 'Complete Project Launch Go-To-Market Playbooks'],
+      whyChooseUs: 'We combine deep real estate industry domain expertise with cutting-edge PropTech engineering — turning traditional real estate firms into high-velocity digital sales powerhouses.'
+    },
+    features: [
+      { title: 'High-Ticket Lead Generation', desc: 'Precision-targeted Meta & Google ad campaigns generating verified luxury homebuyers and NRI investors.', icon: FaChartLine },
+      { title: 'Custom PropTech Web Portals', desc: 'Lightning-fast project landing pages, 3D interactive unit selectors, and virtual tour platforms.', icon: FaDesktop },
+      { title: 'Real Estate CRM & Automation', desc: 'Instant lead distribution, automated WhatsApp sequences, and automated site visit scheduling.', icon: FaCogs },
+      { title: 'Project Launch GTM Strategy', desc: 'End-to-end launch campaigns, pre-booking buzz, 3D architectural visualization, and collateral.', icon: FaRocket },
+      { title: 'Channel Partner (CP) Scaling', desc: 'Dedicated broker portals, automated commission trackers, and CP incentive program management.', icon: FaHandshake },
+      { title: 'Local Domination SEO', desc: 'Rank #1 on Google for high-intent project keywords, micro-market searches, and builder reputation.', icon: FaSearchDollar },
+      { title: 'Sales Funnel Enablement', desc: 'Lead qualification scripts, objection handling playbooks, and automated follow-up cadences.', icon: FaUserShield },
+      { title: 'Performance & CAC Analytics', desc: 'Real-time dashboard tracking Cost Per Lead (CPL), site visit conversions, and booking velocity.', icon: FaCoins }
+    ],
+    technologies: [
+      { name: 'Real Estate CRM', desc: 'Lead Automation Engine', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+      { name: 'Meta Ads Manager', desc: 'High-Ticket Buyer Ads', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg' },
+      { name: 'Google Ads & Search', desc: 'High-Intent Buyer Traffic', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg' },
+      { name: 'Next.js 3D Portals', desc: 'High-Speed Web Platforms', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+      { name: 'WhatsApp Cloud API', desc: 'Instant Lead Nurturing', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+      { name: 'GIS Micro-Mapping', desc: 'Micro-Market Intelligence', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
+      { name: 'VR 3D Engine', desc: 'Virtual Walkthroughs', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg' },
+      { name: 'Analytics & Attribution', desc: 'ROAS & CAC Tracking', logo: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' }
+    ],
+    process: [
+      { step: '01', title: 'Business & Funnel Audit', desc: 'We analyze your current lead cost, sales conversion bottlenecks, channel partner network, and digital footprint.' },
+      { step: '02', title: 'PropTech Infrastructure', desc: 'We build high-speed project discovery pages, 3D virtual tour integrations, and automated lead capture funnels.' },
+      { step: '03', title: 'Performance Lead Generation', desc: 'We launch precision-targeted ad campaigns targeting high-intent homebuyers, NRIs, and institutional investors.' },
+      { step: '04', title: 'Sales Automation & Nurturing', desc: 'We connect real-time WhatsApp bots, instant calling triggers, and CRM workflows to eliminate lead leakage.' },
+      { step: '05', title: 'Scale & Channel Partner Network', desc: 'We scale monthly booking volume, optimize marketing CPA, and expand your channel partner reach.' }
+    ],
+    faqs: [
+      { q: 'Do you sell properties or act as real estate brokers?', a: 'No, we are NOT property brokers and we do not sell properties directly. We are a specialized Real Estate Business Growth Advisory & PropTech firm. We advise builders, developers, real estate agencies, and channel partners on how to build digital systems, generate high-quality leads, automate their sales funnels, and scale their real estate business revenue.' },
+      { q: 'How do you help real estate developers sell project inventory faster?', a: 'We design complete Go-To-Market (GTM) launch strategies, build high-converting 3D project web portals, run hyper-targeted digital ad campaigns (Meta, Google, YouTube), and implement automated WhatsApp/CRM follow-up systems that turn cold inquiries into verified on-site visits and bookings.' },
+      { q: 'Can you help real estate agencies and brokers scale their lead generation?', a: 'Yes! We help property agencies and channel partners build automated inbound lead funnels, setup localized SEO to rank #1 in their target territory, and automate lead qualification so agents only spend time closing high-ticket buyers.' },
+      { q: 'How quickly can we see an increase in qualified real estate leads?', a: 'Once your PropTech landing infrastructure and performance campaigns are launched (typically within 7 to 14 days), qualified inbound inquiries and site-visit requests begin generating immediately.' },
+      { q: 'How do you prevent lead leakage in our sales team?', a: 'We integrate automated CRM and WhatsApp Cloud API pipelines that connect with your leads within 60 seconds of form submission. Our automated nurture cadences, reminder sequences, and call routing ensure no buyer falls through the cracks.' },
+      { q: 'How do we get started with a business growth audit?', a: 'Simply request a growth consultation below. Our senior real estate growth strategists will analyze your current sales funnels, CPA, and inventory targets to deliver a customized scaling roadmap.' }
+    ]
   }
 }
 
@@ -218,6 +275,24 @@ export const ecommercePortfolioProjects = [
   { id: 4, name: 'Furniture & Decor Shop', category: 'E-Commerce', tech: 'Laravel, Vue', desc: 'Room visualizer and product configurator.', image: '/assets/img/project/snapweb.png', link: '#' },
   { id: 5, name: 'Jewellery Marketplace', category: 'E-Commerce', tech: 'Next.js, MySQL', desc: 'Multi-vendor jewellery marketplace.', image: '/assets/img/project/snapweb.png', link: '#' },
   { id: 6, name: 'Digital Products Store', category: 'E-Commerce', tech: 'Node.js, Stripe', desc: 'Sell e-books, templates, and courses online.', image: '/assets/img/project/snapweb.png', link: '#' },
+]
+
+// ─── Real Estate Advisory Portfolio & Scaling Case Studies ───────────────────
+export const realEstatePortfolioProjects = [
+  { id: 1, name: 'Luxury Township GTM Launch', category: 'Project Launch Scaling', tech: 'PropTech Portal, Ads', desc: 'Sold ₹180Cr in residential inventory in 45 days via digital launch funnel.', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop', link: '#contact' },
+  { id: 2, name: 'Channel Partner Growth Portal', category: 'Broker Network Scaling', tech: 'Next.js, CRM', desc: 'Onboarded 850+ active channel partners for a regional Tier-1 developer.', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop', link: '#contact' },
+  { id: 3, name: 'High-Ticket NRI Buyer Funnel', category: 'Performance Marketing', tech: 'Meta & Google Ads', desc: 'Generated 1,400+ verified NRI investor leads with 14.8x Return on Ad Spend (ROAS).', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1000&auto=format&fit=crop', link: '#contact' },
+  { id: 4, name: 'Commercial Pre-Leasing Campaign', category: 'Commercial Strategy', tech: '3D VR Engine, SEO', desc: '100% pre-leasing achieved 6 months ahead of project completion schedule.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop', link: '#contact' },
+  { id: 5, name: 'Real Estate Agency CRM Engine', category: 'Sales Automation', tech: 'WhatsApp Cloud API', desc: 'Reduced lead response time from 4 hours to 45 seconds, doubling site visit bookings.', image: '/assets/img/project/snapweb.png', link: '#contact' },
+  { id: 6, name: 'High-End Golf Sanctuary Portal', category: 'PropTech Web Platform', tech: 'Next.js, VR Engine', desc: 'Immersive 3D interactive property discovery portal with 68% higher conversion rate.', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1000&auto=format&fit=crop', link: '#contact' },
+]
+
+// ─── Real Estate Advisory Testimonials ──────────────────────────────────────
+export const realEstateTestimonials = [
+  { id: 1, text: "WebTycoons transformed our real estate agency. Their PropTech portal and automated WhatsApp lead engine reduced our cost per lead by 52% and helped us close 3x more bookings this quarter.", author: "Siddharth Verma", role: "Managing Director, Apex Real Estate Agency" },
+  { id: 2, text: "For our ₹250Cr luxury project launch, WebTycoons handled the entire digital GTM strategy. We achieved 80% inventory pre-booking in under two months. Outstanding growth advisory!", author: "Rajiv Khurana", role: "Director of Sales, Grandeur Developers" },
+  { id: 3, text: "Their Channel Partner portal and automated broker tracking enabled us to scale from 50 to over 600 active channel partners across Delhi NCR. A game changer for any real estate builder.", author: "Manish Agarwal", role: "Founder, Skyline Realty Group" },
+  { id: 4, text: "Unlike typical marketing agencies that send junk leads, WebTycoons built a qualified NRI investor funnel that directly generated high-ticket closings. Truly the best real estate growth specialists.", author: "Pooja Malhotra", role: "Head of Marketing, Lotus Promoters" },
 ]
 
 // ─── Testimonials per service ────────────────────────────────────────────────

@@ -3,6 +3,7 @@ import Service from '../../../models/Service';
 import { requireAuth } from '../../../lib/auth';
 import { uploadFile } from '../../../../lib/upload';
 import { revalidatePath } from 'next/cache';
+import { DEFAULT_REAL_ESTATE_DATA, mergeRealEstateData } from '../../../../lib/realEstateDefaults';
 
 // Trigger Turbopack rebuild
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,25 @@ export async function GET(request, { params }) {
     let item = await Service.findOne({ slug: id }).lean();
     if (!item && mongoose.Types.ObjectId.isValid(id)) {
       item = await Service.findById(id).lean();
+    }
+    if (id === 'real-estate-advisory' || item?.slug === 'real-estate-advisory') {
+      if (!item) {
+        const initialDoc = {
+          title: 'Real Estate Business Growth & Scaling Advisory',
+          slug: 'real-estate-advisory',
+          shortDesc: 'High-ticket buyer lead generation, PropTech portals, and automated CRM.',
+          bgColor: 'linear-gradient(135deg, #152213, #22381e, #3e6b32)',
+          hoverTextColor: '#ffffff',
+          imageStyle: 'full',
+          status: 'active',
+          isFeatured: true,
+          realEstateData: DEFAULT_REAL_ESTATE_DATA
+        };
+        const created = await Service.create(initialDoc);
+        return Response.json({ success: true, data: JSON.parse(JSON.stringify(created)) });
+      }
+      const merged = mergeRealEstateData(item);
+      return Response.json({ success: true, data: JSON.parse(JSON.stringify(merged)) });
     }
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) });

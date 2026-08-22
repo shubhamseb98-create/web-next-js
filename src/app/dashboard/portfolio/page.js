@@ -452,15 +452,43 @@ export default function PortfolioPage() {
   }
 
   const columns = [
-    { key: 'image', label: 'Image', render: r => <div className="w-16 h-12 bg-muted rounded overflow-hidden">{r.image && <img src={r.image} className="w-full h-full object-cover"/>}</div> },
-    { key: 'title', label: 'Project', render: r => <div className="font-semibold">{r.title}</div> },
-    { key: 'category', label: 'Category', render: r => <Badge variant="outline">{r.category}</Badge> },
+    { 
+      key: 'image', 
+      label: 'Image', 
+      render: r => (
+        <div className="w-16 h-10 rounded-md border border-white/10 overflow-hidden bg-black/40 flex items-center justify-center shrink-0 shadow-sm">
+          {r.image ? (
+            <img src={r.image} alt={r.title} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 flex items-center justify-center text-white/40">
+              <ImageIcon className="w-4 h-4 text-emerald-400/60" />
+            </div>
+          )}
+        </div>
+      )
+    },
+    { key: 'title', label: 'Project', render: r => <div className="font-semibold text-white text-sm">{r.title}</div> },
+    { key: 'category', label: 'Category', render: r => <Badge variant="outline" className="bg-muted text-foreground/80 font-medium capitalize">{r.category}</Badge> },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={() => handleToggleStatus(r._id, r.status)} /> },
-    { key: 'featured', label: 'Featured', render: r => r.isFeatured ? <Badge className="bg-amber-500/20 text-amber-600">Featured</Badge> : '-' },
+    { key: 'featured', label: 'Featured', render: r => r.isFeatured ? <Badge className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs">Featured</Badge> : <span className="text-slate-500 text-xs">-</span> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
-      <div className="flex gap-2 justify-end">
-        <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-blue-500/10 text-blue-600 rounded"><Edit2 className="w-4 h-4" /></button>
-        <button onClick={e => { e.stopPropagation(); setConfirmModal({ isOpen: true, type: 'single', id: r._id }); }} className="p-2 bg-red-500/10 text-red-600 rounded"><Trash2 className="w-4 h-4" /></button>
+      <div className="flex items-center justify-end gap-3.5" onClick={e => e.stopPropagation()}>
+        <button 
+          type="button"
+          onClick={() => setModal(r)} 
+          className="p-1 text-blue-500 hover:text-blue-400 transition-colors" 
+          title="Edit Project"
+        >
+          <Edit2 className="w-4 h-4" />
+        </button>
+        <button 
+          type="button"
+          onClick={() => setConfirmModal({ isOpen: true, type: 'single', id: r._id })} 
+          className="p-1 text-red-500 hover:text-red-400 transition-colors" 
+          title="Delete"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     )}
   ]

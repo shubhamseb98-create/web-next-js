@@ -9,23 +9,20 @@ import { Edit2, Trash2, Check, Plus, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
+import { DEFAULT_REAL_ESTATE_DATA, mergeRealEstateData } from '../../../../lib/realEstateDefaults';
 
 const EMPTY_STAT = {
   id: '',
   value: '',
   label: '',
+  desc: '',
 };
 
 export default function RealEstateTrackRecordPage() {
   const [data, setData] = useState({
-    realEstateData: {
-      stats: [
-        { id: 'st-1', value: '150+', label: 'Real Estate Businesses Scaled' },
-        { id: 'st-2', value: '10x', label: 'Average Lead Volume Growth' },
-        { id: 'st-3', value: '₹2,500Cr+', label: 'Project Sales Marketed' },
-        { id: 'st-4', value: '45%', label: 'Lower Cost Per Acquisition' },
-      ],
-    },
+    title: 'Real Estate Business Growth & Scaling Advisory',
+    slug: 'real-estate-advisory',
+    realEstateData: DEFAULT_REAL_ESTATE_DATA,
   });
   const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,21 +48,32 @@ export default function RealEstateTrackRecordPage() {
   }
 
   useEffect(() => {
-    fetchStats();
+    fetchTrackRecord();
   }, []);
 
-  async function fetchStats() {
+  async function fetchTrackRecord() {
     try {
       setLoading(true);
       const res = await fetch('/api/services/real-estate-advisory');
-      if (!res.ok) throw new Error('Failed to fetch stats');
-      const json = await res.json();
-      if (json.success && json.data) {
-        setServiceId(json.data._id);
-        setData(json.data);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setServiceId(json.data._id);
+          setData(mergeRealEstateData(json.data));
+          return;
+        }
+      }
+      const allRes = await fetch('/api/services');
+      if (allRes.ok) {
+        const allJson = await allRes.json();
+        const found = allJson.data?.find(s => s.slug === 'real-estate-advisory');
+        if (found) {
+          setServiceId(found._id);
+          setData(mergeRealEstateData(found));
+        }
       }
     } catch (err) {
-      addToast('Could not load track record: ' + err.message, 'error');
+      console.warn('Using default track record state:', err);
     } finally {
       setLoading(false);
     }

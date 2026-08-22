@@ -6,22 +6,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "../../../../components
 import { Button } from "../../../../components/ui/button";
 import { FloatingInput } from "../../../../components/ui/floating-input";
 import { Save } from "lucide-react";
+import { DEFAULT_REAL_ESTATE_DATA, mergeRealEstateData } from "../../../../lib/realEstateDefaults";
 
 export default function RealEstateContactPage() {
   const [data, setData] = useState({
-    realEstateData: {
-      contact: {
-        label: "GROWTH AUDIT",
-        title: "Ready to Scale Your Real Estate Business?",
-        desc: "Book a strategic discovery call with our senior real estate growth strategists to audit your lead costs, PropTech funnels, and inventory targets.",
-        phone: "+91 8527458950",
-        email: "info@thewebtycoons.com",
-        location: "123, Digital Hub, Sector 18, Noida, UP — 201301",
-        territories: "Delhi NCR, Mumbai, Bangalore, Dubai & Global NRIs",
-        formTitle: "Request Real Estate Growth Audit",
-        formSubtitle: "Fill out the form below and we will prepare a tailored scaling blueprint for your firm.",
-      },
-    },
+    title: "Real Estate Business Growth & Scaling Advisory",
+    slug: "real-estate-advisory",
+    realEstateData: DEFAULT_REAL_ESTATE_DATA,
   });
   const [serviceId, setServiceId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,13 +27,13 @@ export default function RealEstateContactPage() {
       .then((res) => {
         if (res.success && res.data) {
           setServiceId(res.data._id);
-          setData(res.data);
+          setData(mergeRealEstateData(res.data));
         }
-        setLoading(false);
       })
       .catch((e) => {
-        console.error(e);
-        addToast("Failed to load data", "error");
+        console.warn("Using default contact data", e);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);

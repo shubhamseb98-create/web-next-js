@@ -102,10 +102,10 @@ const Header = () => {
                 </Link>
                 {link.hasDropdown && (
                   <div className={styles.dropdownMenu}>
-                    <Link to="/services/real-estate-advisory">Real Estate Advisory</Link>
                     <Link to="/services/static-website-development">Static Websites</Link>
                     <Link to="/services/dynamic-website-development">Dynamic Websites</Link>
                     <Link to="/services/e-commerce-website-development">E-Commerce</Link>
+                    <Link to="/services/real-estate-advisory">Real Estate Advisory</Link>
                   </div>
                 )}
               </div>
@@ -237,10 +237,10 @@ const Header = () => {
                 </Link>
                 {link.hasDropdown && (
                   <div className={`${styles.menuDropdown} ${styles.menuLinkSub}`}>
-                    <Link to="/services/real-estate-advisory" className={styles.menuDropdownLink} onClick={closeMenu}>Real Estate Advisory</Link>
                     <Link to="/services/static-website-development" className={styles.menuDropdownLink} onClick={closeMenu}>Static Websites</Link>
                     <Link to="/services/dynamic-website-development" className={styles.menuDropdownLink} onClick={closeMenu}>Dynamic Websites</Link>
                     <Link to="/services/e-commerce-website-development" className={styles.menuDropdownLink} onClick={closeMenu}>E-Commerce</Link>
+                    <Link to="/services/real-estate-advisory" className={styles.menuDropdownLink} onClick={closeMenu}>Real Estate Advisory</Link>
                   </div>
                 )}
               </li>

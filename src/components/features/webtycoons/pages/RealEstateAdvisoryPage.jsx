@@ -376,42 +376,34 @@ export default function RealEstateAdvisoryPage({ service = {} }) {
         </div>
       </section>
 
-      {/* ── 2. Executive Overview (Dynamic) ── */}
-      <section className={`${styles.section} ${styles.sectionDarker}`} id="overview">
+      {/* ── 2. Overview Section (Exact Match to Static Website Inner Page) ── */}
+      <section className={`py-100 ${styles.section} ${styles.sectionDarker}`} id="overview">
         <div className="container-fluid-px">
-          <div className={styles.overviewGrid}>
+          <motion.div 
+            className={styles.overviewModernGrid}
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-100px' }}
+          >
             
-            {/* Left Column: Image with Floating Badge */}
-            <motion.div 
-              className={styles.overviewImageWrap}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewportOptions}
-              variants={fadeUp}
-            >
-              <img 
-                src={overviewImage} 
-                alt={overviewTitle} 
-                className={styles.overviewImg}
-              />
-              <div className={styles.floatingCardBadge}>
-                <div className={styles.floatingBadgeTitle}>
-                  <FaRocket /> {floatingBadgeTitle}
+            {/* Left Column: Sticky Image Side (100% Unrestricted Sticky) */}
+            <div className={styles.overviewImageSide}>
+              <div className={styles.overviewImageWrapper}>
+                <img 
+                  src={overviewImage} 
+                  alt={overviewTitle} 
+                  className={styles.overviewImage}
+                />
+                <div className={styles.overviewImageOverlay}>
+                  <h3 className={styles.overlayTitle}>{floatingBadgeTitle}</h3>
+                  <p>{floatingBadgeText}</p>
                 </div>
-                <p className={styles.floatingBadgeText}>
-                  {floatingBadgeText}
-                </p>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Right Column: Strategic Pillars */}
-            <motion.div 
-              className={styles.overviewContent}
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewportOptions}
-            >
+            {/* Right Column: Strategic Pillars & Cards */}
+            <div className={styles.overviewContentSide}>
               <div>
                 <span className={styles.sectionLabel}>{overviewLabel}</span>
                 <h2 className={styles.sectionTitle}>
@@ -425,21 +417,19 @@ export default function RealEstateAdvisoryPage({ service = {} }) {
               {pillars.map((pillar, idx) => {
                 const IconComponent = resolveIcon(pillar.icon);
                 return (
-                  <div key={idx} className={styles.overviewPillarCard}>
-                    <div className={styles.pillarHeader}>
-                      <div className={styles.pillarIcon}><IconComponent /></div>
-                      <h3 className={styles.pillarTitle}>{pillar.title}</h3>
+                  <motion.div key={idx} variants={fadeUp} className={styles.overviewCard}>
+                    <div className={styles.overviewCardIcon}><IconComponent /></div>
+                    <div className={styles.overviewCardContent}>
+                      <h3 className={styles.overviewCardTitle}>{pillar.title}</h3>
+                      <p className={styles.overviewCardText}>{pillar.desc}</p>
                     </div>
-                    <p className={styles.pillarDesc}>
-                      {pillar.desc}
-                    </p>
-                  </div>
+                  </motion.div>
                 );
               })}
 
-            </motion.div>
+            </div>
 
-          </div>
+          </motion.div>
         </div>
       </section>
 

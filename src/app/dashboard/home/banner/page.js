@@ -93,6 +93,39 @@ export default function BannerPage() {
     try {
       setSaving(true)
 
+      let uploadedUrl = form.image || ''
+
+      // If a file was selected, attempt direct upload to Cloudinary to bypass Vercel 4.5MB limit
+      if (imageFile) {
+        try {
+          const signRes = await fetch(`${BASE_URL}/api/cloudinary/sign`)
+          if (signRes.ok) {
+            const signData = await signRes.json()
+            if (signData.signature && signData.apiKey && signData.cloudName) {
+              const cldFormData = new FormData()
+              cldFormData.append('file', imageFile)
+              cldFormData.append('api_key', signData.apiKey)
+              cldFormData.append('timestamp', signData.timestamp)
+              cldFormData.append('signature', signData.signature)
+              cldFormData.append('folder', signData.folder)
+
+              const cldRes = await fetch(
+                `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`,
+                { method: 'POST', body: cldFormData }
+              )
+              const cldData = await cldRes.json()
+              if (cldData.secure_url) {
+                uploadedUrl = cldData.secure_url
+              } else if (cldData.error) {
+                console.warn('Cloudinary upload warning:', cldData.error.message)
+              }
+            }
+          }
+        } catch (cldErr) {
+          console.warn('Direct Cloudinary upload skipped, trying standard upload:', cldErr)
+        }
+      }
+
       const fd = new FormData()
       fd.append('title', form.title || '')
       fd.append('subtitle', form.subtitle || '')
@@ -102,15 +135,29 @@ export default function BannerPage() {
       fd.append('status', form.status || 'active')
       fd.append('sort', form.sort || 0)
       fd.append('showCertifications', form.showCertifications || false)
-      fd.append('imageUrl', form.image || '')
-      if (imageFile) fd.append('image', imageFile)
+      fd.append('imageUrl', uploadedUrl)
+      
+      // If we didn't get a Cloudinary URL and still have the local file, attach it as fallback
+      if (!uploadedUrl && imageFile) {
+        fd.append('image', imageFile)
+      }
 
       const isEdit = Boolean(form._id)
       const url = isEdit ? `${BASE_URL}/api/banner/${form._id}` : `${BASE_URL}/api/banner`
       const method = isEdit ? 'PUT' : 'POST'
 
       const res = await fetch(url, { method, body: fd })
-      const data = await res.json()
+      const rawText = await res.text()
+      let data = {}
+      
+      try {
+        data = JSON.parse(rawText)
+      } catch {
+        if (res.status === 413 || rawText.includes('Too Large')) {
+          throw new Error('Video/Image is too large (>4.5MB). Please upload it directly to Cloudinary or paste the video URL.')
+        }
+        throw new Error(rawText || `Request failed with status ${res.status}`)
+      }
 
       if (!res.ok) throw new Error(data.message || 'Save failed')
 

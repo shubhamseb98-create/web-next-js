@@ -48,7 +48,6 @@ const NAV = [
       { label: 'Technologies',        href: '/dashboard/technologies' },
       { label: 'Team Management',     href: '/dashboard/team' },
       { label: 'Testimonials',        href: '/dashboard/testimonials' },
-      { label: 'Capabilities',        href: '/dashboard/capabilities' },
     ],
   },
   {

@@ -23,7 +23,6 @@ const DEFAULT_SERVICES = [
   { _id: 'svc-1', title: 'Static Website Development', slug: 'static-website-development', shortDesc: 'High-speed, SEO-optimized static websites engineered for performance.', sort: 1, isFeatured: true, status: 'active' },
   { _id: 'svc-2', title: 'Dynamic Website Development', slug: 'dynamic-website-development', shortDesc: 'Database-driven modern web applications with CMS and realtime workflows.', sort: 2, isFeatured: true, status: 'active' },
   { _id: 'svc-3', title: 'E-Commerce Website Development', slug: 'ecommerce-website-development', shortDesc: 'Scalable online storefronts with seamless payment gateways and inventory.', sort: 3, isFeatured: true, status: 'active' },
-  { _id: 'svc-4', title: 'Real Estate Business Growth & Scaling Advisory', slug: 'real-estate-advisory', shortDesc: 'High-ticket buyer lead generation, PropTech portals, and automated CRM.', sort: 4, isFeatured: true, status: 'active' },
 ]
 
 function ServiceModal({ item, nextSort = 1, onClose, onSave, saving }) {
@@ -160,7 +159,8 @@ export default function ServicesPage() {
       if (res.ok) {
         const json = await res.json()
         if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setRows(json.data)
+          const generalServices = json.data.filter(s => s.slug !== 'real-estate-advisory')
+          setRows(generalServices)
         }
       }
     } catch (err) {

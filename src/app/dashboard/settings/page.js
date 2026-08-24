@@ -246,7 +246,7 @@ export default function GlobalSettingsCMS() {
           </div>
 
           <form onSubmit={handleSave}>
-            <CardContent className="p-6 bg-card rounded-b-2xl">
+            <div className="p-6 pt-8 sm:p-8 sm:pt-10 bg-card rounded-b-2xl">
               
               {tab === "branding" && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -539,7 +539,7 @@ export default function GlobalSettingsCMS() {
                 </div>
               )}
 
-            </CardContent>
+            </div>
 
             <CardFooter className="p-6 bg-muted/10 border-t border-border/40 flex items-center justify-end rounded-b-xl">
               <Button 

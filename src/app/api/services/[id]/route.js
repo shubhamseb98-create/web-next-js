@@ -20,19 +20,20 @@ export async function GET(request, { params }) {
     }
     if (id === 'real-estate-advisory' || item?.slug === 'real-estate-advisory') {
       if (!item) {
-        const initialDoc = {
-          title: 'Real Estate Business Growth & Scaling Advisory',
-          slug: 'real-estate-advisory',
-          shortDesc: 'High-ticket buyer lead generation, PropTech portals, and automated CRM.',
-          bgColor: 'linear-gradient(135deg, #152213, #22381e, #3e6b32)',
-          hoverTextColor: '#ffffff',
-          imageStyle: 'full',
-          status: 'active',
-          isFeatured: true,
-          realEstateData: DEFAULT_REAL_ESTATE_DATA
-        };
-        const created = await Service.create(initialDoc);
-        return Response.json({ success: true, data: JSON.parse(JSON.stringify(created)) });
+        return Response.json({
+          success: true,
+          data: {
+            title: 'Real Estate Business Growth & Scaling Advisory',
+            slug: 'real-estate-advisory',
+            shortDesc: 'High-ticket buyer lead generation, PropTech portals, and automated CRM.',
+            bgColor: 'linear-gradient(135deg, #152213, #22381e, #3e6b32)',
+            hoverTextColor: '#ffffff',
+            imageStyle: 'full',
+            status: 'active',
+            isFeatured: true,
+            realEstateData: DEFAULT_REAL_ESTATE_DATA
+          }
+        });
       }
       const merged = mergeRealEstateData(item);
       return Response.json({ success: true, data: JSON.parse(JSON.stringify(merged)) });

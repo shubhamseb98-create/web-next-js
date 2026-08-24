@@ -11,7 +11,6 @@ import Testimonial from "../models/Testimonial";
 import AboutCompany from "src/components/features/webtycoons/sections/AboutCompany";
 import ServicesGrid from "src/components/features/webtycoons/sections/ServicesGrid";
 import RealEstateHighlight from "src/components/features/webtycoons/sections/RealEstateHighlight";
-import TechnicalExpertise from "src/components/features/webtycoons/sections/TechnicalExpertise";
 import TechnologiesSection from "src/components/features/webtycoons/sections/TechnologiesSection";
 import CallToAction from "src/components/features/webtycoons/sections/CallToAction";
 import LatestThinking from "src/components/features/webtycoons/sections/LatestThinking";
@@ -65,7 +64,7 @@ export async function generateMetadata() {
 export default async function WebTycoonsHomePage() {
   await connectDB();
 
-  const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, works, clients, achievements, capabilities, technologies, teamMembers, featuredProjectsSection] = await Promise.all([
+  const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, works, clients, achievements, technologies, teamMembers, featuredProjectsSection] = await Promise.all([
     getHomeSeo(),
     Blog.find({ isPublished: true }).sort({ publishedAt: -1, createdAt: -1 }).limit(5).lean(),
     Portfolio.find({ status: 'active', isFeatured: true }).sort({ sort: 1 }).limit(6).lean(),
@@ -80,7 +79,6 @@ export default async function WebTycoonsHomePage() {
     import('../models/Work').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/Client').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/Achievement').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
-    import('../models/Capability').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/Technology').then(m => m.default.find({ status: 'active' }).sort({ category: 1, sort: 1 }).lean()),
     import('../models/TeamMember').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/HomeFeaturedProjectsSection').then(m => m.default.findOne().lean()),
@@ -149,9 +147,6 @@ export default async function WebTycoonsHomePage() {
 
       {/* Stats Counter - Client Component for counter animation */}
       <StatsCounter achievementsData={serialize(achievements)} homeExtraData={serialize(homeExtra)} />
-
-      {/* Technical Expertise - Server Component */}
-      <TechnicalExpertise capabilitiesData={serialize(capabilities)} homeExtraData={serialize(homeExtra)} />
 
       {/* Technologies - Server Component */}
       <TechnologiesSection technologiesData={serialize(technologies)} homeExtraData={serialize(homeExtra)} />

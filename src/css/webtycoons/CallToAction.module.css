@@ -1,39 +1,127 @@
+/* ============================================================
+   CALL TO ACTION - LUXURY AMBIENT GLOW (NO BACKGROUND IMAGE)
+   Brand: WebTycoons Luxury Emerald (#52a436, #6bc24b, #00e599)
+   ============================================================ */
+
 .section {
-  background: var(--clr-dark);
+  background: radial-gradient(circle at center, #0f1c0e 0%, #060906 70%);
   position: relative;
   overflow: hidden;
-  border-top: 1px solid var(--clr-border-dark);
+  border-top: 1px solid rgba(82, 164, 54, 0.15);
+  padding: 6.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 4.5rem 0;
+  }
 }
 
 .bgGlow {
   position: absolute;
-  top: 100%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
-  height: 500px;
-  background: var(--gradient-primary);
-  filter: blur(200px);
-  opacity: 0.2;
-  border-radius: 50%;
-  z-index: 0;
+  width: 700px;
+  max-width: 100vw;
+  height: 450px;
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.22) 0%, rgba(0, 229, 153, 0.05) 50%, transparent 75%);
+  filter: blur(90px);
   pointer-events: none;
+  z-index: 0;
 }
 
 .title {
-  font-family: var(--font-heading);
-  font-size: var(--fs-h1);
-  font-weight: var(--fw-bold);
-  color: var(--clr-white);
-  line-height: var(--lh-tight);
-  margin-bottom: var(--space-lg);
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(2rem, 4.5vw, 3.3rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 1.35rem;
   letter-spacing: -0.02em;
 }
 
 .description {
-  font-size: var(--fs-h4);
-  color: var(--clr-text-light);
-  line-height: var(--lh-relaxed);
-  max-width: 700px;
-  margin-inline: auto;
+  font-size: clamp(1rem, 2.2vw, 1.12rem);
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2.5rem;
+}
+
+.btnRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .btnRow {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.85rem;
+  }
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #52a436;
+  color: #ffffff;
+  padding: 0.85rem 2.25rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(82, 164, 54, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 480px) {
+  .btnPrimary {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+  }
+}
+
+.btnPrimary:hover {
+  background: #448c2c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(82, 164, 54, 0.65);
+  color: #ffffff;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  padding: 0.85rem 2.25rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 480px) {
+  .btnSecondary {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+  }
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(82, 164, 54, 0.6);
+  color: #6bc24b;
 }

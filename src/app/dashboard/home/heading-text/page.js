@@ -31,7 +31,6 @@ const sections = [
   { key: 'featured_project', label: 'Featured Projects Section', fields: ['featured_project_title', 'featured_project_subtitle', 'featured_project_description'] },
   { key: 'client',    label: 'Our Clients Section',   fields: ['client_title', 'client_subtitle', 'client_description'] },
   { key: 'achievement', label: 'Our Achievements Section', fields: ['achievement_title', 'achievement_subtitle', 'achievement_description'] },
-  { key: 'capability', label: 'Core Capabilities Section', fields: ['capability_title', 'capability_subtitle', 'capability_description'] },
   { key: 'technology', label: 'Modern Tech Stack Section', fields: ['technology_title', 'technology_subtitle', 'technology_description'] },
   { key: 'team',       label: 'Meet The Team Section',     fields: ['team_title', 'team_subtitle', 'team_label', 'team_description'] },
   { key: 'testimonial',label: 'Testimonials Section',      fields: ['testimonial_title', 'testimonial_subtitle', 'testimonial_description'] },

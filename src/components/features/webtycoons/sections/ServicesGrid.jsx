@@ -9,16 +9,6 @@ import styles from '../../../../css/webtycoons/ServicesGrid.module.css'
 
 const services = [
   {
-    title: 'Real Estate Growth Advisory',
-    slug: 'real-estate-advisory',
-    description: 'We advise builders, developers, and agencies on scaling their business, generating 10x high-ticket leads, and PropTech sales automation.',
-    icon: <FaBuilding />,
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop',
-    bgColor: 'linear-gradient(135deg, #152213, #22381e, #3e6b32)', // Emerald Dark Luxury Gradient
-    hoverTextColor: '#ffffff',
-    imageStyle: 'full',
-  },
-  {
     title: 'Website Designing',
     slug: 'static-website-development',
     description: 'Crafting visually stunning, user-centric interfaces that captivate your audience and reflect your brand identity.',
@@ -113,7 +103,10 @@ const BG_COLORS = [
 const HOVER_COLORS = ['#000000', '#ffffff', '#000000ff', '#ffffff', '#ffffff', '#000000', '#ffffff', '#000000ff']
 
 const ServicesGrid = ({ servicesData, homeExtraData }) => {  
-  const displayServices = servicesData?.length > 0 ? servicesData : services;
+  // Real Estate has its own dedicated highlight showcase section right below ServicesGrid.
+  // Filter it out so that the green card never pollutes the IT Services Grid!
+  const filteredServices = (servicesData || []).filter(s => s.slug !== 'real-estate-advisory');
+  const displayServices = filteredServices.length > 0 ? filteredServices : services;
 
   const subtitle = homeExtraData?.service_subtitle || 'Our Services';
   const mainTitle = homeExtraData?.service_title || 'Innovative IT Solutions for <br /> Your Business Growth';

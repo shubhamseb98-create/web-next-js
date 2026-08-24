@@ -2,8 +2,10 @@ import { notFound } from "next/navigation";
 import { connectDB } from "../../../lib/config";
 import Service from "../../../models/Service";
 import ServicePageClient from "src/components/features/webtycoons/pages/ServicePageClient";
+import { mergeRealEstateData } from "../../../../lib/realEstateDefaults";
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Static service slugs that always exist
 const STATIC_SERVICES = [
@@ -113,11 +115,15 @@ export default async function ServicePage({ params }) {
     globalTechStack = JSON.parse(JSON.stringify(techs));
   } catch {}
 
-  if (!serviceData) {
-    serviceData = STATIC_SERVICE_DATA[slug] || null;
-  }
+    if (!serviceData) {
+      serviceData = STATIC_SERVICE_DATA[slug] || null;
+    }
 
-  if (!serviceData) notFound();
+    if (slug === 'real-estate-advisory' || serviceData?.slug === 'real-estate-advisory') {
+      serviceData = mergeRealEstateData(serviceData || {});
+    }
+
+    if (!serviceData) notFound();
 
   const schema = {
     "@context": "https://schema.org",

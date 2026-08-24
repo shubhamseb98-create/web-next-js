@@ -29,7 +29,6 @@ const HomePage = () => {
       <ClientsSlider />
       <StatsCounter />
       {/* <Industries /> */}
-      <TechnicalExpertise />
       <TechnologiesSection />
       <GsapFeaturedProjects />
       {/* <WhyChooseUs /> */}

@@ -12,6 +12,7 @@ import { Plus, Image as ImageIcon, Edit2, Trash2, Check, Save } from 'lucide-rea
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal';
+import { mergeRealEstateData } from '../../../../lib/realEstateDefaults';
 
 const EMPTY = {
   id: '',
@@ -24,12 +25,90 @@ const EMPTY = {
 };
 
 const INITIAL_VERTICALS = [
-  { id: 'gtm', title: 'Project Launch GTM Strategy', tag: 'For Builders & Developers', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop', desc: 'Complete digital launch playbooks to build intense pre-launch FOMO, drive initial bookings, and accelerate inventory absorption in under 60 days.', features: ['Pre-launch teaser & digital hype funnels', '3D architectural renders & virtual walkthroughs', 'High-converting project landing page ecosystems', 'Omnichannel buyer acquisition (Meta, Google, YouTube)'], yield: 'Result: 70%+ Inventory Absorption' },
-  { id: 'agency', title: 'Real Estate Agency & Broker Scaling', tag: 'For Agencies & Channel Partners', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop', desc: 'Turn your real estate agency into an automated inbound lead powerhouse. We build localized acquisition funnels that keep your agents closing high-ticket deals.', features: ['Inbound buyer & seller lead generation', 'Instant 60-second automated WhatsApp connect', 'Automated site-visit booking & calendar reminders', 'Lead qualification playbooks for sales reps'], yield: 'Result: 3x Monthly Site Visits' },
-  { id: 'cp', title: 'Channel Partner (CP) Network Systems', tag: 'Broker Network Automation', image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1000&auto=format&fit=crop', desc: 'Build, manage, and scale a massive channel partner network with custom CP portals, automated commission trackers, and exclusive broker event marketing.', features: ['Custom Channel Partner login & asset portals', 'Real-time lead mapping & transparent attribution', 'Automated commission & slab milestone tracking', 'CP engagement & broker meet event campaigns'], yield: 'Result: 500+ Active Brokers Onboarded' },
-  { id: 'nri', title: 'High-Ticket NRI Investor Funnels', tag: 'Global NRI Acquisition', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1000&auto=format&fit=crop', desc: 'Target affluent overseas Indians in Dubai, US, UK, Singapore, and Canada with virtual 3D tour experiences and trust-building digital collateral.', features: ['High-intent international geo-targeting', 'Virtual 3D immersive property tours & video walkthroughs', 'NRI legal & repatriation objection-handling content', 'High-converting WhatsApp Cloud API nurture'], yield: 'Result: 14.8x Average ROAS' },
-  { id: 'proptech', title: 'PropTech Web Portals & 3D Tech', tag: 'Custom Digital Infrastructure', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop', desc: 'Bespoke Next.js real estate web platforms with interactive master plans, unit availability selectors, and lightning-fast mobile performance.', features: ['Interactive 3D unit selector & floorplan viewer', 'Integrated mortgage & EMI calculators', 'Direct WhatsApp & CRM lead capture hooks', 'Sub-second page load speeds for maximum ad conversions'], yield: 'Result: 68% Higher Conversion Rate' },
-  { id: 'seo', title: 'Local Territory Dominance SEO', tag: 'Organic Buyer Pipeline', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop', desc: 'Dominate Google search results for micro-market keywords, project comparisons, and builder reviews in your target geographical territory.', features: ['Rank #1 for high-intent property buyer searches', 'Google Business Profile & local map pack domination', 'Project review & comparison pillar content', 'Zero ongoing ad spend for organic buyer leads'], yield: 'Result: Zero-CAC Organic Pipeline' }
+  {
+    id: 'v-1',
+    title: 'High-Ticket Lead Generation',
+    tag: 'Performance Ads',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1000&auto=format&fit=crop',
+    desc: 'Precision-targeted Meta & Google ad campaigns generating verified luxury homebuyers and NRI investors.',
+    features: [
+      'Hyper-targeted Meta & Google Search ad campaigns',
+      'High-intent NRI & luxury investor audience targeting',
+      'Automated OTP & multi-layer buyer lead qualification',
+      'Real-time CRM & instant 60-second WhatsApp lead routing'
+    ],
+    yield: 'Result: 14.8x Average ROAS'
+  },
+  {
+    id: 'v-2',
+    title: 'Custom PropTech Web Portals',
+    tag: 'PropTech Development',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop',
+    desc: 'Lightning-fast project landing pages, 3D interactive unit selectors, and virtual tour platforms.',
+    features: [
+      'Interactive 3D unit selector & floorplan viewer',
+      'Integrated mortgage & EMI calculators',
+      'Direct WhatsApp & CRM lead capture hooks',
+      'Sub-second page load speeds for maximum ad conversions'
+    ],
+    yield: 'Result: 68% Higher Conversion Rate'
+  },
+  {
+    id: 'v-3',
+    title: 'Real Estate CRM & Automation',
+    tag: 'Sales Automation',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop',
+    desc: 'Instant lead distribution, automated WhatsApp sequences, and automated site visit scheduling.',
+    features: [
+      'Instant 60-second automated WhatsApp connect',
+      'Automated site-visit booking & calendar reminders',
+      'Lead qualification playbooks for sales reps',
+      'Zero-leakage multi-stage sales pipeline tracking'
+    ],
+    yield: 'Result: 3x Monthly Site Visits'
+  },
+  {
+    id: 'v-4',
+    title: 'Project Launch GTM Strategy',
+    tag: 'Launch Marketing',
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop',
+    desc: 'End-to-end launch campaigns, pre-booking buzz, 3D architectural visualization, and collateral.',
+    features: [
+      'Pre-launch teaser & digital hype funnels',
+      '3D architectural renders & virtual walkthroughs',
+      'High-converting project landing page ecosystems',
+      'Omnichannel buyer acquisition (Meta, Google, YouTube)'
+    ],
+    yield: 'Result: 70%+ Inventory Absorption'
+  },
+  {
+    id: 'v-5',
+    title: 'Channel Partner (CP) Scaling',
+    tag: 'Broker Network',
+    image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1000&auto=format&fit=crop',
+    desc: 'Dedicated broker portals, automated commission trackers, and CP incentive program management.',
+    features: [
+      'Custom Channel Partner login & asset portals',
+      'Real-time lead mapping & transparent attribution',
+      'Automated commission & slab milestone tracking',
+      'CP engagement & broker meet event campaigns'
+    ],
+    yield: 'Result: 500+ Active Brokers Onboarded'
+  },
+  {
+    id: 'v-6',
+    title: 'Local Domination SEO',
+    tag: 'Organic Traffic',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop',
+    desc: 'Rank #1 on Google for high-intent project keywords, micro-market searches, and builder reputation.',
+    features: [
+      'Rank #1 for high-intent property buyer searches',
+      'Google Business Profile & local map pack domination',
+      'Project review & comparison pillar content',
+      'Zero ongoing ad spend for organic buyer leads'
+    ],
+    yield: 'Result: Zero-CAC Organic Pipeline'
+  }
 ];
 
 export default function RealEstateVerticalsPage() {
@@ -82,25 +161,7 @@ export default function RealEstateVerticalsPage() {
         const json = await res.json();
         if (json.success && json.data) {
           setServiceId(json.data._id);
-          const loadedItems = json.data.realEstateData?.verticals?.items;
-          if (loadedItems && loadedItems.length > 0) {
-            setData(json.data);
-          } else {
-            // Merge defaults if items array in db is empty
-            setData({
-              ...json.data,
-              realEstateData: {
-                ...(json.data.realEstateData || {}),
-                verticals: {
-                  ...(json.data.realEstateData?.verticals || {}),
-                  label: json.data.realEstateData?.verticals?.label || 'GROWTH SERVICES',
-                  title: json.data.realEstateData?.verticals?.title || 'Tailored Solutions to Grow Your Real Estate Business',
-                  desc: json.data.realEstateData?.verticals?.desc || 'Whether you are a developer launching a ₹200Cr+ township, a real estate agency scaling broker closings, or expanding a channel partner network — we have the proven blueprint.',
-                  items: INITIAL_VERTICALS,
-                }
-              }
-            });
-          }
+          setData(mergeRealEstateData(json.data));
         }
       }
     } catch (err) {

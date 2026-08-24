@@ -31,12 +31,90 @@ export const DEFAULT_REAL_ESTATE_DATA = {
     title: "Tailored Solutions to Grow Your Real Estate Business",
     desc: "Whether you are a developer launching a ₹200Cr+ township, a real estate agency scaling broker closings, or expanding a channel partner network — we have the proven blueprint.",
     items: [
-      { id: "v-1", title: "High-Ticket Lead Generation", desc: "Precision-targeted Meta & Google ad campaigns generating verified luxury homebuyers and NRI investors.", tag: "Performance Ads" },
-      { id: "v-2", title: "Custom PropTech Web Portals", desc: "Lightning-fast project landing pages, 3D interactive unit selectors, and virtual tour platforms.", tag: "PropTech Development" },
-      { id: "v-3", title: "Real Estate CRM & Automation", desc: "Instant lead distribution, automated WhatsApp sequences, and automated site visit scheduling.", tag: "Sales Automation" },
-      { id: "v-4", title: "Project Launch GTM Strategy", desc: "End-to-end launch campaigns, pre-booking buzz, 3D architectural visualization, and collateral.", tag: "Launch Marketing" },
-      { id: "v-5", title: "Channel Partner (CP) Scaling", desc: "Dedicated broker portals, automated commission trackers, and CP incentive program management.", tag: "Broker Network" },
-      { id: "v-6", title: "Local Domination SEO", desc: "Rank #1 on Google for high-intent project keywords, micro-market searches, and builder reputation.", tag: "Organic Traffic" }
+      {
+        id: "v-1",
+        title: "High-Ticket Lead Generation",
+        tag: "Performance Ads",
+        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1000&auto=format&fit=crop",
+        desc: "Precision-targeted Meta & Google ad campaigns generating verified luxury homebuyers and NRI investors.",
+        features: [
+          "Hyper-targeted Meta & Google Search ad campaigns",
+          "High-intent NRI & luxury investor audience targeting",
+          "Automated OTP & multi-layer buyer lead qualification",
+          "Real-time CRM & instant 60-second WhatsApp lead routing"
+        ],
+        yield: "Result: 14.8x Average ROAS"
+      },
+      {
+        id: "v-2",
+        title: "Custom PropTech Web Portals",
+        tag: "PropTech Development",
+        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop",
+        desc: "Lightning-fast project landing pages, 3D interactive unit selectors, and virtual tour platforms.",
+        features: [
+          "Interactive 3D unit selector & floorplan viewer",
+          "Integrated mortgage & EMI calculators",
+          "Direct WhatsApp & CRM lead capture hooks",
+          "Sub-second page load speeds for maximum ad conversions"
+        ],
+        yield: "Result: 68% Higher Conversion Rate"
+      },
+      {
+        id: "v-3",
+        title: "Real Estate CRM & Automation",
+        tag: "Sales Automation",
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop",
+        desc: "Instant lead distribution, automated WhatsApp sequences, and automated site visit scheduling.",
+        features: [
+          "Instant 60-second automated WhatsApp connect",
+          "Automated site-visit booking & calendar reminders",
+          "Lead qualification playbooks for sales reps",
+          "Zero-leakage multi-stage sales pipeline tracking"
+        ],
+        yield: "Result: 3x Monthly Site Visits"
+      },
+      {
+        id: "v-4",
+        title: "Project Launch GTM Strategy",
+        tag: "Launch Marketing",
+        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop",
+        desc: "End-to-end launch campaigns, pre-booking buzz, 3D architectural visualization, and collateral.",
+        features: [
+          "Pre-launch teaser & digital hype funnels",
+          "3D architectural renders & virtual walkthroughs",
+          "High-converting project landing page ecosystems",
+          "Omnichannel buyer acquisition (Meta, Google, YouTube)"
+        ],
+        yield: "Result: 70%+ Inventory Absorption"
+      },
+      {
+        id: "v-5",
+        title: "Channel Partner (CP) Scaling",
+        tag: "Broker Network",
+        image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1000&auto=format&fit=crop",
+        desc: "Dedicated broker portals, automated commission trackers, and CP incentive program management.",
+        features: [
+          "Custom Channel Partner login & asset portals",
+          "Real-time lead mapping & transparent attribution",
+          "Automated commission & slab milestone tracking",
+          "CP engagement & broker meet event campaigns"
+        ],
+        yield: "Result: 500+ Active Brokers Onboarded"
+      },
+      {
+        id: "v-6",
+        title: "Local Domination SEO",
+        tag: "Organic Traffic",
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop",
+        desc: "Rank #1 on Google for high-intent project keywords, micro-market searches, and builder reputation.",
+        features: [
+          "Rank #1 for high-intent property buyer searches",
+          "Google Business Profile & local map pack domination",
+          "Project review & comparison pillar content",
+          "Zero ongoing ad spend for organic buyer leads"
+        ],
+        yield: "Result: Zero-CAC Organic Pipeline"
+      }
     ]
   },
   process: {
@@ -163,7 +241,16 @@ export function mergeRealEstateData(existingData = {}) {
         ...DEFAULT_REAL_ESTATE_DATA.verticals,
         ...(re.verticals || {}),
         items: (re.verticals?.items && re.verticals.items.length > 0) 
-          ? re.verticals.items 
+          ? re.verticals.items.map((item, idx) => {
+              const def = DEFAULT_REAL_ESTATE_DATA.verticals.items.find(d => d.id === item.id || d.title === item.title) || DEFAULT_REAL_ESTATE_DATA.verticals.items[idx] || {};
+              return {
+                ...def,
+                ...item,
+                features: (item.features && item.features.length > 0) ? item.features : (def.features || []),
+                yield: item.yield || def.yield || 'High ROI Blueprint',
+                image: item.image || def.image || '',
+              };
+            })
           : DEFAULT_REAL_ESTATE_DATA.verticals.items
       },
       process: {

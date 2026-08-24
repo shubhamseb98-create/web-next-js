@@ -265,9 +265,11 @@ export default function RealEstateAdvisoryPage({ service = {} }) {
   const verticalsLabel = rData.verticals?.label || 'GROWTH SERVICES';
   const verticalsTitle = rData.verticals?.title || 'Tailored Solutions to Grow Your Real Estate Business';
   const verticalsDesc = rData.verticals?.desc || 'Whether you are a developer launching a ₹200Cr+ township, a real estate agency scaling broker closings, or expanding a channel partner network — we have the proven blueprint.';
-  const verticalsList = rData.verticals?.items && rData.verticals.items.length > 0 
-    ? rData.verticals.items 
-    : (service.features && service.features.length > 0 ? service.features : defaultGrowthVerticals);
+  
+  const rawItems = rData.verticals?.items;
+  const verticalsList = (Array.isArray(rawItems) && rawItems.length > 0 && typeof rawItems[0] === 'object' && rawItems[0]?.title) 
+    ? rawItems 
+    : defaultGrowthVerticals;
 
   // 4. Stats & Simulator Dynamic Data
   const statsList = rData.stats && rData.stats.length > 0 ? rData.stats : [

@@ -3,12 +3,15 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { 
   FaBuilding, 
-  FaDesktop, 
-  FaCogs, 
   FaRocket, 
+  FaChartLine, 
+  FaWhatsapp, 
+  FaDesktop, 
+  FaHandshake, 
   FaArrowRight, 
-  FaChartLine,
-  FaHandshake
+  FaCheckCircle, 
+  FaShieldAlt,
+  FaCalculator
 } from 'react-icons/fa';
 import styles from '../../../../css/webtycoons/RealEstateHighlight.module.css';
 import { fadeUp, staggerContainer, viewportOptions } from '../animations/variants';
@@ -17,136 +20,152 @@ const growthPillars = [
   {
     icon: FaChartLine,
     title: 'High-Ticket Lead Generation',
-    desc: 'Precision-targeted Meta & Google ad campaigns generating verified luxury homebuyers, NRIs, and commercial investors.',
-    tag: 'Qualified Buyer Pipeline'
+    desc: 'Hyper-targeted Meta & Google ad funnels generating verified luxury homebuyers & NRI investors.'
   },
   {
     icon: FaDesktop,
     title: 'PropTech Portals & 3D Tech',
-    desc: 'Bespoke high-speed project discovery portals with 3D interactive unit selectors and immersive virtual walkthroughs.',
-    tag: '68% Higher Conversion'
+    desc: 'Interactive 3D unit selectors, virtual walkthroughs, and high-speed Next.js project landing pages.'
   },
   {
-    icon: FaCogs,
-    title: 'Automated WhatsApp & Sales CRM',
-    desc: 'Zero lead leakage with 60-second automated WhatsApp response bots, instant calling triggers, and calendar scheduling.',
-    tag: 'Zero Lead Leakage'
+    icon: FaWhatsapp,
+    title: '60-Sec Sales & WhatsApp CRM',
+    desc: 'Zero lead leakage with instant automated WhatsApp connect, call routing, and site-visit reminders.'
   },
   {
-    icon: FaRocket,
-    title: 'Project Launch GTM Strategy',
-    desc: 'End-to-end launch playbooks, pre-booking buzz, 3D architectural visualization, and channel partner meet campaigns.',
-    tag: 'Rapid Inventory Absorption'
+    icon: FaHandshake,
+    title: 'Channel Partner (CP) Scaling',
+    desc: 'Dedicated broker portals, transparent attribution, and automated commission milestone tracking.'
   }
 ];
 
-const stats = [
-  { value: '150+', label: 'Real Estate Firms Scaled', isAccent: true },
-  { value: '10x', label: 'Lead Volume Growth' },
-  { value: '₹2,500Cr+', label: 'Project Sales Marketed', isAccent: true },
-  { value: '45%', label: 'Lower Cost Per Acquisition' }
+const keyStats = [
+  { value: '₹4,200Cr+', label: 'Sales Influenced' },
+  { value: '14.8x', label: 'Average ROAS' },
+  { value: '185K+', label: 'Verified Inquiries' },
+  { value: '< 60s', label: 'Lead Response' }
 ];
 
 export default function RealEstateHighlight() {
   return (
     <section className={styles.section} id="real-estate-specialist">
-      <div className={styles.backgroundGlow} />
+      {/* Subtle Glows */}
+      <div className={styles.ambientGlow} />
 
       <div className="container-fluid-px">
-        <div className={styles.roundedWrapper}>
+        <div className={styles.showcaseBox}>
           
-          {/* Header */}
-          <motion.div 
-            className={styles.headerWrapper}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOptions}
-            variants={fadeUp}
-          >
-            <div className={styles.specialistBadge}>
-              <span className={styles.pulseDot} />
-              Real Estate Business Growth &amp; Scaling Advisory
-            </div>
+          <div className={styles.splitGrid}>
             
-            <h2 className={styles.mainHeading}>
-              Accelerate &amp; Scale Your <span className={styles.titleHighlight}>Real Estate Business</span>
-            </h2>
-            
-            <p className={styles.subHeading}>
-              We do <strong>NOT</strong> sell properties or act as brokers. We advise real estate builders, developers, agencies, and channel partners on how to generate 10x high-ticket buyer leads, automate sales funnels, and scale project revenues.
-            </p>
-          </motion.div>
-
-          {/* 4 Feature Cards */}
-          <motion.div 
-            className={styles.cardsGrid}
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOptions}
-          >
-            {growthPillars.map((pillar, idx) => {
-              const IconComp = pillar.icon;
-              return (
-                <motion.div key={idx} variants={fadeUp} className={styles.highlightCard}>
-                  <div>
-                    <div className={styles.cardIconWrap}>
-                      <IconComp />
-                    </div>
-                    <h3 className={styles.cardTitle}>{pillar.title}</h3>
-                    <p className={styles.cardDesc}>{pillar.desc}</p>
-                  </div>
-                  <div>
-                    <span className={styles.cardTag}>{pillar.tag}</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          {/* Stats Bar */}
-          <motion.div 
-            className={styles.statsRow}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOptions}
-            variants={fadeUp}
-          >
-            {stats.map((stat, idx) => (
-              <div key={idx} className={styles.statItem}>
-                <div className={`${styles.statNumber} ${stat.isAccent ? styles.statNumberAccent : ''}`}>
-                  {stat.value}
-                </div>
-                <div className={styles.statLabel}>{stat.label}</div>
+            {/* ── Left: Value Prop & Pillars ── */}
+            <motion.div 
+              className={styles.leftCol}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOptions}
+              variants={fadeUp}
+            >
+              {/* Badge */}
+              <div className={styles.badge}>
+                <span className={styles.pulseDot} />
+                <span>Specialized Advisory Vertical</span>
               </div>
-            ))}
-          </motion.div>
 
-          {/* CTA Bottom Bar */}
-          <motion.div 
-            className={styles.ctaBar}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewportOptions}
-            variants={fadeUp}
-          >
-            <div className={styles.ctaText}>
-              <h4>Ready to scale your real estate business and 10x sales velocity?</h4>
-              <p>Explore our dedicated growth advisory framework or claim a custom scaling blueprint for your firm.</p>
-            </div>
+              {/* Headline */}
+              <h2 className={styles.heading}>
+                We Help Real Estate Businesses <span className={styles.gradientText}>Scale &amp; Grow</span>
+              </h2>
 
-            <div className={styles.ctaButtonGroup}>
-              <Link href="/services/real-estate-advisory" className={styles.primaryCta}>
-                Explore Growth Advisory <FaArrowRight />
-              </Link>
-              <Link href="/services/real-estate-advisory#consultation" className={styles.secondaryCta}>
-                Request Growth Audit
-              </Link>
-            </div>
-          </motion.div>
+              {/* Subtitle */}
+              <p className={styles.subtext}>
+                We do <strong className={styles.strongText}>NOT</strong> sell properties. We are specialized PropTech &amp; growth strategists who advise builders, developers, and agencies on generating 10x high-ticket buyer leads, automating sales funnels, and accelerating sales velocity.
+              </p>
+
+              {/* 4 Compact Growth Pillars */}
+              <div className={styles.pillarsGrid}>
+                {growthPillars.map((pillar, idx) => {
+                  const Icon = pillar.icon;
+                  return (
+                    <div key={idx} className={styles.pillarItem}>
+                      <div className={styles.pillarIconBox}>
+                        <Icon />
+                      </div>
+                      <div className={styles.pillarText}>
+                        <h4 className={styles.pillarTitle}>{pillar.title}</h4>
+                        <p className={styles.pillarDesc}>{pillar.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Action Buttons */}
+              <div className={styles.actionRow}>
+                <Link href="/services/real-estate-advisory" className={styles.primaryBtn}>
+                  Explore Growth Advisory <FaArrowRight />
+                </Link>
+                <Link href="/services/real-estate-advisory#consultation" className={styles.secondaryBtn}>
+                  Book Growth Audit
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* ── Right: Executive Stats & Proof Card ── */}
+            <motion.div 
+              className={styles.rightCol}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOptions}
+              variants={fadeUp}
+            >
+              <div className={styles.proofCard}>
+                <div className={styles.cardHeader}>
+                  <div className={styles.cardBadge}>
+                    <FaShieldAlt /> Proven Advisory Track Record
+                  </div>
+                  <span className={styles.cardSub}>For Developers &amp; Agencies</span>
+                </div>
+
+                {/* 2x2 Stats Grid */}
+                <div className={styles.statsGrid}>
+                  {keyStats.map((st, i) => (
+                    <div key={i} className={styles.statBox}>
+                      <div className={styles.statNum}>{st.value}</div>
+                      <div className={styles.statLbl}>{st.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Growth Highlights */}
+                <div className={styles.bulletList}>
+                  <div className={styles.bulletItem}>
+                    <FaCheckCircle className={styles.checkIcon} />
+                    <span>Multi-layer OTP verified NRI &amp; HNI buyer funnels</span>
+                  </div>
+                  <div className={styles.bulletItem}>
+                    <FaCheckCircle className={styles.checkIcon} />
+                    <span>Interactive 3D unit selector &amp; virtual tour architecture</span>
+                  </div>
+                  <div className={styles.bulletItem}>
+                    <FaCheckCircle className={styles.checkIcon} />
+                    <span>Under-60-second automated WhatsApp &amp; CRM pipeline</span>
+                  </div>
+                </div>
+
+                {/* Bottom Calculator Link */}
+                <div className={styles.cardFooter}>
+                  <Link href="/services/real-estate-advisory#roi-calculator" className={styles.calcLink}>
+                    <FaCalculator /> Calculate Your Real Estate Growth ROI →
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+          </div>
 
         </div>
       </div>
     </section>
   );
 }
+

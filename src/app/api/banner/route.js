@@ -33,15 +33,20 @@ export async function POST(request) {
         const sort = Number(formData.get("sort"));
         const showCertifications = formData.get("showCertifications") === "true";
         const image = formData.get("image");
+        const imageText = formData.get("imageUrl") || formData.get("imageText");
 
-        if (!isUploadFile(image)) {
+        let imageUrl = imageText || "";
+
+        if (isUploadFile(image)) {
+            imageUrl = await uploadFile(image, "banner", "banner");
+        }
+
+        if (!imageUrl) {
             return Response.json(
-                { message: "Valid image is required" },
+                { message: "Valid image or media URL is required" },
                 { status: 400 }
             );
         }
-
-        const imageUrl = await uploadFile(image, "banner", "banner");
 
         // save to DB
         const banner = await Banner.create({

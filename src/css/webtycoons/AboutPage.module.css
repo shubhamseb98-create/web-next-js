@@ -255,114 +255,245 @@
   background: rgba(82,164,54,0.06);
 }
 
-/* ── Mission ── */
+/* ── Mission / Vision Bento Section ── */
 .missionSection { 
-  background: var(--clr-dark);
+  background: var(--clr-dark, #060906);
   position: relative;
   overflow: hidden;
-  padding: 8rem 0;
+  padding: 6.5rem 0;
+  border-top: 1px solid rgba(82, 164, 54, 0.1);
+  border-bottom: 1px solid rgba(82, 164, 54, 0.1);
 }
 
-.missionSection::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 20%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(82, 164, 54, 0.15) 0%, transparent 60%);
-  filter: blur(60px);
-  z-index: 0;
-  animation: floatOrb 10s ease-in-out infinite alternate;
+.missionHeaderWrapper {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 3.5rem auto;
+  position: relative;
+  z-index: 2;
 }
 
-@keyframes floatOrb {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(150px, 100px) scale(1.2); }
+.missionBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6bc24b;
+  background: rgba(82, 164, 54, 0.12);
+  border: 1px solid rgba(82, 164, 54, 0.3);
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  margin-bottom: 1.25rem;
+}
+
+.missionMainTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.missionSubtext {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.65;
+  margin: 0 auto;
 }
 
 .missionGrid {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
-  align-items: center;
+  gap: 2rem;
 }
-@media (min-width: 768px) {
+
+@media (min-width: 992px) {
   .missionGrid { 
     grid-template-columns: 1fr 1fr; 
-    gap: 4rem;
+    gap: 2.5rem;
   }
 }
 
+/* Base Bento Card */
 .missionCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(155deg, rgba(20, 28, 18, 0.75) 0%, rgba(10, 14, 9, 0.92) 100%);
+  border: 1px solid rgba(82, 164, 54, 0.25);
   backdrop-filter: blur(20px);
-  border-radius: 1.5rem;
-  padding: 4rem 3rem;
+  border-radius: 1.75rem;
+  padding: 3rem 2.5rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
 }
 
-.missionCard::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.5s;
-  pointer-events: none;
+.missionCardVision {
+  background: linear-gradient(155deg, rgba(16, 28, 30, 0.75) 0%, rgba(8, 14, 12, 0.92) 100%);
+  border-color: rgba(0, 229, 153, 0.25);
 }
 
 .missionCard:hover {
-  transform: translateY(-10px);
-  border-color: rgba(82, 164, 54, 0.4);
-  box-shadow: 0 20px 40px rgba(82, 164, 54, 0.15);
-  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(82, 164, 54, 0.2);
+  border-color: rgba(82, 164, 54, 0.5);
 }
 
-.missionCard:hover::before {
-  opacity: 1;
+.missionCardVision:hover {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 229, 153, 0.2);
+  border-color: rgba(0, 229, 153, 0.5);
+}
+
+.cardGlowEffect {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.25) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.cardGlowEffectVision {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(0, 229, 153, 0.25) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* Card Header Row */
+.cardTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
 }
 
 .missionIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
-  background: rgba(82, 164, 54, 0.1);
-  color: var(--clr-primary);
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(82, 164, 54, 0.2);
-  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: rgba(82, 164, 54, 0.15);
+  color: #6bc24b;
+  font-size: 1.6rem;
+  border: 1px solid rgba(82, 164, 54, 0.35);
+  box-shadow: 0 0 15px rgba(82, 164, 54, 0.2);
+  transition: all 0.3s ease;
+}
+
+.missionIconVision {
+  background: rgba(0, 229, 153, 0.15);
+  color: #00e599;
+  border-color: rgba(0, 229, 153, 0.35);
+  box-shadow: 0 0 15px rgba(0, 229, 153, 0.2);
 }
 
 .missionCard:hover .missionIcon {
-  background: var(--clr-primary);
-  color: #fff;
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 10px 20px rgba(82, 164, 54, 0.4);
+  transform: scale(1.08) rotate(4deg);
+  background: var(--clr-primary, #52a436);
+  color: #ffffff;
 }
 
-.missionCard h2 {
-  font-family: var(--font-heading);
-  font-size: 2.2rem;
-  color: var(--clr-white);
-  margin-bottom: 1.5rem;
+.missionCardVision:hover .missionIconVision {
+  transform: scale(1.08) rotate(-4deg);
+  background: #00e599;
+  color: #060906;
+}
+
+.cardStepBadge {
+  font-size: 0.72rem;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6bc24b;
+  background: rgba(82, 164, 54, 0.1);
+  border: 1px solid rgba(82, 164, 54, 0.25);
+  padding: 0.3rem 0.85rem;
+  border-radius: 999px;
 }
 
-.missionCard p {
-  color: var(--clr-text-light);
-  font-size: 1.1rem;
-  line-height: 1.8;
+.cardStepBadgeVision {
+  color: #00e599;
+  background: rgba(0, 229, 153, 0.1);
+  border-color: rgba(0, 229, 153, 0.25);
+}
+
+.cardTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.cardStatement {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+/* 3 Pillars List */
+.cardPillars {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.75rem;
+  margin-top: auto;
+}
+
+.pillarItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.pillarIconWrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(82, 164, 54, 0.12);
+  color: #6bc24b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border: 1px solid rgba(82, 164, 54, 0.25);
+}
+
+.pillarIconWrapVision {
+  background: rgba(0, 229, 153, 0.12);
+  color: #00e599;
+  border-color: rgba(0, 229, 153, 0.25);
+}
+
+.pillarItem h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.2rem 0;
+}
+
+.pillarItem p {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
   margin: 0;
 }
 

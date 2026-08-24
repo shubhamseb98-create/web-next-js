@@ -9,7 +9,8 @@ import Image from 'next/image'
 import {
   FaUsers, FaRocket, FaAward, FaHandshake,
   FaBullseye, FaLightbulb, FaShieldAlt, FaHeart,
-  FaLinkedinIn, FaTwitter, FaInstagram
+  FaLinkedinIn, FaTwitter, FaInstagram,
+  FaCheckCircle, FaBolt, FaGlobe, FaGem, FaChartLine
 } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/AboutPage.module.css'
 import TeamSection from '../sections/TeamSection'
@@ -166,6 +167,16 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
       {/* ── Mission / Vision ── */}
       <section className={`py-100 ${styles.missionSection}`}>
         <div className="container-fluid-px">
+          <div className={styles.missionHeaderWrapper}>
+            <span className={styles.missionBadge}>OUR PURPOSE & DIRECTION</span>
+            <h2 className={styles.missionMainTitle}>
+              Engineered for Impact, <span className={styles.accent}>Driven by Vision</span>
+            </h2>
+            <p className={styles.missionSubtext}>
+              Transforming ambitious brands into digital industry leaders with precision, creativity, and cutting-edge engineering.
+            </p>
+          </div>
+
           <motion.div
             className={styles.missionGrid}
             variants={staggerContainer}
@@ -173,15 +184,92 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <motion.div variants={fadeUp} className={styles.missionCard}>
-              <div className={styles.missionIcon}><FaBullseye /></div>
-              <h2>Our Mission</h2>
-              <p>{data.missionText}</p>
+            {/* Card 1: Our Mission */}
+            <motion.div variants={fadeUp} className={`${styles.missionCard} ${styles.missionCardMission}`}>
+              <div className={styles.cardGlowEffect} />
+              
+              <div className={styles.cardTopRow}>
+                <div className={styles.missionIcon}>
+                  <FaBullseye />
+                </div>
+                <span className={styles.cardStepBadge}>01 / MISSION</span>
+              </div>
+
+              <h3 className={styles.cardTitle}>Our Mission</h3>
+              
+              <p className={styles.cardStatement}>
+                {data.missionText || 'To empower businesses of all sizes with cutting-edge, high-performance digital products — delivered with transparency, passion, and precision.'}
+              </p>
+
+              <div className={styles.cardPillars}>
+                <div className={styles.pillarItem}>
+                  <div className={styles.pillarIconWrap}><FaBolt /></div>
+                  <div>
+                    <h5>High-Performance Engineering</h5>
+                    <p>Ultra-fast, secure, and modern web architectures built to scale effortlessly.</p>
+                  </div>
+                </div>
+
+                <div className={styles.pillarItem}>
+                  <div className={styles.pillarIconWrap}><FaChartLine /></div>
+                  <div>
+                    <h5>Measurable Business ROI</h5>
+                    <p>Every pixel and line of code is structured to maximize conversion and revenue.</p>
+                  </div>
+                </div>
+
+                <div className={styles.pillarItem}>
+                  <div className={styles.pillarIconWrap}><FaHandshake /></div>
+                  <div>
+                    <h5>Transparent Partnership</h5>
+                    <p>Agile sprints, transparent communication, and complete client alignment.</p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
-            <motion.div variants={fadeUp} className={styles.missionCard}>
-              <div className={styles.missionIcon}><FaRocket /></div>
-              <h2>Our Vision</h2>
-              <p>{data.visionText}</p>
+
+            {/* Card 2: Our Vision */}
+            <motion.div variants={fadeUp} className={`${styles.missionCard} ${styles.missionCardVision}`}>
+              <div className={styles.cardGlowEffectVision} />
+              
+              <div className={styles.cardTopRow}>
+                <div className={`${styles.missionIcon} ${styles.missionIconVision}`}>
+                  <FaRocket />
+                </div>
+                <span className={`${styles.cardStepBadge} ${styles.cardStepBadgeVision}`}>02 / VISION</span>
+              </div>
+
+              <h3 className={styles.cardTitle}>Our Vision</h3>
+              
+              <p className={styles.cardStatement}>
+                {data.visionText || 'To be the most trusted web development partner for growth-focused businesses globally, recognized for excellence in craft and client success.'}
+              </p>
+
+              <div className={styles.cardPillars}>
+                <div className={styles.pillarItem}>
+                  <div className={`${styles.pillarIconWrap} ${styles.pillarIconWrapVision}`}><FaGlobe /></div>
+                  <div>
+                    <h5>Global Industry Benchmark</h5>
+                    <p>Recognized worldwide as a gold standard in digital product engineering.</p>
+                  </div>
+                </div>
+
+                <div className={styles.pillarItem}>
+                  <div className={`${styles.pillarIconWrap} ${styles.pillarIconWrapVision}`}><FaGem /></div>
+                  <div>
+                    <h5>Next-Gen Digital Innovation</h5>
+                    <p>Leading the frontier of AI integration, cloud solutions, and luxury design.</p>
+                  </div>
+                </div>
+
+                <div className={styles.pillarItem}>
+                  <div className={`${styles.pillarIconWrap} ${styles.pillarIconWrapVision}`}><FaAward /></div>
+                  <div>
+                    <h5>Uncompromising Craftsmanship</h5>
+                    <p>Elevating brands through bespoke UI/UX and uncompromising code quality.</p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         </div>

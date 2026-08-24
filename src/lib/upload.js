@@ -46,8 +46,12 @@ export async function uploadFile(file, folder = 'uploads', prefix = '') {
   const sanitizedName = sanitizeFileName(originalName);
   const finalFileName = `${timestamp}-${prefixStr}${sanitizedName}`;
 
-  // Use Cloud Storage if enabled and configured
-  if (process.env.USE_CLOUD_STORAGE === 'true' && process.env.CLOUDINARY_CLOUD_NAME) {
+  // Use Cloud Storage if configured or running on serverless Vercel
+  const isCloudinaryConfigured = Boolean(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
+  const isVercel = Boolean(process.env.VERCEL || process.env.VERCEL_ENV);
+  const useCloud = process.env.USE_CLOUD_STORAGE === 'true' || isCloudinaryConfigured || isVercel;
+
+  if (useCloud && isCloudinaryConfigured) {
     return new Promise((resolve, reject) => {
       // Determine if the file is media (image/video) vs raw document
       const isMedia = originalName.toLowerCase().match(/\.(jpe?g|png|gif|webp|svg|bmp|mp4|mov|avi|wmv|webm)$/);
@@ -67,7 +71,7 @@ export async function uploadFile(file, folder = 'uploads', prefix = '') {
           if (error) {
             console.error("Cloudinary Upload Error:", error);
             if (error.http_code === 403) {
-              reject(new Error("Cloudinary Authentication Failed (403): Please check your CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your .env file. Also ensure your email is verified on Cloudinary."));
+              reject(new Error("Cloudinary Authentication Failed (403): Please check your CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Environment Variables."));
             } else {
               reject(error);
             }
@@ -80,6 +84,10 @@ export async function uploadFile(file, folder = 'uploads', prefix = '') {
       uploadStream.end(buffer);
     });
   } 
+  
+  if (isVercel && !isCloudinaryConfigured) {
+    throw new Error("Cannot upload files on Vercel without Cloudinary. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Project Settings > Environment Variables.");
+  }
   
   // Use Local Filesystem fallback
   else {

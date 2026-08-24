@@ -102,6 +102,7 @@ export default function BannerPage() {
       fd.append('status', form.status || 'active')
       fd.append('sort', form.sort || 0)
       fd.append('showCertifications', form.showCertifications || false)
+      fd.append('imageUrl', form.image || '')
       if (imageFile) fd.append('image', imageFile)
 
       const isEdit = Boolean(form._id)
@@ -377,12 +378,39 @@ export default function BannerPage() {
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
                   onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
                 />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>Or enter direct Image / Video URL (e.g. /assets/img/v1.mp4 or Cloudinary URL):</span>
+                  <input
+                    type="text"
+                    placeholder="e.g. /assets/img/v1.mp4 or https://..."
+                    value={form.image || ''}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setForm(p => ({ ...p, image: val }));
+                      setPreview(val);
+                      setImageFile(null);
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '42px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      padding: '0 14px',
+                      color: 'white',
+                      fontSize: '13px',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
                 {preview && (
-                  <div style={{ width: '100%', height: '128px', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '8px' }}>
+                  <div style={{ width: '100%', height: '140px', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)', backgroundColor: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '8px' }}>
                     {(preview.endsWith('.mp4') || preview.endsWith('.webm') || preview.startsWith('blob:') && imageFile?.type?.includes('video')) ? (
-                      <video src={preview} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' }} autoPlay muted loop />
+                      <video src={preview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} autoPlay muted loop playsInline controls />
                     ) : (
-                      <img src={preview} alt="preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' }} />
+                      <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     )}
                   </div>
                 )}

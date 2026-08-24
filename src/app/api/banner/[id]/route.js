@@ -25,8 +25,9 @@ export async function PUT(request, context) {
         }
 
         const image = formData.get("image");
+        const imageText = formData.get("imageUrl") || formData.get("imageText");
 
-        let imageUrl = existingBanner.image;
+        let imageUrl = imageText || existingBanner.image;
 
         if (isUploadFile(image)) {
             imageUrl = await uploadFile(image, "banner", "banner");

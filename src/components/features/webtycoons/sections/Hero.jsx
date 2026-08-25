@@ -131,6 +131,7 @@ const Hero = ({ bannerData }) => {
     const slide = slides[idx]
     const slideEl = document.getElementById(`hs-${idx}`)
     const videoEl = slideEl?.querySelector('video')
+    const allVideos = document.querySelectorAll(`.${styles.hero} video`)
 
     if (unmuted) {
       if (slide?.audio) {
@@ -139,25 +140,45 @@ const Hero = ({ bannerData }) => {
             audioRef.current.src = slide.audio
           }
           audioRef.current.muted = false
+          audioRef.current.volume = 1
           audioRef.current.play().catch(() => {})
         }
-        if (videoEl) videoEl.muted = true
+        allVideos.forEach(v => {
+          v.muted = true
+          v.volume = 0
+        })
       } else {
-        if (audioRef.current) audioRef.current.pause()
-        if (videoEl) {
-          videoEl.muted = false
-          videoEl.volume = 1
+        if (audioRef.current) {
+          audioRef.current.pause()
+          audioRef.current.muted = true
+          audioRef.current.volume = 0
         }
+        allVideos.forEach(v => {
+          if (v === videoEl) {
+            v.muted = false
+            v.volume = 1
+          } else {
+            v.muted = true
+            v.volume = 0
+          }
+        })
       }
     } else {
-      if (audioRef.current) audioRef.current.pause()
-      if (videoEl) videoEl.muted = true
+      // 100% HARD MUTE ALL AUDIO SOURCES
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.muted = true
+        audioRef.current.volume = 0
+      }
+      allVideos.forEach(v => {
+        v.muted = true
+        v.volume = 0
+      })
     }
 
-    // Always ensure video is playing in loop
-    if (videoEl) {
+    // Always ensure active video keeps playing in loop
+    if (videoEl && videoEl.paused) {
       videoEl.play().catch(() => {
-        // Fallback: if browser pauses unmuted autoplay, keep video playing muted
         videoEl.muted = true
         videoEl.play().catch(() => {})
       })
@@ -170,6 +191,12 @@ const Hero = ({ bannerData }) => {
     syncAudioForSlide(0, true)
 
     const unlockSound = () => {
+      // Clean up all unlock listeners immediately upon first user event
+      window.removeEventListener('pointerdown', unlockSound)
+      window.removeEventListener('keydown', unlockSound)
+      window.removeEventListener('scroll', unlockSound)
+      window.removeEventListener('touchstart', unlockSound)
+
       if (!isMutedRef.current) {
         syncAudioForSlide(activeRef.current, true)
       }
@@ -188,12 +215,18 @@ const Hero = ({ bannerData }) => {
     }
   }, [syncAudioForSlide])
 
-  const toggleSound = useCallback(() => {
-    const nextMuted = !isMuted
-    setIsMuted(nextMuted)
-    isMutedRef.current = nextMuted
-    syncAudioForSlide(activeRef.current, !nextMuted)
-  }, [isMuted, syncAudioForSlide])
+  const toggleSound = useCallback((e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    setIsMuted(prev => {
+      const nextMuted = !prev
+      isMutedRef.current = nextMuted
+      syncAudioForSlide(activeRef.current, !nextMuted)
+      return nextMuted
+    })
+  }, [syncAudioForSlide])
 
   // ── Pickers ──
   const pickShape = () => {
@@ -293,6 +326,7 @@ const Hero = ({ bannerData }) => {
         inVideo.src = inVideo.dataset.src;
       }
       inVideo.muted = isMutedRef.current || Boolean(slides[nextIdx]?.audio);
+      inVideo.volume = isMutedRef.current ? 0 : 1;
       inVideo.play().catch(() => {});
     }
 
@@ -300,12 +334,25 @@ const Hero = ({ bannerData }) => {
     if (!isMutedRef.current) {
       if (slides[nextIdx]?.audio) {
         if (audioRef.current) {
-          audioRef.current.src = slides[nextIdx].audio
+          if (audioRef.current.src !== slides[nextIdx].audio) {
+            audioRef.current.src = slides[nextIdx].audio
+          }
           audioRef.current.muted = false
+          audioRef.current.volume = 1
           audioRef.current.play().catch(() => {})
         }
       } else {
-        if (audioRef.current) audioRef.current.pause()
+        if (audioRef.current) {
+          audioRef.current.pause()
+          audioRef.current.muted = true
+          audioRef.current.volume = 0
+        }
+      }
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.muted = true
+        audioRef.current.volume = 0
       }
     }
 

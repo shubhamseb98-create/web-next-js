@@ -31,6 +31,10 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const item = await Testimonial.findByIdAndUpdate(id, body, { new: true }).lean();
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
+
+    const { revalidatePath } = require("next/cache");
+    revalidatePath('/', 'layout');
+
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });
@@ -45,6 +49,10 @@ export async function DELETE(request, { params }) {
     const { id } = await params;
     const item = await Testimonial.findByIdAndDelete(id);
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
+
+    const { revalidatePath } = require("next/cache");
+    revalidatePath('/', 'layout');
+
     return Response.json({ success: true, message: 'Deleted' });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });

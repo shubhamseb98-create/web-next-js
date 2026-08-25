@@ -483,13 +483,22 @@
 
 @media (max-width: 768px) {
   .soundWidget {
-    bottom: 0.4rem;
-    right: 0.4rem;
-    padding: 5px 10px 5px 5px;
-    gap: 8px;
+    top: 5.5rem;
+    bottom: auto;
+    right: 1.2rem;
+    padding: 5px 10px 5px 6px;
+    gap: 6px;
   }
 
   .soundTitle {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .soundWidget {
+    top: 5rem;
+    right: 1rem;
+    padding: 4px 9px 4px 5px;
   }
 }

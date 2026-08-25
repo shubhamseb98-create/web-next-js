@@ -32,6 +32,7 @@ export async function POST(request) {
         const status = formData.get("status");
         const sort = Number(formData.get("sort"));
         const showCertifications = formData.get("showCertifications") === "true";
+        const enableSound = formData.get("enableSound") === "true";
         const image = formData.get("image");
         const imageText = formData.get("imageUrl") || formData.get("imageText");
         const audio = formData.get("audio");
@@ -65,6 +66,7 @@ export async function POST(request) {
             status,
             sort,
             showCertifications,
+            enableSound,
             image: imageUrl,
             audio: audioUrl,
         });

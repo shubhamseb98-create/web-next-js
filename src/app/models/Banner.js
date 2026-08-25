@@ -42,6 +42,10 @@ const bannerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  enableSound: {
+    type: Boolean,
+    default: false,
+  },
 }, {
   timestamps: true,
 });

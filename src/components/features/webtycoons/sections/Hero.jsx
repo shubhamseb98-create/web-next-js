@@ -97,6 +97,7 @@ const Hero = ({ bannerData }) => {
     ? bannerData.map(b => ({
         image: b.image,
         video: b.video || (isVideo(b.image) ? b.image : null),
+        audio: b.audio || null,
         heading: b.title,
         cta: b.buttonText || 'Learn More',
         ctaHref: b.url || '#'
@@ -116,6 +117,50 @@ const Hero = ({ bannerData }) => {
   const tlRef           = useRef(null)   // current GSAP timeline
   const progressTweenRef= useRef(null)
   const navigateRef     = useRef(null)   // latest navigate fn (for progress onComplete)
+  const audioRef        = useRef(null)   // audio element for custom audio tracks
+  const isMutedRef      = useRef(true)   // track mute state in refs for callbacks
+
+  const [isMuted, setIsMuted] = useState(true)
+
+  useEffect(() => {
+    isMutedRef.current = isMuted
+  }, [isMuted])
+
+  // ── Sync audio & video volume based on slide and mute state ──
+  const syncAudioForSlide = useCallback((idx, unmuted) => {
+    const slide = slides[idx]
+    const slideEl = document.getElementById(`hs-${idx}`)
+    const videoEl = slideEl?.querySelector('video')
+
+    if (unmuted) {
+      if (slide?.audio) {
+        if (audioRef.current) {
+          if (audioRef.current.src !== slide.audio) {
+            audioRef.current.src = slide.audio
+          }
+          audioRef.current.muted = false
+          audioRef.current.play().catch(() => {})
+        }
+        if (videoEl) videoEl.muted = true
+      } else {
+        if (audioRef.current) audioRef.current.pause()
+        if (videoEl) {
+          videoEl.muted = false
+          videoEl.volume = 1
+        }
+      }
+    } else {
+      if (audioRef.current) audioRef.current.pause()
+      if (videoEl) videoEl.muted = true
+    }
+  }, [slides])
+
+  const toggleSound = useCallback(() => {
+    const nextMuted = !isMuted
+    setIsMuted(nextMuted)
+    isMutedRef.current = nextMuted
+    syncAudioForSlide(activeRef.current, !nextMuted)
+  }, [isMuted, syncAudioForSlide])
 
   // ── Pickers ──
   const pickShape = () => {
@@ -164,7 +209,11 @@ const Hero = ({ bannerData }) => {
     activeRef.current   = prevIn
     incomingRef.current = null
     setActive(prevIn)
-  }, [])
+
+    if (!isMutedRef.current) {
+      syncAudioForSlide(prevIn, true)
+    }
+  }, [syncAudioForSlide])
 
   /* ── goTo ────────────────────────────────────────────────
    * Core transition using mask-image + mask-size + counter-rotation
@@ -210,7 +259,21 @@ const Hero = ({ bannerData }) => {
       if (!inVideo.src && inVideo.dataset.src) {
         inVideo.src = inVideo.dataset.src;
       }
+      inVideo.muted = isMutedRef.current || Boolean(slides[nextIdx]?.audio);
       inVideo.play().catch(() => {});
+    }
+
+    // ── Sync custom audio if unmuted ──
+    if (!isMutedRef.current) {
+      if (slides[nextIdx]?.audio) {
+        if (audioRef.current) {
+          audioRef.current.src = slides[nextIdx].audio
+          audioRef.current.muted = false
+          audioRef.current.play().catch(() => {})
+        }
+      } else {
+        if (audioRef.current) audioRef.current.pause()
+      }
     }
 
     // ── GSAP Timeline ──
@@ -393,6 +456,52 @@ const Hero = ({ bannerData }) => {
           </svg>
         </button>
       </div>
+
+      {/* ── Audio element for custom slide sound / music ── */}
+      <audio ref={audioRef} playsInline loop preload="none" />
+
+      {/* ── Luxury Floating Audio Widget (Mute / Unmute) ── */}
+      <button
+        type="button"
+        className={`${styles.soundWidget} ${!isMuted ? styles.soundWidgetActive : ''}`}
+        onClick={toggleSound}
+        aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+        title={isMuted ? "Click to play sound" : "Click to mute"}
+      >
+        {/* Left Glowing Icon Orb */}
+        <div className={styles.soundOrb}>
+          {isMuted ? (
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <line x1="23" y1="9" x2="17" y2="15" />
+              <line x1="17" y1="9" x2="23" y2="15" />
+            </svg>
+          ) : (
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+            </svg>
+          )}
+        </div>
+
+        {/* Middle Text & Live Status Indicator */}
+        <div className={styles.soundInfo}>
+          <span className={styles.soundTitle}>Sound</span>
+          <span className={isMuted ? styles.soundBadgeMuted : styles.soundBadgeActive}>
+            <span className={styles.statusDot} />
+            {isMuted ? "Off" : "Live"}
+          </span>
+        </div>
+
+        {/* Dynamic Equalizer Visualizer */}
+        <div className={`${styles.equalizer} ${!isMuted ? styles.equalizerPlaying : ''}`} aria-hidden="true">
+          <span className={`${styles.eqBar} ${styles.eq1}`} />
+          <span className={`${styles.eqBar} ${styles.eq2}`} />
+          <span className={`${styles.eqBar} ${styles.eq3}`} />
+          <span className={`${styles.eqBar} ${styles.eq4}`} />
+        </div>
+      </button>
     </section>
   )
 }

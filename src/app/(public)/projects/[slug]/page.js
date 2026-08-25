@@ -301,18 +301,48 @@ export default async function ProjectDetailPage({ params }) {
                       <span className="dot dot-green"></span>
                     </div>
 
-                    <div className="browser-url-bar">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                      </svg>
-                      <span className="url-text">
-                        {project.projectUrl ? project.projectUrl.replace(/^https?:\/\//, '') : `thewebtycoons.com/projects/${project.slug}`}
-                      </span>
-                    </div>
+                    {project.projectUrl ? (
+                      <a 
+                        href={project.projectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="browser-url-bar"
+                        title={`Open ${project.projectUrl}`}
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span className="url-text">
+                          {project.projectUrl.replace(/^https?:\/\//, '')}
+                        </span>
+                      </a>
+                    ) : (
+                      <div className="browser-url-bar">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span className="url-text">
+                          {`thewebtycoons.com/projects/${project.slug}`}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="browser-actions">
-                      <span className="action-pill">Live Preview</span>
+                      {project.projectUrl ? (
+                        <a 
+                          href={project.projectUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="action-pill"
+                          style={{ textDecoration: 'none' }}
+                        >
+                          Live Preview
+                        </a>
+                      ) : (
+                        <span className="action-pill">Live Preview</span>
+                      )}
                     </div>
                   </div>
 
@@ -833,26 +863,29 @@ export default async function ProjectDetailPage({ params }) {
           align-items: center;
           justify-content: space-between;
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-          gap: 10px;
+          gap: 12px;
         }
         .browser-dots {
           display: flex;
           align-items: center;
           gap: 7px;
           width: 70px;
+          flex-shrink: 0;
         }
         .dot {
           width: 10px;
           height: 10px;
           border-radius: 50%;
+          flex-shrink: 0;
         }
         .dot-red { background: #ff5f56; }
         .dot-yellow { background: #ffbd2e; }
         .dot-green { background: #27c93f; }
         .browser-url-bar {
           flex: 1;
-          max-width: 420px;
-          background: rgba(0, 0, 0, 0.4);
+          min-width: 0;
+          max-width: 440px;
+          background: rgba(0, 0, 0, 0.45);
           border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 6px;
           padding: 5px 12px;
@@ -862,20 +895,31 @@ export default async function ProjectDetailPage({ params }) {
           gap: 6px;
           font-size: 11px;
           font-family: monospace;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.65);
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+        a.browser-url-bar:hover {
+          background: rgba(0, 0, 0, 0.6);
+          border-color: rgba(82, 164, 54, 0.4);
+          color: rgba(255, 255, 255, 0.9);
         }
         .lock-icon {
           color: var(--clr-primary);
+          flex-shrink: 0;
         }
         .url-text {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          min-width: 0;
+          display: inline-block;
         }
         .browser-actions {
           width: 70px;
           display: flex;
           justify-content: flex-end;
+          flex-shrink: 0;
         }
         .action-pill {
           font-size: 10px;
@@ -884,8 +928,94 @@ export default async function ProjectDetailPage({ params }) {
           letter-spacing: 0.5px;
           color: var(--clr-primary);
           background: rgba(82, 164, 54, 0.1);
-          padding: 2px 7px;
+          border: 1px solid rgba(82, 164, 54, 0.2);
+          padding: 2px 8px;
           border-radius: 4px;
+          white-space: nowrap;
+          transition: all 0.2s ease;
+          display: inline-block;
+        }
+        a.action-pill:hover {
+          background: rgba(82, 164, 54, 0.2);
+          border-color: var(--clr-primary);
+          color: #ffffff;
+        }
+
+        /* Responsive Mobile Styles for Showcase Stage & Browser Bar */
+        @media (max-width: 768px) {
+          .showcase-stage-section {
+            padding-bottom: 45px;
+          }
+          .showcase-stage-outer {
+            padding: 10px;
+            border-radius: 18px;
+          }
+          .browser-mockup-frame {
+            border-radius: 12px;
+          }
+          .browser-header-bar {
+            padding: 8px 12px;
+            gap: 8px;
+          }
+          .browser-dots {
+            width: auto;
+            gap: 5px;
+          }
+          .dot {
+            width: 8px;
+            height: 8px;
+          }
+          .browser-actions {
+            width: auto;
+          }
+          .action-pill {
+            font-size: 9px;
+            padding: 2px 6px;
+          }
+          .browser-url-bar {
+            padding: 4px 8px;
+            font-size: 10.5px;
+            gap: 5px;
+            border-radius: 5px;
+          }
+        }
+
+        @media (max-width: 540px) {
+          .showcase-stage-section {
+            padding-bottom: 35px;
+          }
+          .showcase-stage-outer {
+            padding: 7px;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+          }
+          .browser-mockup-frame {
+            border-radius: 10px;
+          }
+          .browser-header-bar {
+            padding: 6px 8px;
+            gap: 6px;
+          }
+          .browser-dots {
+            gap: 4px;
+          }
+          .dot {
+            width: 7px;
+            height: 7px;
+          }
+          .browser-actions {
+            display: none;
+          }
+          .browser-url-bar {
+            padding: 3.5px 6px;
+            font-size: 9.5px;
+            gap: 4px;
+            max-width: 100%;
+          }
+          .lock-icon {
+            width: 9px;
+            height: 9px;
+          }
         }
         .browser-screen {
           width: 100%;

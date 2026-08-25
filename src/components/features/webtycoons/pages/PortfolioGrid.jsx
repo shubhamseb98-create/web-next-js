@@ -147,9 +147,28 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
                       </div>
                       <div className={styles.projectImageWrapper}>
                         <div className={styles.projectImageInner}>
-                          <img src={project.image || '/assets/img/service/featured-projects.png'} alt={project.title} className={styles.projectImage} loading="lazy" />
-                          <div className={styles.projectOverlay}>
-                            <Link href={project.slug && project.slug !== '#' ? `/projects/${project.slug}` : '#'} className={styles.viewBtn}>View</Link>
+                          {/* Browser Mockup Header Bar */}
+                          <div className={styles.browserHeaderBar}>
+                            <div className={styles.browserDots}>
+                              <span className={`${styles.dot} ${styles.dotRed}`} />
+                              <span className={`${styles.dot} ${styles.dotYellow}`} />
+                              <span className={`${styles.dot} ${styles.dotGreen}`} />
+                            </div>
+                            <div className={styles.browserUrlBar}>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.lockIcon}>
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                              </svg>
+                              <span className={styles.urlText}>
+                                {project.projectUrl ? project.projectUrl.replace(/^https?:\/\//, '') : `thewebtycoons.com/projects/${project.slug && project.slug !== '#' ? project.slug : ''}`}
+                              </span>
+                            </div>
+                          </div>
+                          <div className={styles.imageBox}>
+                            <img src={project.image || '/assets/img/service/featured-projects.png'} alt={project.title} className={styles.projectImage} loading="lazy" />
+                            <div className={styles.projectOverlay}>
+                              <Link href={project.slug && project.slug !== '#' ? `/projects/${project.slug}` : '#'} className={styles.viewBtn}>View</Link>
+                            </div>
                           </div>
                         </div>
                       </div>

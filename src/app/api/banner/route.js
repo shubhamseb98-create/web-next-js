@@ -34,11 +34,18 @@ export async function POST(request) {
         const showCertifications = formData.get("showCertifications") === "true";
         const image = formData.get("image");
         const imageText = formData.get("imageUrl") || formData.get("imageText");
+        const audio = formData.get("audio");
+        const audioText = formData.get("audioUrl") || formData.get("audioText");
 
         let imageUrl = imageText || "";
+        let audioUrl = audioText || "";
 
         if (isUploadFile(image)) {
             imageUrl = await uploadFile(image, "banner", "banner");
+        }
+
+        if (isUploadFile(audio)) {
+            audioUrl = await uploadFile(audio, "banner-audio", "audio");
         }
 
         if (!imageUrl) {
@@ -59,6 +66,7 @@ export async function POST(request) {
             sort,
             showCertifications,
             image: imageUrl,
+            audio: audioUrl,
         });
 
         // Trigger on-demand ISR revalidation so Vercel updates the frontend instantly

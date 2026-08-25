@@ -7,7 +7,7 @@ import TableToolbar from '../../../../components/dashboard/TableToolbar'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../../components/ui/dialog'
 import { Button } from '../../../../components/ui/button'
 import { FloatingInput, FloatingSelect } from '../../../../components/ui/floating-input'
-import { Plus, Image as ImageIcon, Link as LinkIcon, ChevronRight, Check } from 'lucide-react'
+import { Plus, Image as ImageIcon, Link as LinkIcon, ChevronRight, Check, Volume2, Music } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '../../../../lib/utils'
 import { Switch } from '../../../../components/ui/switch'
@@ -17,7 +17,7 @@ import { SortInput } from '../../../../components/dashboard/SortInput'
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal'
 
 const BASE_URL = ''
-const EMPTY = { title: '', subtitle: '', url: '', buttonText: '', bnr_image: '', alt: '', status: 'active', sort: '', showCertifications: false }
+const EMPTY = { title: '', subtitle: '', url: '', buttonText: '', image: '', audio: '', alt: '', status: 'active', sort: '', showCertifications: false }
 
 export default function BannerPage() {
   const [rows, setRows] = useState([])
@@ -27,6 +27,8 @@ export default function BannerPage() {
   const [form, setForm] = useState({ ...EMPTY })
   const [imageFile, setImageFile] = useState(null)
   const [preview, setPreview] = useState('')
+  const [audioFile, setAudioFile] = useState(null)
+  const [audioPreview, setAudioPreview] = useState('')
   const [toasts, setToasts] = useState([])
   const [deletingId, setDeletingId] = useState(null)
   const [statusTogglingId, setStatusTogglingId] = useState(null)
@@ -69,6 +71,8 @@ export default function BannerPage() {
     setForm({ ...EMPTY, sort: maxSort + 1 })
     setImageFile(null)
     setPreview('')
+    setAudioFile(null)
+    setAudioPreview('')
     setSortIsAuto(true)
     setModal('new')
   }
@@ -77,6 +81,8 @@ export default function BannerPage() {
     setForm({ ...banner })
     setImageFile(null)
     setPreview(banner.image || '')
+    setAudioFile(null)
+    setAudioPreview(banner.audio || '')
     setSortIsAuto(false)
     setModal(banner)
   }
@@ -88,36 +94,66 @@ export default function BannerPage() {
     setPreview(URL.createObjectURL(file))
   }
 
+  function handleAudio(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setAudioFile(file)
+    setAudioPreview(URL.createObjectURL(file))
+  }
+
   async function handleSave(e) {
     e.preventDefault()
     try {
       setSaving(true)
 
       let uploadedUrl = form.image || ''
+      let uploadedAudioUrl = form.audio || ''
 
       // If a file was selected, attempt direct upload to Cloudinary to bypass Vercel 4.5MB limit
-      if (imageFile) {
+      if (imageFile || audioFile) {
         try {
           const signRes = await fetch(`${BASE_URL}/api/cloudinary/sign`)
           if (signRes.ok) {
             const signData = await signRes.json()
             if (signData.signature && signData.apiKey && signData.cloudName) {
-              const cldFormData = new FormData()
-              cldFormData.append('file', imageFile)
-              cldFormData.append('api_key', signData.apiKey)
-              cldFormData.append('timestamp', signData.timestamp)
-              cldFormData.append('signature', signData.signature)
-              cldFormData.append('folder', signData.folder)
+              if (imageFile) {
+                const cldFormData = new FormData()
+                cldFormData.append('file', imageFile)
+                cldFormData.append('api_key', signData.apiKey)
+                cldFormData.append('timestamp', signData.timestamp)
+                cldFormData.append('signature', signData.signature)
+                cldFormData.append('folder', signData.folder)
 
-              const cldRes = await fetch(
-                `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`,
-                { method: 'POST', body: cldFormData }
-              )
-              const cldData = await cldRes.json()
-              if (cldData.secure_url) {
-                uploadedUrl = cldData.secure_url
-              } else if (cldData.error) {
-                console.warn('Cloudinary upload warning:', cldData.error.message)
+                const cldRes = await fetch(
+                  `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`,
+                  { method: 'POST', body: cldFormData }
+                )
+                const cldData = await cldRes.json()
+                if (cldData.secure_url) {
+                  uploadedUrl = cldData.secure_url
+                } else if (cldData.error) {
+                  console.warn('Cloudinary image upload warning:', cldData.error.message)
+                }
+              }
+
+              if (audioFile) {
+                const cldAudioFormData = new FormData()
+                cldAudioFormData.append('file', audioFile)
+                cldAudioFormData.append('api_key', signData.apiKey)
+                cldAudioFormData.append('timestamp', signData.timestamp)
+                cldAudioFormData.append('signature', signData.signature)
+                cldAudioFormData.append('folder', signData.folder)
+
+                const cldAudioRes = await fetch(
+                  `https://api.cloudinary.com/v1_1/${signData.cloudName}/auto/upload`,
+                  { method: 'POST', body: cldAudioFormData }
+                )
+                const cldAudioData = await cldAudioRes.json()
+                if (cldAudioData.secure_url) {
+                  uploadedAudioUrl = cldAudioData.secure_url
+                } else if (cldAudioData.error) {
+                  console.warn('Cloudinary audio upload warning:', cldAudioData.error.message)
+                }
               }
             }
           }
@@ -136,10 +172,14 @@ export default function BannerPage() {
       fd.append('sort', form.sort || 0)
       fd.append('showCertifications', form.showCertifications || false)
       fd.append('imageUrl', uploadedUrl)
+      fd.append('audioUrl', uploadedAudioUrl)
       
       // If we didn't get a Cloudinary URL and still have the local file, attach it as fallback
       if (!uploadedUrl && imageFile) {
         fd.append('image', imageFile)
+      }
+      if (!uploadedAudioUrl && audioFile) {
+        fd.append('audio', audioFile)
       }
 
       const isEdit = Boolean(form._id)
@@ -281,6 +321,11 @@ export default function BannerPage() {
         <div className="min-w-[120px]">
           <div className="font-bold text-foreground max-w-[200px] truncate" title={row.title}>{row.title}</div>
           <div className="text-xs text-muted-foreground truncate max-w-[200px]" title={row.subtitle}>{row.subtitle || 'No subtitle'}</div>
+          {row.audio && (
+            <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Music className="w-3 h-3" /> Custom Audio
+            </div>
+          )}
         </div>
       )
     },
@@ -459,6 +504,75 @@ export default function BannerPage() {
                     ) : (
                       <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     )}
+                  </div>
+                )}
+              </div>
+
+              {/* Custom Audio / Music Track */}
+              <div style={{ padding: '16px', backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <label style={{ fontSize: '14px', fontWeight: 600, color: '#e2e8f0', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Volume2 className="w-4 h-4 text-emerald-400" /> Custom Audio / Music Track (Optional)
+                    </label>
+                    <p style={{ fontSize: '11px', color: '#94a3b8', margin: '4px 0 0 0' }}>Add background music or custom audio for this banner slide</p>
+                  </div>
+                  {audioPreview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm(p => ({ ...p, audio: '' }))
+                        setAudioPreview('')
+                        setAudioFile(null)
+                      }}
+                      style={{ fontSize: '11px', color: '#f87171', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      Remove Audio
+                    </button>
+                  )}
+                </div>
+
+                <input
+                  type="file"
+                  accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a"
+                  onChange={handleAudio}
+                  className="custom-file-upload"
+                  style={{ boxSizing: 'border-box', display: 'block', width: '100%', height: '48px', lineHeight: '46px', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.08)', backgroundColor: 'rgba(0, 0, 0, 0.4)', padding: '0 20px', fontSize: '14px', color: 'white', cursor: 'pointer', transition: 'border-color 0.2s' }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
+                />
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>Or enter direct Audio URL (e.g. /assets/audio/music.mp3 or Cloudinary audio URL):</span>
+                  <input
+                    type="text"
+                    placeholder="e.g. /assets/audio/track.mp3 or https://..."
+                    value={form.audio || ''}
+                    onChange={e => {
+                      const val = e.target.value;
+                      setForm(p => ({ ...p, audio: val }));
+                      setAudioPreview(val);
+                      setAudioFile(null);
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '42px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      padding: '0 14px',
+                      color: 'white',
+                      fontSize: '13px',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                {audioPreview && (
+                  <div style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <span style={{ fontSize: '11px', color: '#34d399', fontWeight: 600 }}>Audio Preview:</span>
+                    <audio src={audioPreview} controls style={{ width: '100%', height: '36px' }} />
                   </div>
                 )}
               </div>

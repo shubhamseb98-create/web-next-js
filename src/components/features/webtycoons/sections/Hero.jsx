@@ -118,9 +118,9 @@ const Hero = ({ bannerData }) => {
   const progressTweenRef= useRef(null)
   const navigateRef     = useRef(null)   // latest navigate fn (for progress onComplete)
   const audioRef        = useRef(null)   // audio element for custom audio tracks
-  const isMutedRef      = useRef(false)  // unmuted by default
+  const isMutedRef      = useRef(true)   // start muted for 100% reliable video autoplay
 
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
 
   useEffect(() => {
     isMutedRef.current = isMuted
@@ -147,38 +147,29 @@ const Hero = ({ bannerData }) => {
         if (videoEl) {
           videoEl.muted = false
           videoEl.volume = 1
-          videoEl.play().catch(() => {})
         }
       }
     } else {
       if (audioRef.current) audioRef.current.pause()
       if (videoEl) videoEl.muted = true
     }
+
+    // Always ensure video is playing in loop
+    if (videoEl) {
+      videoEl.play().catch(() => {})
+    }
   }, [slides])
 
-  // Unmute and play by default; unlock on first interaction if blocked by browser autoplay policy
+  // Ensure initial slide video autoplays and loops immediately on load
   useEffect(() => {
-    syncAudioForSlide(0, !isMutedRef.current)
-
-    const handleFirstInteraction = () => {
-      if (!isMutedRef.current) {
-        syncAudioForSlide(activeRef.current, true)
-      }
-      window.removeEventListener('pointerdown', handleFirstInteraction)
-      window.removeEventListener('keydown', handleFirstInteraction)
-      window.removeEventListener('touchstart', handleFirstInteraction)
+    setIsMounted(true)
+    const firstSlide = document.getElementById('hs-0')
+    const firstVideo = firstSlide?.querySelector('video')
+    if (firstVideo) {
+      firstVideo.muted = true
+      firstVideo.play().catch(() => {})
     }
-
-    window.addEventListener('pointerdown', handleFirstInteraction, { once: true })
-    window.addEventListener('keydown', handleFirstInteraction, { once: true })
-    window.addEventListener('touchstart', handleFirstInteraction, { once: true })
-
-    return () => {
-      window.removeEventListener('pointerdown', handleFirstInteraction)
-      window.removeEventListener('keydown', handleFirstInteraction)
-      window.removeEventListener('touchstart', handleFirstInteraction)
-    }
-  }, [syncAudioForSlide])
+  }, [])
 
   const toggleSound = useCallback(() => {
     const nextMuted = !isMuted
@@ -407,10 +398,13 @@ const Hero = ({ bannerData }) => {
               <video
                 className={styles.bg}
                 data-src={slide.video || slide.image}
-                src={(idx === 0 && isMounted) ? (slide.video || slide.image) : undefined}
+                src={slide.video || slide.image}
                 poster={slide.image && !isVideo(slide.image) ? slide.image : undefined}
-                autoPlay={idx === 0}
-                muted loop playsInline
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
                 style={{ objectFit: 'cover' }}
               />
             ) : (

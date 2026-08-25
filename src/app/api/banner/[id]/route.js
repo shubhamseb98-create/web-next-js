@@ -24,6 +24,9 @@ export async function PUT(request, context) {
             );
         }
 
+        const image = formData.get("image");
+        const audio = formData.get("audio");
+
         let imageUrl = existingBanner.image;
         if (formData.has("imageUrl")) {
             const raw = formData.get("imageUrl");

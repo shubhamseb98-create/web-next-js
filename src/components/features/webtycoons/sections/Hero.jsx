@@ -100,7 +100,8 @@ const Hero = ({ bannerData }) => {
         audio: b.audio || null,
         heading: b.title || '',
         cta: b.buttonText || '',
-        ctaHref: b.url || '#'
+        ctaHref: b.url || '#',
+        enableSound: b.enableSound === true,
       }))
     : fallbackSlides;
 
@@ -557,48 +558,50 @@ const Hero = ({ bannerData }) => {
       {/* ── Audio element for custom slide sound / music ── */}
       <audio ref={audioRef} playsInline loop preload="none" />
 
-      {/* ── Luxury Floating Audio Widget (Mute / Unmute) ── */}
-      <button
-        type="button"
-        className={`${styles.soundWidget} ${!isMuted ? styles.soundWidgetActive : ''}`}
-        onClick={toggleSound}
-        aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-        title={isMuted ? "Click to play sound" : "Click to mute"}
-      >
-        {/* Left Glowing Icon Orb */}
-        <div className={styles.soundOrb}>
-          {isMuted ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <line x1="23" y1="9" x2="17" y2="15" />
-              <line x1="17" y1="9" x2="23" y2="15" />
-            </svg>
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-            </svg>
-          )}
-        </div>
+      {/* ── Luxury Floating Audio Widget — only shown when active slide has enableSound ── */}
+      {slides[active]?.enableSound && (
+        <button
+          type="button"
+          className={`${styles.soundWidget} ${!isMuted ? styles.soundWidgetActive : ''}`}
+          onClick={toggleSound}
+          aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+          title={isMuted ? "Click to play sound" : "Click to mute"}
+        >
+          {/* Left Glowing Icon Orb */}
+          <div className={styles.soundOrb}>
+            {isMuted ? (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            ) : (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+              </svg>
+            )}
+          </div>
 
-        {/* Middle Text & Live Status Indicator */}
-        <div className={styles.soundInfo}>
-          <span className={styles.soundTitle}>Sound</span>
-          <span className={isMuted ? styles.soundBadgeMuted : styles.soundBadgeActive}>
-            <span className={styles.statusDot} />
-            {isMuted ? "Off" : "Live"}
-          </span>
-        </div>
+          {/* Middle Text & Live Status Indicator */}
+          <div className={styles.soundInfo}>
+            <span className={styles.soundTitle}>Sound</span>
+            <span className={isMuted ? styles.soundBadgeMuted : styles.soundBadgeActive}>
+              <span className={styles.statusDot} />
+              {isMuted ? "Off" : "Live"}
+            </span>
+          </div>
 
-        {/* Dynamic Equalizer Visualizer */}
-        <div className={`${styles.equalizer} ${!isMuted ? styles.equalizerPlaying : ''}`} aria-hidden="true">
-          <span className={`${styles.eqBar} ${styles.eq1}`} />
-          <span className={`${styles.eqBar} ${styles.eq2}`} />
-          <span className={`${styles.eqBar} ${styles.eq3}`} />
-          <span className={`${styles.eqBar} ${styles.eq4}`} />
-        </div>
-      </button>
+          {/* Dynamic Equalizer Visualizer */}
+          <div className={`${styles.equalizer} ${!isMuted ? styles.equalizerPlaying : ''}`} aria-hidden="true">
+            <span className={`${styles.eqBar} ${styles.eq1}`} />
+            <span className={`${styles.eqBar} ${styles.eq2}`} />
+            <span className={`${styles.eqBar} ${styles.eq3}`} />
+            <span className={`${styles.eqBar} ${styles.eq4}`} />
+          </div>
+        </button>
+      )}
     </section>
   )
 }

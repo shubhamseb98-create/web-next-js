@@ -102,6 +102,7 @@ export async function PUT(request, context) {
             status: formData.has("status") ? formData.get("status") : existingBanner.status,
             sort: formData.has("sort") ? Number(formData.get("sort")) : existingBanner.sort,
             showCertifications: formData.has("showCertifications") ? (formData.get("showCertifications") === "true") : existingBanner.showCertifications,
+            enableSound: formData.has("enableSound") ? (formData.get("enableSound") === "true") : existingBanner.enableSound,
             image: imageUrl,
             audio: audioUrl,
         };

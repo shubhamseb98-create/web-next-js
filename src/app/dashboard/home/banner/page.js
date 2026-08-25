@@ -17,7 +17,7 @@ import { SortInput } from '../../../../components/dashboard/SortInput'
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal'
 
 const BASE_URL = ''
-const EMPTY = { title: '', subtitle: '', url: '', buttonText: '', image: '', audio: '', alt: '', status: 'active', sort: '', showCertifications: false }
+const EMPTY = { title: '', subtitle: '', url: '', buttonText: '', image: '', audio: '', alt: '', status: 'active', sort: '', showCertifications: false, enableSound: false }
 
 export default function BannerPage() {
   const [rows, setRows] = useState([])
@@ -171,6 +171,7 @@ export default function BannerPage() {
       fd.append('status', form.status || 'active')
       fd.append('sort', form.sort || 0)
       fd.append('showCertifications', form.showCertifications || false)
+      fd.append('enableSound', form.enableSound || false)
       fd.append('imageUrl', uploadedUrl)
       fd.append('audioUrl', uploadedAudioUrl)
       
@@ -257,6 +258,7 @@ export default function BannerPage() {
       fd.append('status', newStatus)
       fd.append('sort', row.sort || 0)
       fd.append('showCertifications', row.showCertifications || false)
+      fd.append('enableSound', row.enableSound || false)
       fd.append('imageUrl', row.image || '')
       fd.append('audioUrl', row.audio || '')
 
@@ -612,6 +614,26 @@ export default function BannerPage() {
                 <Switch 
                   checked={form.showCertifications} 
                   onCheckedChange={(val) => setForm({...form, showCertifications: val})}
+                />
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', backgroundColor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.15)', borderRadius: '12px' }}>
+                <div>
+                  <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#e2e8f0', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '50%', background: form.enableSound ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)', border: form.enableSound ? '1px solid rgba(16,185,129,0.4)' : '1px solid rgba(255,255,255,0.1)', transition: 'all 0.3s' }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={form.enableSound ? '#34d399' : '#64748b'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                    </span>
+                    Enable Sound Button
+                  </h4>
+                  <p style={{ fontSize: '11px', color: '#94a3b8', margin: '4px 0 0 0' }}>
+                    {form.enableSound 
+                      ? '✅ Sound widget is visible on website — visitors can mute/unmute' 
+                      : '🔇 Sound widget is hidden for this slide — no audio controls shown'}
+                  </p>
+                </div>
+                <Switch 
+                  checked={form.enableSound} 
+                  onCheckedChange={(val) => setForm({...form, enableSound: val})}
                 />
               </div>
             </div>

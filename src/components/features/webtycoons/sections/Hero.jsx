@@ -118,9 +118,9 @@ const Hero = ({ bannerData }) => {
   const progressTweenRef= useRef(null)
   const navigateRef     = useRef(null)   // latest navigate fn (for progress onComplete)
   const audioRef        = useRef(null)   // audio element for custom audio tracks
-  const isMutedRef      = useRef(true)   // start muted for 100% reliable video autoplay
+  const isMutedRef      = useRef(false)  // unmuted by default
 
-  const [isMuted, setIsMuted] = useState(true)
+  const [isMuted, setIsMuted] = useState(false)
 
   useEffect(() => {
     isMutedRef.current = isMuted
@@ -156,20 +156,37 @@ const Hero = ({ bannerData }) => {
 
     // Always ensure video is playing in loop
     if (videoEl) {
-      videoEl.play().catch(() => {})
+      videoEl.play().catch(() => {
+        // Fallback: if browser pauses unmuted autoplay, keep video playing muted
+        videoEl.muted = true
+        videoEl.play().catch(() => {})
+      })
     }
   }, [slides])
 
-  // Ensure initial slide video autoplays and loops immediately on load
+  // Unmuted by default: start playback and unlock sound on initial page interaction
   useEffect(() => {
     setIsMounted(true)
-    const firstSlide = document.getElementById('hs-0')
-    const firstVideo = firstSlide?.querySelector('video')
-    if (firstVideo) {
-      firstVideo.muted = true
-      firstVideo.play().catch(() => {})
+    syncAudioForSlide(0, true)
+
+    const unlockSound = () => {
+      if (!isMutedRef.current) {
+        syncAudioForSlide(activeRef.current, true)
+      }
     }
-  }, [])
+
+    window.addEventListener('pointerdown', unlockSound, { once: true })
+    window.addEventListener('keydown', unlockSound, { once: true })
+    window.addEventListener('scroll', unlockSound, { once: true, passive: true })
+    window.addEventListener('touchstart', unlockSound, { once: true })
+
+    return () => {
+      window.removeEventListener('pointerdown', unlockSound)
+      window.removeEventListener('keydown', unlockSound)
+      window.removeEventListener('scroll', unlockSound)
+      window.removeEventListener('touchstart', unlockSound)
+    }
+  }, [syncAudioForSlide])
 
   const toggleSound = useCallback(() => {
     const nextMuted = !isMuted

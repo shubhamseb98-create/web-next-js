@@ -131,27 +131,29 @@ const Hero = ({ bannerData }) => {
     const slide = slides[idx]
     const slideEl = document.getElementById(`hs-${idx}`)
     const videoEl = slideEl?.querySelector('video')
-    const allVideos = document.querySelectorAll(`.${styles.hero} video`)
+    const allVideos = document.querySelectorAll('video')
+    const allAudios = document.querySelectorAll('audio')
+    const audio = audioRef.current
 
     if (unmuted) {
       if (slide?.audio) {
-        if (audioRef.current) {
-          if (audioRef.current.src !== slide.audio) {
-            audioRef.current.src = slide.audio
+        if (audio) {
+          if (audio.src !== slide.audio) {
+            audio.src = slide.audio
           }
-          audioRef.current.muted = false
-          audioRef.current.volume = 1
-          audioRef.current.play().catch(() => {})
+          audio.muted = false
+          audio.volume = 1
+          audio.play().catch(() => {})
         }
         allVideos.forEach(v => {
           v.muted = true
           v.volume = 0
         })
       } else {
-        if (audioRef.current) {
-          audioRef.current.pause()
-          audioRef.current.muted = true
-          audioRef.current.volume = 0
+        if (audio) {
+          audio.pause()
+          audio.muted = true
+          audio.volume = 0
         }
         allVideos.forEach(v => {
           if (v === videoEl) {
@@ -164,12 +166,17 @@ const Hero = ({ bannerData }) => {
         })
       }
     } else {
-      // 100% HARD MUTE ALL AUDIO SOURCES
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current.muted = true
-        audioRef.current.volume = 0
+      // 100% ABSOLUTE MUTE: Pause and mute all audio & video elements
+      if (audio) {
+        audio.pause()
+        audio.muted = true
+        audio.volume = 0
       }
+      allAudios.forEach(a => {
+        a.pause()
+        a.muted = true
+        a.volume = 0
+      })
       allVideos.forEach(v => {
         v.muted = true
         v.volume = 0
@@ -185,13 +192,14 @@ const Hero = ({ bannerData }) => {
     }
   }, [slides])
 
-  // Unmuted by default: start playback and unlock sound on initial page interaction
+  // Unmuted by default on initial mount: start playback and unlock sound on first interaction
   useEffect(() => {
     setIsMounted(true)
-    syncAudioForSlide(0, true)
+    if (!isMutedRef.current) {
+      syncAudioForSlide(0, true)
+    }
 
     const unlockSound = () => {
-      // Clean up all unlock listeners immediately upon first user event
       window.removeEventListener('pointerdown', unlockSound)
       window.removeEventListener('keydown', unlockSound)
       window.removeEventListener('scroll', unlockSound)
@@ -220,12 +228,10 @@ const Hero = ({ bannerData }) => {
       e.stopPropagation()
       e.preventDefault()
     }
-    setIsMuted(prev => {
-      const nextMuted = !prev
-      isMutedRef.current = nextMuted
-      syncAudioForSlide(activeRef.current, !nextMuted)
-      return nextMuted
-    })
+    const nextMuted = !isMutedRef.current
+    isMutedRef.current = nextMuted
+    setIsMuted(nextMuted)
+    syncAudioForSlide(activeRef.current, !nextMuted)
   }, [syncAudioForSlide])
 
   // ── Pickers ──

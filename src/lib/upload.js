@@ -53,8 +53,8 @@ export async function uploadFile(file, folder = 'uploads', prefix = '') {
 
   if (useCloud && isCloudinaryConfigured) {
     return new Promise((resolve, reject) => {
-      // Determine if the file is media (image/video) vs raw document
-      const isMedia = originalName.toLowerCase().match(/\.(jpe?g|png|gif|webp|svg|bmp|mp4|mov|avi|wmv|webm)$/);
+      // Determine if the file is media (image/video/audio) vs raw document
+      const isMedia = originalName.toLowerCase().match(/\.(jpe?g|png|gif|webp|svg|bmp|mp4|mov|avi|wmv|webm|mp3|wav|ogg|aac|m4a|flac)$/);
       const isRaw = !isMedia;
 
       // Remove extension for public_id as Cloudinary adds it automatically based on format (except for raw files)

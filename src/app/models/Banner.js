@@ -21,6 +21,10 @@ const bannerSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  audio: {
+    type: String,
+    required: false,
+  },
   alt: {
     type: String,
     required: false,

@@ -193,6 +193,23 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
                   {project.title}
                 </span>
                 <div className={styles.innerImageWrapper}>
+                  {/* Browser Mockup Header Bar */}
+                  <div className={styles.browserHeaderBar}>
+                    <div className={styles.browserDots}>
+                      <span className={`${styles.dot} ${styles.dotRed}`} />
+                      <span className={`${styles.dot} ${styles.dotYellow}`} />
+                      <span className={`${styles.dot} ${styles.dotGreen}`} />
+                    </div>
+                    <div className={styles.browserUrlBar}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.lockIcon}>
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                      <span className={styles.urlText}>
+                        {`thewebtycoons.com/projects/${project.slug || ''}`}
+                      </span>
+                    </div>
+                  </div>
                   <Image 
                     src={project.image} 
                     alt={project.title} 

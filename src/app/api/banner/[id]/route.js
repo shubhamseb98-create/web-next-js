@@ -26,8 +26,11 @@ export async function PUT(request, context) {
 
         const image = formData.get("image");
         const imageText = formData.get("imageUrl") || formData.get("imageText");
+        const audio = formData.get("audio");
+        const audioText = formData.get("audioUrl") || formData.get("audioText");
 
-        let imageUrl = imageText || existingBanner.image;
+        let imageUrl = imageText !== undefined ? imageText : existingBanner.image;
+        let audioUrl = audioText !== undefined ? audioText : (existingBanner.audio || "");
 
         if (isUploadFile(image)) {
             imageUrl = await uploadFile(image, "banner", "banner");
@@ -50,6 +53,25 @@ export async function PUT(request, context) {
             }
         }
 
+        if (isUploadFile(audio)) {
+            audioUrl = await uploadFile(audio, "banner-audio", "audio");
+
+            if (existingBanner.audio && existingBanner.audio.startsWith("/uploads/")) {
+                try {
+                    const oldAudioPath = path.join(
+                        process.cwd(),
+                        "public",
+                        existingBanner.audio
+                    );
+                    if (fs.existsSync(oldAudioPath)) {
+                        fs.unlinkSync(oldAudioPath);
+                    }
+                } catch (fsErr) {
+                    console.warn("Could not delete old banner audio:", fsErr.message);
+                }
+            }
+        }
+
         const updateData = {
             title: formData.get("title"),
             subtitle: formData.get("subtitle"),
@@ -60,6 +82,7 @@ export async function PUT(request, context) {
             sort: Number(formData.get("sort")),
             showCertifications: formData.get("showCertifications") === "true",
             image: imageUrl,
+            audio: audioUrl,
         };
 
         const banner = await Banner.findByIdAndUpdate(

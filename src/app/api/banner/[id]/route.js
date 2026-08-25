@@ -24,13 +24,31 @@ export async function PUT(request, context) {
             );
         }
 
-        const image = formData.get("image");
-        const imageText = formData.get("imageUrl") || formData.get("imageText");
-        const audio = formData.get("audio");
-        const audioText = formData.get("audioUrl") || formData.get("audioText");
+        let imageUrl = existingBanner.image;
+        if (formData.has("imageUrl")) {
+            const raw = formData.get("imageUrl");
+            if (raw !== null && raw !== undefined && raw !== "") {
+                imageUrl = raw;
+            }
+        } else if (formData.has("imageText")) {
+            const raw = formData.get("imageText");
+            if (raw !== null && raw !== undefined && raw !== "") {
+                imageUrl = raw;
+            }
+        }
 
-        let imageUrl = imageText !== undefined ? imageText : existingBanner.image;
-        let audioUrl = audioText !== undefined ? audioText : (existingBanner.audio || "");
+        let audioUrl = existingBanner.audio || "";
+        if (formData.has("audioUrl")) {
+            const raw = formData.get("audioUrl");
+            if (raw !== null && raw !== undefined) {
+                audioUrl = raw;
+            }
+        } else if (formData.has("audioText")) {
+            const raw = formData.get("audioText");
+            if (raw !== null && raw !== undefined) {
+                audioUrl = raw;
+            }
+        }
 
         if (isUploadFile(image)) {
             imageUrl = await uploadFile(image, "banner", "banner");
@@ -73,14 +91,14 @@ export async function PUT(request, context) {
         }
 
         const updateData = {
-            title: formData.get("title"),
-            subtitle: formData.get("subtitle"),
-            url: formData.get("url"),
-            buttonText: formData.get("buttonText"),
-            alt: formData.get("alt"),
-            status: formData.get("status"),
-            sort: Number(formData.get("sort")),
-            showCertifications: formData.get("showCertifications") === "true",
+            title: formData.has("title") ? formData.get("title") : existingBanner.title,
+            subtitle: formData.has("subtitle") ? formData.get("subtitle") : existingBanner.subtitle,
+            url: formData.has("url") ? formData.get("url") : existingBanner.url,
+            buttonText: formData.has("buttonText") ? formData.get("buttonText") : existingBanner.buttonText,
+            alt: formData.has("alt") ? formData.get("alt") : existingBanner.alt,
+            status: formData.has("status") ? formData.get("status") : existingBanner.status,
+            sort: formData.has("sort") ? Number(formData.get("sort")) : existingBanner.sort,
+            showCertifications: formData.has("showCertifications") ? (formData.get("showCertifications") === "true") : existingBanner.showCertifications,
             image: imageUrl,
             audio: audioUrl,
         };

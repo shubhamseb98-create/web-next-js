@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     await connectDB();
-    const items = await Testimonial.find({ isActive: true }).sort({ sort: 1 }).lean();
+    const items = await Testimonial.find({}).sort({ sort: 1, createdAt: -1 }).lean();
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(items)) });
   } catch (error) {
     return Response.json({ success: false, message: 'Failed to fetch testimonials' }, { status: 500 });

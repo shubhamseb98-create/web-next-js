@@ -257,6 +257,8 @@ export default function BannerPage() {
       fd.append('status', newStatus)
       fd.append('sort', row.sort || 0)
       fd.append('showCertifications', row.showCertifications || false)
+      fd.append('imageUrl', row.image || '')
+      fd.append('audioUrl', row.audio || '')
 
       const res = await fetch(`${BASE_URL}/api/banner/${row._id}`, { method: 'PUT', body: fd })
       const data = await res.json()
@@ -418,8 +420,7 @@ export default function BannerPage() {
           <form onSubmit={handleSave} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <FloatingInput
-                label="Banner Title *"
-                required
+                label="Banner Title"
                 value={form.title}
                 onChange={e => setForm({...form, title: e.target.value})}
                 rightElement={<AIAssistantButton context="Homepage Hero Banner" field="Catchy Banner Title" onGenerate={(val) => setForm({...form, title: val})} />}

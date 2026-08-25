@@ -98,8 +98,8 @@ const Hero = ({ bannerData }) => {
         image: b.image,
         video: b.video || (isVideo(b.image) ? b.image : null),
         audio: b.audio || null,
-        heading: b.title,
-        cta: b.buttonText || 'Learn More',
+        heading: b.title || '',
+        cta: b.buttonText || '',
         ctaHref: b.url || '#'
       }))
     : fallbackSlides;
@@ -118,9 +118,9 @@ const Hero = ({ bannerData }) => {
   const progressTweenRef= useRef(null)
   const navigateRef     = useRef(null)   // latest navigate fn (for progress onComplete)
   const audioRef        = useRef(null)   // audio element for custom audio tracks
-  const isMutedRef      = useRef(true)   // track mute state in refs for callbacks
+  const isMutedRef      = useRef(false)  // unmuted by default
 
-  const [isMuted, setIsMuted] = useState(true)
+  const [isMuted, setIsMuted] = useState(false)
 
   useEffect(() => {
     isMutedRef.current = isMuted
@@ -147,6 +147,7 @@ const Hero = ({ bannerData }) => {
         if (videoEl) {
           videoEl.muted = false
           videoEl.volume = 1
+          videoEl.play().catch(() => {})
         }
       }
     } else {
@@ -154,6 +155,30 @@ const Hero = ({ bannerData }) => {
       if (videoEl) videoEl.muted = true
     }
   }, [slides])
+
+  // Unmute and play by default; unlock on first interaction if blocked by browser autoplay policy
+  useEffect(() => {
+    syncAudioForSlide(0, !isMutedRef.current)
+
+    const handleFirstInteraction = () => {
+      if (!isMutedRef.current) {
+        syncAudioForSlide(activeRef.current, true)
+      }
+      window.removeEventListener('pointerdown', handleFirstInteraction)
+      window.removeEventListener('keydown', handleFirstInteraction)
+      window.removeEventListener('touchstart', handleFirstInteraction)
+    }
+
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true })
+    window.addEventListener('keydown', handleFirstInteraction, { once: true })
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true })
+
+    return () => {
+      window.removeEventListener('pointerdown', handleFirstInteraction)
+      window.removeEventListener('keydown', handleFirstInteraction)
+      window.removeEventListener('touchstart', handleFirstInteraction)
+    }
+  }, [syncAudioForSlide])
 
   const toggleSound = useCallback(() => {
     const nextMuted = !isMuted
@@ -364,8 +389,10 @@ const Hero = ({ bannerData }) => {
       if (el) gsap.set(el, { opacity: 0, zIndex: 0 })
       if (textRefs.current[i]) gsap.set(textRefs.current[i], { opacity: 0, y: 40 })
     }
-    // Kick off autoplay progress bar
-    startProgress(0)
+    // Kick off autoplay progress bar only if more than 1 slide
+    if (COUNT > 1) {
+      startProgress(0)
+    }
   }, [COUNT, startProgress])
 
   return (
@@ -403,59 +430,65 @@ const Hero = ({ bannerData }) => {
                 ref={el => { textRefs.current[idx] = el }}
                 className={styles.textInner}
               >
-                <h1 className={styles.heading}>{slide.heading}</h1>
-                <a href={slide.ctaHref} className={styles.cta}>
-                  <span>{slide.cta}</span>
-                </a>
+                {slide.heading ? <h1 className={styles.heading}>{slide.heading}</h1> : null}
+                {slide.cta ? (
+                  <a href={slide.ctaHref || '#'} className={styles.cta}>
+                    <span>{slide.cta}</span>
+                  </a>
+                ) : null}
               </div>
             </div>
           </div>
         </div>
       ))}
 
-      {/* ── Bottom blur band ── */}
-      <div className={styles.blurBand} aria-hidden="true">
-        {[1,2,3,4,5].map(n => (
-          <span key={n} className={`${styles.bl} ${styles[`bl${n}`]}`} />
-        ))}
-      </div>
-
-      {/* ── Controls ── */}
-      <div className={styles.controls}>
-        <button
-          className={`${styles.navBtn} ${styles.navPrev}`}
-          onClick={() => navigate(activeRef.current - 1)}
-          aria-label="Previous slide"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-
-        <div className={styles.dots}>
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              ref={el => { progressRefs.current[idx] = el }}
-              className={`${styles.dot} ${idx === active ? styles.dotActive : ''}`}
-              onClick={() => navigate(idx)}
-              aria-label={`Slide ${idx + 1}`}
-            >
-              <span className={styles.fill} />
-            </button>
+      {/* ── Bottom blur band (only if more than 1 slide or controls present) ── */}
+      {COUNT > 1 && (
+        <div className={styles.blurBand} aria-hidden="true">
+          {[1,2,3,4,5].map(n => (
+            <span key={n} className={`${styles.bl} ${styles[`bl${n}`]}`} />
           ))}
         </div>
+      )}
 
-        <button
-          className={`${styles.navBtn} ${styles.navNext}`}
-          onClick={() => navigate(activeRef.current + 1)}
-          aria-label="Next slide"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
-      </div>
+      {/* ── Controls (only shown when there are multiple slides) ── */}
+      {COUNT > 1 && (
+        <div className={styles.controls}>
+          <button
+            className={`${styles.navBtn} ${styles.navPrev}`}
+            onClick={() => navigate(activeRef.current - 1)}
+            aria-label="Previous slide"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+
+          <div className={styles.dots}>
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                ref={el => { progressRefs.current[idx] = el }}
+                className={`${styles.dot} ${idx === active ? styles.dotActive : ''}`}
+                onClick={() => navigate(idx)}
+                aria-label={`Slide ${idx + 1}`}
+              >
+                <span className={styles.fill} />
+              </button>
+            ))}
+          </div>
+
+          <button
+            className={`${styles.navBtn} ${styles.navNext}`}
+            onClick={() => navigate(activeRef.current + 1)}
+            aria-label="Next slide"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* ── Audio element for custom slide sound / music ── */}
       <audio ref={audioRef} playsInline loop preload="none" />

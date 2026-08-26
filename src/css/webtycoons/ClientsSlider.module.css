@@ -1,72 +1,138 @@
 .section {
-  padding: 60px 0;
-  background: var(--clr-dark);
+  padding: 80px 0;
+  background: var(--clr-dark, #0a0e08);
   overflow: hidden;
+  position: relative;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 3.5rem;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 1rem;
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: var(--clr-text-light, #aaaaaa);
-  line-height: 1.6;
+  font-size: 1.05rem;
+  color: var(--clr-text-light, rgba(255, 255, 255, 0.75));
+  line-height: 1.65;
+  margin-top: 0.75rem;
 }
 
-.sliderContainer {
+/* Marquee Container with smooth edge gradient mask */
+.marqueeContainer {
   position: relative;
   width: 100%;
-}
-
-.clientSwiper {
-  width: 100%;
-}
-
-/* Linear easing for smooth continuous autoplay */
-.clientSwiper .swiper-wrapper {
-  transition-timing-function: linear !important;
-}
-
-.slide {
+  overflow: hidden;
   display: flex;
-  justify-content: center;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.marqueeTrack {
+  display: flex;
   align-items: center;
+  gap: 3.25rem;
+  width: max-content;
+  animation: scrollClients 32s linear infinite;
+  will-change: transform;
+}
+
+.marqueeContainer:hover .marqueeTrack {
+  animation-play-state: paused;
+}
+
+@keyframes scrollClients {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.logoCard {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 130px;
+  padding: 0 6px;
+  transition: transform 0.3s ease;
 }
 
 .logoWrapper {
-  width: 100%;
-  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  /* Removed white/grey backgrounds */
+  height: 100%;
+}
+
+.clientLogo {
+  height: 95px;
+  max-width: 250px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.9;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.logoCard:hover .clientLogo {
+  opacity: 1;
+  filter: brightness(0) invert(1) drop-shadow(0 0 16px rgba(255, 255, 255, 0.55));
+  transform: scale(1.06);
 }
 
 .placeholderLogo {
   font-weight: 700;
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.9);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1.25rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.75px;
+  white-space: nowrap;
+  padding: 0 14px;
+  transition: color 0.3s ease;
 }
 
-.clientLogo {
-  max-width: 100%;
-  max-height: 150px;
-  object-fit: contain;
-  opacity: 0.6;
-  filter: brightness(0) invert(1);
-  transition: all 0.3s ease;
-  cursor: pointer;
+.logoCard:hover .placeholderLogo {
+  color: #52a436;
 }
 
-.clientLogo:hover {
-  opacity: 1;
+@media (max-width: 768px) {
+  .section {
+    padding: 50px 0;
+  }
+  
+  .marqueeTrack {
+    gap: 2.25rem;
+    animation-duration: 24s;
+  }
+  
+  .logoCard {
+    height: 85px;
+    padding: 0 2px;
+  }
+  
+  .clientLogo {
+    height: 65px;
+    max-width: 170px;
+  }
 }

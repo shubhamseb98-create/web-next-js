@@ -128,15 +128,19 @@
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding: 1.25rem 2rem;
+  padding: 1rem 1.75rem;
   min-width: 240px;
+  max-width: 320px;
+  height: 84px;
+  box-sizing: border-box;
   background: rgba(30, 32, 38, 0.95);
   /* Solid dark slate/blue-ish */
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  border-radius: 12px;
   /* Slightly rounded rectangle */
   transition: all 0.3s ease;
   cursor: default;
+  flex-shrink: 0;
 }
 
 .techCard:hover {
@@ -146,15 +150,61 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+.techIconWrapper {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  max-width: 44px;
+  max-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.techIconImage {
+  width: 34px;
+  height: 34px;
+  max-width: 34px;
+  max-height: 34px;
+  object-fit: contain;
+  display: block;
+}
+
+.techIconSvg {
+  width: 30px;
+  height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  font-size: 1.8rem;
+  display: block;
+}
+
+.techIconFallback {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--clr-primary, #52a436);
+}
+
 .techIcon {
   font-size: 2.2rem;
-  /* color applied via inline style for constant color like the image */
+  width: 36px;
+  height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .techText {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  overflow: hidden;
 }
 
 .techTitle {
@@ -163,6 +213,9 @@
   font-size: 1.1rem;
   color: var(--clr-white);
   line-height: 1.1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .techSub {
@@ -170,4 +223,7 @@
   color: rgba(255, 255, 255, 0.45);
   font-weight: 400;
   line-height: 1.1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

@@ -7,7 +7,16 @@ import { NextResponse } from 'next/server';
 // The config.matcher keeps the same shape as before.
 
 export function proxy(request) {
-  const token = request.cookies.get('admin_token')?.value;
+  let token = request.cookies.get('admin_token')?.value;
+
+  // Support Bearer token in Authorization header as well
+  if (!token) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      token = authHeader.slice(7);
+    }
+  }
+
   const { pathname } = request.nextUrl;
 
   // Protect Dashboard Routes: Redirect unauthenticated users to login

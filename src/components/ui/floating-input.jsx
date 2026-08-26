@@ -30,7 +30,7 @@ FloatingInput.displayName = "FloatingInput"
 const FloatingSelect = React.forwardRef(({ className, label, id, children, ...props }, ref) => {
   const selectId = id || React.useId()
   return (
-    <div className="custom-floating-wrap">
+    <div className="custom-floating-wrap" style={{ position: 'relative', width: '100%' }}>
       <select
         id={selectId}
         className={cn("custom-floating-input", className)}
@@ -43,7 +43,7 @@ const FloatingSelect = React.forwardRef(({ className, label, id, children, ...pr
       <label htmlFor={selectId} className="custom-floating-label" style={{ transform: 'translateY(-10px) scale(0.85)', color: '#94a3b8' }}>
         {label}
       </label>
-      <div style={{ pointerEvents: 'none', position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
+      <div style={{ pointerEvents: 'none', position: 'absolute', right: '16px', top: '28px', transform: 'translateY(-50%)', color: '#94a3b8', zIndex: 5, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
         </svg>

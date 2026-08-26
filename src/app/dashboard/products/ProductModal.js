@@ -280,7 +280,7 @@ export default function ProductModal({ product, categories, nextSort = 1, onClos
 
           <DialogFooter className="pt-6 border-t border-border mt-6">
             <Button variant="ghost" type="button" onClick={onClose} disabled={saving} className="rounded-full px-6 text-muted-foreground hover:bg-muted/50 font-medium">Cancel</Button>
-            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-transform active:scale-95">
+            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">
               {saving ? 'Saving...' : 'Save Product'}
             </Button>
           </DialogFooter>

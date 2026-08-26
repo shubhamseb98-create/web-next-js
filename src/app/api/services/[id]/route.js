@@ -76,11 +76,40 @@ export async function PUT(request, { params }) {
     }
 
     const { id } = await params;
+
+    // Delete immutable root fields
+    delete body._id;
+    delete body.__v;
+    delete body.createdAt;
+    delete body.updatedAt;
+
+    // Sanitize subdocument array IDs so synthetic client IDs ('item-0', etc.) don't fail Mongoose ObjectId casting
+    const sanitizeArray = (arr) => {
+      if (!Array.isArray(arr)) return arr;
+      return arr.map((item) => {
+        if (!item || typeof item !== 'object') return item;
+        const clean = { ...item };
+        if (clean._id && !mongoose.Types.ObjectId.isValid(clean._id)) {
+          delete clean._id;
+        }
+        if (clean.id && !mongoose.Types.ObjectId.isValid(clean.id)) {
+          delete clean.id;
+        }
+        return clean;
+      });
+    };
+
+    ['features', 'faq', 'benefits', 'portfolio', 'process', 'whyChooseUs', 'techStack'].forEach((key) => {
+      if (body[key] && Array.isArray(body[key])) {
+        body[key] = sanitizeArray(body[key]);
+      }
+    });
+
     let item;
     if (mongoose.Types.ObjectId.isValid(id)) {
-      item = await Service.findByIdAndUpdate(id, body, { new: true }).lean();
+      item = await Service.findByIdAndUpdate(id, { $set: body }, { new: true, runValidators: true }).lean();
     } else {
-      item = await Service.findOneAndUpdate({ slug: id }, body, { upsert: true, new: true }).lean();
+      item = await Service.findOneAndUpdate({ slug: id }, { $set: body }, { upsert: true, new: true, runValidators: true }).lean();
     }
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
     
@@ -90,6 +119,7 @@ export async function PUT(request, { params }) {
     
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) });
   } catch (error) {
+    console.error("Service PUT error:", error);
     return Response.json({ success: false, message: error.message }, { status: 500 });
   }
 }

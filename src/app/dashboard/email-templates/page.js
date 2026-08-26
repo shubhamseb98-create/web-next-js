@@ -103,7 +103,7 @@ function TemplateModal({ template, onClose, onSave, saving }) {
 
               <DialogFooter className="p-6 pt-4 border-t border-border bg-muted/20 mt-auto">
                 <Button variant="ghost" type="button" onClick={onClose} disabled={saving} className="rounded-full px-6 text-muted-foreground hover:bg-muted/50 font-medium">Cancel</Button>
-                <Button type="submit" disabled={saving} className="rounded-full px-10 h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-transform active:scale-95">
+                <Button type="submit" disabled={saving} className="rounded-full px-10 h-11 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">
                   {saving ? 'Saving...' : 'Save Template'}
                 </Button>
               </DialogFooter>
@@ -332,7 +332,7 @@ export default function EmailTemplatesPage() {
             {testingId === row._id ? <span className="w-3.5 h-3.5 animate-spin border-2 border-indigo-600 border-t-transparent rounded-full" /> : <Send className="w-3.5 h-3.5" />}
             Test
           </button>
-          <button onClick={(e) => { e.stopPropagation(); setModal(row); }} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30">
+          <button onClick={(e) => { e.stopPropagation(); setModal(row); }} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30">
             <Edit2 className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); setConfirmModal({ isOpen: true, type: 'single', id: row._id }) }} disabled={deletingId === row._id} className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors text-red-500 hover:bg-red-500/10 disabled:opacity-50">

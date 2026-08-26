@@ -23,6 +23,7 @@ export default function ServiceCMSPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savingModal, setSavingModal] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [toasts, setToasts] = useState([]);
   const [activeTab, setActiveTab] = useState('banner');
 
@@ -46,6 +47,12 @@ export default function ServiceCMSPage() {
     }, 4000);
   }
 
+  const getAuthHeaders = () => {
+    if (typeof window === 'undefined') return {};
+    const token = localStorage.getItem('admin_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   useEffect(() => {
     fetchService();
   }, [slug]);
@@ -53,7 +60,9 @@ export default function ServiceCMSPage() {
   async function fetchService() {
     try {
       setLoading(true);
-      const res = await fetch(`/api/services/${slug}`);
+      const res = await fetch(`/api/services/${slug}`, {
+        headers: { ...getAuthHeaders() },
+      });
       const json = await res.json();
 
       if (json.success && json.data) {
@@ -112,13 +121,17 @@ export default function ServiceCMSPage() {
     formData.append('upload', file);
     addToast(`Uploading ${key}...`, 'info');
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { ...getAuthHeaders() },
+        body: formData,
+      });
       const responseData = await res.json();
       if (res.ok && responseData.url) {
         setData(p => ({ ...p, [key]: responseData.url }));
         addToast(`${key} uploaded successfully`, 'success');
       } else {
-        throw new Error(responseData.error?.message || 'Upload failed');
+        throw new Error(responseData.error?.message || responseData.message || 'Upload failed');
       }
     } catch (err) {
       addToast(err.message, 'error');
@@ -130,18 +143,25 @@ export default function ServiceCMSPage() {
     if (!file) return;
     const formData = new FormData();
     formData.append('upload', file);
+    setUploadingImage(true);
     addToast(`Uploading image...`, 'info');
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { ...getAuthHeaders() },
+        body: formData,
+      });
       const responseData = await res.json();
       if (res.ok && responseData.url) {
         setForm(prev => ({ ...prev, [field]: responseData.url }));
         addToast(`Image uploaded successfully`, 'success');
       } else {
-        throw new Error(responseData.error?.message || 'Upload failed');
+        throw new Error(responseData.error?.message || responseData.message || 'Upload failed');
       }
     } catch (err) {
       addToast(err.message, 'error');
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -152,12 +172,15 @@ export default function ServiceCMSPage() {
       const targetId = updatedData._id || slug;
       const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         body: JSON.stringify(updatedData),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || result.message || 'Failed to save');
-      setData(updatedData);
+      setData(result.data || updatedData);
       addToast("Service configuration saved successfully!", "success");
     } catch (err) {
       addToast(err.message, "error");
@@ -182,6 +205,10 @@ export default function ServiceCMSPage() {
   // Save Modal Item into array & persist
   async function handleSaveModalItem(e) {
     e.preventDefault();
+    if (uploadingImage) {
+      addToast("Please wait for image upload to complete", "warning");
+      return;
+    }
     try {
       setSavingModal(true);
       const arrayKey = modalType;
@@ -191,7 +218,17 @@ export default function ServiceCMSPage() {
       if (modal === 'new') {
         updatedList = [...currentList, form];
       } else {
-        const idx = currentList.findIndex((x, i) => (x._id || `item-${i}`) === (modal._id || modal.id));
+        const idx = currentList.findIndex((x, i) => {
+          if (modal._id && x._id && x._id === modal._id) return true;
+          if (modal.id && x.id && x.id === modal.id) return true;
+          if (modal._id === `item-${i}` || modal.id === `item-${i}`) return true;
+          if (modal.title && x.title && x.title === modal.title) return true;
+          if (modal.name && x.name && x.name === modal.name) return true;
+          if (modal.question && x.question && x.question === modal.question) return true;
+          if (modal.step && x.step && x.step === modal.step) return true;
+          return false;
+        });
+
         if (idx >= 0) {
           currentList[idx] = form;
           updatedList = currentList;
@@ -204,12 +241,16 @@ export default function ServiceCMSPage() {
       const targetId = data._id || slug;
       const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         body: JSON.stringify(updatedData),
       });
-      if (!res.ok) throw new Error('Failed to save');
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || result.error || 'Failed to save');
 
-      setData(updatedData);
+      setData(result.data || updatedData);
       addToast(modal === 'new' ? 'Item added successfully!' : 'Item updated successfully!');
       setModal(null);
     } catch (err) {
@@ -226,18 +267,25 @@ export default function ServiceCMSPage() {
       setDeletingId(id);
 
       const currentList = data[arrayKey] || [];
-      const updatedList = currentList.filter((x, i) => (x._id || `item-${i}`) !== id);
+      const updatedList = currentList.filter((x, i) => {
+        const itemId = x._id || x.id || `item-${i}`;
+        return itemId !== id;
+      });
       const updatedData = { ...data, [arrayKey]: updatedList };
 
       const targetId = data._id || slug;
       const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         body: JSON.stringify(updatedData),
       });
-      if (!res.ok) throw new Error('Delete failed');
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || result.error || 'Delete failed');
 
-      setData(updatedData);
+      setData(result.data || updatedData);
       setSelectedIds(prev => prev.filter(x => x !== id));
       addToast('Item deleted.', 'warning');
     } catch (err) {
@@ -258,14 +306,18 @@ export default function ServiceCMSPage() {
       const targetId = data._id || slug;
       const res = await fetch(`/api/services/${targetId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
         body: JSON.stringify(updatedData),
       });
-      if (!res.ok) throw new Error('Bulk delete failed');
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || result.error || 'Delete failed');
 
-      setData(updatedData);
+      setData(result.data || updatedData);
       setSelectedIds([]);
-      addToast('Selected items deleted.', 'warning');
+      addToast(`${selectedIds.length} items deleted.`, 'warning');
     } catch (err) {
       addToast(err.message, 'error');
     }
@@ -335,7 +387,7 @@ export default function ServiceCMSPage() {
           e.stopPropagation();
           openEdit(activeTab, row);
         }}
-        className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30"
+        className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30"
       >
         <Edit2 className="w-4 h-4" />
       </button>
@@ -716,9 +768,30 @@ export default function ServiceCMSPage() {
                 />
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Feature Image / Icon</label>
-                  <div className="flex gap-4 items-center">
-                    {form.image && <img src={form.image} alt="Feature" className="w-16 h-16 object-cover rounded-xl border border-white/10 shadow" />}
-                    <input type="file" accept="image/*" onChange={(e) => handleModalImageUpload(e, 'image')} className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500" />
+                  <div className="flex flex-wrap gap-4 items-center">
+                    {form.image && (
+                      <div className="relative group">
+                        <img src={form.image} alt="Feature" className="w-16 h-16 object-cover rounded-xl border border-white/10 shadow" />
+                        <button
+                          type="button"
+                          onClick={() => setForm(prev => ({ ...prev, image: '' }))}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow transition-colors"
+                          title="Remove image"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        disabled={uploadingImage}
+                        onChange={(e) => handleModalImageUpload(e, 'image')} 
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 disabled:opacity-50" 
+                      />
+                      {uploadingImage && <span className="text-xs text-emerald-400 font-medium animate-pulse">Uploading image...</span>}
+                    </div>
                   </div>
                 </div>
                 <FloatingTextarea
@@ -789,11 +862,30 @@ export default function ServiceCMSPage() {
                 />
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Advantage Icon Image</label>
-                  <div className="flex gap-4 items-center">
+                  <div className="flex flex-wrap gap-4 items-center">
                     {form.icon && (form.icon.startsWith('/') || form.icon.startsWith('http') || form.icon.startsWith('data:image')) && (
-                      <img src={form.icon} alt="Icon" className="w-14 h-14 object-cover rounded-xl border border-white/10 shadow" />
+                      <div className="relative group">
+                        <img src={form.icon} alt="Icon" className="w-14 h-14 object-cover rounded-xl border border-white/10 shadow" />
+                        <button
+                          type="button"
+                          onClick={() => setForm(prev => ({ ...prev, icon: '' }))}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow transition-colors"
+                          title="Remove image"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     )}
-                    <input type="file" accept="image/*" onChange={(e) => handleModalImageUpload(e, 'icon')} className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500" />
+                    <div className="flex items-center gap-3">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        disabled={uploadingImage}
+                        onChange={(e) => handleModalImageUpload(e, 'icon')} 
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 disabled:opacity-50" 
+                      />
+                      {uploadingImage && <span className="text-xs text-emerald-400 font-medium animate-pulse">Uploading image...</span>}
+                    </div>
                   </div>
                 </div>
                 <FloatingTextarea
@@ -827,9 +919,30 @@ export default function ServiceCMSPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Project Cover Image</label>
-                  <div className="flex gap-4 items-center">
-                    {form.image && <img src={form.image} alt="Project" className="w-24 h-16 object-cover rounded-xl border border-white/10 shadow" />}
-                    <input type="file" accept="image/*" onChange={(e) => handleModalImageUpload(e, 'image')} className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500" />
+                  <div className="flex flex-wrap gap-4 items-center">
+                    {form.image && (
+                      <div className="relative group">
+                        <img src={form.image} alt="Project" className="w-24 h-16 object-cover rounded-xl border border-white/10 shadow" />
+                        <button
+                          type="button"
+                          onClick={() => setForm(prev => ({ ...prev, image: '' }))}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow transition-colors"
+                          title="Remove image"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        disabled={uploadingImage}
+                        onChange={(e) => handleModalImageUpload(e, 'image')} 
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 disabled:opacity-50" 
+                      />
+                      {uploadingImage && <span className="text-xs text-emerald-400 font-medium animate-pulse">Uploading image...</span>}
+                    </div>
                   </div>
                 </div>
                 <FloatingInput
@@ -853,6 +966,7 @@ export default function ServiceCMSPage() {
                   required
                   value={form.question || ''}
                   onChange={(e) => setForm({ ...form, question: e.target.value })}
+                  rightElement={<AIAssistantButton context="Frequently Asked Question" field="Question" onGenerate={v => setForm({ ...form, question: v })} />}
                 />
                 <FloatingTextarea
                   label="Answer *"
@@ -877,7 +991,7 @@ export default function ServiceCMSPage() {
               <button
                 type="button"
                 onClick={() => setModal(null)}
-                disabled={savingModal}
+                disabled={savingModal || uploadingImage}
                 style={{
                   padding: '0 24px',
                   height: '48px',
@@ -894,21 +1008,22 @@ export default function ServiceCMSPage() {
               </button>
               <button
                 type="submit"
-                disabled={savingModal}
+                disabled={savingModal || uploadingImage}
                 style={{
                   padding: '0 40px',
                   height: '48px',
                   borderRadius: '24px',
-                  backgroundColor: '#52a436',
+                  backgroundColor: uploadingImage ? '#3f6212' : '#52a436',
                   color: 'white',
                   fontSize: '15px',
                   fontWeight: 700,
                   border: 'none',
-                  cursor: 'pointer',
+                  cursor: uploadingImage || savingModal ? 'not-allowed' : 'pointer',
+                  opacity: uploadingImage ? 0.7 : 1,
                   boxShadow: '0 8px 25px -5px rgba(82, 164, 54, 0.6)',
                 }}
               >
-                {savingModal ? 'Saving...' : modal === 'new' ? 'Save Item' : 'Save Changes'}
+                {uploadingImage ? 'Uploading Image...' : savingModal ? 'Saving...' : modal === 'new' ? 'Save Item' : 'Save Changes'}
               </button>
             </DialogFooter>
           </form>

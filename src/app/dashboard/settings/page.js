@@ -545,7 +545,7 @@ export default function GlobalSettingsCMS() {
               <Button 
                 type="submit" 
                 disabled={saving}
-                className="rounded-md px-8 py-2 h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all whitespace-nowrap border-0"
+                className="rounded-md px-8 py-2 h-10 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold transition-all whitespace-nowrap border-0 shadow-lg shadow-[#52a436]/25"
               >
                 <Save className="w-4 h-4 mr-1.5" />
                 {saving ? "Saving..." : "Save Settings"}

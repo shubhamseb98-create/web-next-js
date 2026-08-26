@@ -170,6 +170,12 @@ export default function ServicesPage() {
     }
   }
 
+  const getAuthHeaders = () => {
+    if (typeof window === 'undefined') return {};
+    const token = localStorage.getItem('admin_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   async function handleSave(form, imageFile) {
     try {
       setSaving(true)
@@ -182,7 +188,11 @@ export default function ServicesPage() {
       
       const isEdit = Boolean(form._id && !form._id.startsWith('svc-'))
       const endpoint = isEdit ? `${BASE_URL}/api/services/${form._id}` : `${BASE_URL}/api/services`
-      const res = await fetch(endpoint, { method: isEdit ? 'PUT' : 'POST', body: fd })
+      const res = await fetch(endpoint, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { ...getAuthHeaders() },
+        body: fd,
+      })
       
       if (!res.ok) {
         const errJson = await res.json().catch(() => ({}))
@@ -202,7 +212,10 @@ export default function ServicesPage() {
   async function handleDelete(id) {
     try {
       setConfirmModal({ isOpen: false })
-      const res = await fetch(`${BASE_URL}/api/services/${id}`, { method: 'DELETE' })
+      const res = await fetch(`${BASE_URL}/api/services/${id}`, {
+        method: 'DELETE',
+        headers: { ...getAuthHeaders() },
+      })
       if (!res.ok) throw new Error()
       addToast('Service deleted.', 'warning')
       setRows(r => r.filter(x => x._id !== id))

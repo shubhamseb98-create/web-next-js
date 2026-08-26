@@ -32,10 +32,16 @@ const iconMap = {
   handshake: FaHandshake,
   users: FaUsers,
   bullseye: FaBullseye,
+  target: FaBullseye,
   lightbulb: FaLightbulb,
   shield: FaShieldAlt,
   heart: FaHeart,
-  rocket: FaRocket
+  rocket: FaRocket,
+  bolt: FaBolt,
+  globe: FaGlobe,
+  gem: FaGem,
+  chart: FaChartLine,
+  check: FaCheckCircle
 };
 
 // Extracted from original Vite template for visual matching
@@ -388,8 +394,24 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
 
       {/* ── Values ── */}
       <section className={`py-100 ${styles.valuesSection}`}>
-        <div className="container-fluid-px">
-          <SectionHeading subtitle="WHAT WE STAND FOR" title={<>Our Core <span className={styles.accent}>Values</span></>} center={true} />
+        {/* Ambient background glow & grid */}
+        <div className={styles.valuesGlow} aria-hidden="true" />
+        <div className={styles.valuesGridPattern} aria-hidden="true" />
+
+        <div className="container-fluid-px" style={{ position: 'relative', zIndex: 1 }}>
+          <div className={styles.valuesHeader}>
+            <div className={styles.valuesBadge}>
+              <span className={styles.badgePulseDot} />
+              <span>WHAT WE STAND FOR</span>
+            </div>
+            <h2 className={styles.valuesMainTitle}>
+              Our Core <span className={styles.titleGradient}>Values</span>
+            </h2>
+            <p className={styles.valuesSubtitle}>
+              The principles that define our culture, drive our craft, and ensure exceptional results for every client.
+            </p>
+          </div>
+
           <motion.div
             className={styles.valuesGrid}
             variants={staggerContainer}
@@ -399,11 +421,20 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
           >
             {data.values?.map((v, i) => {
               const Icon = iconMap[v.icon?.toLowerCase()] || FaHeart;
+              const indexFormatted = String(i + 1).padStart(2, '0');
               return (
                 <motion.div key={i} variants={fadeUp} className={styles.valueCard}>
-                  <div className={styles.valueIcon}><Icon /></div>
-                  <h3>{v.title}</h3>
-                  <p>{v.description}</p>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.valueIcon}>
+                      <Icon />
+                    </div>
+                    <span className={styles.cardNumber}>{indexFormatted}</span>
+                  </div>
+
+                  <div className={styles.cardBody}>
+                    <h3 className={styles.cardTitle}>{v.title}</h3>
+                    <p className={styles.cardDesc}>{v.description}</p>
+                  </div>
                 </motion.div>
               );
             })}

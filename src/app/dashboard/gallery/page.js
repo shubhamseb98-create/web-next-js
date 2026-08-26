@@ -241,7 +241,7 @@ export default function GalleryPage() {
       label: 'Action',
       render: (row) => (
         <div className="flex items-center justify-end gap-2">
-          <button onClick={(e) => { e.stopPropagation(); openEdit(row); }} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30">
+          <button onClick={(e) => { e.stopPropagation(); openEdit(row); }} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30">
             <Edit2 className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); setConfirmModal({ isOpen: true, type: 'single', id: row._id }); }} disabled={deletingId === row._id} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30 disabled:opacity-50">
@@ -354,7 +354,7 @@ export default function GalleryPage() {
 
             <DialogFooter className="pt-4 border-t border-border">
               <Button type="button" variant="ghost" onClick={() => setModal(null)} disabled={saving} className="rounded-full px-6">Cancel</Button>
-              <Button type="submit" disabled={saving || (modal === 'upload' && !file)} className="rounded-full px-8 py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-transform active:scale-95">
+              <Button type="submit" disabled={saving || (modal === 'upload' && !file)} className="rounded-full px-8 py-6 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">
                   {saving ? 'Saving...' : modal === 'upload' ? 'Upload Image' : 'Save Changes'}
               </Button>
             </DialogFooter>

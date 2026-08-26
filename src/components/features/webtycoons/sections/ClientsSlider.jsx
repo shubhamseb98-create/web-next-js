@@ -1,9 +1,6 @@
 'use client'
 import React from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay } from 'swiper/modules'
-import Image from 'next/image';
-import 'swiper/css'
+import Image from 'next/image'
 import styles from '../../../../css/webtycoons/ClientsSlider.module.css'
 
 import abrigoLogo from '../assets/clients/abrigo.png'
@@ -39,7 +36,9 @@ const clients = [
 ]
 
 const ClientsSlider = ({ clientsData, homeExtraData }) => {
-  const displayClients = clientsData?.length > 0 ? clientsData : clients;
+  const rawList = clientsData?.length > 0 ? clientsData : clients;
+  // Ensure enough items for seamless infinite looping
+  const displayClients = rawList.length < 8 ? [...rawList, ...rawList, ...rawList] : rawList;
 
   return (
     <section className={styles.section} id="clients">
@@ -54,44 +53,26 @@ const ClientsSlider = ({ clientsData, homeExtraData }) => {
           </p>
         </div>
 
-        <div className={styles.sliderContainer}>
-          <Swiper
-            modules={[Autoplay]}
-            spaceBetween={0}
-            slidesPerView={3}
-            loop={true}
-            speed={4000} // Smooth continuous scroll speed
-            autoplay={{
-              delay: 0,
-              disableOnInteraction: false,
-            }}
-            breakpoints={{
-              576: { slidesPerView: 4 },
-              768: { slidesPerView: 5 },
-              1024: { slidesPerView: 6 },
-              1200: { slidesPerView: 8 },
-            }}
-            className={styles.clientSwiper}
-          >
-            {displayClients.map((client, index) => (
-              <SwiperSlide key={index} className={styles.slide}>
-                <div className={`${styles.logoWrapper} ${client.hasBg ? styles.withBg : ''}`}>
-                  {client.image ? (
+        <div className={styles.marqueeContainer}>
+          <div className={styles.marqueeTrack}>
+            {[...displayClients, ...displayClients].map((client, index) => (
+              <div key={index} className={styles.logoCard}>
+                {client.image ? (
+                  <div className={styles.logoWrapper}>
                     <Image 
                       src={typeof client.image === 'string' ? client.image : (client.image?.src || client.image)} 
-                      alt={client.name}
-                      width={180}
-                      height={80}
-                      style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+                      alt={client.name || 'Client Logo'}
+                      width={320}
+                      height={140}
                       className={styles.clientLogo} 
                     />
-                  ) : (
-                    <div className={styles.placeholderLogo}>{client.name}</div>
-                  )}
-                </div>
-              </SwiperSlide>
+                  </div>
+                ) : (
+                  <div className={styles.placeholderLogo}>{client.name}</div>
+                )}
+              </div>
             ))}
-          </Swiper>
+          </div>
         </div>
       </div>
     </section>

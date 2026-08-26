@@ -12,7 +12,7 @@ export default function AboutBreadcrumb() {
   const [data, setData] = useState({ heroTitle: "", heroDescription: "", heroImage: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [toasts, setToasts] = useState([]);
+  const [toasts, setToasts] = useState([]);               
   
   const addToast = (msg, type = "success") => setToasts(t => [...t, { id: Date.now(), message: msg, type }]);
   

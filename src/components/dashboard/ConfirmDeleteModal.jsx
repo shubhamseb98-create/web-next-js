@@ -122,12 +122,13 @@ export default function ConfirmDeleteModal({
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && !isDeleting && onClose()}>
       <DialogContent
-        /* suppress default shadcn animation classes */
-        className=""
+        hideClose={true}
+        className="!p-0 !border-0 !bg-transparent !shadow-none !max-w-[420px] !outline-none !backdrop-blur-none"
         style={{
           background:'transparent',
           border:'none',
           boxShadow:'none',
+          outline:'none',
           padding:0,
           maxWidth:420,
           width:'calc(100% - 32px)',
@@ -150,6 +151,45 @@ export default function ConfirmDeleteModal({
             `,
           }}
         >
+          {/* Close button inside card */}
+          <button
+            type="button"
+            disabled={isDeleting}
+            onClick={onClose}
+            style={{
+              position:'absolute',
+              top:14,
+              right:14,
+              zIndex:10,
+              width:28,
+              height:28,
+              borderRadius:'50%',
+              display:'flex',
+              alignItems:'center',
+              justifyContent:'center',
+              backgroundColor:'rgba(255,255,255,0.05)',
+              border:'1px solid rgba(255,255,255,0.1)',
+              color:'#94a3b8',
+              cursor:'pointer',
+              transition:'all 0.2s',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.15)';
+              e.currentTarget.style.borderColor = 'rgba(239,68,68,0.3)';
+              e.currentTarget.style.color = '#ef4444';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+              e.currentTarget.style.color = '#94a3b8';
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
           {/* scanline texture */}
           <div style={{
             position:'absolute', inset:0, pointerEvents:'none', borderRadius:24,
@@ -165,13 +205,13 @@ export default function ConfirmDeleteModal({
           }} />
 
           {/* ── Icon ── */}
-          <div style={{ position:'relative', display:'flex', justifyContent:'center', marginBottom:24 }}>
+          <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'center', width:72, height:72, margin:'0 auto 24px' }}>
             <Particles active={isOpen} />
 
             {/* outer pulsing ring */}
             <div style={{
               position:'absolute',
-              width:72, height:72,
+              inset:0,
               borderRadius:'50%',
               background:'rgba(239,68,68,0.06)',
               animation:'cdm-ring-pulse 2.4s ease-in-out infinite',

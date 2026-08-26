@@ -33,7 +33,7 @@ function LocationModal({ location, onSave, onClose }) {
           </div>
           <DialogFooter className="pt-6 border-t border-border mt-6">
             <Button variant="ghost" type="button" onClick={onClose} className="rounded-full px-6 text-muted-foreground hover:bg-muted/50 font-medium">Cancel</Button>
-            <Button type="submit" className="rounded-full px-10 py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-transform active:scale-95">Save Location</Button>
+            <Button type="submit" className="rounded-full px-10 py-6 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">Save Location</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -506,7 +506,7 @@ export default function ContactPageCMS() {
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="flex justify-between items-center bg-muted/30 p-4 rounded-xl border border-border/50">
                     <h4 className="font-semibold text-foreground">Manage Office Locations</h4>
-                    <Button type="button" onClick={openAddLocation} className="rounded-md px-5 h-9 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all whitespace-nowrap border-0">
+                    <Button type="button" onClick={openAddLocation} className="rounded-md px-5 h-9 bg-[#52a436] hover:bg-[#3e8027] text-white font-medium transition-all whitespace-nowrap border-0 shadow-md shadow-[#52a436]/25">
                       <Plus className="w-4 h-4 mr-1.5" /> Add New Location
                     </Button>
                   </div>
@@ -533,7 +533,7 @@ export default function ContactPageCMS() {
                               onCheckedChange={() => handleToggleLocationStatus(index, loc.isActive !== false)}
                             />
                             <div className="flex items-center gap-2">
-                              <Button type="button" variant="ghost" size="sm" onClick={() => openEditLocation(index)} className="text-blue-500 hover:bg-blue-50 hover:text-blue-600 rounded-md h-8 px-3">
+                              <Button type="button" variant="ghost" size="sm" onClick={() => openEditLocation(index)} className="text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/30 rounded-md h-8 px-3">
                                 <Edit2 className="w-4 h-4 mr-1.5" /> Edit
                               </Button>
                               <Button type="button" variant="ghost" size="sm" onClick={() => confirmRemoveLocation(index)} className="text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md h-8 px-3">
@@ -617,7 +617,7 @@ export default function ContactPageCMS() {
               <Button 
                 type="submit" 
                 disabled={saving}
-                className="rounded-md px-8 py-2 h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all whitespace-nowrap border-0"
+                className="rounded-md px-8 py-2 h-10 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold transition-all whitespace-nowrap border-0 shadow-lg shadow-[#52a436]/25"
               >
                 <Save className="w-4 h-4 mr-1.5" />
                 {saving ? "Saving..." : "Save Changes"}

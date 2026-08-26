@@ -78,7 +78,7 @@ function CertModal({ cert, nextSort = 1, onClose, onSave, saving }) {
 
           <DialogFooter className="pt-6 border-t border-border mt-6">
             <Button variant="ghost" type="button" onClick={onClose} disabled={saving} className="rounded-full px-6 text-muted-foreground hover:bg-muted/50 font-medium">Cancel</Button>
-            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-transform active:scale-95">
+            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">
               {saving ? 'Saving...' : 'Save Document'}
             </Button>
           </DialogFooter>
@@ -285,7 +285,7 @@ export default function CertificationsPage() {
               <ExternalLink className="w-4 h-4" />
             </a>
           )}
-          <button onClick={(e) => { e.stopPropagation(); setModal(cert); }} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30">
+          <button onClick={(e) => { e.stopPropagation(); setModal(cert); }} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30">
             <Edit2 className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); setConfirmModal({ isOpen: true, type: 'single', id: cert._id }); }} disabled={deletingId === cert._id} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30 disabled:opacity-50">

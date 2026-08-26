@@ -22,7 +22,7 @@ const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
-const DialogContent = React.forwardRef(({ className, children, onPointerDownOutside, onFocusOutside, onInteractOutside, ...props }, ref) => (
+const DialogContent = React.forwardRef(({ className, children, hideClose = false, onPointerDownOutside, onFocusOutside, onInteractOutside, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -46,24 +46,31 @@ const DialogContent = React.forwardRef(({ className, children, onPointerDownOuts
         if (onInteractOutside) onInteractOutside(e);
       }}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-lg min-w-0 translate-x-[-50%] translate-y-[-50%] glass-panel flex flex-col max-h-[calc(100vh-2rem)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-2xl sm:rounded-[2rem]",
+        "fixed left-[50%] top-[50%] z-50 w-[calc(100%-2rem)] max-w-lg min-w-0 translate-x-[-50%] translate-y-[-50%] flex flex-col max-h-[calc(100vh-2rem)] duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        !hideClose && "glass-panel rounded-2xl sm:rounded-[2rem]",
         className
       )}
+      style={{
+        ...(hideClose ? { background: 'transparent', border: 'none', boxShadow: 'none', outline: 'none' } : {}),
+        ...props.style
+      }}
       {...props}
     >
       <div 
-        className="relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 sm:p-6 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700 dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-600"
-        style={{ padding: '24px' }}
+        className={cn("relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden", !hideClose && "p-4 sm:p-6 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700 dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-600")}
+        style={{ padding: hideClose ? 0 : '24px' }}
       >
-        <DialogPrimitive.Close 
-          className="absolute right-4 top-4 z-50"
-          style={{ width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8', cursor: 'pointer', transition: 'all 0.2s' }}
-          onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.color = '#94a3b8'; }}
-        >
-          <X style={{ width: '16px', height: '16px' }} />
-          <span className="sr-only">Close</span>
-        </DialogPrimitive.Close>
+        {!hideClose && (
+          <DialogPrimitive.Close 
+            className="absolute right-4 top-4 z-50"
+            style={{ width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#94a3b8', cursor: 'pointer', transition: 'all 0.2s' }}
+            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.color = 'white'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'; e.currentTarget.style.color = '#94a3b8'; }}
+          >
+            <X style={{ width: '16px', height: '16px' }} />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
         {children}
       </div>
     </DialogPrimitive.Content>

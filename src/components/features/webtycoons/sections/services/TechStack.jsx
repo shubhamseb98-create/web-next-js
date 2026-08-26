@@ -21,6 +21,13 @@ const TechStack = ({ techStack = [] }) => {
   const frontendTech = techStack.filter(t => t.category?.toLowerCase() === 'frontend');
   const backendTech = techStack.filter(t => t.category?.toLowerCase() === 'backend');
 
+  const getTechIconInfo = (tech) => {
+    const isImage = !!(tech.image || (typeof tech.icon === 'string' && (tech.icon.startsWith('/') || tech.icon.startsWith('http') || tech.icon.startsWith('data:image'))));
+    const imgSrc = tech.image || (typeof tech.icon === 'string' && (tech.icon.startsWith('/') || tech.icon.startsWith('http') || tech.icon.startsWith('data:image')) ? tech.icon : null);
+    const IconComponent = !isImage ? (typeof tech.icon === 'function' ? tech.icon : (iconMap[tech.name] || (typeof tech.icon === 'string' ? iconMap[tech.icon] : null))) : null;
+    return { isImage, imgSrc, IconComponent };
+  };
+
   return (
     <section className={styles.sectionWrapper}>
       
@@ -80,16 +87,19 @@ const TechStack = ({ techStack = [] }) => {
           <div className={`${styles.marqueeTrack} ${styles.scrollLeft}`}>
             {/* Render twice for infinite loop effect */}
             {[...frontendTech, ...frontendTech].map((tech, index) => {
-              const isImageUrl = !!tech.image;
-              const IconComponent = !isImageUrl ? iconMap[tech.name] : null;
+              const { isImage, imgSrc, IconComponent } = getTechIconInfo(tech);
               
               return (
                 <div key={`front-${index}`} className={styles.techCard}>
-                  {isImageUrl ? (
-                    <img src={tech.image} alt={tech.name} className={styles.techIcon} style={{ objectFit: 'contain' }} />
-                  ) : (
-                    IconComponent && <IconComponent className={styles.techIcon} style={{ color: tech.color }} />
-                  )}
+                  <div className={styles.techIconWrapper}>
+                    {isImage && imgSrc ? (
+                      <img src={imgSrc} alt={tech.name} className={styles.techIconImage} />
+                    ) : (
+                      IconComponent ? <IconComponent className={styles.techIconSvg} style={{ color: tech.color || '#52a436' }} /> : (
+                        <span className={styles.techIconFallback}>{tech.name?.charAt(0) || '⚡'}</span>
+                      )
+                    )}
+                  </div>
                   <div className={styles.techText}>
                     <span className={styles.techTitle}>{tech.name}</span>
                     <span className={styles.techSub}>{tech.sub}</span>
@@ -105,16 +115,19 @@ const TechStack = ({ techStack = [] }) => {
           <div className={`${styles.marqueeTrack} ${styles.scrollRight}`}>
             {/* Render twice for infinite loop effect */}
             {[...backendTech, ...backendTech].map((tech, index) => {
-              const isImageUrl = !!tech.image;
-              const IconComponent = !isImageUrl ? iconMap[tech.name] : null;
+              const { isImage, imgSrc, IconComponent } = getTechIconInfo(tech);
               
               return (
                 <div key={`back-${index}`} className={styles.techCard}>
-                  {isImageUrl ? (
-                    <img src={tech.image} alt={tech.name} className={styles.techIcon} style={{ objectFit: 'contain' }} />
-                  ) : (
-                    IconComponent && <IconComponent className={styles.techIcon} style={{ color: tech.color }} />
-                  )}
+                  <div className={styles.techIconWrapper}>
+                    {isImage && imgSrc ? (
+                      <img src={imgSrc} alt={tech.name} className={styles.techIconImage} />
+                    ) : (
+                      IconComponent ? <IconComponent className={styles.techIconSvg} style={{ color: tech.color || '#52a436' }} /> : (
+                        <span className={styles.techIconFallback}>{tech.name?.charAt(0) || '⚡'}</span>
+                      )
+                    )}
+                  </div>
                   <div className={styles.techText}>
                     <span className={styles.techTitle}>{tech.name}</span>
                     <span className={styles.techSub}>{tech.sub}</span>

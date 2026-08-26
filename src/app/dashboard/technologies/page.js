@@ -98,38 +98,82 @@ function TechnologyModal({ item, nextSort = 1, onClose, onSave, saving }) {
 }
 
 export default function TechnologiesPage() {
-  const [rows, setRows] = useState([]); const [loading, setLoading] = useState(true); const [saving, setSaving] = useState(false); const [modal, setModal] = useState(null)
-  const [search, setSearch] = useState(''); const [toasts, setToasts] = useState([])
-  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
-  const addToast = (msg, type = 'success') => setToasts(t => [...t, { id: Date.now(), message: msg, type }])
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [modal, setModal] = useState(null);
+  const [search, setSearch] = useState('');
+  const [toasts, setToasts] = useState([]);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
 
-  useEffect(() => { fetchItems() }, [])
+  const addToast = (msg, type = 'success') => setToasts(t => [...t, { id: Date.now(), message: msg, type }]);
+
+  const getAuthHeaders = () => {
+    if (typeof window === 'undefined') return {};
+    const token = localStorage.getItem('admin_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  useEffect(() => { fetchItems() }, []);
 
   async function fetchItems() {
-    try { setLoading(true); const res = await fetch(`${BASE_URL}/api/technologies?all=true`); const json = await res.json(); setRows(json.data || []); }
-    catch (err) { addToast('Error: ' + err.message, 'error') } finally { setLoading(false) }
+    try {
+      setLoading(true);
+      const res = await fetch(`${BASE_URL}/api/technologies?all=true`, {
+        headers: { ...getAuthHeaders() },
+      });
+      const json = await res.json();
+      setRows(json.data || []);
+    } catch (err) {
+      addToast('Error: ' + err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSave(form, imageFile) {
     try {
-      setSaving(true); const fd = new FormData()
+      setSaving(true);
+      const fd = new FormData();
       Object.keys(form).forEach(k => {
-        fd.append(k, form[k] === null ? '' : form[k])
-      })
-      if (imageFile) fd.append('image', imageFile)
+        fd.append(k, form[k] === null || form[k] === undefined ? '' : form[k]);
+      });
+      if (imageFile) fd.append('image', imageFile);
       
-      const isEdit = Boolean(form._id)
-      const res = await fetch(isEdit ? `${BASE_URL}/api/technologies/${form._id}` : `${BASE_URL}/api/technologies`, { method: isEdit ? 'PUT' : 'POST', body: fd })
-      if (!res.ok) throw new Error((await res.json()).message)
-      addToast(isEdit ? 'Updated!' : 'Created!'); setModal(null); fetchItems();
-    } catch (err) { addToast(err.message, 'error') } finally { setSaving(false) }
+      const isEdit = Boolean(form._id);
+      const res = await fetch(isEdit ? `${BASE_URL}/api/technologies/${form._id}` : `${BASE_URL}/api/technologies`, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { ...getAuthHeaders() },
+        body: fd,
+      });
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(resJson.message || 'Failed to save technology');
+      
+      addToast(isEdit ? 'Technology updated successfully!' : 'Technology added successfully!');
+      setModal(null);
+      fetchItems();
+    } catch (err) {
+      addToast(err.message, 'error');
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function handleDelete(id) {
     try {
-      setConfirmModal({ isOpen: false }); const res = await fetch(`${BASE_URL}/api/technologies/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error(); addToast('Deleted.', 'warning'); setRows(r => r.filter(x => x._id !== id))
-    } catch (err) {}
+      setConfirmModal({ isOpen: false, id: null });
+      const res = await fetch(`${BASE_URL}/api/technologies/${id}`, {
+        method: 'DELETE',
+        headers: { ...getAuthHeaders() },
+      });
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(resJson.message || 'Failed to delete technology');
+      
+      addToast('Technology deleted successfully.', 'warning');
+      setRows(r => r.filter(x => x._id !== id));
+    } catch (err) {
+      addToast(err.message || 'Failed to delete technology', 'error');
+    }
   }
 
   const columns = [
@@ -144,11 +188,11 @@ export default function TechnologiesPage() {
     { key: 'name', label: 'Name', render: r => <div className="font-semibold">{r.name}</div> },
     { key: 'category', label: 'Category', render: r => <div className="text-sm text-slate-400 capitalize">{r.category}</div> },
     { key: 'color', label: 'Color', render: r => <div className="flex items-center gap-2"><div className="w-4 h-4 rounded-full" style={{ backgroundColor: r.color }}></div><span className="text-xs font-mono">{r.color}</span></div> },
-    { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/technologies/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
+    { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/technologies/${r._id}`, { method: 'PUT', headers: { ...getAuthHeaders() }, body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex gap-2 justify-end">
-        <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-blue-500/10 text-blue-600 rounded"><Edit2 className="w-4 h-4" /></button>
-        <button onClick={e => { e.stopPropagation(); setConfirmModal({ isOpen: true, id: r._id }); }} className="p-2 bg-red-500/10 text-red-600 rounded"><Trash2 className="w-4 h-4" /></button>
+        <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded transition-colors" title="Edit"><Edit2 className="w-4 h-4" /></button>
+        <button onClick={e => { e.stopPropagation(); setConfirmModal({ isOpen: true, id: r._id }); }} className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
       </div>
     )}
   ]
@@ -160,7 +204,7 @@ export default function TechnologiesPage() {
       <TableToolbar search={search} onSearchChange={setSearch} selectedCount={0} onAdd={() => setModal('new')} addLabel="Add Technology" />
       <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={[]} onToggleSelectAll={()=>{}} onToggleSelectRow={()=>{}} />
       {modal && <TechnologyModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
-      <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Technology" message="Are you sure?" />
+      <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false, id: null })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Technology" message="Are you sure you want to delete this technology record?" />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />
     </div>
   )

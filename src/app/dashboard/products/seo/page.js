@@ -51,7 +51,7 @@ export default function ProductsSeoPage() {
               <Button 
                 type="submit" 
                 disabled={saving}
-                className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg shadow-blue-500/20"
+                className="rounded-full px-8 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold shadow-lg shadow-[#52a436]/30"
               >
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Saving...' : 'Save SEO Settings'}

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #52a436;
+  --color-primary-foreground: #ffffff;
+}
+
 /* ============================================================
    DESIGN SYSTEM — CSS CUSTOM PROPERTIES
    WebTycoons Premium Corporate Website

@@ -151,7 +151,7 @@ export default function SecurityPage() {
         </div>
 
         <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[15px] shadow-lg shadow-blue-500/30 transition-transform active:scale-95">
+            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">
                 {saving ? 'Saving...' : 'Save Security Settings'}
             </Button>
         </div>

@@ -40,7 +40,7 @@ function ViewModal({ enq, onClose, onUpdateStatus }) {
               </p>
             </div>
             <a href={`mailto:${enq.email}?subject=Re: Enquiry ${enq.id} - ${enq.product}`} className="hidden sm:flex">
-              <Button size="sm" className="rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20">
+              <Button size="sm" className="rounded-full bg-[#52a436] hover:bg-[#3e8027] text-white shadow-md shadow-[#52a436]/20">
                 <Mail className="w-4 h-4 mr-2" /> Reply by Email
               </Button>
             </a>

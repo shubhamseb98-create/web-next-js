@@ -113,7 +113,7 @@ export default function BackupManagement() {
                        <Button 
                          onClick={downloadManualBackup} 
                          disabled={loading} 
-                         className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-blue-500/20 whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white transition-all active:scale-95"
+                         className="rounded-xl px-8 h-12 font-bold shadow-lg shadow-[#52a436]/25 whitespace-nowrap bg-[#52a436] hover:bg-[#3e8027] text-white transition-all active:scale-95"
                        >
                          {loading ? 'Generating Dump...' : 'Export JSON Backup'}
                        </Button>

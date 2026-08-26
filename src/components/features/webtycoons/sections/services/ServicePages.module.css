@@ -660,6 +660,23 @@
   font-size: 2rem;
   color: var(--clr-accent);
   flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconCardIcon img,
+.iconCardIcon svg {
+  width: 36px;
+  height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+  object-fit: contain;
+  display: block;
 }
 
 .iconCardContent h4 {

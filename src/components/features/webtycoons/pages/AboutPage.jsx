@@ -9,7 +9,7 @@ import {
   FaBullseye, FaLightbulb, FaShieldAlt, FaHeart,
   FaLinkedinIn, FaTwitter, FaInstagram
 } from 'react-icons/fa'
-import styles from './AboutPage.module.css'
+import styles from '../../../../css/webtycoons/AboutPage.module.css'
 import { fadeUp, staggerContainer } from '../animations/variants'
 import SectionHeading from '../components/SectionHeading/SectionHeading'
 import TeamSection from '../components/Sections/TeamSection'
@@ -249,8 +249,24 @@ const AboutPage = () => {
 
       {/* ── Values ── */}
       <section className={`py-100 ${styles.valuesSection}`}>
-        <div className="container-fluid-px">
-          <SectionHeading subtitle="WHAT WE STAND FOR" title={<>Our Core <span className={styles.accent}>Values</span></>} center={true} />
+        {/* Ambient background glow & grid */}
+        <div className={styles.valuesGlow} aria-hidden="true" />
+        <div className={styles.valuesGridPattern} aria-hidden="true" />
+
+        <div className="container-fluid-px" style={{ position: 'relative', zIndex: 1 }}>
+          <div className={styles.valuesHeader}>
+            <div className={styles.valuesBadge}>
+              <span className={styles.badgePulseDot} />
+              <span>WHAT WE STAND FOR</span>
+            </div>
+            <h2 className={styles.valuesMainTitle}>
+              Our Core <span className={styles.titleGradient}>Values</span>
+            </h2>
+            <p className={styles.valuesSubtitle}>
+              The principles that define our culture, drive our craft, and ensure exceptional results for every client.
+            </p>
+          </div>
+
           <motion.div
             className={styles.valuesGrid}
             variants={staggerContainer}
@@ -258,13 +274,24 @@ const AboutPage = () => {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {values.map((v, i) => (
-              <motion.div key={i} variants={fadeUp} className={styles.valueCard}>
-                <div className={styles.valueIcon}><v.icon /></div>
-                <h3>{v.title}</h3>
-                <p>{v.desc}</p>
-              </motion.div>
-            ))}
+            {values.map((v, i) => {
+              const indexFormatted = String(i + 1).padStart(2, '0');
+              return (
+                <motion.div key={i} variants={fadeUp} className={styles.valueCard}>
+                  <div className={styles.cardHeader}>
+                    <div className={styles.valueIcon}>
+                      <v.icon />
+                    </div>
+                    <span className={styles.cardNumber}>{indexFormatted}</span>
+                  </div>
+
+                  <div className={styles.cardBody}>
+                    <h3 className={styles.cardTitle}>{v.title}</h3>
+                    <p className={styles.cardDesc}>{v.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>

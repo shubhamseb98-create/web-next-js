@@ -33,18 +33,21 @@ export default function CtaOnePage() {
 
   async function fetchCta() {
     try {
-      const res = await fetch(`${BASE_URL}/api/cta-one`)
+      setLoading(true)
+      const res = await fetch(`${BASE_URL}/api/cta`)
+      if (!res.ok) throw new Error('Failed to fetch CTA')
       const data = await res.json()
-      if (data.data) {
-        setForm({
-          title: data.data.title || '',
-          content: data.data.content || '',
-          image: data.data.image || '',
-        })
-        setRecordId(data.data._id)
-        if (data.data.image) setPreview(data.data.image)
+      if (Array.isArray(data) && data.length > 0) {
+        const record = data[0]
+        setRecordId(record._id)
+        setForm({ title: record.title || '', content: record.content || '', image: record.image || '' })
+        if (record.image) setPreview(record.image)
+      } else if (data && data._id) {
+        setRecordId(data._id)
+        setForm({ title: data.title || '', content: data.content || '', image: data.image || '' })
+        if (data.image) setPreview(data.image)
       }
-    } catch {
+    } catch (err) {
       addToast('Failed to load CTA data', 'error')
     } finally {
       setLoading(false)
@@ -68,14 +71,11 @@ export default function CtaOnePage() {
       fd.append('content', form.content)
       if (imageFile) fd.append('image', imageFile)
 
-      const url = recordId ? `${BASE_URL}/api/cta-one/${recordId}` : `${BASE_URL}/api/cta-one`
-      const method = recordId ? 'PUT' : 'POST'
-
-      const res = await fetch(url, { method, body: fd })
+      const res = await fetch(`${BASE_URL}/api/cta`, { method: 'POST', body: fd })
       const data = await res.json()
       if (!res.ok) throw new Error(data.message || 'Save failed')
       addToast('CTA section updated successfully!')
-      if (data.data) setRecordId(data.data._id)
+      if (data.data?._id) setRecordId(data.data._id)
     } catch (err) {
       addToast(err.message, 'error')
     } finally {

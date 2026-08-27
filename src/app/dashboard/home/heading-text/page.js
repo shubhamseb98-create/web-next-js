@@ -25,18 +25,65 @@ const DEFAULT = {
 }
 
 const sections = [
-  { key: 'work',      label: 'Global Network',      fields: ['work_title', 'work_subtitle', 'work_description'] },
-  { key: 'service',   label: 'Our Services Section',  fields: ['service_title', 'service_subtitle', 'service_description'] },
-  { key: 'blog',      label: 'Blog Section',          fields: ['blog_title', 'blog_subtitle'] },
-  { key: 'featured_project', label: 'Featured Projects Section', fields: ['featured_project_title', 'featured_project_subtitle', 'featured_project_description'] },
-  { key: 'client',    label: 'Our Clients Section',   fields: ['client_title', 'client_subtitle', 'client_description'] },
-  { key: 'achievement', label: 'Our Achievements Section', fields: ['achievement_title', 'achievement_subtitle', 'achievement_description'] },
-  { key: 'technology', label: 'Modern Tech Stack Section', fields: ['technology_title', 'technology_subtitle', 'technology_description'] },
-  { key: 'team',       label: 'Meet The Team Section',     fields: ['team_title', 'team_subtitle', 'team_label', 'team_description'] },
-  { key: 'testimonial',label: 'Testimonials Section',      fields: ['testimonial_title', 'testimonial_subtitle', 'testimonial_description'] },
+  { key: 'work',        label: 'Global Network',             fields: ['work_subtitle', 'work_title', 'work_description'] },
+  { key: 'service',     label: 'Our Services Section',         fields: ['service_subtitle', 'service_title', 'service_description'] },
+  { key: 'technology',  label: 'Modern Tech Stack Section',    fields: ['technology_title', 'technology_subtitle', 'technology_description'] },
+  { key: 'team',        label: 'Meet The Team Section',        fields: ['team_label', 'team_title', 'team_subtitle', 'team_description'] },
+  { key: 'testimonial', label: 'Testimonials Section',         fields: ['testimonial_title', 'testimonial_subtitle', 'testimonial_description'] },
+  { key: 'client',      label: 'Our Clients Section',          fields: ['client_title', 'client_subtitle', 'client_description'] },
+  { key: 'achievement', label: 'Our Achievements Section',    fields: ['achievement_subtitle', 'achievement_title', 'achievement_description'] },
+  { key: 'blog',        label: 'Blog Section',                 fields: ['blog_title', 'blog_subtitle'] },
+  { key: 'featured_project', label: 'Featured Projects Section', fields: ['featured_project_subtitle', 'featured_project_title', 'featured_project_description'] },
 ]
 
-const fieldLabel = k => k.endsWith('_title') ? 'Title' : k.endsWith('_subtitle') ? 'Subtitle' : k.endsWith('_label') ? 'Small Label' : k.endsWith('_description') ? 'Description' : k
+const FIELD_CONFIG = {
+  // Global Network
+  work_subtitle: 'Title',
+  work_title: 'Main Heading',
+  work_description: 'Description',
+
+  // Our Services
+  service_subtitle: 'Title',
+  service_title: 'Main Heading',
+  service_description: 'Description',
+
+  // Modern Tech Stack
+  technology_title: 'Main Heading (White Color)',
+  technology_subtitle: 'Main Heading (Green Color)',
+  technology_description: 'Description',
+
+  // Meet The Team
+  team_label: 'Title',
+  team_title: 'Main Heading (White Color)',
+  team_subtitle: 'Main Heading (Green Color)',
+  team_description: 'Description',
+
+  // Testimonials
+  testimonial_title: 'Main Heading (White Color)',
+  testimonial_subtitle: 'Main Heading (Green Color)',
+  testimonial_description: 'Description',
+
+  // Our Clients
+  client_title: 'Title',
+  client_subtitle: 'Main Heading',
+  client_description: 'Description',
+
+  // Achievements
+  achievement_subtitle: 'Title',
+  achievement_title: 'Main Heading',
+  achievement_description: 'Description',
+
+  // Blog
+  blog_title: 'Main Heading',
+  blog_subtitle: 'Description',
+
+  // Featured Projects
+  featured_project_subtitle: 'Title',
+  featured_project_title: 'Main Heading',
+  featured_project_description: 'Description',
+}
+
+const fieldLabel = k => FIELD_CONFIG[k] || (k.endsWith('_subtitle') ? 'Title' : k.endsWith('_title') ? 'Main Heading' : 'Description')
 
 export default function HeadingTextPage() {
   const [form, setForm] = useState(DEFAULT)

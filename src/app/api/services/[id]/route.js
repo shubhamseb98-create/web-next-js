@@ -66,9 +66,19 @@ export async function PUT(request, { params }) {
             body[key] = value;
           }
         } else if (['features', 'faq', 'benefits', 'portfolio', 'process', 'whyChooseUs', 'techStack', 'realEstateData', 'customData'].includes(key)) {
-          try { body[key] = JSON.parse(value); } catch (e) { body[key] = value; }
+          if (typeof value === 'string' && value.startsWith('[object')) {
+            // Skip corrupted [object Object] strings so they do not overwrite DB
+            continue;
+          }
+          try { 
+            body[key] = JSON.parse(value); 
+          } catch (e) { 
+            if (typeof value === 'object' && value !== null) {
+              body[key] = value;
+            }
+          }
         } else if (key === 'isFeatured') {
-          body[key] = value === 'true';
+          body[key] = value === 'true' || value === true;
         } else {
           body[key] = value;
         }

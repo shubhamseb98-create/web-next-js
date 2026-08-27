@@ -10,7 +10,8 @@ import {
   FaUsers, FaRocket, FaAward, FaHandshake,
   FaBullseye, FaLightbulb, FaShieldAlt, FaHeart,
   FaLinkedinIn, FaTwitter, FaInstagram,
-  FaCheckCircle, FaBolt, FaGlobe, FaGem, FaChartLine
+  FaCheckCircle, FaBolt, FaGlobe, FaGem, FaChartLine,
+  FaStar, FaArrowRight
 } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/AboutPage.module.css'
 import TeamSection from '../sections/TeamSection'
@@ -103,7 +104,7 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
         </div>
       </section>
 
-      {/* ── About Us ── */}
+      {/* ── About Us (Who We Are - Ultra Modern Redesign) ── */}
       <section className={`py-100 ${styles.aboutUsSection}`}>
         <div className="container-fluid-px">
           <motion.div
@@ -113,46 +114,89 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
             whileInView="visible"
             viewport={{ once: true, margin: '-80px' }}
           >
-            {/* Left — Image Block */}
-            <motion.div variants={fadeUp} className={styles.aboutImgBlock}>
-              <div className={styles.aboutImgMain}>
+            {/* Left — Cyber Bento Visual Showcase */}
+            <motion.div variants={fadeUp} className={styles.aboutVisualContainer}>
+              {/* Ambient Glow Backdrop */}
+              <div className={styles.visualAuraGlow} />
+
+              {/* Main Image Frame */}
+              <div className={styles.mainImageFrame}>
                 <Image
-                  src={data.aboutUsImage1 || "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1000&auto=format&fit=crop"}
-                  alt="WebTycoons Team"
-                  className={styles.aboutImg}
+                  src={data.aboutUsImage1 || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"}
+                  alt="WebTycoons Digital Agency"
+                  className={styles.mainImage}
                   width={1000}
                   height={800}
+                  priority
                 />
+                <div className={styles.imageOverlayGradient} />
+                
+                {/* Tech Corner Accents */}
+                <div className={`${styles.cornerAccent} ${styles.cornerTopLeft}`} />
+                <div className={`${styles.cornerAccent} ${styles.cornerBottomRight}`} />
               </div>
-              <div className={styles.aboutImgFloat}>
-                <Image
-                  src={data.aboutUsImage2 || "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop"}
-                  alt="Our Office"
-                  className={styles.aboutImg}
-                  width={600}
-                  height={400}
-                />
+
+              {/* Floating Glassmorphic Badge 1 (Top Left: Years Experience) */}
+              <div className={styles.experienceGlassPill}>
+                <div className={styles.expIconBox}>
+                  <FaStar className={styles.expIcon} />
+                </div>
+                <div>
+                  <div className={styles.expNumberText}>
+                    {data.aboutUsYears || '15'}<span>+</span>
+                  </div>
+                  <div className={styles.expSubLabel}>Years of Mastery</div>
+                </div>
               </div>
-              <div className={styles.aboutExpBadge}>
-                <span className={styles.expNumber}>{data.aboutUsYears}<sup>+</sup></span>
-                <span className={styles.expText}>Years of<br />Excellence</span>
+
+              {/* Floating Glassmorphic Badge 2 (Bottom Right: Delivered Projects) */}
+              <div className={styles.projectsGlassCard}>
+                <div className={styles.projectsTopRow}>
+                  <span className={styles.livePulseDot} />
+                  <span className={styles.projectsLiveTag}>PROVEN IMPACT</span>
+                </div>
+                <div className={styles.projectsCount}>
+                  350<span>+</span> Projects
+                </div>
+                <div className={styles.projectsSubText}>Delivered Worldwide</div>
+              </div>
+
+              {/* Floating Micro Badge 3 (Bottom Left: Quality / Satisfaction) */}
+              <div className={styles.qualityPill}>
+                <FaBolt className={styles.qualityIcon} />
+                <span>99.8% Client Satisfaction</span>
               </div>
             </motion.div>
 
-            {/* Right — Content */}
+            {/* Right — High-Impact Storytelling & Interactive Bento Feature Cards */}
             <motion.div variants={fadeUp} className={styles.aboutUsContent}>
-              <div className={styles.sectionLabel}>WHO WE ARE</div>
-              <h2 className={styles.aboutUsTitle} dangerouslySetInnerHTML={{ __html: (data?.aboutUsTitle || 'Your Trusted Partner in Digital Transformation').replace('Digital Transformation', `<span class="${styles.accent}">Digital Transformation</span>`) }} />
-              <p className={styles.aboutUsPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph1 || 'Founded in 2011, WebTycoons is a full-service digital agency based in Delhi NCR, India.').replace('WebTycoons', '<strong>WebTycoons</strong>') }} />
-              <p className={styles.aboutUsPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph2 || 'Over the past 15 years, we have delivered 350+ projects for startups, SMEs, and enterprises across industries.').replace('350+ projects', '<strong>350+ projects</strong>') }} />
+              <div className={styles.modernBadgePill}>
+                <span className={styles.pulseDot} />
+                <span>WHO WE ARE</span>
+              </div>
 
-              <div className={styles.aboutHighlights}>
-                {data.aboutUsHighlights?.map((hl, i) => {
+              <h2 className={styles.aboutUsTitle}>
+                Your Strategic Partner in <span className={styles.greenGradientText}>Digital Transformation</span>
+              </h2>
+
+              <p className={styles.aboutUsLeadPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph1 || 'Founded in 2011, WebTycoons is a high-performance digital agency based in Delhi NCR, India, crafting bespoke web platforms and digital growth engines.').replace('WebTycoons', '<strong>WebTycoons</strong>') }} />
+
+              <p className={styles.aboutUsSubPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph2 || 'Over the past 15 years, we have delivered 350+ projects for ambitious startups, scaling SMEs, and enterprises across the globe.').replace('350+ projects', '<strong>350+ projects</strong>').replace('15 years', '<strong>15 years</strong>') }} />
+
+              {/* Modern Bento Feature Deck */}
+              <div className={styles.bentoDeck}>
+                {(data.aboutUsHighlights && data.aboutUsHighlights.length > 0 ? data.aboutUsHighlights : [
+                  { icon: 'award', title: 'Award-Winning Work', description: 'Recognized as a top digital agency in Delhi NCR for design excellence & performance.' },
+                  { icon: 'handshake', title: 'Client-Centric ROI', description: 'We treat your business as our own, engineering digital products that drive measurable growth.' },
+                  { icon: 'users', title: 'Expert Team of 25+', description: 'Specialists in Next.js, full-stack development, UI/UX architecture, and digital strategy.' }
+                ]).map((hl, i) => {
                   const Icon = iconMap[hl.icon?.toLowerCase()] || FaAward;
                   return (
-                    <div key={i} className={styles.highlight}>
-                      <Icon className={styles.highlightIcon} />
-                      <div>
+                    <div key={i} className={styles.bentoCard}>
+                      <div className={styles.bentoIconBox}>
+                        <Icon className={styles.bentoIcon} />
+                      </div>
+                      <div className={styles.bentoText}>
                         <h4>{hl.title}</h4>
                         <p>{hl.description}</p>
                       </div>
@@ -161,9 +205,31 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
                 })}
               </div>
 
+              {/* CTA Action Row */}
               <div className={styles.aboutUsBtns}>
-                <Link href="/contact" className="btnPrimary">Work With Us &rarr;</Link>
-                <Link href="/services" className={styles.btnOutline}>Our Services</Link>
+                <Link href="/contact" className={styles.primaryActionButton}>
+                  <span>Work With Us</span>
+                  <FaArrowRight className={styles.btnArrowIcon} />
+                </Link>
+                <Link href="/services" className={styles.secondaryActionButton}>
+                  <span>Our Services</span>
+                </Link>
+              </div>
+
+              {/* Trust Checkpoints */}
+              <div className={styles.trustCheckpoints}>
+                <div className={styles.checkpointItem}>
+                  <FaCheckCircle className={styles.checkIcon} />
+                  <span>100% Code Ownership</span>
+                </div>
+                <div className={styles.checkpointItem}>
+                  <FaCheckCircle className={styles.checkIcon} />
+                  <span>Next-Gen Architecture</span>
+                </div>
+                <div className={styles.checkpointItem}>
+                  <FaCheckCircle className={styles.checkIcon} />
+                  <span>Global Delivery</span>
+                </div>
               </div>
             </motion.div>
           </motion.div>

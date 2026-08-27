@@ -102,6 +102,10 @@ export default function ServiceCMSPage() {
         if (!loadedData.overviewWhoNeedsIt) loadedData.overviewWhoNeedsIt = fallback?.overview?.whoNeedsIt || "";
         if (!loadedData.overviewWhyChooseUs) loadedData.overviewWhyChooseUs = fallback?.overview?.whyChooseUs || "";
 
+        if (!loadedData.breadcrumbImage) loadedData.breadcrumbImage = loadedData.image || fallback?.hero?.image || "";
+        if (!loadedData.overviewImage) loadedData.overviewImage = loadedData.image || fallback?.hero?.image || "";
+        if (!loadedData.image) loadedData.image = loadedData.breadcrumbImage || fallback?.hero?.image || "";
+
         setData(loadedData);
       } else {
         addToast("Service not found", "error");
@@ -128,7 +132,11 @@ export default function ServiceCMSPage() {
       });
       const responseData = await res.json();
       if (res.ok && responseData.url) {
-        setData(p => ({ ...p, [key]: responseData.url }));
+        if (key === 'breadcrumbImage') {
+          setData(p => ({ ...p, breadcrumbImage: responseData.url, image: responseData.url }));
+        } else {
+          setData(p => ({ ...p, [key]: responseData.url }));
+        }
         addToast(`${key} uploaded successfully`, 'success');
       } else {
         throw new Error(responseData.error?.message || responseData.message || 'Upload failed');
@@ -632,10 +640,27 @@ export default function ServiceCMSPage() {
               rightElement={<AIAssistantButton context={`Service Short Desc for ${data.title}`} field="shortDesc" onGenerate={v => setData(p => ({ ...p, shortDesc: v }))} />}
             />
             <div className="space-y-3 pt-2">
-              <label className="text-sm font-medium text-foreground">Hero / Breadcrumb Image</label>
-              <div className="flex gap-4 items-center">
-                {data.breadcrumbImage && <img src={data.breadcrumbImage} alt="Preview" className="w-40 h-20 object-cover rounded-xl border border-white/10 shadow" />}
-                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'breadcrumbImage')} className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500" />
+              <label className="text-sm font-semibold text-foreground">Hero / Breadcrumb Image</label>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                {(data.breadcrumbImage || data.image) ? (
+                  <div className="relative rounded-xl overflow-hidden border border-white/15 shadow-md bg-black/40">
+                    <img 
+                      src={data.breadcrumbImage || data.image} 
+                      alt="Banner Preview" 
+                      className="w-48 h-24 object-cover" 
+                    />
+                  </div>
+                ) : (
+                  <div className="w-48 h-24 rounded-xl border border-dashed border-white/20 bg-white/[0.02] flex items-center justify-center text-xs text-muted-foreground">
+                    No image uploaded
+                  </div>
+                )}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleImageUpload(e, 'breadcrumbImage')} 
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer text-xs text-muted-foreground" 
+                />
               </div>
             </div>
           </CardContent>
@@ -687,10 +712,27 @@ export default function ServiceCMSPage() {
               />
             </div>
             <div className="space-y-3 pt-2">
-              <label className="text-sm font-medium text-foreground">Overview Section Image</label>
-              <div className="flex gap-4 items-center">
-                {data.overviewImage && <img src={data.overviewImage} alt="Preview" className="w-32 h-20 object-cover rounded-xl border border-white/10 shadow" />}
-                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'overviewImage')} className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500" />
+              <label className="text-sm font-semibold text-foreground">Overview Section Image</label>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                {(data.overviewImage || data.image) ? (
+                  <div className="relative rounded-xl overflow-hidden border border-white/15 shadow-md bg-black/40">
+                    <img 
+                      src={data.overviewImage || data.image} 
+                      alt="Overview Preview" 
+                      className="w-48 h-24 object-cover" 
+                    />
+                  </div>
+                ) : (
+                  <div className="w-48 h-24 rounded-xl border border-dashed border-white/20 bg-white/[0.02] flex items-center justify-center text-xs text-muted-foreground">
+                    No image uploaded
+                  </div>
+                )}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleImageUpload(e, 'overviewImage')} 
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer text-xs text-muted-foreground" 
+                />
               </div>
             </div>
           </CardContent>

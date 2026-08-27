@@ -37,9 +37,18 @@ export async function POST(request) {
           body[key] = value;
         }
       } else if (['features', 'faq', 'benefits', 'portfolio', 'process', 'whyChooseUs', 'techStack'].includes(key)) {
-        try { body[key] = JSON.parse(value); } catch (e) { body[key] = []; }
+        if (typeof value === 'string' && value.startsWith('[object')) {
+          continue;
+        }
+        try { 
+          body[key] = JSON.parse(value); 
+        } catch (e) { 
+          if (typeof value === 'object' && value !== null) {
+            body[key] = value;
+          }
+        }
       } else if (key === 'isFeatured') {
-        body[key] = value === 'true';
+        body[key] = value === 'true' || value === true;
       } else {
         body[key] = value;
       }

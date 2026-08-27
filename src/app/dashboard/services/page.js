@@ -180,11 +180,23 @@ export default function ServicesPage() {
     try {
       setSaving(true)
       const fd = new FormData()
-      Object.keys(form).forEach(k => {
-        if (['features', 'faq', 'description', 'benefits', 'process', 'whyChooseUs', 'portfolio'].includes(k)) return
-        fd.append(k, form[k] === null || form[k] === undefined ? '' : form[k])
+
+      const modalFields = [
+        'title', 'slug', 'icon', 'shortDesc', 'bgColor',
+        'hoverTextColor', 'imageStyle', 'status', 'sort', 'isFeatured'
+      ]
+
+      modalFields.forEach(k => {
+        if (form[k] !== undefined && form[k] !== null) {
+          fd.append(k, form[k])
+        }
       })
-      if (imageFile) fd.append('image', imageFile)
+
+      if (imageFile) {
+        fd.append('image', imageFile)
+      } else if (form.image && typeof form.image === 'string') {
+        fd.append('image', form.image)
+      }
       
       const isEdit = Boolean(form._id && !form._id.startsWith('svc-'))
       const endpoint = isEdit ? `${BASE_URL}/api/services/${form._id}` : `${BASE_URL}/api/services`

@@ -244,9 +244,24 @@ export default function TeamPage() {
       key: 'photo',
       label: 'Photo',
       render: (m) => (
-        <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center overflow-hidden bg-primary/10 text-primary font-bold shadow-sm">
+        <div 
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '6px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            color: '#22c55e',
+            fontWeight: 700,
+            flexShrink: 0
+          }}
+        >
           {m.image ? (
-            <img src={m.image} alt="photo" className="w-full h-full object-cover" />
+            <img src={m.image} alt="photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
             <span>{m.name.charAt(0)}</span>
           )}

@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Card, CardContent } from '../../../../components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
-import { ArrowRight, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink } from 'lucide-react';
+import { ArrowRight, Plus, Trash2, ExternalLink, CornerDownRight } from 'lucide-react';
+import { Switch } from '../../../../components/ui/switch';
 import Breadcrumb from '../../../../components/dashboard/Breadcrumb';
 import Toast from '../../../../components/dashboard/Toast';
 
@@ -51,20 +52,29 @@ export default function RedirectManager() {
   };
 
   const handleToggle = async (r) => {
+    const newStatus = !r.isActive;
+    setRedirects(prev => prev.map(x => x._id === r._id ? { ...x, isActive: newStatus } : x));
     try {
       const res = await fetch('/api/system/redirects', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: r._id, from: r.from, to: r.to, type: r.type, isActive: !r.isActive }),
+        body: JSON.stringify({ id: r._id, from: r.from, to: r.to, type: r.type, isActive: newStatus }),
       });
       const data = await res.json();
-      if (data.success) setRedirects(prev => prev.map(x => x._id === r._id ? data.data : x));
-    } catch { addToast('Error updating redirect', 'error'); }
+      if (data.success) {
+        addToast(newStatus ? 'Redirect activated' : 'Redirect deactivated');
+      } else {
+        setRedirects(prev => prev.map(x => x._id === r._id ? { ...x, isActive: r.isActive } : x));
+        addToast('Failed to update status', 'error');
+      }
+    } catch {
+      setRedirects(prev => prev.map(x => x._id === r._id ? { ...x, isActive: r.isActive } : x));
+      addToast('Error updating redirect', 'error');
+    }
   };
 
   const handleDelete = async (id) => {
     try {
-      setConfirmModal({ isOpen: false, id: null });
       setDeletingId(id);
       const res = await fetch('/api/system/redirects', {
         method: 'DELETE',
@@ -79,117 +89,208 @@ export default function RedirectManager() {
   };
 
   return (
-    <div className="min-h-full flex flex-col bg-background">
-      <div className="p-4 sm:p-6 lg:p-8 flex-1 max-w-[1600px] w-full mx-auto">
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Advanced', href: '#' }, { label: 'Redirect Manager' }]} />
+    <div>
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8">
+        <Breadcrumb title="Redirect Manager" crumbs={[{ label: 'Advanced Settings' }, { label: 'Redirect Manager' }]} />
+      </div>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2 flex items-center gap-3">
-            <ArrowRight className="w-8 h-8 text-blue-500" />
-            Redirect Manager
-          </h1>
-          <p className="text-muted-foreground max-w-3xl">
-            Create 301 (permanent) or 302 (temporary) redirects to preserve SEO when URLs change. Active redirects are applied via Next.js middleware on every request.
-          </p>
-        </div>
+      <div className="p-4 sm:p-6 lg:p-8 w-full max-w-[1600px] mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>Redirect Manager</CardTitle>
+            <CardDescription>
+              Create 301 (permanent) or 302 (temporary) redirects to preserve SEO when URLs change. Active redirects are automatically processed on request.
+            </CardDescription>
+          </CardHeader>
 
-        {/* Add New Redirect */}
-        <Card className="border border-border rounded-2xl mb-8 shadow-sm">
-          <CardContent className="p-6">
-            <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2"><Plus className="w-4 h-4 text-indigo-500" /> Add New Redirect</h3>
-            <div className="flex flex-col sm:flex-row items-end gap-3">
-              <div className="flex-1 space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">FROM path</label>
-                <input
-                  type="text"
-                  value={form.from}
-                  onChange={e => setForm({ ...form, from: e.target.value })}
-                  placeholder="/old-url-path"
-                  className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20"
-                />
+          <CardContent className="flex flex-col gap-8">
+            {/* Add New Redirect Box */}
+            <div 
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid #1e2e20',
+                borderRadius: '16px',
+                padding: '24px'
+              }}
+            >
+              <div className="flex items-center gap-2 text-sm font-bold text-white mb-5">
+                <Plus className="w-4 h-4 text-emerald-400" />
+                <span>Add New Redirect</span>
               </div>
-              <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0 mb-2.5" />
-              <div className="flex-1 space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">TO path / URL</label>
-                <input
-                  type="text"
-                  value={form.to}
-                  onChange={e => setForm({ ...form, to: e.target.value })}
-                  placeholder="/new-url-path or https://..."
-                  className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20"
-                />
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+                {/* FROM Path */}
+                <div className="col-span-12 sm:col-span-5 lg:col-span-4 flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-foreground/80">FROM Path</label>
+                  <input
+                    type="text"
+                    value={form.from}
+                    onChange={e => setForm({ ...form, from: e.target.value })}
+                    placeholder="/old-url-path"
+                    style={{
+                      height: '44px',
+                      borderRadius: '12px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid #1e2e20',
+                      padding: '0 16px',
+                      color: '#ffffff',
+                      fontSize: '13.5px',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      width: '100%'
+                    }}
+                  />
+                </div>
+
+                {/* Arrow */}
+                <div className="hidden lg:flex lg:col-span-1 items-center justify-center h-[44px]">
+                  <ArrowRight className="w-4 h-4 text-emerald-400" />
+                </div>
+
+                {/* TO Path */}
+                <div className="col-span-12 sm:col-span-5 lg:col-span-4 flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-foreground/80">TO Path / Destination URL</label>
+                  <input
+                    type="text"
+                    value={form.to}
+                    onChange={e => setForm({ ...form, to: e.target.value })}
+                    placeholder="/new-url-path or https://..."
+                    style={{
+                      height: '44px',
+                      borderRadius: '12px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid #1e2e20',
+                      padding: '0 16px',
+                      color: '#ffffff',
+                      fontSize: '13.5px',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                      width: '100%'
+                    }}
+                  />
+                </div>
+
+                {/* Type */}
+                <div className="col-span-6 sm:col-span-2 lg:col-span-2 flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold text-foreground/80">Type</label>
+                  <select
+                    value={form.type}
+                    onChange={e => setForm({ ...form, type: parseInt(e.target.value) })}
+                    style={{
+                      height: '44px',
+                      borderRadius: '12px',
+                      backgroundColor: '#0a100c',
+                      border: '1px solid #1e2e20',
+                      padding: '0 12px',
+                      color: '#ffffff',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      outline: 'none',
+                      cursor: 'pointer',
+                      boxSizing: 'border-box',
+                      width: '100%'
+                    }}
+                  >
+                    <option value={301}>301 Permanent</option>
+                    <option value={302}>302 Temporary</option>
+                  </select>
+                </div>
+
+                {/* Submit */}
+                <div className="col-span-6 sm:col-span-12 lg:col-span-1 flex flex-col justify-end">
+                  <button 
+                    type="button"
+                    onClick={handleAdd} 
+                    disabled={adding}
+                    style={{
+                      height: '44px',
+                      borderRadius: '12px',
+                      background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                      color: '#ffffff',
+                      fontWeight: 600,
+                      fontSize: '13.5px',
+                      border: 'none',
+                      cursor: adding ? 'not-allowed' : 'pointer',
+                      opacity: adding ? 0.7 : 1,
+                      boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%'
+                    }}
+                  >
+                    {adding ? '...' : 'Add'}
+                  </button>
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-muted-foreground">Type</label>
-                <select
-                  value={form.type}
-                  onChange={e => setForm({ ...form, type: parseInt(e.target.value) })}
-                  className="bg-background border border-border rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 font-semibold"
-                >
-                  <option value={301}>301 Permanent</option>
-                  <option value={302}>302 Temporary</option>
-                </select>
-              </div>
-              <Button onClick={handleAdd} disabled={adding} className="h-10 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shrink-0">
-                {adding ? 'Adding...' : 'Add'}
-              </Button>
             </div>
+
+            {/* Redirect Table */}
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin h-8 w-8 rounded-full border-b-2 border-emerald-500" />
+              </div>
+            ) : redirects.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground border border-[#1e2e20] rounded-2xl bg-black/20">
+                <CornerDownRight className="w-10 h-10 mx-auto mb-3 text-emerald-500/40" />
+                <p className="text-base font-semibold text-foreground">No redirects configured yet</p>
+                <p className="text-xs text-muted-foreground mt-1">Add your first URL redirect above to get started.</p>
+              </div>
+            ) : (
+              <div className="border border-[#1e2e20] rounded-2xl overflow-hidden bg-black/20">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-[#1e2e20] bg-white/[0.02]">
+                        <th className="text-left px-5 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">From Path</th>
+                        <th className="text-left px-5 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Destination</th>
+                        <th className="text-center px-5 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Status Code</th>
+                        <th className="text-center px-5 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Active</th>
+                        <th className="text-right px-5 py-3.5 text-xs font-bold text-muted-foreground uppercase tracking-wider">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#1e2e20]">
+                      {redirects.map(r => (
+                        <tr key={r._id} className={`hover:bg-white/[0.02] transition-colors ${!r.isActive ? 'opacity-50' : ''}`}>
+                          <td className="px-5 py-4 font-mono text-xs text-emerald-400 font-semibold">{r.from}</td>
+                          <td className="px-5 py-4 font-mono text-xs text-muted-foreground">
+                            <a href={r.to} target="_blank" rel="noreferrer" className="hover:text-emerald-400 flex items-center gap-1.5 transition-colors">
+                              <span>{r.to}</span>
+                              <ExternalLink className="w-3 h-3 opacity-60" />
+                            </a>
+                          </td>
+                          <td className="px-5 py-4 text-center">
+                            <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${r.type === 301 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
+                              {r.type} {r.type === 301 ? 'Permanent' : 'Temporary'}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4 text-center">
+                            <div className="flex items-center justify-center">
+                              <Switch 
+                                checked={r.isActive}
+                                onCheckedChange={() => handleToggle(r)}
+                              />
+                            </div>
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <button 
+                              onClick={() => setConfirmModal({ isOpen: true, id: r._id })} 
+                              disabled={deletingId === r._id} 
+                              className="w-8 h-8 rounded inline-flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30 disabled:opacity-50"
+                              title="Delete Redirect"
+                            >
+                              {deletingId === r._id ? <span className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin inline-block" /> : <Trash2 className="w-4 h-4" />}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
-
-        {/* Redirect Table */}
-        {loading ? (
-          <div className="flex justify-center py-12"><div className="animate-spin h-8 w-8 rounded-full border-b-2 border-primary" /></div>
-        ) : redirects.length === 0 ? (
-          <div className="text-center py-16 text-muted-foreground">
-            <ArrowRight className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p className="text-lg font-medium">No redirects yet</p>
-            <p className="text-sm">Add your first redirect above to get started</p>
-          </div>
-        ) : (
-          <Card className="border border-border rounded-2xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/40 border-b border-border">
-                  <tr>
-                    <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">From</th>
-                    <th className="text-left px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">To</th>
-                    <th className="text-center px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">Type</th>
-                    <th className="text-center px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">Status</th>
-                    <th className="text-center px-4 py-3 text-xs font-bold text-muted-foreground uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {redirects.map(r => (
-                    <tr key={r._id} className={`hover:bg-muted/20 transition-colors ${!r.isActive ? 'opacity-50' : ''}`}>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground">{r.from}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                        <a href={r.to} target="_blank" rel="noreferrer" className="hover:text-indigo-500 flex items-center gap-1">
-                          {r.to} <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.type === 301 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}`}>
-                          {r.type}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <button onClick={() => handleToggle(r)} className="text-muted-foreground hover:text-foreground transition-colors">
-                          {r.isActive ? <ToggleRight className="w-5 h-5 text-green-500" /> : <ToggleLeft className="w-5 h-5" />}
-                        </button>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <button onClick={() => setConfirmModal({ isOpen: true, id: r._id })} disabled={deletingId === r._id} className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50">
-                          {deletingId === r._id ? <span className="w-4 h-4 rounded-full border-2 border-red-500 border-t-transparent animate-spin inline-block" /> : <Trash2 className="w-4 h-4" />}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        )}
 
         <ConfirmDeleteModal
           isOpen={confirmModal.isOpen}

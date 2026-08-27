@@ -13,7 +13,7 @@ import { Switch } from '../../../components/ui/switch'
 import { FloatingInput, FloatingTextarea, FloatingSelect } from '../../../components/ui/floating-input'
 import { SlugInput } from '../../../components/dashboard/SlugInput'
 import { SortInput } from '../../../components/dashboard/SortInput'
-import { Edit2, Trash2, ImageIcon, Video, Sparkles, Upload, Play, RefreshCw } from 'lucide-react'
+import { Edit2, Trash2, ImageIcon, Video, Sparkles, Upload, Play, RefreshCw, HelpCircle, Plus } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 import PortfolioThemePicker from '../../../components/dashboard/PortfolioThemePicker'
 
@@ -23,6 +23,383 @@ const EMPTY = {
   clientName: '', projectUrl: '', technologies: '', sort: 0,
   isFeatured: false, status: 'active',
   themeColor: '', themeTextColor: ''
+}
+
+function ProjectFaqsModal({ onClose, onSaved }) {
+  const [faqs, setFaqs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [editingFaq, setEditingFaq] = useState(null)
+  const [form, setForm] = useState({ question: '', answer: '', sort: 0, status: 'active' })
+  const [saving, setSaving] = useState(false)
+  const [deletingId, setDeletingId] = useState(null)
+  const [faqToDelete, setFaqToDelete] = useState(null)
+
+  useEffect(() => {
+    fetchFaqs()
+  }, [])
+
+  async function fetchFaqs() {
+    try {
+      setLoading(true)
+      const res = await fetch('/api/project-faqs')
+      const json = await res.json()
+      if (json.data) setFaqs(json.data)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function handleOpenNew() {
+    setForm({ question: '', answer: '', sort: faqs.length + 1, status: 'active' })
+    setEditingFaq('new')
+  }
+
+  function handleOpenEdit(faq) {
+    setForm({
+      question: faq.question || '',
+      answer: faq.answer || '',
+      sort: faq.sort || 0,
+      status: faq.status || 'active'
+    })
+    setEditingFaq(faq)
+  }
+
+  async function handleToggleStatus(faq) {
+    const newStatus = faq.status === 'active' ? 'inactive' : 'active'
+    setFaqs(prev => prev.map(f => f._id === faq._id ? { ...f, status: newStatus } : f))
+    try {
+      await fetch(`/api/project-faqs/${faq._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...faq, status: newStatus })
+      })
+    } catch {
+      setFaqs(prev => prev.map(f => f._id === faq._id ? { ...f, status: faq.status } : f))
+    }
+  }
+
+  async function handleDeleteFaq(id) {
+    try {
+      setDeletingId(id)
+      const res = await fetch(`/api/project-faqs/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setFaqs(prev => prev.filter(f => f._id !== id))
+        onSaved('FAQ deleted successfully!')
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setDeletingId(null)
+      setFaqToDelete(null)
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!form.question.trim() || !form.answer.trim()) return
+    try {
+      setSaving(true)
+      const isEdit = editingFaq && editingFaq !== 'new'
+      const url = isEdit ? `/api/project-faqs/${editingFaq._id}` : '/api/project-faqs'
+      const method = isEdit ? 'PUT' : 'POST'
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      const json = await res.json()
+      if (json.success) {
+        onSaved(isEdit ? 'FAQ updated successfully!' : 'FAQ created successfully!')
+        setEditingFaq(null)
+        fetchFaqs()
+      } else {
+        alert(json.error || 'Failed to save FAQ')
+      }
+    } catch (e) {
+      alert(e.message || 'Error saving FAQ')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <>
+      <Dialog open={true} onOpenChange={(open) => !open && !saving && !faqToDelete && onClose()}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pr-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                  <HelpCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <DialogTitle className="text-xl font-bold">Projects Page FAQs</DialogTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Manage the &quot;Technical Expertise, FAQs&quot; section displayed on the public Projects page.
+                  </p>
+                </div>
+              </div>
+              {!editingFaq && (
+                <button
+                  type="button"
+                  onClick={handleOpenNew}
+                  style={{
+                    height: '38px',
+                    padding: '0 16px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(34, 197, 94, 0.35)',
+                    flexShrink: 0,
+                    marginRight: '8px'
+                  }}
+                >
+                  <Plus className="w-4 h-4" /> Add FAQ
+                </button>
+              )}
+            </div>
+          </DialogHeader>
+
+          {loading ? (
+            <div className="py-12 text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
+              <RefreshCw className="w-4 h-4 animate-spin" /> Loading FAQs...
+            </div>
+          ) : editingFaq ? (
+            <form onSubmit={handleSubmit} className="space-y-5 mt-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#1e2e20]">
+                <span className="text-sm font-bold text-white">
+                  {editingFaq === 'new' ? 'Create New FAQ' : 'Edit FAQ'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setEditingFaq(null)}
+                  className="text-xs text-muted-foreground hover:text-white transition-colors"
+                >
+                  Back to List
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <FloatingInput
+                  label="Question *"
+                  required
+                  value={form.question}
+                  onChange={e => setForm({ ...form, question: e.target.value })}
+                  rightElement={
+                    <AIAssistantButton
+                      context="Projects Portfolio FAQ"
+                      field="Technical Question"
+                      onGenerate={(val) => setForm({ ...form, question: val })}
+                    />
+                  }
+                />
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-foreground/80">Answer *</label>
+                    <AIAssistantButton
+                      context={form.question || "Web development solutions and delivery"}
+                      field="Detailed Answer"
+                      onGenerate={(val) => setForm({ ...form, answer: val })}
+                    />
+                  </div>
+                  <textarea
+                    required
+                    rows={4}
+                    value={form.answer}
+                    onChange={e => setForm({ ...form, answer: e.target.value })}
+                    placeholder="Enter detailed answer for this FAQ..."
+                    style={{
+                      width: '100%',
+                      borderRadius: '12px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid #1e2e20',
+                      padding: '12px 16px',
+                      color: '#ffffff',
+                      fontSize: '13.5px',
+                      outline: 'none',
+                      resize: 'vertical',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FloatingInput
+                    label="Sort Order"
+                    type="number"
+                    value={form.sort}
+                    onChange={e => setForm({ ...form, sort: parseInt(e.target.value) || 0 })}
+                  />
+                  <div className="flex items-center justify-between p-3 rounded-xl border border-[#1e2e20] bg-white/[0.02]">
+                    <span className="text-xs font-semibold text-foreground/80">Active on Website</span>
+                    <Switch
+                      checked={form.status === 'active'}
+                      onCheckedChange={(checked) => setForm({ ...form, status: checked ? 'active' : 'inactive' })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter className="pt-4 border-t border-[#1e2e20] gap-2">
+                <Button variant="ghost" type="button" onClick={() => setEditingFaq(null)} disabled={saving}>
+                  Cancel
+                </Button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  style={{
+                    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                    color: '#ffffff',
+                    padding: '0 24px',
+                    height: '40px',
+                    borderRadius: '10px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: saving ? 'not-allowed' : 'pointer',
+                    border: 'none',
+                    boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)'
+                  }}
+                >
+                  {saving ? 'Saving...' : editingFaq === 'new' ? 'Create FAQ' : 'Save Changes'}
+                </button>
+              </DialogFooter>
+            </form>
+          ) : (
+            <div className="flex flex-col gap-4 mt-4">
+              {faqs.length === 0 ? (
+                <div className="py-12 text-center text-sm text-muted-foreground border border-dashed border-[#1e2e20] rounded-xl">
+                  No FAQs added yet. Click "+ Add FAQ" to create one.
+                </div>
+              ) : (
+                faqs.map((faq, idx) => (
+                  <div
+                    key={faq._id || idx}
+                    style={{
+                      borderRadius: '12px',
+                      border: '1px solid #1e2e20',
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '16px'
+                    }}
+                    className="hover:bg-white/[0.04] transition-all"
+                  >
+                    <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                      <span 
+                        style={{
+                          borderRadius: '8px',
+                          backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                          border: '1px solid rgba(34, 197, 94, 0.25)',
+                          color: '#22c55e',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          width: '28px',
+                          height: '28px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          marginTop: '2px'
+                        }}
+                      >
+                        {(idx + 1).toString().padStart(2, '0')}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-bold text-white leading-snug">{faq.question}</div>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5 leading-relaxed">{faq.answer}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                      <Switch
+                        checked={faq.status === 'active'}
+                        onCheckedChange={() => handleToggleStatus(faq)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEdit(faq)}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                          color: '#22c55e',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(34, 197, 94, 0.22)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(34, 197, 94, 0.12)'}
+                        title="Edit FAQ"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFaqToDelete(faq)}
+                        disabled={deletingId === faq._id}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                          color: '#f87171',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: deletingId === faq._id ? 'not-allowed' : 'pointer',
+                          opacity: deletingId === faq._id ? 0.5 : 1,
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.22)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.12)'}
+                        title="Delete FAQ"
+                      >
+                        {deletingId === faq._id ? (
+                          <span className="w-3.5 h-3.5 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDeleteModal
+        isOpen={Boolean(faqToDelete)}
+        isDeleting={deletingId === faqToDelete?._id}
+        onClose={() => setFaqToDelete(null)}
+        onConfirm={async () => {
+          if (faqToDelete?._id) {
+            await handleDeleteFaq(faqToDelete._id)
+          }
+        }}
+        title="Delete FAQ"
+        message={`Are you sure you want to delete this FAQ? This action is permanent and cannot be undone.`}
+      />
+    </>
+  )
 }
 
 function ContactVideoModal({ onClose, onSaved }) {
@@ -386,6 +763,7 @@ export default function PortfolioPage() {
   const [saving, setSaving] = useState(false)
   const [modal, setModal] = useState(null)
   const [videoModalOpen, setVideoModalOpen] = useState(false)
+  const [faqModalOpen, setFaqModalOpen] = useState(false)
   
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('latest')
@@ -448,21 +826,34 @@ export default function PortfolioPage() {
       await fetch(`${BASE_URL}/api/portfolio/${id}`, { method: 'PUT', body: fd })
       setRows(r => r.map(x => x._id === id ? { ...x, status: newStatus } : x))
       addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error')
-    } catch (err) {}
+    } catch {
+      addToast('Error updating status', 'error')
+    }
   }
 
   const columns = [
     { 
       key: 'image', 
-      label: 'Image', 
+      label: 'Preview', 
       render: r => (
-        <div className="w-16 h-10 rounded-md border border-white/10 overflow-hidden bg-black/40 flex items-center justify-center shrink-0 shadow-sm">
+        <div 
+          style={{
+            width: '56px',
+            height: '38px',
+            borderRadius: '6px',
+            overflow: 'hidden',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}
+        >
           {r.image ? (
-            <img src={r.image} alt={r.title} className="w-full h-full object-cover" />
+            <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 flex items-center justify-center text-white/40">
-              <ImageIcon className="w-4 h-4 text-emerald-400/60" />
-            </div>
+            <ImageIcon style={{ width: '16px', height: '16px', color: 'rgba(34, 197, 94, 0.6)' }} />
           )}
         </div>
       )
@@ -472,11 +863,11 @@ export default function PortfolioPage() {
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={() => handleToggleStatus(r._id, r.status)} /> },
     { key: 'featured', label: 'Featured', render: r => r.isFeatured ? <Badge className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs">Featured</Badge> : <span className="text-slate-500 text-xs">-</span> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
-      <div className="flex items-center justify-end gap-3.5" onClick={e => e.stopPropagation()}>
+      <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
         <button 
           type="button"
           onClick={() => setModal(r)} 
-          className="p-1 text-blue-500 hover:text-blue-400 transition-colors" 
+          className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30" 
           title="Edit Project"
         >
           <Edit2 className="w-4 h-4" />
@@ -484,7 +875,7 @@ export default function PortfolioPage() {
         <button 
           type="button"
           onClick={() => setConfirmModal({ isOpen: true, type: 'single', id: r._id })} 
-          className="p-1 text-red-500 hover:text-red-400 transition-colors" 
+          className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30" 
           title="Delete"
         >
           <Trash2 className="w-4 h-4" />
@@ -505,37 +896,66 @@ export default function PortfolioPage() {
         onAdd={() => setModal('new')} 
         addLabel="Add Project"
         extraActions={
-          <button 
-            type="button"
-            onClick={() => setVideoModalOpen(true)}
-            style={{
-              height: '40px',
-              padding: '0 16px',
-              borderRadius: '999px',
-              backgroundColor: 'rgba(82, 164, 54, 0.12)',
-              color: '#52a436',
-              border: '1px solid rgba(82, 164, 54, 0.35)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '7px',
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.22)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
-          >
-            <Video style={{ width: '15px', height: '15px' }} />
-            Manage Form Video
-          </button>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button 
+              type="button"
+              onClick={() => setFaqModalOpen(true)}
+              style={{
+                height: '40px',
+                padding: '0 16px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                color: '#22c55e',
+                border: '1px solid rgba(34, 197, 94, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '7px',
+                fontWeight: 600,
+                fontSize: '13.5px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(34, 197, 94, 0.22)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(34, 197, 94, 0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              <HelpCircle style={{ width: '15px', height: '15px' }} />
+              Manage FAQs
+            </button>
+
+            <button 
+              type="button"
+              onClick={() => setVideoModalOpen(true)}
+              style={{
+                height: '40px',
+                padding: '0 16px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(82, 164, 54, 0.12)',
+                color: '#52a436',
+                border: '1px solid rgba(82, 164, 54, 0.35)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '7px',
+                fontWeight: 600,
+                fontSize: '13.5px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.22)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            >
+              <Video style={{ width: '15px', height: '15px' }} />
+              Manage Form Video
+            </button>
+          </div>
         }
       />
       <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={selectedIds} onToggleSelectAll={() => setSelectedIds(selectedIds.length === filtered.length ? [] : filtered.map(x=>x._id))} onToggleSelectRow={id => setSelectedIds(p => p.includes(id) ? p.filter(x=>x!==id) : [...p, id])} />
       {modal && <PortfolioModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
       {videoModalOpen && <ContactVideoModal onClose={() => setVideoModalOpen(false)} onSaved={msg => addToast(msg, 'success')} />}
-      <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false, type: 'single' })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Project" message="Are you sure?" />
+      {faqModalOpen && <ProjectFaqsModal onClose={() => setFaqModalOpen(false)} onSaved={msg => addToast(msg, 'success')} />}
+      <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false, type: 'single' })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Project" message="Are you sure you want to delete this project? This action is permanent and cannot be undone." />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />
     </div>
   )

@@ -321,11 +321,11 @@ export default function ServicesPage() {
       align: 'right',
       label: 'Action',
       render: r => (
-        <div className="flex items-center justify-end gap-3.5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
           <button 
             type="button"
             onClick={() => setModal(r)} 
-            className="p-1 text-blue-500 hover:text-blue-400 transition-colors" 
+            className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30" 
             title="Edit Service"
           >
             <Edit2 className="w-4 h-4" />
@@ -333,8 +333,8 @@ export default function ServicesPage() {
           <button 
             type="button"
             onClick={() => setConfirmModal({ isOpen: true, id: r._id })} 
-            className="p-1 text-red-500 hover:text-red-400 transition-colors" 
-            title="Delete"
+            className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30" 
+            title="Delete Service"
           >
             <Trash2 className="w-4 h-4" />
           </button>

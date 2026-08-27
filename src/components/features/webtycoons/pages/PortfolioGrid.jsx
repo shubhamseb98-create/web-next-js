@@ -31,7 +31,7 @@ const projectStyles = [
 
 const tagColors = ['#00a3ff', '#00ff88', '#ffb800', '#ff5c5c'];
 
-const faqs = [
+const DEFAULT_FAQS = [
   {
     question: "What development services do you specialize in?",
     answer: "We specialize in developing robust static, dynamic, and complex e-commerce websites. We leverage cutting-edge frameworks like React, Next.js, and Node to deliver high-performance solutions."
@@ -50,10 +50,11 @@ const faqs = [
   }
 ];
 
-export default function PortfolioGrid({ items = [], categories = ['All'], contactConfig = null }) {
+export default function PortfolioGrid({ items = [], categories = ['All'], contactConfig = null, faqs = [] }) {
   const [active, setActive] = useState('All')
   const [openFaq, setOpenFaq] = useState(0)
   const projects = items.length > 0 ? items : PLACEHOLDER_PROJECTS
+  const activeFaqs = faqs && faqs.length > 0 ? faqs : DEFAULT_FAQS
 
   const filtered = active === 'All'
     ? projects
@@ -227,7 +228,7 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
           </div>
 
           <div className={styles.faqContainer}>
-            {faqs.map((faq, index) => (
+            {activeFaqs.map((faq, index) => (
               <div 
                 key={index} 
                 className={`${styles.faqItem} ${openFaq === index ? styles.faqOpen : ''}`}

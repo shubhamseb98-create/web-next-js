@@ -286,7 +286,23 @@ export default function UserManagementPage() {
       label: 'Customer Name',
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-polaris-primary flex items-center justify-center text-white font-bold text-sm shadow-xs border border-white/20 overflow-hidden">
+          <div 
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '6px',
+              backgroundColor: '#52a436',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: '14px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              overflow: 'hidden',
+              flexShrink: 0
+            }}
+          >
              {row.name.charAt(0).toUpperCase()}
           </div>
           <div>

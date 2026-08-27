@@ -128,22 +128,15 @@ export default function ProfilePage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSave} className="rounded-2xl p-8 space-y-6" style={{ backgroundColor: 'rgba(255, 255, 255, 0.015)', border: '1px solid rgba(255, 255, 255, 0.05)',
-          padding:'26px',
-         }}>
-          <h3 className="text-lg font-bold text-foreground border-b border-border/20 pb-4">Account Details</h3>
+        <form onSubmit={handleSave} className="rounded-2xl flex flex-col gap-6" style={{ backgroundColor: 'rgba(255, 255, 255, 0.015)', border: '1px solid #1e2e20', padding: '28px' }}>
+          <h3 className="text-lg font-bold text-foreground border-b border-[#1e2e20] pb-4">Account Details</h3>
 
-          <div className="space-y-4">
+          <div className="flex flex-col gap-5">
             <FloatingInput
               label="Full Name"
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
               required
-              style={{ 
-                borderRadius: '12px', 
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                backgroundColor: 'rgba(255, 255, 255, 0.02)'
-              }}
             />
 
             <FloatingInput
@@ -154,9 +147,6 @@ export default function ProfilePage() {
               disabled={user?.role !== 'super_admin'}
               required={user?.role === 'super_admin'}
               style={{ 
-                borderRadius: '12px', 
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                backgroundColor: 'rgba(255, 255, 255, 0.02)',
                 opacity: user?.role !== 'super_admin' ? 0.6 : 1,
                 cursor: user?.role !== 'super_admin' ? 'not-allowed' : 'text'
               }}
@@ -171,11 +161,6 @@ export default function ProfilePage() {
                   onChange={e => setForm({ ...form, password: e.target.value })}
                   className="pr-12"
                   autoComplete="new-password"
-                  style={{ 
-                    borderRadius: '12px', 
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.02)'
-                  }}
                 />
                 <button
                   type="button"
@@ -193,19 +178,19 @@ export default function ProfilePage() {
               type="submit"
               disabled={saving}
               style={{
-                backgroundColor: '#2563eb',
-                color: 'white',
+                background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                color: '#ffffff',
                 border: 'none',
-                borderRadius: '40px',
-                padding: '0 32px',
-                height: '44px',
+                borderRadius: '12px',
+                padding: '0 28px',
+                height: '42px',
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '13.5px',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 6px 16px rgba(37, 99, 235, 0.25)',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)',
                 transition: 'all 0.2s'
               }}
             >

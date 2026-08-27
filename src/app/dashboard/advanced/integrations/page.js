@@ -106,88 +106,118 @@ export default function IntegrationsManagement() {
 
         {/* ── Analytics Tab ── */}
         {activeTab === 'analytics' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
               {/* GA4 */}
-              <Card className="border border-border shadow-sm rounded-2xl overflow-hidden hover:border-blue-500/50 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
-                      <BarChart3 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-foreground">Google Analytics (GA4)</h3>
-                      <p className="text-sm text-muted-foreground">Track website traffic, user behavior, and engagement metrics.</p>
-                    </div>
+              <div 
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid #1e2e20',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px'
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
+                    <BarChart3 className="w-5 h-5 text-orange-400" />
                   </div>
-                  <div className="space-y-2 mt-4">
-                    <label className="text-sm font-semibold">Measurement ID (e.g., G-XXXXXXXXXX)</label>
-                    <input
-                      type="text"
-                      value={settings.googleAnalyticsId}
-                      onChange={(e) => setSettings({ ...settings, googleAnalyticsId: e.target.value })}
-                      placeholder="G-..."
-                      className="w-full bg-background text-foreground border border-border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                  <div>
+                    <h3 className="text-base font-bold text-foreground">Google Analytics (GA4)</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">Track website traffic, user behavior, and engagement metrics.</p>
                   </div>
-                  <a href="https://analytics.google.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-indigo-500 hover:underline mt-3">Get Measurement ID <ExternalLink className="w-3 h-3" /></a>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <label className="text-xs font-semibold text-slate-300">Measurement ID (e.g., G-XXXXXXXXXX)</label>
+                  <input
+                    type="text"
+                    value={settings.googleAnalyticsId}
+                    onChange={(e) => setSettings({ ...settings, googleAnalyticsId: e.target.value })}
+                    placeholder="G-..."
+                    className="w-full bg-black/40 text-foreground border border-[#1e2e20] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#22c55e] transition-colors"
+                  />
+                </div>
+                <a href="https://analytics.google.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#22c55e] hover:underline mt-1 font-medium">
+                  Get Measurement ID <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
 
               {/* GTM */}
-              <Card className="border border-border shadow-sm rounded-2xl overflow-hidden hover:border-blue-500/50 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
-                      <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-foreground">Google Tag Manager</h3>
-                      <p className="text-sm text-muted-foreground">Manage marketing tags and track conversions without touching the code.</p>
-                    </div>
+              <div 
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid #1e2e20',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px'
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                    <Activity className="w-5 h-5 text-blue-400" />
                   </div>
-                  <div className="space-y-2 mt-4">
-                    <label className="text-sm font-semibold">Container ID (e.g., GTM-XXXXXXX)</label>
-                    <input
-                      type="text"
-                      value={settings.googleTagManagerId}
-                      onChange={(e) => setSettings({ ...settings, googleTagManagerId: e.target.value })}
-                      placeholder="GTM-..."
-                      className="w-full bg-background text-foreground border border-border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
+                  <div>
+                    <h3 className="text-base font-bold text-foreground">Google Tag Manager</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">Manage marketing tags and track conversions without touching code.</p>
                   </div>
-                  <a href="https://tagmanager.google.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-indigo-500 hover:underline mt-3">Open Tag Manager <ExternalLink className="w-3 h-3" /></a>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <label className="text-xs font-semibold text-slate-300">Container ID (e.g., GTM-XXXXXXX)</label>
+                  <input
+                    type="text"
+                    value={settings.googleTagManagerId}
+                    onChange={(e) => setSettings({ ...settings, googleTagManagerId: e.target.value })}
+                    placeholder="GTM-..."
+                    className="w-full bg-black/40 text-foreground border border-[#1e2e20] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#22c55e] transition-colors"
+                  />
+                </div>
+                <a href="https://tagmanager.google.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#22c55e] hover:underline mt-1 font-medium">
+                  Open Tag Manager <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6">
               {/* GSC */}
-              <Card className="border border-border shadow-sm rounded-2xl overflow-hidden hover:border-blue-500/50 transition-colors">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
-                      <Search className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-foreground">Google Search Console</h3>
-                      <p className="text-sm text-muted-foreground">Verify site ownership and monitor your search performance.</p>
-                    </div>
+              <div 
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid #1e2e20',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px'
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                    <Search className="w-5 h-5 text-[#22c55e]" />
                   </div>
-                  <div className="space-y-2 mt-4">
-                    <label className="text-sm font-semibold">Verification Meta Tag Content</label>
-                    <input
-                      type="text"
-                      value={settings.googleSearchConsoleKey}
-                      onChange={(e) => setSettings({ ...settings, googleSearchConsoleKey: e.target.value })}
-                      placeholder="e.g. Y7xxX..."
-                      className="w-full bg-background text-foreground border border-border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
-                    <p className="text-xs text-muted-foreground">Paste only the content string, not the full HTML tag.</p>
+                  <div>
+                    <h3 className="text-base font-bold text-foreground">Google Search Console</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">Verify site ownership and monitor your search performance.</p>
                   </div>
-                  <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-indigo-500 hover:underline mt-3">Open Search Console <ExternalLink className="w-3 h-3" /></a>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="flex flex-col gap-2 pt-1">
+                  <label className="text-xs font-semibold text-slate-300">Verification Meta Tag Content</label>
+                  <input
+                    type="text"
+                    value={settings.googleSearchConsoleKey}
+                    onChange={(e) => setSettings({ ...settings, googleSearchConsoleKey: e.target.value })}
+                    placeholder="e.g. Y7xxX..."
+                    className="w-full bg-black/40 text-foreground border border-[#1e2e20] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#22c55e] transition-colors"
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1">Paste only the content string, not the full HTML tag.</p>
+                </div>
+                <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-[#22c55e] hover:underline mt-1 font-medium">
+                  Open Search Console <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
           </div>
         )}
@@ -199,45 +229,61 @@ export default function IntegrationsManagement() {
               ⚠️ <strong>Caution:</strong> Only paste trusted JavaScript code here. Malicious or broken scripts can break your entire website for all visitors.
             </div>
 
-            <Card className="border border-border rounded-2xl overflow-hidden">
-              <CardContent className="p-6 space-y-3">
-                <div>
-                  <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-1">
-                    <Code className="w-4 h-4 text-purple-500" /> Custom Head Script
-                  </h3>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Runs immediately after page load (e.g., Meta Pixel, Clarity, custom analytics). Injected with <code className="bg-muted px-1 rounded">afterInteractive</code> strategy.
-                  </p>
-                  <textarea
-                    rows={8}
-                    value={settings.customHeadCode}
-                    onChange={(e) => setSettings({ ...settings, customHeadCode: e.target.value })}
-                    placeholder={`// Example: Microsoft Clarity\n(function(c,l,a,r,i,t,y){\n  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};\n  // ...\n})(window, document, "clarity", "script", "YOUR_ID");`}
-                    className="w-full font-mono text-sm bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 resize-none"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid #1e2e20',
+                borderRadius: '16px',
+                padding: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}
+            >
+              <div>
+                <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-1">
+                  <Code className="w-4 h-4 text-purple-400" /> Custom Head Script
+                </h3>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Runs immediately after page load (e.g., Meta Pixel, Clarity, custom analytics). Injected with <code className="bg-white/5 px-1.5 py-0.5 rounded text-slate-300">afterInteractive</code> strategy.
+                </p>
+                <textarea
+                  rows={8}
+                  value={settings.customHeadCode}
+                  onChange={(e) => setSettings({ ...settings, customHeadCode: e.target.value })}
+                  placeholder={`// Example: Microsoft Clarity\n(function(c,l,a,r,i,t,y){\n  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};\n  // ...\n})(window, document, "clarity", "script", "YOUR_ID");`}
+                  className="w-full font-mono text-sm bg-black/40 border border-[#1e2e20] rounded-xl px-4 py-3 focus:outline-none focus:border-[#22c55e] transition-colors resize-none"
+                />
+              </div>
+            </div>
 
-            <Card className="border border-border rounded-2xl overflow-hidden">
-              <CardContent className="p-6 space-y-3">
-                <div>
-                  <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-1">
-                    <Code className="w-4 h-4 text-blue-500" /> Custom Body Script
-                  </h3>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    Loads lazily after page is fully idle (e.g., live chat widgets, support tools). Injected with <code className="bg-muted px-1 rounded">lazyOnload</code> strategy — will not slow page load.
-                  </p>
-                  <textarea
-                    rows={8}
-                    value={settings.customBodyCode}
-                    onChange={(e) => setSettings({ ...settings, customBodyCode: e.target.value })}
-                    placeholder={`// Example: Intercom, Tidio, or other chat widgets\nwindow.intercomSettings = { app_id: "YOUR_APP_ID" };\n// ...`}
-                    className="w-full font-mono text-sm bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 resize-none"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid #1e2e20',
+                borderRadius: '16px',
+                padding: '24px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}
+            >
+              <div>
+                <h3 className="text-base font-bold text-foreground flex items-center gap-2 mb-1">
+                  <Code className="w-4 h-4 text-blue-400" /> Custom Body Script
+                </h3>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Loads lazily after page is fully idle (e.g., live chat widgets, support tools). Injected with <code className="bg-white/5 px-1.5 py-0.5 rounded text-slate-300">lazyOnload</code> strategy — will not slow page load.
+                </p>
+                <textarea
+                  rows={8}
+                  value={settings.customBodyCode}
+                  onChange={(e) => setSettings({ ...settings, customBodyCode: e.target.value })}
+                  placeholder={`// Example: Intercom, Tidio, or other chat widgets\nwindow.intercomSettings = { app_id: "YOUR_APP_ID" };\n// ...`}
+                  className="w-full font-mono text-sm bg-black/40 border border-[#1e2e20] rounded-xl px-4 py-3 focus:outline-none focus:border-[#22c55e] transition-colors resize-none"
+                />
+              </div>
+            </div>
           </div>
         )}
 

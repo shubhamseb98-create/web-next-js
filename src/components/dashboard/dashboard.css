@@ -96,43 +96,94 @@
   }
 
   /* Premium Glassmorphism Overrides for Dark Mode — WebTycoons Green */
-  .dark body, .dark .bg-background {
-    background: 
-      radial-gradient(circle at 15% 50%, rgba(82, 164, 54, 0.10), transparent 45%), 
-      radial-gradient(circle at 85% 30%, rgba(62, 128, 39, 0.08), transparent 45%), 
+  .dark body,
+  .dark .bg-background {
+    background:
+      radial-gradient(circle at 15% 50%, rgba(82, 164, 54, 0.10), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(62, 128, 39, 0.08), transparent 45%),
       #080e06 !important;
     background-attachment: fixed !important;
   }
 
-  .dark .bg-card {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-    backdrop-filter: blur(24px) saturate(150%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.06) !important;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  .dark .bg-card,
+  .dark .card {
+    background: radial-gradient(ellipse 80% 45% at 50% 0%, rgba(34, 197, 94, 0.08), transparent 75%), #0d150e;
+    background-color: #0d150e;
+    border: 1px solid #1e2e20;
+    border-radius: 16px;
+    box-shadow: 0 0 35px -10px rgba(34, 197, 94, 0.10), 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .dark [class*="CardHeader"],
+  .dark [class*="CardContent"],
+  .dark [class*="CardFooter"],
+  .dark .card-header,
+  .dark .card-content,
+  .dark .card-footer {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 
   .dark .bg-muted {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.03) !important;
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid #1e2e20 !important;
+  }
+
+  .dark .border-border,
+  .dark .border {
+    border-color: #1e2e20 !important;
   }
 
   .glass-panel {
-    background: linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.3) 100%) !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.3) 100%) !important;
     backdrop-filter: blur(24px) saturate(150%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
-    border-bottom-color: rgba(255, 255, 255, 0.4) !important;
-    border-right-color: rgba(255, 255, 255, 0.4) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255,255,255,0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
   }
 
   .dark .glass-panel {
-    background: linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.6) 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    background: #0d150e !important;
+    border: 1px solid #1e2e20 !important;
+    box-shadow: 0 0 35px -10px rgba(34, 197, 94, 0.12), 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* Global Typography Scaling for Admin Density */
+  .dark h1, .dark .text-3xl, .dark .text-4xl {
+    font-size: 21px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .dark h2, .dark .text-2xl {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  .dark h3, .dark .text-xl {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+  }
+
+  .dark h4, .dark .text-lg {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+  }
+
+  .dark h5, .dark .text-base {
+    font-size: 13px !important;
+  }
+
+  .dark p, .dark .text-sm {
+    font-size: 12.5px !important;
+    line-height: 1.5 !important;
+  }
+
+  .dark .text-xs {
+    font-size: 11px !important;
   }
 }
 
@@ -141,6 +192,7 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
   }
 }
 

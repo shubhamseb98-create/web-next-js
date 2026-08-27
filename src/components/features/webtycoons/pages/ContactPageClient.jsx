@@ -292,19 +292,33 @@ export default function ContactPageClient({ initialData = {}, globalSettings = {
 
       {/* ── Map ── */}
       <section className={styles.mapSection}>
-        {initialData?.mapIframeUrl ? (
-          <div dangerouslySetInnerHTML={{ __html: initialData.mapIframeUrl.replace('<iframe', '<iframe width="100%" height="450" style="border: 0; display: block; filter: invert(90%) hue-rotate(180deg);" allowfullscreen="" loading="lazy"') }} />
-        ) : (
-          <iframe
-            title="WebTycoons Office Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.3765565254!2d77.32199!3d28.56978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce4f2d2b7e4d1%3A0x7f0c0c0c0c0c0c0c!2sSector%2018%2C%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-            width="100%"
-            height="450"
-            style={{ border: 0, display: 'block', filter: 'invert(90%) hue-rotate(180deg)' }}
-            allowFullScreen=""
-            loading="lazy"
-          />
-        )}
+        {(() => {
+          const mapInput = initialData?.mapIframeUrl;
+          let mapSrc = mapInput;
+          if (mapInput && mapInput.includes('<iframe')) {
+            const match = mapInput.match(/src=["']([^"']+)["']/);
+            if (match) mapSrc = match[1];
+          }
+          let finalSrc = mapSrc || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.3765565254!2d77.32199!3d28.56978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce4f2d2b7e4d1%3A0x7f0c0c0c0c0c0c0c!2sSector%2018%2C%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin";
+
+          // Force English language on Google Maps
+          finalSrc = finalSrc.replace(/!2shi/g, '!2sen').replace(/!1shi/g, '!1sen');
+          if (!finalSrc.includes('hl=')) {
+            finalSrc += (finalSrc.includes('?') ? '&' : '?') + 'hl=en';
+          }
+
+          return (
+            <iframe
+              title="Office Location Map"
+              src={finalSrc}
+              width="100%"
+              height="450"
+              style={{ border: 0, display: 'block', filter: 'invert(90%) hue-rotate(180deg)' }}
+              allowFullScreen=""
+              loading="lazy"
+            />
+          );
+        })()}
       </section>
 
     </main>

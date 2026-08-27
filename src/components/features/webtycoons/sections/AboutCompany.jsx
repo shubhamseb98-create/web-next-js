@@ -18,6 +18,8 @@ const smoothImageVariant = {
 };
 
 const AboutCompany = ({ aboutData }) => {
+  const title_green = aboutData?.title_green;
+  const title_white = aboutData?.title_white;
   const title = aboutData?.title || '*Scale at Speed™* with WebTycoons';
   const description = aboutData?.description || 'Our promise to help enterprises across industries transform at speed and bring agility, resilience, and efficiency to their businesses.';
   const image = aboutData?.image || '/assets/img/about-us-it-company.png';
@@ -47,6 +49,19 @@ const AboutCompany = ({ aboutData }) => {
     return formatted.replace(/\n/g, '<br />');
   };
 
+  const renderHeading = () => {
+    if (title_green || title_white) {
+      return (
+        <>
+          {title_green && <span className={styles.titleHighlight}>{title_green}</span>}
+          {title_green && title_white && <br />}
+          {title_white && <span className={styles.titleSecondary}>{title_white}</span>}
+        </>
+      );
+    }
+    return <span dangerouslySetInnerHTML={{ __html: formatTitle(title) }} />;
+  };
+
   return (
     <section className={styles.section} id="about">
       <div className="container-fluid-px">
@@ -60,7 +75,9 @@ const AboutCompany = ({ aboutData }) => {
             viewport={viewportOptions}
           >
             <motion.div variants={fadeUp}>
-              <h2 className="mb-4" dangerouslySetInnerHTML={{ __html: formatTitle(title) }}></h2>
+              <h2 className="mb-4">
+                {renderHeading()}
+              </h2>
             </motion.div>
             
             <motion.div variants={fadeUp} className={styles.text} dangerouslySetInnerHTML={{ __html: description }}></motion.div>

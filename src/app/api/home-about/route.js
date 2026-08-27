@@ -21,7 +21,9 @@ export async function POST(request) {
 
         const formData = await request.formData();
 
-        const title = formData.get("title") || "";
+        const title_green = formData.get("title_green") || "";
+        const title_white = formData.get("title_white") || "";
+        const title = formData.get("title") || (title_green ? `[${title_green}] ${title_white}` : title_white);
         const description = formData.get("description") || "";
         const image = formData.get("image"); // FILE
         const alt = formData.get("alt") || "";
@@ -32,7 +34,7 @@ export async function POST(request) {
             imageUrl = await uploadFile(image, "home-about", "homeabout");
         }
 
-        const updateData = { title, description, alt };
+        const updateData = { title, title_green, title_white, description, alt };
         if (imageUrl) updateData.image = imageUrl;
 
         // Upsert

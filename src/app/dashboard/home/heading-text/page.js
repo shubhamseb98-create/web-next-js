@@ -38,12 +38,12 @@ const sections = [
 
 const FIELD_CONFIG = {
   // Global Network
-  work_subtitle: 'Title',
+  work_subtitle: 'Tag',
   work_title: 'Main Heading',
   work_description: 'Description',
 
   // Our Services
-  service_subtitle: 'Title',
+  service_subtitle: 'Tag',
   service_title: 'Main Heading',
   service_description: 'Description',
 
@@ -53,7 +53,7 @@ const FIELD_CONFIG = {
   technology_description: 'Description',
 
   // Meet The Team
-  team_label: 'Title',
+  team_label: 'Tag',
   team_title: 'Main Heading (White Color)',
   team_subtitle: 'Main Heading (Green Color)',
   team_description: 'Description',
@@ -64,12 +64,12 @@ const FIELD_CONFIG = {
   testimonial_description: 'Description',
 
   // Our Clients
-  client_title: 'Title',
+  client_title: 'Tag',
   client_subtitle: 'Main Heading',
   client_description: 'Description',
 
   // Achievements
-  achievement_subtitle: 'Title',
+  achievement_subtitle: 'Tag',
   achievement_title: 'Main Heading',
   achievement_description: 'Description',
 
@@ -78,12 +78,12 @@ const FIELD_CONFIG = {
   blog_subtitle: 'Description',
 
   // Featured Projects
-  featured_project_subtitle: 'Title',
+  featured_project_subtitle: 'Tag',
   featured_project_title: 'Main Heading',
   featured_project_description: 'Description',
 }
 
-const fieldLabel = k => FIELD_CONFIG[k] || (k.endsWith('_subtitle') ? 'Title' : k.endsWith('_title') ? 'Main Heading' : 'Description')
+const fieldLabel = k => FIELD_CONFIG[k] || (k.endsWith('_subtitle') || k.endsWith('_label') ? 'Tag' : k.endsWith('_title') ? 'Main Heading' : 'Description')
 
 export default function HeadingTextPage() {
   const [form, setForm] = useState(DEFAULT)

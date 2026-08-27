@@ -102,9 +102,8 @@ export default function ServiceCMSPage() {
         if (!loadedData.overviewWhoNeedsIt) loadedData.overviewWhoNeedsIt = fallback?.overview?.whoNeedsIt || "";
         if (!loadedData.overviewWhyChooseUs) loadedData.overviewWhyChooseUs = fallback?.overview?.whyChooseUs || "";
 
-        if (!loadedData.breadcrumbImage) loadedData.breadcrumbImage = loadedData.image || fallback?.hero?.image || "";
-        if (!loadedData.overviewImage) loadedData.overviewImage = loadedData.image || fallback?.hero?.image || "";
-        if (!loadedData.image) loadedData.image = loadedData.breadcrumbImage || fallback?.hero?.image || "";
+        if (!loadedData.breadcrumbImage) loadedData.breadcrumbImage = fallback?.hero?.image || "";
+        if (!loadedData.overviewImage) loadedData.overviewImage = fallback?.hero?.image || "";
 
         setData(loadedData);
       } else {
@@ -118,7 +117,7 @@ export default function ServiceCMSPage() {
   }
 
   // Handle Image Uploads
-  const handleImageUpload = async (e, key = 'image') => {
+  const handleImageUpload = async (e, key = 'breadcrumbImage') => {
     const file = e.target.files[0];
     if (!file) return;
     const formData = new FormData();
@@ -132,11 +131,7 @@ export default function ServiceCMSPage() {
       });
       const responseData = await res.json();
       if (res.ok && responseData.url) {
-        if (key === 'breadcrumbImage') {
-          setData(p => ({ ...p, breadcrumbImage: responseData.url, image: responseData.url }));
-        } else {
-          setData(p => ({ ...p, [key]: responseData.url }));
-        }
+        setData(p => ({ ...p, [key]: responseData.url }));
         addToast(`${key} uploaded successfully`, 'success');
       } else {
         throw new Error(responseData.error?.message || responseData.message || 'Upload failed');
@@ -173,6 +168,16 @@ export default function ServiceCMSPage() {
     }
   };
 
+  const sanitizePayload = (obj) => {
+    const payload = { ...obj };
+    // The inner service page editor should NEVER touch or overwrite the home page card image, card style or card theme
+    delete payload.image;
+    delete payload.imageStyle;
+    delete payload.bgColor;
+    delete payload.hoverTextColor;
+    return payload;
+  };
+
   // Main Save
   const handleSaveAll = async (updatedData = data) => {
     try {
@@ -184,7 +189,7 @@ export default function ServiceCMSPage() {
           'Content-Type': 'application/json',
           ...getAuthHeaders(),
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(sanitizePayload(updatedData)),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || result.message || 'Failed to save');
@@ -253,7 +258,7 @@ export default function ServiceCMSPage() {
           'Content-Type': 'application/json',
           ...getAuthHeaders(),
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(sanitizePayload(updatedData)),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || result.error || 'Failed to save');
@@ -288,7 +293,7 @@ export default function ServiceCMSPage() {
           'Content-Type': 'application/json',
           ...getAuthHeaders(),
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(sanitizePayload(updatedData)),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || result.error || 'Delete failed');
@@ -318,7 +323,7 @@ export default function ServiceCMSPage() {
           'Content-Type': 'application/json',
           ...getAuthHeaders(),
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify(sanitizePayload(updatedData)),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.message || result.error || 'Delete failed');

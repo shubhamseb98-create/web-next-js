@@ -158,8 +158,8 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
               const cardInner = (
                 <>
                   <div className={styles.cardBg}>
-                    {(service.image || service.breadcrumbImage) && (
-                      <img src={service.image || service.breadcrumbImage} alt={service.title} className={styles.cardImage} />
+                    {service.image && (
+                      <img src={service.image} alt={service.title} className={styles.cardImage} />
                     )}
                   </div>
                   <div className={styles.cardContent}>

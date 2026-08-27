@@ -1,70 +1,84 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../../../context/AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../../../../components/ui/card';
 import { Button } from '../../../../components/ui/button';
 import { Sparkles, Key, FileText, Search, Languages, MessageSquare, Copy, Check, Zap, ChevronDown } from 'lucide-react';
 import Breadcrumb from '../../../../components/dashboard/Breadcrumb';
 import Toast from '../../../../components/dashboard/Toast';
+import { cn } from '../../../../lib/utils';
 
-const PROVIDERS = [
-  {
-    id: 'openrouter',
-    key: 'openRouterApiKey',
-    label: 'OpenRouter',
-    badge: 'PRIMARY',
-    badgeColor: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400',
-    borderColor: 'border-emerald-500/40',
-    iconBg: 'bg-emerald-500',
-    model: 'openrouter/free',
-    placeholder: 'sk-or-v1-...',
-    url: 'https://openrouter.ai/keys',
-    description: 'Best free tier — OpenRouter Auto Free. Automatically selects the best available free model.',
-    icon: '⚡',
-  },
-  {
-    id: 'groq',
-    key: 'groqApiKey',
-    label: 'Groq',
-    badge: 'FALLBACK 1',
-    badgeColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
-    borderColor: 'border-blue-500/40',
-    iconBg: 'bg-blue-500',
-    model: 'llama-3.3-70b-versatile',
-    placeholder: 'gsk_...',
-    url: 'https://console.groq.com/keys',
-    description: 'Ultra-fast inference — Llama 3.3 70B. Best speed on free tier.',
-    icon: '🚀',
-  },
-  {
-    id: 'cerebras',
-    key: 'cerebrasApiKey',
-    label: 'Cerebras',
-    badge: 'FALLBACK 2',
-    badgeColor: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400',
-    borderColor: 'border-purple-500/40',
-    iconBg: 'bg-purple-500',
-    model: 'llama-3.3-70b',
-    placeholder: 'csk-...',
-    url: 'https://cloud.cerebras.ai',
-    description: 'World-fastest AI chip — Llama 3.3 70B at incredible speed.',
-    icon: '🧠',
-  },
-  {
-    id: 'gemini',
-    key: 'geminiApiKey',
-    label: 'Google Gemini',
-    badge: 'LEGACY',
-    badgeColor: 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400',
-    borderColor: 'border-orange-500/40',
-    iconBg: 'bg-orange-500',
-    model: 'gemini-1.5-flash',
-    placeholder: 'AIzaSy...',
-    url: 'https://aistudio.google.com/app/apikey',
-    description: 'Google Gemini — used as last resort if others are exhausted.',
-    icon: '✦',
-  },
-];
+function CustomSelect({ label, value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options?.find(opt => opt.value === value) || options?.[0];
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      {label && <label className="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">{label}</label>}
+      <button
+        type="button"
+        onClick={() => setOpen(prev => !prev)}
+        className="w-full flex items-center justify-between bg-[#111912] hover:bg-[#142016] border border-[#233526] hover:border-[#52a436]/60 px-3.5 py-2 text-sm text-white font-medium transition-all shadow-xs focus:outline-none focus:ring-1 focus:ring-[#52a436]/40 cursor-pointer"
+        style={{ height: '42px', borderRadius: '6px' }}
+      >
+        <span className="truncate">{selectedOption?.label || 'Select option'}</span>
+        <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform duration-200 shrink-0 ml-2", open && "rotate-180 text-[#52a436]")} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.1 }}
+            className="absolute left-0 right-0 z-50 mt-1 bg-[#111912] border border-[#233526] shadow-2xl shadow-black/90 p-1 overflow-hidden"
+            style={{ borderRadius: '6px', boxShadow: '0 12px 28px -4px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05)' }}
+          >
+            <div className="max-h-56 overflow-y-auto space-y-0.5" style={{ scrollbarWidth: 'none' }}>
+              {options.map((opt) => {
+                const isSelected = (value || options[0]?.value) === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => {
+                      onChange(opt.value);
+                      setOpen(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 text-[13.5px] transition-all text-left font-normal cursor-pointer",
+                      isSelected
+                        ? "bg-[#52a436]/15 text-[#52a436] font-semibold"
+                        : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                    )}
+                    style={{ borderRadius: '4px' }}
+                  >
+                    <span>{opt.label}</span>
+                    {isSelected && <Check className="w-3.5 h-3.5 text-[#52a436] shrink-0 ml-2" />}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function AIFeaturesManagement() {
   const { user } = useAuth();
@@ -75,8 +89,6 @@ export default function AIFeaturesManagement() {
   // API Key States
   const [keys, setKeys] = useState({ openRouterApiKey: '', groqApiKey: '', cerebrasApiKey: '', geminiApiKey: '' });
   const [preferredProvider, setPreferredProvider] = useState('auto');
-  const [savingKeys, setSavingKeys] = useState(false);
-  const [showKeys, setShowKeys] = useState({});
 
   // AI Tool States
   const [isGenerating, setIsGenerating] = useState(false);
@@ -102,25 +114,9 @@ export default function AIFeaturesManagement() {
           geminiApiKey: data.data.geminiApiKey || '',
         });
         setPreferredProvider(data.data.preferredAiProvider || 'auto');
-        // Note: do NOT auto-switch tabs — let user stay on setup to see saved keys
       }
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
-  };
-
-  const saveKeys = async () => {
-    try {
-      setSavingKeys(true);
-      const fd = new FormData();
-      Object.entries(keys).forEach(([k, v]) => fd.append(k, v));
-      fd.append('preferredAiProvider', preferredProvider);
-
-      const res = await fetch('/api/global-settings', { method: 'PUT', body: fd });
-      const data = await res.json();
-      if (data.success) addToast('AI provider keys saved successfully!');
-      else addToast('Failed to save keys', 'error');
-    } catch { addToast('Error saving keys', 'error'); }
-    finally { setSavingKeys(false); }
   };
 
   const generateAIContent = async (taskType) => {
@@ -154,46 +150,42 @@ export default function AIFeaturesManagement() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const configuredCount = Object.values(keys).filter(v => v?.trim()).length;
-
   const renderToolInterface = (taskType, title, description, promptLabel, contextLabel, contextOptions) => (
-    <Card className="border border-indigo-500/30 shadow-lg rounded-2xl overflow-hidden mt-6">
-      <CardHeader className="bg-indigo-50/50 dark:bg-indigo-900/10 border-b border-border/50">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-indigo-500" />
-          {title}
+    <Card className="border border-[#253828] bg-[#0d140e] shadow-xl overflow-hidden mt-5" style={{ borderRadius: '6px' }}>
+      <CardHeader className="bg-[#121c13] border-b border-[#253828]" style={{ padding: '14px 20px', borderRadius: 0 }}>
+        <CardTitle className="font-bold flex items-center gap-2 text-white" style={{ fontSize: '15px' }}>
+          <Sparkles className="w-4 h-4 text-[#52a436]" />
+          <span>{title}</span>
         </CardTitle>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-xs text-slate-400 mt-0.5 leading-normal">{description}</p>
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <CardContent style={{ padding: '20px' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             {contextLabel && contextOptions && (
-              <div>
-                <label className="block text-sm font-semibold mb-2">{contextLabel}</label>
-                <select
-                  className="w-full bg-background border border-border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500/20"
-                  value={extraContext}
-                  onChange={(e) => setExtraContext(e.target.value)}
-                >
-                  {contextOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-              </div>
+              <CustomSelect
+                label={contextLabel}
+                value={extraContext}
+                options={contextOptions}
+                onChange={setExtraContext}
+              />
             )}
             <div>
-              <label className="block text-sm font-semibold mb-2">{promptLabel}</label>
+              <label className="block text-xs sm:text-sm font-semibold text-slate-200 mb-1.5">{promptLabel}</label>
               <textarea
                 rows={6}
-                className="w-full bg-background border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500/20 resize-none text-sm"
+                className="w-full bg-[#0e1610] border border-[#253828] focus:border-[#52a436]/60 px-3.5 py-2.5 focus:ring-1 focus:ring-[#52a436]/30 resize-none text-sm text-white placeholder-slate-500 transition-all outline-none"
                 placeholder="Enter your text or topic here..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
+                style={{ borderRadius: '6px' }}
               />
             </div>
             <Button
               onClick={() => generateAIContent(taskType)}
               disabled={isGenerating || !prompt}
-              className="w-full h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold"
+              className="w-full h-11 bg-[#52a436] hover:bg-[#3e8027] text-white font-bold shadow-sm shadow-[#52a436]/20 transition-all cursor-pointer text-sm"
+              style={{ borderRadius: '6px' }}
             >
               {isGenerating ? (
                 <span className="flex items-center gap-2">
@@ -207,32 +199,32 @@ export default function AIFeaturesManagement() {
           </div>
 
           <div className="flex flex-col h-full relative">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-semibold flex items-center gap-2">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs sm:text-sm font-semibold text-slate-200 flex items-center gap-2">
                 Output Result
                 {usedProvider && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300">
+                  <span className="text-[11px] font-bold px-2 py-0.5 bg-[#52a436]/20 text-[#52a436] border border-[#52a436]/30" style={{ borderRadius: '4px' }}>
                     via {usedProvider}
                   </span>
                 )}
               </label>
               {result && (
-                <button onClick={copyToClipboard} className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
-                  {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3" />}
+                <button onClick={copyToClipboard} className="text-xs flex items-center gap-1.5 text-slate-400 hover:text-white px-2 py-1 bg-white/[0.05] hover:bg-white/[0.1] transition-all cursor-pointer" style={{ borderRadius: '4px' }}>
+                  {copied ? <Check className="w-3.5 h-3.5 text-[#52a436]" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
               )}
             </div>
-            <div className="flex-1 min-h-[250px] w-full bg-muted/30 border border-border rounded-xl p-4 overflow-y-auto whitespace-pre-wrap font-sans text-sm">
+            <div className="flex-1 min-h-[240px] w-full bg-[#0e1610] border border-[#253828] p-3.5 overflow-y-auto whitespace-pre-wrap font-sans text-sm text-slate-200 leading-relaxed" style={{ borderRadius: '6px' }}>
               {isGenerating ? (
-                <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-3">
-                  <Sparkles className="w-8 h-8 animate-pulse text-indigo-400" />
+                <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-3">
+                  <Sparkles className="w-6 h-6 animate-pulse text-[#52a436]" />
                   <span className="text-sm">AI is thinking...</span>
                 </div>
               ) : result ? (
                 <div dangerouslySetInnerHTML={{ __html: result.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
               ) : (
-                <div className="h-full flex items-center justify-center text-muted-foreground opacity-50">
+                <div className="h-full flex items-center justify-center text-slate-500 text-xs italic">
                   Results will appear here
                 </div>
               )}
@@ -245,7 +237,7 @@ export default function AIFeaturesManagement() {
 
   if (loading) return (
     <div className="p-8 flex justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#52a436]" />
     </div>
   );
 
@@ -255,17 +247,17 @@ export default function AIFeaturesManagement() {
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Advanced', href: '#' }, { label: 'AI Features' }]} />
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2 flex items-center gap-3">
-            <Sparkles className="w-8 h-8 text-indigo-500" />
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2 flex items-center gap-3">
+            <Sparkles className="w-8 h-8 text-[#52a436]" />
             AI Features Management
           </h1>
-          <p className="text-muted-foreground max-w-3xl">
+          <p className="text-slate-400 max-w-3xl">
             Multi-provider AI engine with automatic fallback. Uses the best available free provider — if one runs out of quota, it instantly switches to the next.
           </p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-border pb-2">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-[#253828] pb-3">
           <div className="flex flex-wrap gap-2">
             {[
               { key: 'content', label: 'Content Generator', icon: FileText },
@@ -275,18 +267,21 @@ export default function AIFeaturesManagement() {
             ].map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
-                onClick={() => { setActiveTab(key); setResult(''); setPrompt(''); }}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors ${
-                  activeTab === key ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'hover:bg-muted text-muted-foreground'
-                }`}
+                onClick={() => { setActiveTab(key); setResult(''); setPrompt(''); setExtraContext(''); }}
+                className={cn(
+                  "px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer",
+                  activeTab === key
+                    ? "bg-[#52a436]/20 text-[#52a436] border border-[#52a436]/40 shadow-sm"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.05] border border-transparent"
+                )}
               >
                 <Icon className="w-4 h-4" /> {label}
               </button>
             ))}
           </div>
           
-          <a href="/dashboard/profile/api-keys" className="px-4 py-2 bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors border border-border">
-            <Key className="w-4 h-4" /> Manage API Keys Securely
+          <a href="/dashboard/profile/api-keys" className="px-4 py-2 bg-[#0e1610] hover:bg-[#142016] text-slate-300 hover:text-white rounded-xl text-sm font-semibold flex items-center gap-2 transition-colors border border-[#253828]">
+            <Key className="w-4 h-4 text-[#52a436]" /> Manage API Keys Securely
           </a>
         </div>
 

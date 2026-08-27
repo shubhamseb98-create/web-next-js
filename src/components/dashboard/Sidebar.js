@@ -51,7 +51,7 @@ const NAV = [
     ],
   },
   {
-    id: 'about', label: 'About Management', icon: FileText, permission: 'inner_pages',
+    id: 'about', label: 'About Management', icon: FileText, permission: 'about',
     children: [
       { label: 'About Breadcrumb',   href: '/dashboard/about-page/breadcrumb' },
       { label: 'About Us Content',   href: '/dashboard/about-page/content' },
@@ -61,7 +61,7 @@ const NAV = [
     ],
   },
   {
-    id: 'services', label: 'Services Management', icon: Briefcase, permission: 'home',
+    id: 'services', label: 'Services Management', icon: Briefcase, permission: 'services',
     children: [
       { label: 'All Services',       href: '/dashboard/services' },
       { label: 'Dynamic Website',    href: '/dashboard/services/dynamic-website-development' },
@@ -73,7 +73,7 @@ const NAV = [
     id: 'real-estate',
     label: 'Real Estate Management',
     icon: Building2,
-    permission: 'home',
+    permission: 'real_estate',
     children: [
       { label: 'Breadcrumb & Banner', href: '/dashboard/real-estate/breadcrumb' },
       { label: 'Overview & Pillars',   href: '/dashboard/real-estate/overview' },
@@ -123,23 +123,57 @@ const ADMIN_NAV = [
   },
 ];
 
+function isRouteActive(currentPath, targetHref) {
+  if (!currentPath || !targetHref) return false;
+  const cleanCurrent = currentPath.replace(/\/$/, '');
+  const cleanTarget = targetHref.replace(/\/$/, '');
+  return cleanCurrent === cleanTarget;
+}
+
+function checkItemChildActive(item, currentPath) {
+  if (!item.children || !Array.isArray(item.children)) return false;
+  return item.children.some(child => {
+    if (child.href && isRouteActive(currentPath, child.href)) return true;
+    if (child.children && Array.isArray(child.children)) {
+      return child.children.some(sub => sub.href && isRouteActive(currentPath, sub.href));
+    }
+    return false;
+  });
+}
+
 /* ─── Reusable sub-item list ────────────────────────── */
 function SubList({ items, pathname }) {
   return (
-    <div className="space-y-0.5" style={{ marginLeft: '32px', padding: '6px 0' }}>
+    <div className="space-y-1" style={{ padding: '4px 0' }}>
       {items.map((child) => {
-        const active = pathname === child.href;
+        const active = isRouteActive(pathname, child.href);
         return (
           <Link
             key={child.href}
             href={child.href}
-            className={cn(
-              'flex items-center text-sm transition-all font-normal',
-              active
-                ? 'text-white'
-                : 'text-slate-400 hover:text-white',
-            )}
-            style={{ padding: '6px 16px 6px 24px' }}
+            className="flex items-center text-sm transition-all"
+            style={{
+              padding: '8px 16px',
+              marginLeft: '28px',
+              marginRight: '8px',
+              borderRadius: '10px',
+              backgroundColor: active ? 'rgba(82, 164, 54, 0.18)' : 'transparent',
+              border: active ? '1px solid rgba(82, 164, 54, 0.35)' : '1px solid transparent',
+              color: active ? '#ffffff' : '#94a3b8',
+              fontWeight: active ? 600 : 400,
+            }}
+            onMouseEnter={(e) => {
+              if (!active) {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.color = '#ffffff';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!active) {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#94a3b8';
+              }
+            }}
           >
             {child.label}
           </Link>
@@ -151,21 +185,32 @@ function SubList({ items, pathname }) {
 
 /* ─── Nested (3-level) child ────────────────────────── */
 function NestedNavChild({ child, pathname }) {
-  const isActive = child.children.some(c => pathname === c.href);
+  const isActive = child.children?.some(c => isRouteActive(pathname, c.href));
   const [open, setOpen] = useState(isActive);
+
+  useEffect(() => {
+    if (isActive) setOpen(true);
+  }, [isActive]);
+
   return (
-    <div>
+    <div className="mb-1">
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
-        className={cn(
-          'w-full flex items-center justify-between text-sm font-normal transition-colors',
-          isActive || open ? 'text-slate-200' : 'text-slate-400 hover:text-white',
-        )}
-        style={{ padding: '6px 16px 6px 24px', borderRadius: '6px' }}
+        className="w-full flex items-center justify-between text-sm transition-colors"
+        style={{
+          padding: '8px 16px',
+          marginLeft: '28px',
+          marginRight: '8px',
+          borderRadius: '10px',
+          backgroundColor: isActive || open ? 'rgba(255, 255, 255, 0.04)' : 'transparent',
+          color: isActive || open ? '#ffffff' : '#94a3b8',
+          border: 'none',
+          cursor: 'pointer',
+        }}
       >
         <span>{child.label}</span>
-        <ChevronRight className={cn('w-3 h-3 transition-transform duration-200', open && 'rotate-90')} />
+        <ChevronRight className={cn('w-3.5 h-3.5 transition-transform duration-200', open && 'rotate-90')} />
       </button>
       <AnimatePresence>
         {open && (
@@ -185,44 +230,126 @@ function NestedNavChild({ child, pathname }) {
 }
 
 /* ─── Single nav item ────────────────────────────────── */
-function NavItem({ item, isActive, isChildActive, hasModuleAccess }) {
+function NavItem({ item, pathname, hasModuleAccess }) {
+  const isChildActive = checkItemChildActive(item, pathname);
+  const isActive = item.href ? isRouteActive(pathname, item.href) : false;
   const [open, setOpen] = useState(isChildActive);
-  const pathname = usePathname();
+
+  useEffect(() => {
+    if (isChildActive) setOpen(true);
+  }, [isChildActive]);
 
   if (item.permission && !hasModuleAccess(item.permission)) return null;
 
   const hasChildren = !!(item.children?.length);
   const isItemActive = isActive || isChildActive;
 
-  const pillClasses = cn(
-    'nav-item-pill flex w-full items-center text-sm font-medium transition-all duration-300 cursor-pointer select-none focus:outline-none focus:ring-0',
-    isItemActive
-      ? 'bg-green-600 text-white shadow-sm'
-      : 'text-slate-400 hover:bg-white/5 hover:text-white',
-  );
+  const activeStyle = {
+    padding: '10px 16px',
+    borderRadius: '12px',
+    background: 'linear-gradient(135deg, #52a436 0%, #3e8027 100%)',
+    color: '#ffffff',
+    fontWeight: 600,
+    boxShadow: '0 4px 12px rgba(82, 164, 54, 0.25)',
+    border: 'none',
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    cursor: 'pointer',
+    userSelect: 'none',
+    outline: 'none',
+    transition: 'all 0.2s',
+  };
+
+  const inactiveStyle = {
+    padding: '10px 16px',
+    borderRadius: '12px',
+    backgroundColor: 'transparent',
+    border: '1px solid transparent',
+    color: '#94a3b8',
+    fontWeight: 500,
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    cursor: 'pointer',
+    userSelect: 'none',
+    outline: 'none',
+    transition: 'all 0.2s',
+  };
 
   const innerContent = (
     <>
-      <item.icon className={cn('nav-item-icon w-5 h-5 shrink-0', isItemActive ? 'text-white' : 'text-slate-500')} style={{ marginRight: '12px', transition: 'margin 0.3s' }} />
-      <span className="nav-item-text flex-1 text-left whitespace-nowrap overflow-hidden transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:w-0 lg:group-hover:w-auto">
+      <item.icon
+        className="nav-item-icon w-5 h-5 shrink-0"
+        style={{
+          marginRight: '12px',
+          color: isItemActive ? '#ffffff' : '#64748b',
+          transition: 'margin 0.3s, color 0.2s',
+        }}
+      />
+      <span
+        className="nav-item-text flex-1 text-left whitespace-nowrap overflow-hidden transition-all duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:w-0 lg:group-hover:w-auto"
+        style={{ color: isItemActive ? '#ffffff' : '#cbd5e1' }}
+      >
         {item.label}
       </span>
       {hasChildren && (
-        <ChevronRight className={cn(
-          'nav-item-chevron w-4 h-4 shrink-0 transition-all duration-300',
-          open && 'rotate-90',
-          'opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:w-0 lg:group-hover:w-4'
-        )} />
+        <ChevronRight
+          className={cn(
+            'nav-item-chevron w-4 h-4 shrink-0 transition-all duration-300',
+            open && 'rotate-90',
+            'opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:w-0 lg:group-hover:w-4'
+          )}
+          style={{ color: isItemActive ? '#ffffff' : '#64748b' }}
+        />
       )}
     </>
   );
 
   return (
     <div>
-      {hasChildren
-        ? <button type="button" onClick={() => setOpen(v => !v)} className={pillClasses} style={{ padding: '10px 16px', borderRadius: '8px' }}>{innerContent}</button>
-        : <Link href={item.href} className={pillClasses} style={{ padding: '10px 16px', borderRadius: '8px' }}>{innerContent}</Link>
-      }
+      {hasChildren ? (
+        <button
+          type="button"
+          onClick={() => setOpen(v => !v)}
+          className="nav-item-pill"
+          style={isItemActive ? activeStyle : inactiveStyle}
+          onMouseEnter={(e) => {
+            if (!isItemActive) {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.color = '#ffffff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isItemActive) {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#cbd5e1';
+            }
+          }}
+        >
+          {innerContent}
+        </button>
+      ) : (
+        <Link
+          href={item.href}
+          className="nav-item-pill"
+          style={isItemActive ? activeStyle : inactiveStyle}
+          onMouseEnter={(e) => {
+            if (!isItemActive) {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              e.currentTarget.style.color = '#ffffff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isItemActive) {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#cbd5e1';
+            }
+          }}
+        >
+          {innerContent}
+        </Link>
+      )}
 
       <AnimatePresence initial={false}>
         {hasChildren && open && (
@@ -234,21 +361,39 @@ function NavItem({ item, isActive, isChildActive, hasModuleAccess }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden lg:hidden lg:group-hover:block"
           >
-            <div className="space-y-0.5" style={{ marginLeft: '32px', padding: '6px 0' }}>
+            <div className="space-y-1" style={{ padding: '4px 0' }}>
               {item.children.map((child) => {
                 if (child.children) {
                   return <NestedNavChild key={child.label} child={child} pathname={pathname} />;
                 }
-                const subActive = pathname === child.href;
+                const subActive = isRouteActive(pathname, child.href);
                 return (
                   <Link
                     key={child.href}
                     href={child.href}
-                    className={cn(
-                      'flex items-center text-sm transition-all font-normal',
-                      subActive ? 'text-white' : 'text-slate-400 hover:text-white',
-                    )}
-                    style={{ padding: '6px 16px 6px 24px' }}
+                    className="flex items-center text-sm transition-all"
+                    style={{
+                      padding: '8px 16px',
+                      marginLeft: '28px',
+                      marginRight: '8px',
+                      borderRadius: '10px',
+                      backgroundColor: subActive ? 'rgba(82, 164, 54, 0.18)' : 'transparent',
+                      border: subActive ? '1px solid rgba(82, 164, 54, 0.35)' : '1px solid transparent',
+                      color: subActive ? '#ffffff' : '#94a3b8',
+                      fontWeight: subActive ? 600 : 400,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!subActive) {
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+                        e.currentTarget.style.color = '#ffffff';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!subActive) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#94a3b8';
+                      }
+                    }}
                   >
                     {child.label}
                   </Link>
@@ -390,8 +535,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
                 <NavItem
                   key={item.id}
                   item={item}
-                  isActive={pathname === item.href}
-                  isChildActive={!!(item.children?.some(c => pathname === c.href))}
+                  pathname={pathname}
                   hasModuleAccess={hasModuleAccess}
                 />
               ))}
@@ -409,8 +553,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
                   <NavItem
                     key={item.id}
                     item={item}
-                    isActive={pathname === item.href}
-                    isChildActive={!!(item.children?.some(c => pathname === c.href))}
+                    pathname={pathname}
                     hasModuleAccess={() => true}
                   />
                 ))}

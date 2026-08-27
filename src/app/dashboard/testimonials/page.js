@@ -112,13 +112,40 @@ export default function TestimonialsPage() {
   }
 
   const columns = [
-    { key: 'avatar', label: 'Avatar', render: r => <div className="w-10 h-10 bg-muted rounded-full overflow-hidden">{r.avatar && <img src={r.avatar} className="w-full h-full object-cover"/>}</div> },
-    { key: 'name', label: 'Client', render: r => <div><div className="font-semibold">{r.name}</div><div className="text-xs text-muted-foreground">{r.designation || r.role}</div></div> },
-    { key: 'status', label: 'Active', render: r => <Switch checked={r.isActive} onCheckedChange={async () => { const newStatus = !r.isActive; setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: newStatus } : x)); try { const fd = new FormData(); fd.append('isActive', newStatus.toString()); await fetch(`${BASE_URL}/api/testimonials/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: r.isActive } : x)); addToast('Error updating status', 'error'); } }} /> },
+    { 
+      key: 'avatar', 
+      label: 'Preview', 
+      render: r => (
+        <div 
+          style={{
+            width: '44px',
+            height: '44px',
+            borderRadius: '6px',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}
+        >
+          {r.avatar ? (
+            <img src={r.avatar} alt={r.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(34, 197, 94, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#22c55e' }}>
+              {r.name ? r.name.charAt(0) : 'T'}
+            </div>
+          )}
+        </div>
+      )
+    },
+    { key: 'name', label: 'Client', render: r => <div><div className="font-semibold text-white">{r.name}</div><div className="text-xs text-muted-foreground">{r.designation || r.role}</div></div> },
+    { key: 'status', label: 'Active', render: r => <Switch checked={r.isActive} onCheckedChange={async () => { const newStatus = !r.isActive; setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: newStatus } : x)); try { const fd = new FormData(); fd.append('isActive', newStatus.toString()); await fetch(`${BASE_URL}/api/testimonials/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error'); } catch { setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: r.isActive } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
-      <div className="flex gap-2 justify-end">
-        <button onClick={e => { e.stopPropagation(); setModal(r); }} className="p-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded transition-colors" title="Edit"><Edit2 className="w-4 h-4" /></button>
-        <button onClick={e => { e.stopPropagation(); setConfirmModal({ isOpen: true, id: r._id }); }} className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded transition-colors" title="Delete"><Trash2 className="w-4 h-4" /></button>
+      <div className="flex gap-2 justify-end" onClick={e => e.stopPropagation()}>
+        <button onClick={() => setModal(r)} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30" title="Edit Testimonial"><Edit2 className="w-4 h-4" /></button>
+        <button onClick={() => setConfirmModal({ isOpen: true, id: r._id })} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30" title="Delete Testimonial"><Trash2 className="w-4 h-4" /></button>
       </div>
     )}
   ]
@@ -130,7 +157,7 @@ export default function TestimonialsPage() {
       <TableToolbar search={search} onSearchChange={setSearch} selectedCount={0} onAdd={() => setModal('new')} addLabel="Add Testimonial" />
       <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={[]} onToggleSelectAll={()=>{}} onToggleSelectRow={()=>{}} />
       {modal && <TestimonialModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
-      <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Testimonial" message="Are you sure?" />
+      <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Testimonial" message="Are you sure you want to delete this testimonial? This action is permanent and cannot be undone." />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />
     </div>
   )

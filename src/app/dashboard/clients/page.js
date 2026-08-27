@@ -131,11 +131,11 @@ export default function ClientsPage() {
     { key: 'name', label: 'Client Name', render: r => <div className="font-semibold text-white text-sm">{r.name}</div> },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/clients/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
-      <div className="flex items-center justify-end gap-3.5" onClick={e => e.stopPropagation()}>
+      <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
         <button 
           type="button"
           onClick={() => setModal(r)} 
-          className="p-1 text-blue-500 hover:text-blue-400 transition-colors" 
+          className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30" 
           title="Edit Client"
         >
           <Edit2 className="w-4 h-4" />
@@ -143,7 +143,7 @@ export default function ClientsPage() {
         <button 
           type="button"
           onClick={() => setConfirmModal({ isOpen: true, id: r._id })} 
-          className="p-1 text-red-500 hover:text-red-400 transition-colors" 
+          className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30" 
           title="Delete"
         >
           <Trash2 className="w-4 h-4" />

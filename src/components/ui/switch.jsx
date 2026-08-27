@@ -24,7 +24,7 @@ const Switch = React.forwardRef(({ className, checked, onCheckedChange, disabled
       borderRadius: '9999px',
       border: '2px solid transparent',
       transition: 'background-color 0.2s ease-in-out',
-      backgroundColor: checked ? '#2563eb' : 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: checked ? '#22c55e' : 'rgba(255, 255, 255, 0.1)',
       opacity: disabled ? 0.5 : 1,
     }}
     {...props}

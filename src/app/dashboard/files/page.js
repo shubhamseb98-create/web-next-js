@@ -251,10 +251,11 @@ export default function FileManagerPage() {
         {/* Search & Filter */}
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="relative w-full md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />
             <Input 
               placeholder="Search files..." 
-              className="pl-9 rounded-xl bg-muted/50 border-transparent focus:border-border h-10"
+              className="rounded-xl bg-muted/50 border-transparent focus:border-border h-10 text-sm"
+              style={{ paddingLeft: '40px', paddingRight: '16px' }}
               value={search}
               onChange={e => setSearch(e.target.value)}
             />

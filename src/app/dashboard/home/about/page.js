@@ -16,7 +16,8 @@ export default function HomeAboutPage() {
   const [saving, setSaving] = useState(false)
   const [aboutId, setAboutId] = useState(null)
   const [form, setForm] = useState({
-    title: '',
+    title_green: '',
+    title_white: '',
     description: '',
     image: '',
     imageFile: null,
@@ -45,8 +46,25 @@ export default function HomeAboutPage() {
       if (data && data.length > 0) {
         const about = data[0]
         setAboutId(about._id)
+
+        let green = about.title_green || ''
+        let white = about.title_white || ''
+
+        // If title_green / title_white are not set but legacy title exists
+        if (!green && !white && about.title) {
+          const raw = about.title
+          const match = raw.match(/\[(.*?)\]|\*(.*?)\*/)
+          if (match) {
+            green = match[1] || match[2] || ''
+            white = raw.replace(/\[.*?\]|\*.*?\*/, '').trim()
+          } else {
+            white = raw
+          }
+        }
+
         setForm({
-          title: about.title || '',
+          title_green: green,
+          title_white: white,
           description: about.description || '',
           image: about.image || '',
           imageFile: null,
@@ -67,7 +85,9 @@ export default function HomeAboutPage() {
       setSaving(true)
       const formData = new FormData()
 
-      formData.append('title', form.title)
+      formData.append('title_green', form.title_green)
+      formData.append('title_white', form.title_white)
+      formData.append('title', form.title_green ? `[${form.title_green}] ${form.title_white}` : form.title_white)
       formData.append('description', form.description)
       formData.append('alt', form.alt)
 
@@ -176,7 +196,7 @@ export default function HomeAboutPage() {
                         label="Image ALT Text"
                         value={form.alt}
                         onChange={e => updateField('alt', e.target.value)}
-                        rightElement={<AIAssistantButton context={form.title || 'About The WebTycoons'} field="SEO Image Alt Text" onGenerate={(val) => updateField('alt', val)} />}
+                        rightElement={<AIAssistantButton context={`${form.title_green} ${form.title_white}`.trim() || 'About The WebTycoons'} field="SEO Image Alt Text" onGenerate={(val) => updateField('alt', val)} />}
                       />
                     </div>
                     
@@ -199,17 +219,24 @@ export default function HomeAboutPage() {
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="flex flex-col gap-6">
-                  <FloatingTextarea
-                    label="Title *"
-                    required
-                    rows={2}
-                    value={form.title}
-                    onChange={e => updateField('title', e.target.value)}
-                    rightElement={<AIAssistantButton context="The WebTycoons About Section" field="Catchy Title" onGenerate={(val) => updateField('title', val)} />}
+                {/* Content Section - Headings */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FloatingInput
+                    label="Main Heading (Green Color)"
+                    value={form.title_green}
+                    onChange={e => updateField('title_green', e.target.value)}
+                    rightElement={<AIAssistantButton context="The WebTycoons About Section" field="Green Highlight Text" onGenerate={(val) => updateField('title_green', val)} />}
                   />
-                  <p className="text-[11px] text-muted-foreground -mt-4 px-1">Tip: Wrap words in asterisks like *Scale at Speed* to make them green! Use enter for a new line.</p>
+                  <FloatingInput
+                    label="Main Heading (White Color)"
+                    value={form.title_white}
+                    onChange={e => updateField('title_white', e.target.value)}
+                    rightElement={<AIAssistantButton context="The WebTycoons About Section" field="Main Heading Text" onGenerate={(val) => updateField('title_white', val)} />}
+                  />
+                </div>
+
+                {/* Description Section */}
+                <div className="flex flex-col gap-6">
 
                   <div 
                     style={{ 

@@ -5,6 +5,14 @@ const homeAboutSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  title_green: {
+    type: String,
+    required: false,
+  },
+  title_white: {
+    type: String,
+    required: false,
+  },
   description: {
     type: String,
     required: false,

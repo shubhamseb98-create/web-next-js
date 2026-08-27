@@ -97,8 +97,15 @@ export function AuthProvider({ children }) {
   function hasModuleAccess(module) {
     if (!user) return false;
     if (user.role === 'super_admin') return true;
-    const allowed = user.permissions?.[module] || [];
-    return allowed.length > 0;
+    if (!module) return true;
+    const modules = Array.isArray(module) ? module : [module];
+    return modules.some(m => {
+      const allowed = user.permissions?.[m] || [];
+      if (Array.isArray(allowed) && allowed.length > 0) return true;
+      if (m === 'about' && Array.isArray(user.permissions?.['inner_pages']) && user.permissions['inner_pages'].length > 0) return true;
+      if (m === 'categories' && Array.isArray(user.permissions?.['products']) && user.permissions['products'].length > 0) return true;
+      return false;
+    });
   }
 
   return (

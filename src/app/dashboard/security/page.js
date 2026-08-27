@@ -89,7 +89,7 @@ export default function SecurityPage() {
         crumbs={[{ label: 'Security' }]} 
       />
 
-      <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-4xl">
         
         {/* Login Protections */}
         <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
@@ -150,8 +150,22 @@ export default function SecurityPage() {
             )}
         </div>
 
-        <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={saving} className="rounded-full px-10 py-6 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold text-[15px] shadow-lg shadow-[#52a436]/30 transition-transform active:scale-95">
+        <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              disabled={saving}
+              style={{
+                background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                color: '#ffffff',
+                padding: '0 28px',
+                height: '42px',
+                borderRadius: '12px',
+                fontSize: '13.5px',
+                fontWeight: 600,
+                boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)',
+                border: 'none'
+              }}
+            >
                 {saving ? 'Saving...' : 'Save Security Settings'}
             </Button>
         </div>

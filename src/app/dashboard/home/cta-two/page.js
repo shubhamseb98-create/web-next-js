@@ -3,19 +3,24 @@ import { useState, useEffect } from 'react'
 import AIAssistantButton from '../../../../components/dashboard/AIAssistantButton'
 import Breadcrumb from '../../../../components/dashboard/Breadcrumb'
 import Toast from '../../../../components/dashboard/Toast'
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../../../../components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../../../../components/ui/card'
 import { Button } from '../../../../components/ui/button'
 import { FloatingInput } from '../../../../components/ui/floating-input'
 import RichEditor from '../../../../components/dashboard/RichEditor'
-import { Save, Link as LinkIcon, RotateCcw, Megaphone } from 'lucide-react'
+import { Save, Megaphone, RotateCcw, Link as LinkIcon } from 'lucide-react'
 
 const BASE_URL = ''
 
-const DEFAULT = { title: '', subtitle: '', content: '', buttonText1: '', url1: '', buttonText2: '', url2: '' }
-
-export default function CtaTwoPage() {
-  const [form, setForm] = useState(DEFAULT)
-  const [recordId, setRecordId] = useState(null)
+export default function SecondaryCtaPage() {
+  const [form, setForm] = useState({
+    title: '',
+    subtitle: '',
+    content: '',
+    buttonText1: '',
+    url1: '',
+    buttonText2: '',
+    url2: '',
+  })
   const [imageFile, setImageFile] = useState(null)
   const [preview, setPreview] = useState('')
   const [loading, setLoading] = useState(true)
@@ -37,21 +42,19 @@ export default function CtaTwoPage() {
     try {
       setLoading(true)
       const res = await fetch(`${BASE_URL}/api/othercta`)
-      if (!res.ok) throw new Error('Failed to fetch CTA')
+      if (!res.ok) throw new Error('Failed to load')
       const data = await res.json()
-      if (data.length > 0) {
-        const r = data[0]
-        setRecordId(r._id)
+      if (data) {
         setForm({
-          title:       r.title       || '',
-          subtitle:    r.subtitle    || '',
-          content:     r.content     || '',
-          buttonText1: r.buttonText1 || '',
-          url1:        r.url1        || '',
-          buttonText2: r.buttonText2 || '',
-          url2:        r.url2        || '',
+          title: data.title || '',
+          subtitle: data.subtitle || '',
+          content: data.content || '',
+          buttonText1: data.buttonText1 || '',
+          url1: data.url1 || '',
+          buttonText2: data.buttonText2 || '',
+          url2: data.url2 || '',
         })
-        setPreview(r.image || '')
+        if (data.image) setPreview(data.image)
       }
     } catch (err) {
       addToast(err.message, 'error')
@@ -71,7 +74,6 @@ export default function CtaTwoPage() {
     e.preventDefault()
     try {
       setSaving(true)
-      
       const formData = new FormData()
       formData.append('title', form.title)
       formData.append('subtitle', form.subtitle)
@@ -111,127 +113,149 @@ export default function CtaTwoPage() {
       </div>
       
       <div className="p-4 sm:p-6 lg:p-8 w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="border-0 shadow-sm shadow-primary/5 bg-background h-fit">
-          <CardHeader className="border-b border-border/40 px-6 py-4 bg-card rounded-t-2xl">
-            <CardTitle className="text-xl font-bold text-foreground">Edit Secondary CTA</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">Update the title, subtitle, and buttons for the secondary call-to-action.</p>
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle>Edit Secondary CTA</CardTitle>
+            <CardDescription>Update the title, subtitle, and buttons for the secondary call-to-action.</CardDescription>
           </CardHeader>
 
           <form onSubmit={handleSubmit}>
-            <CardContent className="p-6 space-y-6 bg-card" style={{ padding:'24px 24px 24px'}}>
-              
-              {/* Background Image Upload */}
-              <div className="border border-input/60 rounded-xl p-5 bg-muted/10 space-y-4">
-                <div className="text-sm font-semibold text-foreground/80 block">Background Image</div>
-                <p className="text-[11px] text-muted-foreground -mt-2">Recommended: 1920×800px</p>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleImage} 
-                  className="flex h-11 w-full rounded-xl border border-input/60 bg-background px-4 py-2 text-sm transition-all file:border-0 file:bg-transparent file:text-sm file:font-semibold file:text-primary cursor-pointer hover:border-input" 
-                />
-                {preview && (
-                  <img 
-                    src={preview} 
-                    alt="preview" 
-                    className="mt-4 w-full max-h-48 rounded-lg border border-border shadow-sm object-cover" 
+            <CardContent>
+              <div className="flex flex-col gap-6">
+                {/* Background Image Upload */}
+                <div 
+                  style={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.02)', 
+                    border: '1px solid #1e2e20', 
+                    borderRadius: '16px',
+                    padding: '20px' 
+                  }}
+                  className="flex flex-col gap-3"
+                >
+                  <div className="text-sm font-semibold text-foreground/80 block">Background Image</div>
+                  <p className="text-[11px] text-muted-foreground -mt-1">Recommended: 1920×800px</p>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImage} 
+                    className="flex h-11 w-full rounded-xl border border-[#1e2e20] bg-black/40 px-4 py-2 text-sm transition-all file:border-0 file:bg-transparent file:text-sm file:font-semibold file:text-[#22c55e] cursor-pointer hover:border-slate-600" 
                   />
-                )}
-              </div>
-
-              <div className="space-y-6">
-                <FloatingInput
-                  label="Title *"
-                  required
-                  value={form.title}
-                  onChange={e => setForm({...form, title: e.target.value})}
-                  rightElement={<AIAssistantButton context="Call to Action Section" field="Catchy Title" onGenerate={(val) => setForm({...form, title: val})} />}
-                />
-                <FloatingInput
-                  label="Subtitle"
-                  value={form.subtitle}
-                  onChange={e => setForm({...form, subtitle: e.target.value})}
-                  rightElement={<AIAssistantButton context={form.title || 'Call to Action Section'} field="Engaging Subtitle" onGenerate={(val) => setForm({...form, subtitle: val})} />}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between ml-1">
-                  <label className="text-sm font-semibold text-foreground/80 block">CTA Content</label>
-                  <AIAssistantButton context={form.title || 'Call to Action'} field="Persuasive Content" onGenerate={(val) => setForm({...form, content: val})} />
+                  {preview && (
+                    <img 
+                      src={preview} 
+                      alt="preview" 
+                      className="mt-2 w-full max-h-48 rounded-lg border border-[#1e2e20] shadow-sm object-cover" 
+                    />
+                  )}
                 </div>
-                <div className="border border-input/60 rounded-xl overflow-hidden">
-                  <RichEditor
-                    value={form.content}
-                    onChange={v => setForm({...form, content: v})}
-                    placeholder="Enter CTA description..."
-                    minHeight={140}
-                  />
-                </div>
-              </div>
 
-              {/* Primary Button */}
-              <div className="rounded-xl p-5 space-y-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Primary Button</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-5">
                   <FloatingInput
-                    label="Button Text"
-                    value={form.buttonText1}
-                    onChange={e => setForm({...form, buttonText1: e.target.value})}
-                    placeholder="e.g. Get a Quote"
-                    rightElement={<AIAssistantButton context={form.title || 'Hero CTA'} field="Actionable Primary Button Text" onGenerate={(val) => setForm({...form, buttonText1: val})} />}
+                    label="Title *"
+                    required
+                    value={form.title}
+                    onChange={e => setForm({...form, title: e.target.value})}
+                    rightElement={<AIAssistantButton context="Call to Action Section" field="Catchy Title" onGenerate={(val) => setForm({...form, title: val})} />}
                   />
                   <FloatingInput
-                    label="Button URL"
-                    value={form.url1}
-                    onChange={e => setForm({...form, url1: e.target.value})}
-                    placeholder="/contact"
-                    icon={<LinkIcon className="w-4 h-4" />}
+                    label="Subtitle"
+                    value={form.subtitle}
+                    onChange={e => setForm({...form, subtitle: e.target.value})}
+                    rightElement={<AIAssistantButton context={form.title || 'Call to Action Section'} field="Engaging Subtitle" onGenerate={(val) => setForm({...form, subtitle: val})} />}
                   />
                 </div>
-              </div>
 
-              {/* Secondary Button */}
-              <div className="rounded-xl p-5 space-y-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Secondary Button</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FloatingInput
-                    label="Button Text"
-                    value={form.buttonText2}
-                    onChange={e => setForm({...form, buttonText2: e.target.value})}
-                    placeholder="e.g. Know More"
-                    rightElement={<AIAssistantButton context={form.title || 'Hero CTA'} field="Actionable Secondary Button Text" onGenerate={(val) => setForm({...form, buttonText2: val})} />}
-                  />
-                  <FloatingInput
-                    label="Button URL"
-                    value={form.url2}
-                    onChange={e => setForm({...form, url2: e.target.value})}
-                    placeholder="/products"
-                    icon={<LinkIcon className="w-4 h-4" />}
-                  />
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between ml-1">
+                    <label className="text-sm font-semibold text-foreground/80 block">CTA Content</label>
+                    <AIAssistantButton context={form.title || 'Call to Action'} field="Persuasive Content" onGenerate={(val) => setForm({...form, content: val})} />
+                  </div>
+                  <div className="border border-[#1e2e20] rounded-xl overflow-hidden">
+                    <RichEditor
+                      value={form.content}
+                      onChange={v => setForm({...form, content: v})}
+                      placeholder="Enter CTA description..."
+                      minHeight={140}
+                    />
+                  </div>
+                </div>
+
+                {/* Primary Button */}
+                <div className="rounded-xl p-5 flex flex-col gap-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid #1e2e20' }}>
+                  <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Primary Button</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FloatingInput
+                      label="Button Text"
+                      value={form.buttonText1}
+                      onChange={e => setForm({...form, buttonText1: e.target.value})}
+                      placeholder="e.g. Get a Quote"
+                      rightElement={<AIAssistantButton context={form.title || 'Hero CTA'} field="Actionable Primary Button Text" onGenerate={(val) => setForm({...form, buttonText1: val})} />}
+                    />
+                    <FloatingInput
+                      label="Button URL"
+                      value={form.url1}
+                      onChange={e => setForm({...form, url1: e.target.value})}
+                      placeholder="/contact"
+                      icon={<LinkIcon className="w-4 h-4" />}
+                    />
+                  </div>
+                </div>
+
+                {/* Secondary Button */}
+                <div className="rounded-xl p-5 flex flex-col gap-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid #1e2e20' }}>
+                  <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Secondary Button</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FloatingInput
+                      label="Button Text"
+                      value={form.buttonText2}
+                      onChange={e => setForm({...form, buttonText2: e.target.value})}
+                      placeholder="e.g. Know More"
+                      rightElement={<AIAssistantButton context={form.title || 'Hero CTA'} field="Actionable Secondary Button Text" onGenerate={(val) => setForm({...form, buttonText2: val})} />}
+                    />
+                    <FloatingInput
+                      label="Button URL"
+                      value={form.url2}
+                      onChange={e => setForm({...form, url2: e.target.value})}
+                      placeholder="/products"
+                      icon={<LinkIcon className="w-4 h-4" />}
+                    />
+                  </div>
                 </div>
               </div>
-
             </CardContent>
 
-            <CardFooter className="p-6 bg-muted/10 border-t border-border/40 flex items-center justify-end gap-4 rounded-b-2xl">
+            <CardFooter className="flex items-center justify-end gap-4">
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={fetchData}
                 disabled={saving}
-                className="rounded-md px-6 h-10 font-medium bg-background"
               >
                 <RotateCcw className="w-4 h-4 mr-2" /> Reset
               </Button>
-              <Button 
+              <button 
                 type="submit" 
                 disabled={saving}
-                className="rounded-md px-8 h-10 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold transition-all whitespace-nowrap border-0 shadow-lg shadow-[#52a436]/25"
+                style={{
+                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                  color: '#ffffff',
+                  padding: '0 28px',
+                  height: '42px',
+                  borderRadius: '12px',
+                  fontSize: '13.5px',
+                  fontWeight: 600,
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  opacity: saving ? 0.7 : 1,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  border: 'none',
+                  boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)'
+                }}
               >
-                <Save className="w-4 h-4 mr-2" />
-                {saving ? 'Saving...' : 'Save Changes'}
-              </Button>
+                <Save className="w-4 h-4" />
+                <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+              </button>
             </CardFooter>
           </form>
         </Card>

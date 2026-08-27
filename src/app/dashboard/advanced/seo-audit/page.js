@@ -130,7 +130,7 @@ export default function SeoAuditPage() {
         <>
           {/* Health Score Card */}
           <div className="bg-card border border-border p-6 sm:p-8 rounded-3xl shadow-sm flex flex-col md:flex-row items-center gap-8 justify-between">
-            <div className="flex-1 space-y-2 text-center md:text-left">
+            <div className="flex-1 flex flex-col gap-2 text-center md:text-left">
               <h2 className="text-2xl font-bold text-foreground">SEO Health Audit</h2>
               <p className="text-muted-foreground text-sm max-w-lg">
                 We checked <strong>{data.totalChecks}</strong> SEO parameters across all your products, categories, and static pages. 
@@ -138,12 +138,28 @@ export default function SeoAuditPage() {
               </p>
               <div className="pt-4 flex items-center justify-center md:justify-start gap-4">
                 <button 
+                  type="button"
                   onClick={fetchAudit} 
                   disabled={loading}
-                  className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors flex items-center gap-2 disabled:opacity-70"
+                  style={{
+                    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                    color: '#ffffff',
+                    padding: '0 20px',
+                    height: '40px',
+                    borderRadius: '12px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(34, 197, 94, 0.35)',
+                    transition: 'all 0.2s ease'
+                  }}
                 >
                   <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> 
-                  {loading ? 'Auditing...' : 'Re-run Audit'}
+                  <span>{loading ? 'Auditing...' : 'Re-run Audit'}</span>
                 </button>
               </div>
             </div>
@@ -152,10 +168,9 @@ export default function SeoAuditPage() {
             <div className="shrink-0 relative flex items-center justify-center w-40 h-40">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                 <path
-                  className="text-slate-100"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke="currentColor"
+                  stroke="#1e2e20"
                   strokeWidth="3"
                 />
                 <path

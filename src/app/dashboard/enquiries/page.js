@@ -275,20 +275,54 @@ export default function EnquiriesPage() {
   }
 
   const customFilter = (
-    <div className="flex items-center bg-background rounded-full p-1 border border-border">
-      {['all', 'new', 'replied', 'closed'].map(s => (
-        <button 
-          key={s} 
-          onClick={() => setFilter(s)}
-          className={`px-5 py-1.5 text-sm font-semibold rounded-full transition-all capitalize flex items-center justify-center focus:outline-none ${
-            filter === s 
-              ? 'bg-green-600 text-white shadow-md' 
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
-          }`}
-        >
-          {s}
-        </button>
-      ))}
+    <div
+      style={{
+        backgroundColor: '#080e06',
+        border: '1px solid #1e2e20',
+        borderRadius: '12px',
+        padding: '3px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px'
+      }}
+    >
+      {['all', 'new', 'replied', 'closed'].map(s => {
+        const isActive = filter === s;
+        return (
+          <button 
+            key={s} 
+            type="button"
+            onClick={() => setFilter(s)}
+            style={{
+              padding: '6px 14px',
+              fontSize: '12.5px',
+              fontWeight: 600,
+              borderRadius: '8px',
+              cursor: 'pointer',
+              border: 'none',
+              textTransform: 'capitalize',
+              background: isActive ? 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' : 'transparent',
+              color: isActive ? '#ffffff' : '#94a3b8',
+              boxShadow: isActive ? '0 2px 8px rgba(34, 197, 94, 0.35)' : 'none',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                e.currentTarget.style.color = '#94a3b8';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }
+            }}
+          >
+            {s}
+          </button>
+        );
+      })}
     </div>
   )
 
@@ -357,73 +391,93 @@ export default function EnquiriesPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full relative overflow-hidden z-0">
-      {/* Decorative background to make glassmorphism visible in light mode */}
-      <div className="absolute top-0 left-0 w-full h-[500px] overflow-hidden -z-10 pointer-events-none opacity-60 dark:opacity-20">
-        <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[80%] bg-blue-300 rounded-full mix-blend-multiply filter blur-[100px] opacity-50"></div>
-        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[80%] bg-orange-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-50"></div>
-        <div className="absolute top-[20%] left-[30%] w-[40%] h-[80%] bg-purple-200 rounded-full mix-blend-multiply filter blur-[100px] opacity-50"></div>
-      </div>
-
       <Breadcrumb title="Enquiry Management" crumbs={[{ label: 'Enquiries' }]} />
       
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card className="glass-panel border-0 relative overflow-hidden !bg-gradient-to-br !from-white/90 !to-slate-200/50 dark:!from-slate-800/80 dark:!to-slate-900/60 shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_8px_32px_rgba(0,0,0,0.06)]">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Total Enquiries</p>
-                <p className="text-3xl font-bold text-foreground">{enquiries.length}</p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-background/60 border border-border/50 flex items-center justify-center text-foreground">
-                <i className="bi bi-envelope-fill text-2xl"></i>
-              </div>
+        <div
+          style={{
+            backgroundColor: '#0d150e',
+            border: '1px solid #1e2e20',
+            borderRadius: '16px',
+            padding: '20px 24px',
+            boxShadow: '0 0 35px -10px rgba(34, 197, 94, 0.08), 0 10px 30px rgba(0, 0, 0, 0.3)',
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(34, 197, 94, 0.06), transparent 75%), #0d150e'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-400 mb-1">Total Enquiries</p>
+              <p className="text-2xl font-bold text-white">{enquiries.length}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-[#1e2e20] flex items-center justify-center text-[#22c55e]">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
         
-        <Card className="glass-panel border-0 relative overflow-hidden !bg-gradient-to-br !from-white/90 !to-slate-200/50 dark:!from-slate-800/80 dark:!to-slate-900/60 shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_8px_32px_rgba(0,0,0,0.06)]">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">New</p>
-                <p className="text-3xl font-bold text-orange-600">{counts.new}</p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-background/60 border border-border/50 flex items-center justify-center text-foreground relative">
-                <i className="bi bi-envelope-exclamation-fill text-2xl relative z-10"></i>
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/20 opacity-20"></span>
-              </div>
+        <div
+          style={{
+            backgroundColor: '#0d150e',
+            border: '1px solid #1e2e20',
+            borderRadius: '16px',
+            padding: '20px 24px',
+            boxShadow: '0 0 35px -10px rgba(249, 115, 22, 0.08), 0 10px 30px rgba(0, 0, 0, 0.3)',
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(249, 115, 22, 0.06), transparent 75%), #0d150e'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-400 mb-1">New</p>
+              <p className="text-2xl font-bold text-orange-500">{counts.new}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
 
-        <Card className="glass-panel border-0 relative overflow-hidden !bg-gradient-to-br !from-white/90 !to-slate-200/50 dark:!from-slate-800/80 dark:!to-slate-900/60 shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_8px_32px_rgba(0,0,0,0.06)]">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Replied</p>
-                <p className="text-3xl font-bold text-green-600">{counts.replied}</p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-background/60 border border-border/50 flex items-center justify-center text-foreground">
-                <i className="bi bi-envelope-check-fill text-2xl"></i>
-              </div>
+        <div
+          style={{
+            backgroundColor: '#0d150e',
+            border: '1px solid #1e2e20',
+            borderRadius: '16px',
+            padding: '20px 24px',
+            boxShadow: '0 0 35px -10px rgba(34, 197, 94, 0.08), 0 10px 30px rgba(0, 0, 0, 0.3)',
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(34, 197, 94, 0.06), transparent 75%), #0d150e'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-400 mb-1">Replied</p>
+              <p className="text-2xl font-bold text-[#22c55e]">{counts.replied}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="w-10 h-10 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center justify-center text-[#22c55e]">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
 
-        <Card className="glass-panel border-0 relative overflow-hidden !bg-gradient-to-br !from-white/90 !to-slate-200/50 dark:!from-slate-800/80 dark:!to-slate-900/60 shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_8px_32px_rgba(0,0,0,0.06)]">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Closed</p>
-                <p className="text-3xl font-bold text-zinc-600">{counts.closed}</p>
-              </div>
-              <div className="w-12 h-12 rounded-2xl bg-background/60 border border-border/50 flex items-center justify-center text-foreground">
-                <i className="bi bi-archive-fill text-2xl"></i>
-              </div>
+        <div
+          style={{
+            backgroundColor: '#0d150e',
+            border: '1px solid #1e2e20',
+            borderRadius: '16px',
+            padding: '20px 24px',
+            boxShadow: '0 0 35px -10px rgba(148, 163, 184, 0.08), 0 10px 30px rgba(0, 0, 0, 0.3)',
+            background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(148, 163, 184, 0.06), transparent 75%), #0d150e'
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-slate-400 mb-1">Closed</p>
+              <p className="text-2xl font-bold text-slate-400">{counts.closed}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-[#1e2e20] flex items-center justify-center text-slate-400">
+              <Mail className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
       </div>
       
       <TableToolbar 

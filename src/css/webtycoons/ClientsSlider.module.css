@@ -27,20 +27,16 @@
   width: 100%;
   overflow: hidden;
   display: flex;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    black 8%,
-    black 92%,
-    transparent 100%
-  );
+  mask-image: linear-gradient(to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%);
+  -webkit-mask-image: linear-gradient(to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%);
 }
 
 .marqueeTrack {
@@ -60,6 +56,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -120,17 +117,17 @@
   .section {
     padding: 50px 0;
   }
-  
+
   .marqueeTrack {
     gap: 2.25rem;
     animation-duration: 24s;
   }
-  
+
   .logoCard {
     height: 85px;
     padding: 0 2px;
   }
-  
+
   .clientLogo {
     height: 65px;
     max-width: 170px;

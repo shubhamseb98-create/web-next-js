@@ -21,25 +21,35 @@ const buttonSizes = {
 const Button = React.forwardRef(({ className, variant = "default", size = "default", style, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"
   
-  // Inject robust fallback styles to bypass frozen Tailwind utility classes
-  let bg = '#52a436';
-  let hoverBg = '#3e8027';
+  let bg = 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)';
+  let hoverBg = 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)';
   let textColor = 'white';
   let hoverTextColor = 'white';
-  let shadow = '0 8px 25px -5px rgba(82, 164, 54, 0.6)';
+  let shadow = '0 4px 14px rgba(34, 197, 94, 0.35)';
+  let border = 'none';
   
   if (variant === 'ghost') {
     bg = 'transparent';
     hoverBg = 'rgba(255,255,255,0.05)';
     textColor = '#94a3b8';
+    hoverTextColor = '#ffffff';
     shadow = 'none';
   } else if (variant === 'destructive') {
-    bg = '#ef4444';
-    hoverBg = '#dc2626';
-    shadow = '0 8px 25px -5px rgba(239, 68, 68, 0.6)';
+    bg = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+    hoverBg = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+    shadow = '0 4px 14px rgba(239, 68, 68, 0.35)';
   } else if (variant === 'outline') {
-    bg = 'transparent';
+    bg = 'rgba(255,255,255,0.02)';
+    hoverBg = 'rgba(255,255,255,0.06)';
+    textColor = '#cbd5e1';
+    hoverTextColor = '#ffffff';
+    border = '1px solid #1e2e20';
+    shadow = 'none';
+  } else if (variant === 'secondary') {
+    bg = 'rgba(255,255,255,0.05)';
     hoverBg = 'rgba(255,255,255,0.1)';
+    textColor = '#ffffff';
+    border = '1px solid #1e2e20';
     shadow = 'none';
   }
 
@@ -47,15 +57,16 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '24px',
-    fontWeight: variant === 'ghost' ? 600 : 700,
+    borderRadius: '12px',
+    fontWeight: 600,
+    fontSize: size === 'sm' ? '12px' : '13px',
     cursor: props.disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.2s',
-    height: size === 'sm' ? '36px' : size === 'icon' ? '40px' : '48px',
-    padding: size === 'icon' ? '0' : '0 24px',
-    width: size === 'icon' ? '40px' : 'auto',
-    border: variant === 'outline' ? '1px solid rgba(255,255,255,0.2)' : 'none',
-    backgroundColor: bg,
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    height: size === 'sm' ? '32px' : size === 'icon' ? '36px' : '40px',
+    padding: size === 'icon' ? '0' : size === 'sm' ? '0 14px' : '0 20px',
+    width: size === 'icon' ? '36px' : 'auto',
+    border: border,
+    background: bg,
     color: textColor,
     boxShadow: shadow,
     opacity: props.disabled ? 0.5 : 1,
@@ -65,7 +76,7 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
   return (
     <Comp
       className={cn(
-        "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-xs sm:text-sm font-semibold ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         buttonVariants[variant],
         buttonSizes[size],
         className
@@ -73,7 +84,7 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
       style={fallbackStyle}
       onMouseEnter={(e) => {
         if (!props.disabled && !asChild) {
-          e.currentTarget.style.backgroundColor = hoverBg;
+          e.currentTarget.style.background = hoverBg;
           e.currentTarget.style.color = hoverTextColor;
           if (variant !== 'ghost' && variant !== 'outline') e.currentTarget.style.transform = 'translateY(-1px)';
         }
@@ -81,7 +92,7 @@ const Button = React.forwardRef(({ className, variant = "default", size = "defau
       }}
       onMouseLeave={(e) => {
         if (!props.disabled && !asChild) {
-          e.currentTarget.style.backgroundColor = bg;
+          e.currentTarget.style.background = bg;
           e.currentTarget.style.color = textColor;
           if (variant !== 'ghost' && variant !== 'outline') e.currentTarget.style.transform = 'translateY(0)';
         }

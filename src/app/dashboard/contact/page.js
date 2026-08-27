@@ -6,7 +6,7 @@ import Toast from "../../../components/dashboard/Toast";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { FloatingInput, FloatingTextarea } from "../../../components/ui/floating-input";
-import { Save, Plus, Trash2, MapPin, Search, Share2, FileText, ImageIcon, Edit2 } from "lucide-react";
+import { Save, Plus, Trash2, MapPin, Search, Share2, FileText, ImageIcon, Edit2, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../components/ui/dialog";
 import { Switch } from "../../../components/ui/switch";
@@ -316,7 +316,7 @@ export default function ContactPageCMS() {
   }
 
   return (
-    <div>
+    <div className="min-h-full flex flex-col bg-background text-foreground">
       <div className="px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8">
         <Breadcrumb
           title="Contact Page Management"
@@ -324,47 +324,94 @@ export default function ContactPageCMS() {
         />
       </div>
 
-      <div className="p-4 sm:p-6 lg:p-8 w-full">
-        <Card className="border-0 shadow-sm shadow-primary/5 bg-background">
-          <CardHeader className="border-b border-border/40 pb-5 px-6 py-5 bg-card rounded-t-2xl">
-            <CardTitle className="text-2xl font-bold text-foreground">Manage Contact Page</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">Update the content, locations, and SEO settings for the contact page.</p>
-          </CardHeader>
+      <div className="p-4 sm:p-6 lg:p-8 w-full max-w-[1600px] mx-auto">
+        <div
+          style={{
+            backgroundColor: '#0d150e',
+            border: '1px solid #1e2e20',
+            borderRadius: '16px',
+            boxShadow: '0 0 35px -10px rgba(34, 197, 94, 0.12), 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            background: 'radial-gradient(ellipse 80% 45% at 50% 0%, rgba(34, 197, 94, 0.09), transparent 75%), #0d150e',
+            overflow: 'hidden',
+            position: 'relative'
+          }}
+        >
+          {/* Header */}
+          <div style={{ padding: '24px 28px 16px 28px' }}>
+            <h1 style={{ fontSize: '21px', fontWeight: 700, letterSpacing: '-0.02em', color: '#ffffff', margin: 0 }}>
+              Manage Contact Page
+            </h1>
+            <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px', margin: '4px 0 0 0' }}>
+              Update the content, locations, and SEO settings for the contact page.
+            </p>
+          </div>
 
-          <div className="flex gap-6 border-b border-border px-6 mt-2">
+          {/* Tab Bar */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              borderBottom: '1px solid #1e2e20',
+              padding: '0 24px',
+              backgroundColor: 'rgba(0, 0, 0, 0.15)'
+            }}
+          >
             {TABS.map(t => {
-              const Icon = t.icon
+              const Icon = t.icon;
+              const isActive = tab === t.key;
               return (
                 <button
-                  key={t.key} type="button"
+                  key={t.key}
+                  type="button"
                   onClick={() => setTab(t.key)}
-                  className={`py-3 text-[14px] font-semibold transition-colors flex items-center gap-2 relative ${
-                    tab === t.key ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  style={{
+                    padding: '14px 16px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: isActive ? '#22c55e' : '#94a3b8',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: 'none',
+                    borderBottom: isActive ? '2px solid #22c55e' : '2px solid transparent',
+                    marginBottom: '-1px',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) e.currentTarget.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) e.currentTarget.style.color = '#94a3b8';
+                  }}
                 >
-                  <Icon className="w-4 h-4" />
-                  {t.label}
-                  {tab === t.key && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-primary rounded-t-md" />}
+                  <Icon style={{ width: '15px', height: '15px', color: isActive ? '#22c55e' : '#64748b' }} />
+                  <span>{t.label}</span>
                 </button>
-              )
+              );
             })}
           </div>
 
           <form onSubmit={handleSave}>
-            <div className="p-6 pt-8 sm:p-8 sm:pt-10 bg-card rounded-b-2xl">
+            <div style={{ padding: '28px' }}>
               {tab === "content" && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
-                      <FloatingTextarea
-                        label="Top Banner Title"
-                        name="headerTitle"
-                        value={data.headerTitle}
-                        onChange={handleChange}
-                        rows={2}
-                        rightElement={<AIAssistantButton context="Contact Page Banner" field="Banner Title" onGenerate={(val) => setData({ ...data, headerTitle: val })} />}
-                      />
-                      <p className="text-[11px] text-muted-foreground -mt-4 px-1">Tip: Wrap words in asterisks like *Amazing* to make them green! Use enter for a new line.</p>
+                      <div>
+                        <FloatingTextarea
+                          label="Top Banner Title"
+                          name="headerTitle"
+                          value={data.headerTitle}
+                          onChange={handleChange}
+                          rows={2}
+                          rightElement={<AIAssistantButton context="Contact Page Banner" field="Banner Title" onGenerate={(val) => setData({ ...data, headerTitle: val })} />}
+                        />
+                        <p className="text-[11px] text-slate-400 mt-2 px-1">Tip: Wrap words in asterisks like *Amazing* to make them green! Use enter for a new line.</p>
+                      </div>
+
                       <FloatingInput
                         label="Breadcrumb Text"
                         name="breadcrumb"
@@ -372,6 +419,7 @@ export default function ContactPageCMS() {
                         onChange={handleChange}
                         placeholder="e.g. Contact Us"
                       />
+
                       <FloatingTextarea
                         label="Top Banner Description"
                         name="headerDescription"
@@ -379,11 +427,17 @@ export default function ContactPageCMS() {
                         onChange={handleChange}
                         rows={2}
                       />
+
                       <div className="space-y-3 pt-2">
-                        <label className="text-sm font-medium text-foreground">Top Banner Background Image</label>
+                        <label className="text-sm font-medium text-slate-200">Top Banner Background Image</label>
                         <div className="flex items-center gap-4">
-                          <Button type="button" variant="outline" className="relative overflow-hidden" onClick={() => document.getElementById('headerImageUpload').click()}>
-                            <ImageIcon className="w-4 h-4 mr-2" /> 
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="relative overflow-hidden border-[#1e2e20] bg-white/[0.03] text-white hover:bg-white/[0.06] rounded-xl h-10 px-5"
+                            onClick={() => document.getElementById('headerImageUpload').click()}
+                          >
+                            <ImageIcon className="w-4 h-4 mr-2 text-[#22c55e]" /> 
                             {headerFile ? "Change Image" : "Upload Image"}
                             <input 
                               id="headerImageUpload"
@@ -398,10 +452,10 @@ export default function ContactPageCMS() {
                               }} 
                             />
                           </Button>
-                          {headerFile && <span className="text-sm text-muted-foreground">{headerFile.name}</span>}
+                          {headerFile && <span className="text-xs text-slate-400">{headerFile.name}</span>}
                         </div>
                         {(headerPreview || data.headerImage) && (
-                          <div className="mt-3 relative w-full h-32 rounded-xl overflow-hidden border border-border">
+                          <div className="mt-3 relative w-full h-36 rounded-2xl overflow-hidden border border-[#1e2e20] shadow-md">
                             <Image 
                               src={headerPreview || data.headerImage} 
                               alt="Banner Preview" 
@@ -414,31 +468,54 @@ export default function ContactPageCMS() {
                     </div>
                     
                     <div className="space-y-6">
-                      <FloatingInput
-                        label="Google Map Iframe URL (src only)"
-                        name="mapIframeUrl"
-                        value={data.mapIframeUrl}
-                        onChange={handleChange}
-                        placeholder="https://www.google.com/maps/embed?..."
-                      />
-                      <p className="text-[11px] text-muted-foreground -mt-4 px-1">Extract only the src link from the Google Maps iframe embed code.</p>
+                      <div>
+                        <FloatingInput
+                          label="Google Map Iframe URL (src only)"
+                          name="mapIframeUrl"
+                          value={data.mapIframeUrl}
+                          onChange={handleChange}
+                          placeholder="https://www.google.com/maps/embed?..."
+                        />
+                        <p className="text-[11px] text-slate-400 mt-2 px-1">Extract only the src link from the Google Maps iframe embed code.</p>
+                      </div>
                       
-                      {data.mapIframeUrl && (
-                        <div className="mt-2 p-2 border border-border rounded-xl bg-muted/10 shadow-sm">
-                          <iframe 
-                            src={data.mapIframeUrl} 
-                            width="100%" 
-                            height="200" 
-                            style={{border: 0, borderRadius: '8px'}} 
-                            loading="lazy"
-                          ></iframe>
-                        </div>
-                      )}
+                      {(() => {
+                        let mapSrc = data.mapIframeUrl;
+                        if (mapSrc && mapSrc.includes('<iframe')) {
+                          const match = mapSrc.match(/src=["']([^"']+)["']/);
+                          if (match) mapSrc = match[1];
+                        }
+                        if (!mapSrc) return null;
+                        mapSrc = mapSrc.replace(/!2shi/g, '!2sen').replace(/!1shi/g, '!1sen');
+                        if (!mapSrc.includes('hl=')) {
+                          mapSrc += (mapSrc.includes('?') ? '&' : '?') + 'hl=en';
+                        }
+                        return (
+                          <div
+                            style={{
+                              border: '1px solid #1e2e20',
+                              borderRadius: '16px',
+                              overflow: 'hidden',
+                              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                              boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                            }}
+                            className="p-1.5"
+                          >
+                            <iframe 
+                              src={mapSrc} 
+                              width="100%" 
+                              height="240" 
+                              style={{ border: 0, borderRadius: '12px', display: 'block' }} 
+                              loading="lazy"
+                            ></iframe>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                   
-                  <div className="pt-6 border-t border-border/40 space-y-6">
-                    <h4 className="font-bold text-lg">Contact Form Section</h4>
+                  <div className="pt-8 border-t border-[#1e2e20] space-y-6">
+                    <h4 className="font-bold text-lg text-white">Contact Form Section</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FloatingInput
                         label="Section Sub-title (Orange text)"
@@ -465,9 +542,11 @@ export default function ContactPageCMS() {
                     />
                   </div>
 
-                  <div className="pt-6 border-t border-border/40 space-y-6">
-                    <h4 className="font-bold text-lg">Main Office Details</h4>
-                    <p className="text-sm text-muted-foreground -mt-4">These details will populate the 4 green boxes on the contact page if you leave the Locations tab empty.</p>
+                  <div className="pt-8 border-t border-[#1e2e20] space-y-6">
+                    <div>
+                      <h4 className="font-bold text-lg text-white">Main Office Details</h4>
+                      <p className="text-xs text-slate-400 mt-1">These details will populate the 4 green boxes on the contact page if you leave the Locations tab empty.</p>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FloatingTextarea
                         label="Office Address"
@@ -504,28 +583,64 @@ export default function ContactPageCMS() {
 
               {tab === "locations" && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="flex justify-between items-center bg-muted/30 p-4 rounded-xl border border-border/50">
-                    <h4 className="font-semibold text-foreground">Manage Office Locations</h4>
-                    <Button type="button" onClick={openAddLocation} className="rounded-md px-5 h-9 bg-[#52a436] hover:bg-[#3e8027] text-white font-medium transition-all whitespace-nowrap border-0 shadow-md shadow-[#52a436]/25">
-                      <Plus className="w-4 h-4 mr-1.5" /> Add New Location
-                    </Button>
+                  <div
+                    style={{
+                      backgroundColor: '#142016',
+                      border: '1px solid #1e2e20',
+                      borderRadius: '16px',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <h4 className="font-semibold text-white">Manage Office Locations</h4>
+                    <button
+                      type="button"
+                      onClick={openAddLocation}
+                      style={{
+                        background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                        color: '#ffffff',
+                        padding: '0 18px',
+                        height: '38px',
+                        borderRadius: '10px',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        border: 'none',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)'
+                      }}
+                    >
+                      <Plus className="w-4 h-4" /> Add New Location
+                    </button>
                   </div>
                   
                   {data.locations.length === 0 && (
-                    <div className="text-center py-10 border border-dashed border-border rounded-xl">
-                      <p className="text-muted-foreground">No locations added yet.</p>
+                    <div className="text-center py-12 border border-dashed border-[#1e2e20] rounded-2xl">
+                      <p className="text-slate-400 text-sm">No locations added yet.</p>
                     </div>
                   )}
 
                   <div className="space-y-4">
                     {data.locations.map((loc, index) => (
-                      <div key={index} className="border border-border/80 bg-background rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-muted/30 px-5 py-4 gap-4">
+                      <div
+                        key={index}
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                          border: '1px solid #1e2e20',
+                          borderRadius: '16px',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-4 gap-4">
                           <div>
-                            <h5 className="font-semibold text-foreground flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-primary" /> {loc.title || `Location #${index + 1}`}
+                            <h5 className="font-semibold text-white flex items-center gap-2">
+                              <MapPin className="w-4 h-4 text-[#22c55e]" /> {loc.title || `Location #${index + 1}`}
                             </h5>
-                            <p className="text-sm text-muted-foreground mt-1 ml-6">{loc.address}</p>
+                            <p className="text-xs text-slate-400 mt-1 ml-6">{loc.address}</p>
                           </div>
                           <div className="flex items-center gap-4 sm:ml-auto ml-6">
                             <Switch 
@@ -533,11 +648,11 @@ export default function ContactPageCMS() {
                               onCheckedChange={() => handleToggleLocationStatus(index, loc.isActive !== false)}
                             />
                             <div className="flex items-center gap-2">
-                              <Button type="button" variant="ghost" size="sm" onClick={() => openEditLocation(index)} className="text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/30 rounded-md h-8 px-3">
-                                <Edit2 className="w-4 h-4 mr-1.5" /> Edit
+                              <Button type="button" variant="ghost" size="sm" onClick={() => openEditLocation(index)} className="text-[#22c55e] hover:bg-[#22c55e]/10 rounded-lg h-8 px-3 text-xs font-semibold">
+                                <Edit2 className="w-3.5 h-3.5 mr-1" /> Edit
                               </Button>
-                              <Button type="button" variant="ghost" size="sm" onClick={() => confirmRemoveLocation(index)} className="text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md h-8 px-3">
-                                <Trash2 className="w-4 h-4 mr-1.5" /> Remove
+                              <Button type="button" variant="ghost" size="sm" onClick={() => confirmRemoveLocation(index)} className="text-red-400 hover:bg-red-500/10 rounded-lg h-8 px-3 text-xs font-semibold">
+                                <Trash2 className="w-3.5 h-3.5 mr-1" /> Remove
                               </Button>
                             </div>
                           </div>
@@ -613,18 +728,57 @@ export default function ContactPageCMS() {
               )}
             </div>
 
-            <CardFooter className="p-6 bg-muted/10 border-t border-border/40 flex items-center justify-end rounded-b-xl">
-              <Button 
-                type="submit" 
+            {/* Footer */}
+            <div className="p-6 sm:p-8 border-t border-[#1e2e20] flex items-center justify-end bg-black/20">
+              <button
+                type="submit"
                 disabled={saving}
-                className="rounded-md px-8 py-2 h-10 bg-[#52a436] hover:bg-[#3e8027] text-white font-semibold transition-all whitespace-nowrap border-0 shadow-lg shadow-[#52a436]/25"
+                style={{
+                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                  color: '#ffffff',
+                  padding: '0 28px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  opacity: saving ? 0.7 : 1,
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  border: 'none',
+                  boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)'
+                }}
+                onMouseEnter={(e) => {
+                  if (!saving) {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(34, 197, 94, 0.45)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!saving) {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(34, 197, 94, 0.35)';
+                  }
+                }}
               >
-                <Save className="w-4 h-4 mr-1.5" />
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
-            </CardFooter>
+                {saving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Save Changes</span>
+                  </>
+                )}
+              </button>
+            </div>
           </form>
-        </Card>
+        </div>
       </div>
       <Toast
         toasts={toasts}

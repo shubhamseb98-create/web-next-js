@@ -33,13 +33,28 @@ const Header = () => {
   useEffect(() => {
     setIsMenuOpen(false)
     setMobileDropdownOpen('')
-    // Do NOT call lenis.stop/start here — lenis-stopped adds overflow:hidden to html
-    // which causes the same scrollbar layout shift that breaks Swiper
+    if (typeof document !== 'undefined') {
+      document.activeElement?.blur?.()
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+      if (window.lenis?.scrollTo) {
+        window.lenis.scrollTo(0, { immediate: true })
+      }
+    }
   }, [location])
 
   const closeMenu = () => {
     setIsMenuOpen(false)
-    // No lenis.stop/start — the fixed overlay doesn't need a scroll lock
+    if (typeof document !== 'undefined') {
+      document.activeElement?.blur?.()
+    }
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+      if (window.lenis?.scrollTo) {
+        window.lenis.scrollTo(0, { immediate: true })
+      }
+    }
   }
 
   /* Menu open state — NO scroll locking at all.
@@ -161,7 +176,12 @@ const Header = () => {
       {/* ════════════════════════════════════════════
           Fullscreen menu — Exact Spec
       ════════════════════════════════════════════ */}
-      <nav className={`${styles.fullscreenMenu} ${isMenuOpen ? styles.glFloat : ''}`} data-open={isMenuOpen ? 'true' : 'false'}>
+      <nav
+        className={`${styles.fullscreenMenu} ${isMenuOpen ? styles.glFloat : ''}`}
+        data-open={isMenuOpen ? 'true' : 'false'}
+        aria-hidden={!isMenuOpen}
+        inert={!isMenuOpen ? '' : undefined}
+      >
         
         {/* Floating Shapes Background Decoration */}
         <div className={styles.header__shapes}>

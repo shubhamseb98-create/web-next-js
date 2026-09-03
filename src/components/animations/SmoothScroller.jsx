@@ -15,19 +15,27 @@ function RouteChangeListener() {
   const lenis = useLenis();
 
   useEffect(() => {
+    if (lenis && typeof window !== "undefined") {
+      window.lenis = lenis;
+    }
+  }, [lenis]);
+
+  useEffect(() => {
     // Scroll to top
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true });
-    } else {
+    if (typeof window !== "undefined") {
       window.scrollTo(0, 0);
     }
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    }
 
-    // Fire resize events at multiple intervals to catch all Swiper/GSAP recalculations.
+    // Fire resize & scroll events at multiple intervals to catch all Swiper/GSAP recalculations.
     // This is necessary because Next.js App Router keeps components mounted across
     // navigations, so Swiper's cached dimensions can become stale.
     const timers = [50, 150, 350, 600].map(delay =>
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event('scroll'));
       }, delay)
     );
 

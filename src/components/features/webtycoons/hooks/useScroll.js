@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 /**
  * useScrolled — returns true when window has scrolled past `threshold` px.
@@ -6,12 +7,18 @@ import { useEffect, useState } from 'react'
  */
 export function useScrolled(threshold = 60) {
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > threshold)
+    const handler = () => {
+      if (typeof window !== 'undefined') {
+        setScrolled((window.scrollY || 0) > threshold)
+      }
+    }
+    handler()
     window.addEventListener('scroll', handler, { passive: true })
     return () => window.removeEventListener('scroll', handler)
-  }, [threshold])
+  }, [threshold, pathname])
 
   return scrolled
 }

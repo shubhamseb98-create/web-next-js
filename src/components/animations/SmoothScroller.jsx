@@ -17,6 +17,10 @@ function RouteChangeListener() {
   useEffect(() => {
     if (lenis && typeof window !== "undefined") {
       window.lenis = lenis;
+      lenis.on('scroll', ScrollTrigger.update);
+      return () => {
+        lenis.off('scroll', ScrollTrigger.update);
+      };
     }
   }, [lenis]);
 

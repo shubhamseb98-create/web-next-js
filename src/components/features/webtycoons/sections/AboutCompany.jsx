@@ -1,17 +1,16 @@
 'use client';
 import { motion } from 'framer-motion'
-import { fadeUp, fadeLeft, staggerContainer, viewportOptions } from '../animations/variants'
+import { fadeUp, staggerContainer, viewportOptions } from '../animations/variants'
 import styles from '../../../../css/webtycoons/AboutCompany.module.css'
 import Image from 'next/image';
 
-const smoothImageVariant = {
-  hidden: { opacity: 0, scale: 0.96, x: 40 },
+const imageEntranceVariant = {
+  hidden: { opacity: 0, y: 35 },
   visible: {
     opacity: 1,
-    scale: 1,
-    x: 0,
+    y: 0,
     transition: {
-      duration: 1.0,
+      duration: 0.8,
       ease: [0.16, 1, 0.3, 1],
     },
   },
@@ -31,7 +30,6 @@ const AboutCompany = ({ aboutData }) => {
     if (text.includes('<span')) return text;
     
     // Convert [text] or *text* to span with titleHighlight, wrap everything else in titleSecondary
-    // Split by asterisks or brackets
     let parts = text.split('*');
     if (parts.length === 1) {
        parts = text.split(/\[|\]/);
@@ -69,7 +67,7 @@ const AboutCompany = ({ aboutData }) => {
           {/* Left: Text Content */}
           <motion.div 
             className={`col-12 col-lg-6 ${styles.contentWrapper}`}
-            variants={staggerContainer()}
+            variants={staggerContainer(0.08, 0.05)}
             initial="hidden"
             whileInView="visible"
             viewport={viewportOptions}
@@ -92,24 +90,16 @@ const AboutCompany = ({ aboutData }) => {
             </motion.div>
           </motion.div>
 
-          {/* Right: Abstract Visual / Image */}
+          {/* Right: Visual / Image with GPU-accelerated entrance */}
           <div className={`col-12 col-lg-6 p-0 ${styles.imageCol}`}>
             <motion.div 
               className={styles.imageWrapper}
-              initial={{ opacity: 0, x: 80, clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 15% 100%)' }}
-              whileInView={{ opacity: 1, x: 0, clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)' }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              variants={imageEntranceVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.12 }}
             >
-              {/* Image with subtle ambient breath and hover zoom */}
-              <motion.div 
-                style={{ width: '100%', height: '100%', position: 'relative' }}
-                initial={{ scale: 1.15, filter: 'brightness(0.9)' }}
-                whileInView={{ scale: 1, filter: 'brightness(1)' }}
-                whileHover={{ scale: 1.03 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              >
+              <div className={styles.imageInner}>
                 <Image 
                   src={image} 
                   alt={alt} 
@@ -119,24 +109,15 @@ const AboutCompany = ({ aboutData }) => {
                   className={styles.image} 
                 />
 
-                {/* Cyber Green Light Sweep Sheen */}
+                {/* Cyber Green Light Sweep Sheen - lightweight GPU-only translation */}
                 <motion.div
-                  initial={{ x: '-100%', opacity: 0 }}
-                  whileInView={{ x: '250%', opacity: [0, 0.6, 0] }}
+                  initial={{ x: '-150%', opacity: 0 }}
+                  whileInView={{ x: '250%', opacity: 0.4 }}
                   viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 1.6, delay: 0.3, ease: 'easeInOut' }}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '60%',
-                    height: '100%',
-                    background: 'linear-gradient(90deg, transparent, rgba(82, 164, 54, 0.3), rgba(255, 255, 255, 0.2), transparent)',
-                    transform: 'skewX(-25deg)',
-                    pointerEvents: 'none',
-                  }}
+                  transition={{ duration: 1.2, delay: 0.2, ease: 'easeInOut' }}
+                  className={styles.sheen}
                 />
-              </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>

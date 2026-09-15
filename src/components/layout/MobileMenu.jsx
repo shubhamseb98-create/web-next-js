@@ -100,7 +100,7 @@ export default function MobileMenu({ mobileMenu, setMobileMenu, menuData }) {
         role="navigation"
         aria-label="Mobile navigation"
         aria-hidden={!mobileMenu}
-        inert={!mobileMenu ? true : undefined}
+        inert={!mobileMenu}
       >
         {/* Header: logo + close */}
         <div className="mm-header">

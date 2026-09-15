@@ -180,7 +180,7 @@ const Header = () => {
         className={`${styles.fullscreenMenu} ${isMenuOpen ? styles.glFloat : ''}`}
         data-open={isMenuOpen ? 'true' : 'false'}
         aria-hidden={!isMenuOpen}
-        inert={!isMenuOpen ? '' : undefined}
+        inert={!isMenuOpen}
       >
         
         {/* Floating Shapes Background Decoration */}

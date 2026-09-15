@@ -25,7 +25,7 @@ function RouteChangeListener() {
   }, [lenis]);
 
   useEffect(() => {
-    // Scroll to top
+    // Scroll to top immediately on navigation
     if (typeof window !== "undefined") {
       window.scrollTo(0, 0);
     }
@@ -33,25 +33,13 @@ function RouteChangeListener() {
       lenis.scrollTo(0, { immediate: true });
     }
 
-    // Fire resize & scroll events at multiple intervals to catch all Swiper/GSAP recalculations.
-    // This is necessary because Next.js App Router keeps components mounted across
-    // navigations, so Swiper's cached dimensions can become stale.
-    const timers = [50, 150, 350, 600].map(delay =>
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-        window.dispatchEvent(new Event('scroll'));
-      }, delay)
-    );
-
-    // Also refresh ScrollTrigger after a longer delay
-    const stTimer = setTimeout(() => {
+    // Single scheduled refresh after route settles
+    const timer = setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 700);
+      window.dispatchEvent(new Event('resize'));
+    }, 250);
 
-    return () => {
-      timers.forEach(clearTimeout);
-      clearTimeout(stTimer);
-    };
+    return () => clearTimeout(timer);
   }, [pathname, lenis]);
 
   return null;
@@ -60,6 +48,7 @@ function RouteChangeListener() {
 export default function SmoothScroller({ children }) {
   useEffect(() => {
     ScrollTrigger.refresh();
+    gsap.ticker.lagSmoothing(0);
   }, []);
 
   return (
@@ -67,8 +56,10 @@ export default function SmoothScroller({ children }) {
       root
       options={{
         lerp: 0.1,
-        duration: 1.2,
-        smoothTouch: false,
+        wheelMultiplier: 1.15,
+        touchMultiplier: 1.2,
+        smoothWheel: true,
+        syncTouch: false,
       }}
     >
       <RouteChangeListener />

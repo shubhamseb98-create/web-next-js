@@ -94,10 +94,10 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${poppins.variable}`}
+      className={`antialiased ${poppins.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <Script
           id="schema-org"
           type="application/ld+json"

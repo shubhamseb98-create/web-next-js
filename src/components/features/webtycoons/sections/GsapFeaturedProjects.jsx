@@ -88,41 +88,47 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
   const [isHovering, setIsHovering] = useState(false)
 
   useGSAP(() => {
-    // Custom Cursor tracking
-    gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50 })
+    const container = containerRef.current
+    if (!container || !cursorRef.current) return
+
+    // Custom Cursor tracking - scoped to container and desktop only
+    const isDesktop = window.innerWidth >= 992
     
-    const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.2, ease: "power3" })
-    const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.2, ease: "power3" })
+    if (isDesktop) {
+      gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50 })
+      
+      const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.2, ease: "power3" })
+      const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.2, ease: "power3" })
 
-    const handleMouseMove = (e) => {
-      xTo(e.clientX)
-      yTo(e.clientY)
-    }
+      const handleMouseMove = (e) => {
+        xTo(e.clientX)
+        yTo(e.clientY)
+      }
 
-    window.addEventListener("mousemove", handleMouseMove)
+      container.addEventListener("mousemove", handleMouseMove, { passive: true })
 
-    // ScrollTrigger pinning logic
-    const cards = gsap.utils.toArray(`.${styles.projectCard}`)
-    
-    cards.forEach((card, index) => {
-      // The last card doesn't need to scale down because nothing scrolls over it
-      if (index === cards.length - 1) return 
+      // ScrollTrigger card stacking animation on desktop
+      const cards = gsap.utils.toArray(`.${styles.projectCard}`)
+      
+      cards.forEach((card, index) => {
+        if (index === cards.length - 1) return 
 
-      gsap.to(card, {
-        scale: 0.92, // Shrink slightly
-        opacity: 0.2, // Fade it back more so it's less distracting when covered
-        ease: "none",
-        scrollTrigger: {
-          trigger: cards[index + 1], // Trigger based on the NEXT card
-          start: "top top+=40vh", // Start when next card is halfway up the screen
-          end: "top top+=12vh", // End when next card reaches its sticky point
-          scrub: true, // Smooth scrub
-        }
+        gsap.to(card, {
+          scale: 0.94,
+          opacity: 0.25,
+          ease: "none",
+          scrollTrigger: {
+            trigger: cards[index + 1],
+            start: "top top+=40vh",
+            end: "top top+=12vh",
+            scrub: 0.5,
+          }
+        })
       })
-    })
 
-    return () => {
-        window.removeEventListener("mousemove", handleMouseMove)
+      return () => {
+        container.removeEventListener("mousemove", handleMouseMove)
+      }
     }
   }, { scope: containerRef })
 

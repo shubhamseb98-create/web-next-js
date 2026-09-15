@@ -119,12 +119,11 @@
   position: relative;
   border-radius: 8px;
   /* REMOVED margin: 0 10px; because it breaks Swiper's internal width calculations */
-  transition: all var(--transition-normal);
-  filter: brightness(0.6);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  will-change: transform;
 }
 
 .activeCard, .cardWrapper:hover {
-  filter: brightness(1);
   transform: skewX(-8deg) scale(1.05);
   z-index: 10;
   box-shadow: var(--shadow-lg);
@@ -156,6 +155,12 @@
   inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
   z-index: 1;
+  opacity: 0.75;
+  transition: opacity var(--transition-normal);
+}
+
+.activeCard .overlay, .cardWrapper:hover .overlay {
+  opacity: 0.35;
 }
 
 .content {

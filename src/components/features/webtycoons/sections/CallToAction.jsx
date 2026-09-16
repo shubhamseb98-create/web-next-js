@@ -27,9 +27,18 @@ const CallToAction = ({ ctaData }) => {
               {description}
             </p>
             <div className={styles.btnRow}>
-              <Link href="/contact" className={styles.btnPrimary}>
-                Let's Talk
-              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('open-contact-modal'));
+                  }
+                }}
+                className={styles.btnPrimary}
+                style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                {"Let's Talk"}
+              </button>
               <Link href="/about" className={styles.btnSecondary}>
                 Learn More About Us
               </Link>

@@ -326,6 +326,42 @@ select {
   background: var(--clr-primary-light);
 }
 
+/* Modal and Dialog Ultra-Thin Scrollbars */
+[role="dialog"] ::-webkit-scrollbar,
+[role="dialog"]::-webkit-scrollbar,
+.custom-thin-scrollbar::-webkit-scrollbar,
+.custom-thin-scrollbar ::-webkit-scrollbar {
+  width: 4px !important;
+  height: 4px !important;
+}
+
+[role="dialog"] ::-webkit-scrollbar-track,
+[role="dialog"]::-webkit-scrollbar-track,
+.custom-thin-scrollbar::-webkit-scrollbar-track,
+.custom-thin-scrollbar ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+[role="dialog"] ::-webkit-scrollbar-thumb,
+[role="dialog"]::-webkit-scrollbar-thumb,
+.custom-thin-scrollbar::-webkit-scrollbar-thumb,
+.custom-thin-scrollbar ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-radius: 9999px !important;
+}
+
+[role="dialog"] ::-webkit-scrollbar-thumb:hover,
+[role="dialog"]::-webkit-scrollbar-thumb:hover,
+.custom-thin-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-thin-scrollbar ::-webkit-scrollbar-thumb:hover {
+  background: #52a436 !important;
+}
+
+[role="dialog"],
+.custom-thin-scrollbar {
+  scrollbar-width: thin;
+}
+
 /* ============================================================
    SELECTION
    ============================================================ */

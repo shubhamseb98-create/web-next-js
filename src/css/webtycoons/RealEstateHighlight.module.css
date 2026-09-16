@@ -5,7 +5,7 @@
 
 .section {
   position: relative;
-  background: var(--clr-dark-2, #0a0e09);
+  background: #060806;
   overflow: hidden;
   padding: 4.5rem 0;
   width: 100%;

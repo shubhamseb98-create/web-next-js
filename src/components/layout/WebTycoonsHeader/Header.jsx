@@ -1,38 +1,95 @@
 "use client";
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation'
-import { FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube } from 'react-icons/fa'
+import { FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube, FaChevronDown } from 'react-icons/fa'
 import { motion, AnimatePresence } from 'framer-motion'
-import { gsap } from 'gsap'
 import { useScrolled } from '../../features/webtycoons/hooks/useScroll'
+import ContactModal from '../ContactModal/ContactModal'
 import styles from './Header.module.css'
 
-/* ══════════════════════════════════════════════
-   SHAPE SVGs — matches CodePen exactly:
-   Each has 4 path variants; only active shown.
-   We cycle which path is "active" per shape.
-══════════════════════════════════════════════ */
-const ShapeSVG = ({ className }) => (
-  <svg viewBox="0 0 360 360" fill="none" className={className} aria-hidden="true">
-    {/* Hexagon */}
-    <path fill="currentColor"
-      d="M199.5 3.93243C216.536 -6.47747 237.526 -6.47748 254.562 3.43242L359.927 64.7223C376.963 74.6322 387.458 92.9465 387.458 112.766L387.458 235.346C387.458 255.166 376.963 273.48 359.927 283.39L254.562 344.68C237.526 354.59 216.536 354.59 199.5 344.68L94.135 283.39C77.0987 273.48 66.6039 255.166 66.6039 235.346L66.6039 112.766C66.6039 92.9465 77.0987 74.6322 94.135 64.7223L199.5 3.93243Z"
-    />
-  </svg>
-)
+const INITIAL_NAV_LINKS = [
+  { name: 'Home', path: '/', order: 1, isActive: true, hasDropdown: false, subItems: [] },
+  { name: 'Brand Story', path: '/about', order: 2, isActive: true, hasDropdown: false, subItems: [] },
+  {
+    name: 'Services',
+    path: '/services/static-website-development',
+    order: 3,
+    isActive: true,
+    hasDropdown: true,
+    subItems: [
+      { label: 'Static Websites', path: '/services/static-website-development' },
+      { label: 'Dynamic Websites', path: '/services/dynamic-website-development' },
+      { label: 'E-Commerce', path: '/services/e-commerce-website-development' },
+      { label: 'Real Estate Advisory', path: '/services/real-estate-advisory' },
+    ]
+  },
+  { name: 'Projects', path: '/projects', order: 4, isActive: true, hasDropdown: false, subItems: [] },
+  { name: 'Blog', path: '/blog', order: 5, isActive: true, hasDropdown: false, subItems: [] },
+  { name: 'Contact Us', path: '/contact', order: 6, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
+]
 
 const Header = () => {
+  const [navLinks, setNavLinks]                     = useState(INITIAL_NAV_LINKS)
+  const [ctaConfig, setCtaConfig]                   = useState({
+    ctaButtonText: "Let's Talk",
+    ctaButtonAction: "modal",
+    ctaButtonLink: "/contact",
+    showCtaButton: true,
+  })
   const [isMenuOpen, setIsMenuOpen]                 = useState(false)
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState('')
+  const [expandedDropdowns, setExpandedDropdowns]   = useState({ Services: false })
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const isScrolled                                  = useScrolled(80)
   const location                                    = usePathname()
 
+  /* Fetch dynamic header navigation menu from API */
+  useEffect(() => {
+    let isMounted = true
+    async function fetchMenu() {
+      try {
+        const res = await fetch('/api/header-menu')
+        const json = await res.json()
+        if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          const active = json.data
+            .filter((it) => it.isActive !== false)
+            .map((it) => ({
+              id: it._id,
+              name: it.name,
+              path: it.path,
+              order: it.order || 0,
+              hasDropdown: Boolean(it.hasDropdown),
+              openInNewTab: Boolean(it.openInNewTab),
+              isSpecialCta: Boolean(it.isSpecialCta),
+              ctaAction: it.ctaAction || 'link',
+              subItems: (it.subItems || []).filter((sub) => sub.isActive !== false),
+            }))
+          setNavLinks(active)
+          if (json.config) {
+            setCtaConfig(json.config)
+          }
+        }
+      } catch (err) {
+        // Fallback gracefully to default links
+      }
+    }
+    fetchMenu()
+    return () => { isMounted = false }
+  }, [])
+
+  /* Listen for global modal open events */
+  useEffect(() => {
+    const handleOpenModal = () => setIsContactModalOpen(true)
+    window.addEventListener('open-contact-modal', handleOpenModal)
+    return () => window.removeEventListener('open-contact-modal', handleOpenModal)
+  }, [])
+
   /* Close on route change */
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMenuOpen(false)
-    setMobileDropdownOpen('')
+    setExpandedDropdowns({})
     if (typeof document !== 'undefined') {
       document.activeElement?.blur?.()
     }
@@ -44,37 +101,67 @@ const Header = () => {
     }
   }, [location])
 
+  /* Lock background scrolling & pause Lenis when drawer menu is open */
+  useEffect(() => {
+    if (isMenuOpen) {
+      if (typeof window !== 'undefined' && window.lenis?.stop) {
+        window.lenis.stop()
+      }
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'hidden'
+      }
+    } else {
+      if (typeof window !== 'undefined' && window.lenis?.start) {
+        window.lenis.start()
+      }
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = ''
+      }
+    }
+
+    return () => {
+      if (typeof window !== 'undefined' && window.lenis?.start) {
+        window.lenis.start()
+      }
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [isMenuOpen])
+
+  /* Prevent mousewheel and touch scroll leakage to the main background page */
+  useEffect(() => {
+    if (!isMenuOpen) return
+
+    const handleWheel = (e) => {
+      const scrollable = e.target.closest?.(`.${styles.drawerLinksWrapper}`)
+      if (!scrollable) {
+        e.preventDefault()
+      }
+    }
+
+    const handleTouchMove = (e) => {
+      const scrollable = e.target.closest?.(`.${styles.drawerLinksWrapper}`)
+      if (!scrollable) {
+        e.preventDefault()
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel)
+      window.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [isMenuOpen])
+
   const closeMenu = () => {
     setIsMenuOpen(false)
     if (typeof document !== 'undefined') {
       document.activeElement?.blur?.()
     }
-    if (typeof window !== 'undefined') {
-      window.scrollTo(0, 0)
-      if (window.lenis?.scrollTo) {
-        window.lenis.scrollTo(0, { immediate: true })
-      }
-    }
   }
-
-  /* Menu open state — NO scroll locking at all.
-     The fullscreen menu is position:fixed and covers the whole viewport.
-     Stopping lenis would add overflow:hidden to <html> via .lenis-stopped class,
-     causing a ~15px scrollbar layout shift that breaks all Swiper sliders. */
-  useEffect(() => {
-    // intentionally empty — just track isMenuOpen for UI state
-    return () => {}
-  }, [isMenuOpen])
-
-
-  const navLinks = [
-    { name: 'Home',       path: '/' },
-    { name: 'About',      path: '/about' },
-    { name: 'Services',   path: '/services/static-website-development', hasDropdown: true },
-    { name: 'Projects',   path: '/projects' },
-    { name: 'Blog',       path: '/blog' },
-    { name: 'Contact Us', path: '/contact' },
-  ]
 
   return (
     <>
@@ -100,21 +187,44 @@ const Header = () => {
           {/* Desktop Nav */}
           <nav className={`d-none d-lg-flex align-items-center ${styles.desktopNav}`}>
             {navLinks.map((link) => (
-              <div key={link.name} className={styles.navItemWrapper}>
-                <Link href={link.path} className={`${styles.navLink} ${link.hasDropdown ? styles.hasDropdown : ''}`}>
-                  {link.name}
-                  {link.hasDropdown && (
-                    <svg className={styles.dropdownIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  )}
-                </Link>
-                {link.hasDropdown && (
+              <div key={link.id || link.name} className={styles.navItemWrapper}>
+                {link.isSpecialCta && link.ctaAction === 'modal' ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsContactModalOpen(true)}
+                    className={styles.navLink}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                  >
+                    {link.name}
+                  </button>
+                ) : (
+                  <Link 
+                    href={link.path} 
+                    target={link.openInNewTab ? '_blank' : undefined}
+                    rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
+                    className={`${styles.navLink} ${link.hasDropdown ? styles.hasDropdown : ''}`}
+                  >
+                    {link.name}
+                    {link.hasDropdown && (
+                      <svg className={styles.dropdownIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    )}
+                  </Link>
+                )}
+
+                {link.hasDropdown && link.subItems && link.subItems.length > 0 && (
                   <div className={styles.dropdownMenu}>
-                    <Link href="/services/static-website-development">Static Websites</Link>
-                    <Link href="/services/dynamic-website-development">Dynamic Websites</Link>
-                    <Link href="/services/e-commerce-website-development">E-Commerce</Link>
-                    <Link href="/services/real-estate-advisory">Real Estate Advisory</Link>
+                    {link.subItems.map((sub, sIdx) => (
+                      <Link 
+                        key={sub._id || sIdx} 
+                        href={sub.path}
+                        target={sub.openInNewTab ? '_blank' : undefined}
+                        rel={sub.openInNewTab ? 'noopener noreferrer' : undefined}
+                      >
+                        {sub.label}
+                      </Link>
+                    ))}
                   </div>
                 )}
               </div>
@@ -122,9 +232,26 @@ const Header = () => {
           </nav>
 
           <div className="d-flex align-items-center gap-3">
-            <Link href="/contact" className={`d-none d-lg-flex ${styles.ctaButton}`}>
-              {"Let's Talk"}
-            </Link>
+            {ctaConfig.showCtaButton && (
+              ctaConfig.ctaButtonAction === 'modal' ? (
+                <button
+                  type="button"
+                  onClick={() => setIsContactModalOpen(true)}
+                  className={`d-none d-lg-flex ${styles.ctaButton}`}
+                  aria-label="Open contact modal"
+                >
+                  {ctaConfig.ctaButtonText}
+                </button>
+              ) : (
+                <Link
+                  href={ctaConfig.ctaButtonLink || '/contact'}
+                  className={`d-none d-lg-flex ${styles.ctaButton}`}
+                  aria-label={ctaConfig.ctaButtonText}
+                >
+                  {ctaConfig.ctaButtonText}
+                </Link>
+              )
+            )}
             <button
               className={styles.mobileToggle}
               onClick={() => setIsMenuOpen(v => !v)}
@@ -171,19 +298,27 @@ const Header = () => {
       </AnimatePresence>
 
       {/* ════════════════════════════════════════════
-          Fullscreen menu — CodePen style
+          Drawer Backdrop (click outside to close)
       ════════════════════════════════════════════ */}
+      <div 
+        className={`${styles.drawerBackdrop} ${isMenuOpen ? styles.backdropActive : ''}`}
+        onClick={closeMenu}
+        data-lenis-prevent="true"
+        aria-hidden="true"
+      />
+
       {/* ════════════════════════════════════════════
-          Fullscreen menu — Exact Spec
+          Compact Side Drawer Menu (like KNYX reference)
+          with preserved floating bubble / shapes effect
       ════════════════════════════════════════════ */}
       <nav
-        className={`${styles.fullscreenMenu} ${isMenuOpen ? styles.glFloat : ''}`}
+        className={`${styles.sideDrawerMenu} ${isMenuOpen ? styles.glFloat : ''}`}
         data-open={isMenuOpen ? 'true' : 'false'}
+        data-lenis-prevent="true"
         aria-hidden={!isMenuOpen}
         inert={!isMenuOpen}
       >
-        
-        {/* Floating Shapes Background Decoration */}
+        {/* Floating Shapes Background Decoration (Preserved Bubble Effects!) */}
         <div className={styles.header__shapes}>
           {/* HEXAGON shape */}
           <div name="hexagon" className={`${styles.header__shape} ${styles['header__shape--hexagon']}`}>
@@ -228,40 +363,154 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Menu top bar */}
-        <div className={styles.menuHeader}>
-          <Link href="/" className={styles.logo} onClick={closeMenu}>
-            <Image src="/assets/img/logo-new.png" alt="WebTycoons Logo" width={200} height={50} style={{ objectFit: 'contain' }} className={styles.logoImg} />
+        {/* Drawer top bar: Logo + Close 'X' */}
+        <div className={styles.drawerHeader}>
+          <Link href="/" className={styles.drawerLogo} onClick={closeMenu}>
+            <Image 
+              src="/assets/img/logo-new.png" 
+              alt="WebTycoons Logo" 
+              width={160} 
+              height={42} 
+              style={{ objectFit: 'contain' }} 
+              className={styles.logoImg} 
+            />
           </Link>
-          <button className={styles.mobileToggle} onClick={closeMenu} aria-label="Close menu">
-            <svg width="20" height="21" viewBox="0 0 22 23" fill="none">
-              <rect x="1.061" y="0.354" width="29.345" height="1.5" transform="rotate(45 1.061 0.354)" fill="currentColor" />
-              <rect x="21.811" y="1.061" width="29.345" height="1.5" transform="rotate(135 21.811 1.061)" fill="currentColor" />
+          <button className={styles.drawerCloseBtn} onClick={closeMenu} aria-label="Close menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
 
         {/* Vertical Links List */}
-        <div className={styles.menuLinksWrapper} data-lenis-prevent="true">
-          <ul className={styles.menuList}>
-            {navLinks.map((link, i) => (
-              <li key={link.name} className={styles.menuListItem} style={{ transitionDelay: `${0.15 * i + 0.15}s` }}>
-                <Link href={link.path} className={styles.menuLink} onClick={closeMenu}>
-                  {link.name}
-                </Link>
-                {link.hasDropdown && (
-                  <div className={`${styles.menuDropdown} ${styles.menuLinkSub}`}>
-                    <Link href="/services/static-website-development" className={styles.menuDropdownLink} onClick={closeMenu}>Static Websites</Link>
-                    <Link href="/services/dynamic-website-development" className={styles.menuDropdownLink} onClick={closeMenu}>Dynamic Websites</Link>
-                    <Link href="/services/e-commerce-website-development" className={styles.menuDropdownLink} onClick={closeMenu}>E-Commerce</Link>
-                    <Link href="/services/real-estate-advisory" className={styles.menuDropdownLink} onClick={closeMenu}>Real Estate Advisory</Link>
-                  </div>
-                )}
-              </li>
-            ))}
+        <div className={styles.drawerLinksWrapper} data-lenis-prevent="true">
+          <ul className={styles.drawerList}>
+            {navLinks.map((link) => {
+              const isExpanded = Boolean(expandedDropdowns[link.id || link.name])
+              const toggleDropdown = () => {
+                setExpandedDropdowns((prev) => ({
+                  ...prev,
+                  [link.id || link.name]: !prev[link.id || link.name],
+                }))
+              }
+
+              return (
+                <li key={link.id || link.name} className={styles.drawerItem}>
+                  {link.hasDropdown ? (
+                    <>
+                      <div className={styles.drawerDropdownTrigger}>
+                        <button
+                          type="button"
+                          className={styles.drawerLink}
+                          style={{ background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
+                          onClick={toggleDropdown}
+                        >
+                          <div className={styles.hoverBar} aria-hidden="true">
+                            <span className={styles.hoverBarLine} />
+                            <span className={styles.hoverBarDot} />
+                          </div>
+                          <span className={styles.drawerLinkText}>{link.name}</span>
+                        </button>
+                        <button 
+                          type="button"
+                          className={`${styles.chevronBtn} ${isExpanded ? styles.chevronOpen : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            toggleDropdown()
+                          }}
+                          aria-label={`Toggle ${link.name} sub-menu`}
+                        >
+                          <FaChevronDown size={14} />
+                        </button>
+                      </div>
+                      {isExpanded && link.subItems && link.subItems.length > 0 && (
+                        <div className={styles.drawerSubMenu}>
+                          {link.subItems.map((sub, sIdx) => (
+                            <Link
+                              key={sub._id || sIdx}
+                              href={sub.path}
+                              target={sub.openInNewTab ? '_blank' : undefined}
+                              rel={sub.openInNewTab ? 'noopener noreferrer' : undefined}
+                              className={styles.drawerSubLink}
+                              onClick={closeMenu}
+                            >
+                              <div className={styles.hoverBar} aria-hidden="true">
+                                <span className={styles.hoverBarLine} />
+                                <span className={styles.hoverBarDot} />
+                              </div>
+                              <span className={styles.drawerSubLinkText}>{sub.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : link.isSpecialCta && link.ctaAction === 'modal' ? (
+                    <button
+                      type="button"
+                      className={styles.drawerLink}
+                      style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+                      onClick={() => {
+                        closeMenu()
+                        setIsContactModalOpen(true)
+                      }}
+                    >
+                      <div className={styles.hoverBar} aria-hidden="true">
+                        <span className={styles.hoverBarLine} />
+                        <span className={styles.hoverBarDot} />
+                      </div>
+                      <span className={styles.drawerLinkText}>{link.name}</span>
+                    </button>
+                  ) : (
+                    <Link
+                      href={link.path}
+                      target={link.openInNewTab ? '_blank' : undefined}
+                      rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
+                      className={styles.drawerLink}
+                      onClick={closeMenu}
+                    >
+                      <div className={styles.hoverBar} aria-hidden="true">
+                        <span className={styles.hoverBarLine} />
+                        <span className={styles.hoverBarDot} />
+                      </div>
+                      <span className={styles.drawerLinkText}>{link.name}</span>
+                    </Link>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </div>
+
+        {/* Drawer footer: STALK US & Social Icons */}
+        <div className={styles.drawerFooter}>
+          <span className={styles.drawerSocialTitle}>STALK US</span>
+          <div className={styles.drawerSocialRow}>
+            <a href="https://instagram.com/thewebtycoons" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <FaInstagram />
+            </a>
+            <a href="https://facebook.com/thewebtycoons" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <FaFacebookF />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <FaTwitter />
+            </a>
+            <a href="https://linkedin.com/company/thewebtycoons" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <FaLinkedinIn />
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+              <FaYoutube />
+            </a>
+          </div>
+        </div>
       </nav>
+
+      {/* Interactive Contact / Let's Talk Modal */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </>
   )
 }

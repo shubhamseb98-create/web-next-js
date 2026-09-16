@@ -1,10 +1,9 @@
 .section {
-  background-color: var(--clr-dark);
+  background-color: #060806;
   position: relative;
   overflow: hidden;
   padding: 0;
   contain: paint;
-  /* Removing padding because the image should touch edges */
 }
 
 /* Subtle geometric background pattern - GPU isolated to prevent scroll repaints */

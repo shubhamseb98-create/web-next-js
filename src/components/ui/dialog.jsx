@@ -57,7 +57,7 @@ const DialogContent = React.forwardRef(({ className, children, hideClose = false
       {...props}
     >
       <div 
-        className={cn("relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden", !hideClose && "p-4 sm:p-6 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700 dark:hover:[&::-webkit-scrollbar-thumb]:bg-slate-600")}
+        className={cn("relative flex-1 min-h-0 overflow-y-auto overflow-x-hidden custom-thin-scrollbar", !hideClose && "p-4 sm:p-6")}
         style={{ padding: hideClose ? 0 : '24px' }}
       >
         {!hideClose && (

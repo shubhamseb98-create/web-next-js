@@ -1,6 +1,6 @@
 /* ── GSAP Featured Projects Section ── */
 .featuredSection {
-  background: transparent;
+  background-color: #060806;
   position: relative;
   /* overflow: hidden removed to fix position: sticky */
   padding: 60px 0;

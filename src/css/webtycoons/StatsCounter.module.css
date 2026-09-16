@@ -1,16 +1,10 @@
 .section {
-  background-color: #0b0f0c;
-  /* Deep dark green/black tint */
+  background-color: #060806;
   background-image:
-    /* Soft radial glow to highlight the center */
-    radial-gradient(circle at center, rgba(0, 255, 136, 0.03) 0%, transparent 70%),
-    /* The large grid texture */
-    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 100% 100%, 80px 80px, 80px 80px;
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px;
   background-position: center center;
-  border-top: 1px solid var(--clr-border-dark);
-  border-bottom: 1px solid var(--clr-border-dark);
   position: relative;
   overflow: hidden;
   padding: 60px 0;

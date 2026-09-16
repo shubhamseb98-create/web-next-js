@@ -41,10 +41,38 @@ const SHAPE_NAMES = ['circle', 'flower', 'hexagon', 'square']
    STATIC FALLBACK SLIDES
 ══════════════════════════════════════════════════════════ */
 const fallbackSlides = [
-  { video: '/assets/img/v1.mp4', image: '/assets/img/bn-1.jpg', heading: 'We Build Digital Experiences', cta: 'Get Started',      ctaHref: '/contact' },
-  { video: '/assets/img/v2.mp4', image: '/assets/img/bn-2.jpg', heading: 'Creative Design & Branding',   cta: 'See Our Work',     ctaHref: '/projects' },
-  { video: '/assets/img/v3.mp4', image: '/assets/img/b-2.jpg', heading: 'Full-Stack Development',        cta: 'Explore Services', ctaHref: '/services/static-website-development' },
-  { video: '/assets/img/v1.mp4', image: '/assets/img/bn-1.jpg', heading: 'SEO & Digital Growth',          cta: "Let's Talk",       ctaHref: '/contact' },
+  {
+    video: '/assets/img/v1.mp4',
+    image: '/assets/img/bn-1.jpg',
+    heading: 'We Build Digital Experiences',
+    subtitle: 'Elevating brands through bespoke web design, cutting-edge code & measurable digital impact.',
+    cta: 'Get Started',
+    ctaHref: '/contact'
+  },
+  {
+    video: '/assets/img/v2.mp4',
+    image: '/assets/img/bn-2.jpg',
+    heading: 'Creative Design & Branding',
+    subtitle: 'Crafting unforgettable identities and world-class digital interfaces that command attention.',
+    cta: 'See Our Work',
+    ctaHref: '/projects'
+  },
+  {
+    video: '/assets/img/v3.mp4',
+    image: '/assets/img/b-2.jpg',
+    heading: 'Full-Stack Development',
+    subtitle: 'High-performance Next.js architectures, scalable APIs, and bespoke software solutions.',
+    cta: 'Explore Services',
+    ctaHref: '/services/static-website-development'
+  },
+  {
+    video: '/assets/img/v1.mp4',
+    image: '/assets/img/bn-1.jpg',
+    heading: 'SEO & Digital Growth',
+    subtitle: 'Data-driven search dominance and organic conversion funnels engineered to scale your revenue.',
+    cta: "Let's Talk",
+    ctaHref: '/contact'
+  },
 ]
 
 const AUTOPLAY_MS = 5000
@@ -86,11 +114,6 @@ const isVideo = (url) => typeof url === 'string' && (url.endsWith('.mp4') || url
 
 const Hero = ({ bannerData }) => {
   const [active, setActive] = useState(0)
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   // Map dynamic banner data or use fallback
   const slides = bannerData?.length > 0 
@@ -99,6 +122,7 @@ const Hero = ({ bannerData }) => {
         video: b.video || (isVideo(b.image) ? b.image : null),
         audio: b.audio || null,
         heading: b.title || '',
+        subtitle: b.subtitle || b.subTitle || b.subHeading || b.description || '',
         cta: b.buttonText || '',
         ctaHref: b.url || '#',
         enableSound: b.enableSound === true,
@@ -195,7 +219,6 @@ const Hero = ({ bannerData }) => {
 
   // Unmuted by default on initial mount: start playback and unlock sound on first interaction
   useEffect(() => {
-    setIsMounted(true)
     if (!isMutedRef.current) {
       syncAudioForSlide(0, true)
     }
@@ -439,7 +462,9 @@ const Hero = ({ bannerData }) => {
   }, [COUNT, goTo, startProgress])
 
   // Keep ref in sync for use inside startProgress onComplete
-  navigateRef.current = navigate
+  useEffect(() => {
+    navigateRef.current = navigate
+  }, [navigate])
 
   /* ── Init ── */
   useEffect(() => {
@@ -496,6 +521,7 @@ const Hero = ({ bannerData }) => {
                 className={styles.textInner}
               >
                 {slide.heading ? <h1 className={styles.heading}>{slide.heading}</h1> : null}
+                {slide.subtitle ? <p className={styles.subheading}>{slide.subtitle}</p> : null}
                 {slide.cta ? (
                   <a href={slide.ctaHref || '#'} className={styles.cta}>
                     <span>{slide.cta}</span>

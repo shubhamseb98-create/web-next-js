@@ -25,12 +25,14 @@ import {
   Users,
   LogOut,
   ChevronDown,
-  Building2
+  Building2,
+  Menu
 } from 'lucide-react';
 
 /* ─── Navigation config ─────────────────────────────── */
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard', permission: null },
+  { id: 'header-menu', label: 'Header Management', icon: Menu, permission: null, href: '/dashboard/header-menu' },
   {
     id: 'home', label: 'Home Management', icon: Home, permission: 'home',
     children: [
@@ -97,6 +99,7 @@ const NAV = [
     id: 'global-settings', label: 'Global Settings', icon: Settings, permission: 'global_settings',
     children: [
       { label: 'General Settings', href: '/dashboard/settings' },
+      { label: 'Header Navigation', href: '/dashboard/header-menu' },
       { label: 'Page Banners',     href: '/dashboard/settings/page-banners' },
     ],
   },
@@ -189,6 +192,7 @@ function NestedNavChild({ child, pathname }) {
   const [open, setOpen] = useState(isActive);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isActive) setOpen(true);
   }, [isActive]);
 
@@ -236,6 +240,7 @@ function NavItem({ item, pathname, hasModuleAccess }) {
   const [open, setOpen] = useState(isChildActive);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isChildActive) setOpen(true);
   }, [isChildActive]);
 

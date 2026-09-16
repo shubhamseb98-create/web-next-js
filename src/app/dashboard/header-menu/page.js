@@ -847,23 +847,52 @@ export default function HeaderManagementPage() {
                 </p>
               </div>
 
-              {/* Selection Options: Open in New Tab & Trigger Contact Modal */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+              {/* Selection Options: Open in New Tab & Trigger Contact Modal (Smooth Rounded 12px) */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '12px',
+                  paddingTop: '4px',
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => setTabForm(f => ({ ...f, openInNewTab: !f.openInNewTab }))}
-                  className={`h-12 px-5 rounded-full border flex items-center justify-center gap-3 text-sm font-semibold cursor-pointer select-none transition-all duration-200 ${
-                    tabForm.openInNewTab
-                      ? "bg-[#52a436]/15 border-[#52a436] text-white shadow-md shadow-[#52a436]/20 ring-1 ring-[#52a436]/30"
-                      : "bg-black/30 border-white/10 text-slate-300 hover:border-white/20 hover:bg-white/5 hover:text-white"
-                  }`}
+                  style={{
+                    height: '48px',
+                    padding: '0 18px',
+                    borderRadius: '12px',
+                    border: tabForm.openInNewTab ? '1px solid #52a436' : '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: tabForm.openInNewTab ? 'rgba(82, 164, 54, 0.14)' : 'rgba(0, 0, 0, 0.35)',
+                    color: tabForm.openInNewTab ? '#ffffff' : '#cbd5e1',
+                    boxShadow: tabForm.openInNewTab ? '0 4px 14px rgba(82, 164, 54, 0.2)' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    transition: 'all 0.2s ease',
+                  }}
                 >
-                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all flex-shrink-0 ${
-                    tabForm.openInNewTab
-                      ? "border-[#52a436] bg-[#52a436] text-white"
-                      : "border-slate-500 bg-slate-800"
-                  }`}>
-                    {tabForm.openInNewTab && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      border: tabForm.openInNewTab ? '1px solid #52a436' : '1px solid #64748b',
+                      backgroundColor: tabForm.openInNewTab ? '#52a436' : 'rgba(255, 255, 255, 0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {tabForm.openInNewTab && <Check className="w-3 h-3 text-white stroke-[3]" />}
                   </div>
                   <span>Open in New Tab</span>
                 </button>
@@ -875,32 +904,78 @@ export default function HeaderManagementPage() {
                     isSpecialCta: !f.isSpecialCta,
                     ctaAction: !f.isSpecialCta ? "modal" : "link"
                   }))}
-                  className={`h-12 px-5 rounded-full border flex items-center justify-center gap-3 text-sm font-semibold cursor-pointer select-none transition-all duration-200 ${
-                    tabForm.isSpecialCta
-                      ? "bg-amber-500/15 border-amber-500 text-white shadow-md shadow-amber-500/20 ring-1 ring-amber-500/30"
-                      : "bg-black/30 border-white/10 text-slate-300 hover:border-white/20 hover:bg-white/5 hover:text-white"
-                  }`}
+                  style={{
+                    height: '48px',
+                    padding: '0 18px',
+                    borderRadius: '12px',
+                    border: tabForm.isSpecialCta ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: tabForm.isSpecialCta ? 'rgba(245, 158, 11, 0.14)' : 'rgba(0, 0, 0, 0.35)',
+                    color: tabForm.isSpecialCta ? '#ffffff' : '#cbd5e1',
+                    boxShadow: tabForm.isSpecialCta ? '0 4px 14px rgba(245, 158, 11, 0.2)' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '12px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    transition: 'all 0.2s ease',
+                  }}
                 >
-                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all flex-shrink-0 ${
-                    tabForm.isSpecialCta
-                      ? "border-amber-500 bg-amber-500 text-white"
-                      : "border-slate-500 bg-slate-800"
-                  }`}>
-                    {tabForm.isSpecialCta && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      border: tabForm.isSpecialCta ? '1px solid #f59e0b' : '1px solid #64748b',
+                      backgroundColor: tabForm.isSpecialCta ? '#f59e0b' : 'rgba(255, 255, 255, 0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    {tabForm.isSpecialCta && <Check className="w-3 h-3 text-white stroke-[3]" />}
                   </div>
                   <span>Trigger Contact Modal</span>
                 </button>
               </div>
 
               {/* Dropdown Toggle Card */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/15 transition-colors">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center flex-shrink-0">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px',
+                  borderRadius: '16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  transition: 'border-color 0.2s',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                      border: '1px solid rgba(168, 85, 247, 0.3)',
+                      color: '#c084fc',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
                     <Layers className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-white">Has Dropdown Sub-menu</div>
-                    <div className="text-xs text-slate-400 mt-0.5">Enable child navigation links for this tab (like Services).</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Has Dropdown Sub-menu</div>
+                    <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>Enable child navigation links for this tab (like Services).</div>
                   </div>
                 </div>
                 <Switch
@@ -910,46 +985,123 @@ export default function HeaderManagementPage() {
                 />
               </div>
 
-              {/* Dropdown Sub-items Manager (Spacious Pills & Clean Spacing) */}
+              {/* Dropdown Sub-items Manager (Clean Spacing & Distinct 12px Cards) */}
               {tabForm.hasDropdown && (
-                <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.02] border border-purple-500/25 space-y-4">
+                <div
+                  style={{
+                    padding: '20px',
+                    borderRadius: '16px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid rgba(168, 85, 247, 0.25)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}
+                >
                   {/* Section Header */}
-                  <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                    <div className="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-2">
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingBottom: '12px',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#d8b4fe',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
                       <Layers className="w-4 h-4 text-purple-400" />
                       SUB-MENU ITEMS ({tabForm.subItems?.length || 0})
                     </div>
-                    <span className="text-xs font-mono font-medium text-slate-400 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontFamily: 'monospace',
+                        fontWeight: 500,
+                        color: '#94a3b8',
+                        padding: '4px 12px',
+                        borderRadius: '9999px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                      }}
+                    >
                       {(tabForm.subItems || []).filter(s => s.isActive !== false).length} of {tabForm.subItems?.length || 0} Active
                     </span>
                   </div>
 
-                  {/* Sub-items list */}
+                  {/* Sub-items list with guaranteed gap and no overlapping */}
                   {tabForm.subItems && tabForm.subItems.length > 0 ? (
-                    <div className="space-y-3 max-h-64 overflow-y-auto pr-2 [scrollbar-width:thin] [scrollbar-color:#334155_transparent]">
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        maxHeight: '260px',
+                        overflowY: 'auto',
+                        paddingRight: '6px',
+                        paddingBottom: '2px',
+                      }}
+                      className="custom-thin-scrollbar"
+                    >
                       {tabForm.subItems.map((sub, sIdx) => {
                         const isSubActive = sub.isActive !== false;
                         return (
                           <div
                             key={sIdx}
-                            className={`px-5 py-3 rounded-full border flex items-center justify-between gap-4 transition-all ${
-                              isSubActive
-                                ? "bg-black/40 border-white/10 shadow-sm"
-                                : "bg-black/20 border-white/5 opacity-60"
-                            }`}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              gap: '14px',
+                              padding: '12px 16px',
+                              borderRadius: '12px',
+                              backgroundColor: isSubActive ? 'rgba(0, 0, 0, 0.45)' : 'rgba(0, 0, 0, 0.2)',
+                              border: isSubActive ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(255, 255, 255, 0.05)',
+                              opacity: isSubActive ? 1 : 0.6,
+                              transition: 'all 0.2s ease',
+                              boxShadow: isSubActive ? '0 2px 6px rgba(0, 0, 0, 0.3)' : 'none',
+                            }}
                           >
-                            <div className="min-w-0 pl-1">
-                              <div className={`text-sm font-semibold truncate ${
-                                isSubActive ? "text-white" : "text-slate-400 line-through"
-                              }`}>
+                            <div style={{ minWidth: 0, paddingLeft: '4px' }}>
+                              <div
+                                style={{
+                                  fontSize: '13px',
+                                  fontWeight: 600,
+                                  color: isSubActive ? '#ffffff' : '#94a3b8',
+                                  textDecoration: isSubActive ? 'none' : 'line-through',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
                                 {sub.label}
                               </div>
-                              <div className="text-xs text-slate-400 font-mono truncate mt-0.5">
+                              <div
+                                style={{
+                                  fontSize: '11px',
+                                  color: '#64748b',
+                                  fontFamily: 'monospace',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap',
+                                  marginTop: '2px',
+                                }}
+                              >
                                 {sub.path}
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-3 flex-shrink-0 pr-1">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
                               <Switch
                                 checked={isSubActive}
                                 onCheckedChange={(checked) => {
@@ -960,38 +1112,86 @@ export default function HeaderManagementPage() {
                                 }}
                                 aria-label={`Toggle ${sub.label}`}
                               />
-                              <span className="text-xs font-bold w-7 text-center">
-                                {isSubActive ? (
-                                  <span className="text-[#52a436]">ON</span>
-                                ) : (
-                                  <span className="text-slate-500">OFF</span>
-                                )}
+                              <span
+                                style={{
+                                  fontSize: '12px',
+                                  fontWeight: 700,
+                                  width: '28px',
+                                  textAlign: 'left',
+                                  color: isSubActive ? '#52a436' : '#64748b',
+                                }}
+                              >
+                                {isSubActive ? 'ON' : 'OFF'}
                               </span>
 
-                              <Button
+                              <button
                                 type="button"
-                                variant="ghost"
-                                size="sm"
                                 onClick={() => handleRemoveSubItem(sIdx)}
-                                className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 h-8 w-8 p-0 rounded-full transition-colors"
+                                style={{
+                                  width: '32px',
+                                  height: '32px',
+                                  borderRadius: '8px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: '#94a3b8',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                                  e.currentTarget.style.color = '#ef4444';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.backgroundColor = 'transparent';
+                                  e.currentTarget.style.color = '#94a3b8';
+                                }}
                                 title="Delete sub-item"
                               >
                                 <Trash2 className="w-4 h-4" />
-                              </Button>
+                              </button>
                             </div>
                           </div>
                         );
                       })}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-400 italic py-3 text-center bg-black/20 rounded-xl border border-white/5">
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        color: '#94a3b8',
+                        fontStyle: 'italic',
+                        padding: '16px',
+                        textAlign: 'center',
+                        backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        margin: 0,
+                      }}
+                    >
                       No sub-items added yet.
                     </p>
                   )}
 
-                  {/* Add Sub-item Form */}
-                  <div className="pt-4 space-y-3.5 border-t border-white/10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* Add Sub-item Form (Clean Spacing, Inputs & Button separated without overlap) */}
+                  <div
+                    style={{
+                      paddingTop: '16px',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '14px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                        gap: '12px',
+                      }}
+                    >
                       <FloatingInput
                         label="Sub-item Label (e.g. E-Commerce)"
                         value={newSubLabel}
@@ -1003,36 +1203,112 @@ export default function HeaderManagementPage() {
                         onChange={(e) => setNewSubPath(e.target.value)}
                       />
                     </div>
-                    <Button
+
+                    <button
                       type="button"
                       onClick={handleAddSubItem}
-                      className="w-full h-11 bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 hover:text-white border border-purple-500/40 rounded-full text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm"
+                      style={{
+                        width: '100%',
+                        height: '46px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        borderRadius: '12px',
+                        backgroundColor: 'rgba(82, 164, 54, 0.16)',
+                        border: '1px solid rgba(82, 164, 54, 0.45)',
+                        color: '#6bc24b',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.28)';
+                        e.currentTarget.style.borderColor = '#52a436';
+                        e.currentTarget.style.color = '#ffffff';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(82, 164, 54, 0.16)';
+                        e.currentTarget.style.borderColor = 'rgba(82, 164, 54, 0.45)';
+                        e.currentTarget.style.color = '#6bc24b';
+                      }}
                     >
-                      <Plus className="w-4 h-4 text-[#52a436]" /> Add Sub-item to List
-                    </Button>
+                      <Plus className="w-4 h-4" />
+                      <span>Add Sub-item to List</span>
+                    </button>
                   </div>
                 </div>
               )}
             </div>
 
-            <DialogFooter className="pt-5 border-t border-white/10 mt-6 flex items-center justify-end gap-3">
-              <Button
+            <DialogFooter
+              style={{
+                paddingTop: '20px',
+                marginTop: '20px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                gap: '12px',
+              }}
+            >
+              <button
                 type="button"
-                variant="ghost"
                 onClick={() => setIsTabModalOpen(false)}
                 disabled={saving}
-                className="rounded-full px-6 h-11 text-slate-400 hover:text-white hover:bg-white/5 font-medium text-sm transition-colors"
+                style={{
+                  height: '44px',
+                  padding: '0 24px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  backgroundColor: 'transparent',
+                  color: '#94a3b8',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.currentTarget.style.color = '#ffffff';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#94a3b8';
+                }}
               >
                 Cancel
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
                 disabled={saving}
-                className="rounded-full px-8 h-11 bg-[#52a436] hover:bg-[#438a2c] text-white font-semibold text-sm shadow-lg shadow-[#52a436]/25 transition-all flex items-center gap-2"
+                style={{
+                  height: '44px',
+                  padding: '0 28px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  backgroundColor: '#52a436',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 16px rgba(82, 164, 54, 0.3)',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  if (!saving) e.currentTarget.style.backgroundColor = '#438a2c';
+                }}
+                onMouseLeave={(e) => {
+                  if (!saving) e.currentTarget.style.backgroundColor = '#52a436';
+                }}
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                {editingItem ? "Update Tab" : "Save Tab"}
-              </Button>
+                <span>{editingItem ? "Update Tab" : "Save Tab"}</span>
+              </button>
             </DialogFooter>
           </form>
         </DialogContent>

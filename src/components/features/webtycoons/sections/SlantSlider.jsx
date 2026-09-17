@@ -1,8 +1,7 @@
 'use client'
-import { useEffect, useRef } from 'react'
-import { usePathname } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay, Navigation, Virtual } from 'swiper/modules'
+import { Autoplay, Navigation } from 'swiper/modules'
 import Image from 'next/image';
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -60,44 +59,24 @@ const slantSlides = [
 ]
 
 const SlantSlider = ({ workData, homeExtraData }) => {
-  const slidesToUse = workData && workData.length > 0 ? workData : slantSlides;
-  // Duplicate slides so Swiper has enough elements to loop perfectly on ultra-wide screens (where 5.5 slides are shown)
-  const allSlides = [...slidesToUse, ...slidesToUse.map(s => ({ ...s, id: (s.id || s._id) + '_dup' }))]
+  const [isMounted, setIsMounted] = useState(false)
+  const swiperRef = useRef(null)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const baseSlides = workData && workData.length > 0 ? workData : slantSlides;
+  // Repeat 3x so Swiper has abundant slides on both left & right, preventing any blank gaps during loop cycles
+  const allSlides = [
+    ...baseSlides.map((s, i) => ({ ...s, slideKey: `set1_${s._id || s.id || i}_${i}` })),
+    ...baseSlides.map((s, i) => ({ ...s, slideKey: `set2_${s._id || s.id || i}_${i}` })),
+    ...baseSlides.map((s, i) => ({ ...s, slideKey: `set3_${s._id || s.id || i}_${i}` })),
+  ]
 
   const subtitle = homeExtraData?.work_subtitle || 'GLOBAL NETWORK';
   const mainTitle = homeExtraData?.work_title || 'Trusted by Industry Leaders';
   const description = homeExtraData?.work_description || "WebTycoons is a pioneering digital firm dedicated to safeguarding your digital assets. With over two decades of experience, we've been at the forefront of innovation, providing comprehensive solutions.";
-
-  const swiperRef = useRef(null)
-  const pathname = usePathname()
-
-  // Force Swiper to recalculate its dimensions after every navigation
-  useEffect(() => {
-    if (!swiperRef.current) return
-    const swiper = swiperRef.current
-
-    // Small delay to ensure the DOM has settled after navigation
-    const t1 = setTimeout(() => {
-      if (swiper && !swiper.destroyed) {
-        swiper.update()
-        swiper.updateSize()
-        swiper.updateSlides()
-        swiper.updateProgress()
-        swiper.updateSlidesClasses()
-      }
-    }, 100)
-
-    const t2 = setTimeout(() => {
-      if (swiper && !swiper.destroyed) {
-        swiper.update()
-      }
-    }, 500)
-
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
-  }, [pathname])
 
   return (
     <section className={styles.section}>
@@ -111,32 +90,36 @@ const SlantSlider = ({ workData, homeExtraData }) => {
       </div>
 
       <div className={styles.sliderContainer}>
-        <Swiper
-          modules={[Autoplay, Navigation]}
-          spaceBetween={20}
-          slidesPerView={1.5}
-          centeredSlides={true}
-          loop={true}
-          speed={800}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
-          observer={true}
-          observeParents={true}
-          resizeObserver={true}
-          navigation={{
-            nextEl: '.slant-next',
-            prevEl: '.slant-prev',
-          }}
-          breakpoints={{
-            576: { slidesPerView: 2.5 },
-            768: { slidesPerView: 3.5 },
-            1200: { slidesPerView: 4.5 },
-            1400: { slidesPerView: 5.5 },
-          }}
-          className={styles.slantSwiper}
-          onSwiper={(swiper) => { swiperRef.current = swiper }}
-        >
-          {allSlides.map((slide) => (
-            <SwiperSlide key={slide.id || slide._id} className={styles.slide}>
+        {isMounted ? (
+          <Swiper
+            modules={[Autoplay, Navigation]}
+            spaceBetween={20}
+            slidesPerView={1.5}
+            centeredSlides={true}
+            loop={true}
+            loopedSlides={6}
+            loopPreventsSliding={false}
+            initialSlide={baseSlides.length}
+            speed={800}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            observer={true}
+            observeParents={true}
+            resizeObserver={true}
+            navigation={{
+              nextEl: '.slant-next',
+              prevEl: '.slant-prev',
+            }}
+            breakpoints={{
+              576: { slidesPerView: 2.5 },
+              768: { slidesPerView: 3.5 },
+              1200: { slidesPerView: 4.5 },
+              1400: { slidesPerView: 5.5 },
+            }}
+            className={styles.slantSwiper}
+            onSwiper={(swiper) => { swiperRef.current = swiper }}
+          >
+            {allSlides.map((slide) => (
+              <SwiperSlide key={slide.slideKey} className={styles.slide}>
               {({ isActive }) => (
                 <div className={`${styles.cardWrapper} ${isActive ? styles.activeCard : ''}`}>
                   <div className={styles.cardInner}>
@@ -173,6 +156,7 @@ const SlantSlider = ({ workData, homeExtraData }) => {
             </SwiperSlide>
           ))}
         </Swiper>
+      ) : null}
 
       </div>
 

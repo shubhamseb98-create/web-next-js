@@ -4,6 +4,10 @@ const ClientSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     image: { type: String, default: "" },
+    websiteUrl: { type: String, default: "" },
+    domain: { type: String, default: "" },
+    category: { type: String, default: "" },
+    snapshotImage: { type: String, default: "" },
     hasBg: { type: Boolean, default: false },
     status: { type: String, enum: ["active", "draft"], default: "active" },
     sort: { type: Number, default: 0 },

@@ -8,7 +8,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { Badge } from '../../../components/ui/badge'
 import { Switch } from '../../../components/ui/switch'
-import { Edit2, Trash2, Layers, ImageIcon, Eye } from 'lucide-react'
+import { Edit2, Trash2, Layers, ImageIcon, Eye, ExternalLink } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 
 // Lazy-load ProductModal so CKEditor doesn't crash the categories route
@@ -203,6 +203,18 @@ export default function ProductsPage() {
       label: 'Action',
       render: (row) => (
         <div className="flex items-center justify-end gap-2">
+          {row.slug && (
+            <Link 
+              href={`/products/${row.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              title="View Live Product Page"
+              className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </Link>
+          )}
           <button onClick={(e) => { e.stopPropagation(); setModal(row); }} className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30">
             <Edit2 className="w-4 h-4" />
           </button>
@@ -215,11 +227,18 @@ export default function ProductsPage() {
   ]
 
   const customButtons = (
-    <Link href="/dashboard/products/categories">
-      <div className="inline-flex items-center justify-center rounded-md px-4 h-10 font-medium bg-transparent border border-border hover:bg-muted transition-colors text-sm cursor-pointer">
-        <Layers className="w-4 h-4 mr-1.5" /> Categories
-      </div>
-    </Link>
+    <div className="flex items-center gap-2">
+      <Link href="/products" target="_blank" rel="noopener noreferrer">
+        <div className="inline-flex items-center justify-center rounded-md px-3.5 h-10 font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors text-sm cursor-pointer">
+          <ExternalLink className="w-4 h-4 mr-1.5" /> View Public Page
+        </div>
+      </Link>
+      <Link href="/dashboard/products/categories">
+        <div className="inline-flex items-center justify-center rounded-md px-4 h-10 font-medium bg-transparent border border-border hover:bg-muted transition-colors text-sm cursor-pointer">
+          <Layers className="w-4 h-4 mr-1.5" /> Categories
+        </div>
+      </Link>
+    </div>
   )
 
   return (

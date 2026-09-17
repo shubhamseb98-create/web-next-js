@@ -1,7 +1,7 @@
 .sectionWrapper {
   padding: 60px 0;
   background-color: #091308;
-  background-image: 
+  background-image:
     radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.14) 0%, transparent 65%),
     radial-gradient(ellipse 70% 40% at 50% 100%, rgba(46, 117, 28, 0.12) 0%, transparent 65%),
     linear-gradient(180deg, #091308 0%, #0d1a0b 50%, #091308 100%);
@@ -50,7 +50,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto;
   gap: 1.5rem;
-  grid-template-areas: 
+  grid-template-areas:
     "card-1"
     "card-2"
     "card-3"
@@ -61,7 +61,7 @@
 @media (min-width: 768px) {
   .bentoGrid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-areas: 
+    grid-template-areas:
       "card-1 card-2"
       "card-1 card-3"
       "card-4 card-5";
@@ -72,7 +72,7 @@
   .bentoGrid {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 350px);
-    grid-template-areas: 
+    grid-template-areas:
       "card-1 card-2 card-3"
       "card-1 card-4 card-5";
   }
@@ -125,12 +125,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 100%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.85) 100%);
   transition: background 0.5s ease;
 }
 
 .blogCard:hover .overlay {
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.95) 100%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.95) 100%);
 }
 
 /* Content Layer */
@@ -173,7 +173,8 @@
 }
 
 .blogCard:nth-child(1) .cardTitle {
-  font-size: 2rem; /* Make first card title larger */
+  font-size: 2rem;
+  /* Make first card title larger */
 }
 
 .cardDesc {

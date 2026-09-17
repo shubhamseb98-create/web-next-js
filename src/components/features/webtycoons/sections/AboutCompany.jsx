@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { fadeUp, staggerContainer, viewportOptions } from '../animations/variants'
 import styles from '../../../../css/webtycoons/AboutCompany.module.css'
 import Image from 'next/image';
+import Link from 'next/link';
 
 const imageEntranceVariant = {
   hidden: { opacity: 0, y: 35 },
@@ -81,12 +82,9 @@ const AboutCompany = ({ aboutData }) => {
             <motion.div variants={fadeUp} className={styles.text} dangerouslySetInnerHTML={{ __html: description }}></motion.div>
             
             <motion.div variants={fadeUp} className={styles.buttonGroup}>
-              <a href="#contact" className={styles.primaryBtn}>
+              <Link href="/about" className={styles.primaryBtn}>
                 KNOW MORE
-              </a>
-              <a href="#about" className={styles.outlineBtn}>
-                OUR BRAND STORY
-              </a>
+              </Link>
             </motion.div>
           </motion.div>
 

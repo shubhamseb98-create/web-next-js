@@ -14,20 +14,26 @@ const INITIAL_NAV_LINKS = [
   { name: 'Brand Story', path: '/about', order: 2, isActive: true, hasDropdown: false, subItems: [] },
   {
     name: 'Services',
-    path: '/services/static-website-development',
+    path: '/services/website-designing',
     order: 3,
     isActive: true,
     hasDropdown: true,
     subItems: [
-      { label: 'Static Websites', path: '/services/static-website-development' },
-      { label: 'Dynamic Websites', path: '/services/dynamic-website-development' },
-      { label: 'E-Commerce', path: '/services/e-commerce-website-development' },
+      { label: 'Website Designing', path: '/services/website-designing' },
+      { label: 'Static Website Development', path: '/services/static-website-development' },
+      { label: 'Dynamic Website Development', path: '/services/dynamic-website-development' },
+      { label: 'E-Commerce Website Development', path: '/services/e-commerce-website-development' },
+      { label: 'Logo Designing', path: '/services/logo-designing' },
+      { label: 'Domain & Hosting', path: '/services/domain' },
+      { label: 'Digital Marketing Solution', path: '/services/digital-marketing-solution' },
+      { label: 'Email Solution', path: '/services/email-solution' },
       { label: 'Real Estate Advisory', path: '/services/real-estate-advisory' },
     ]
   },
   { name: 'Projects', path: '/projects', order: 4, isActive: true, hasDropdown: false, subItems: [] },
-  { name: 'Blog', path: '/blog', order: 5, isActive: true, hasDropdown: false, subItems: [] },
-  { name: 'Contact Us', path: '/contact', order: 6, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
+  { name: 'CRM Products', path: '/products', order: 5, isActive: true, hasDropdown: false, subItems: [] },
+  { name: 'Blog', path: '/blog', order: 6, isActive: true, hasDropdown: false, subItems: [] },
+  { name: 'Contact Us', path: '/contact', order: 7, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
 ]
 
 const Header = () => {

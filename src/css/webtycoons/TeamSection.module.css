@@ -6,7 +6,7 @@
 .teamSection {
   position: relative;
   background-color: #091308;
-  background-image: 
+  background-image:
     radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.14) 0%, transparent 65%),
     radial-gradient(ellipse 70% 40% at 50% 100%, rgba(46, 117, 28, 0.12) 0%, transparent 65%),
     linear-gradient(180deg, #091308 0%, #0d1a0b 50%, #091308 100%);

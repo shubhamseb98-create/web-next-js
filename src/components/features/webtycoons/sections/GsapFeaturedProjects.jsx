@@ -216,15 +216,16 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
                       </span>
                     </div>
                   </div>
-                  <Image 
-                    src={project.image} 
-                    alt={project.title} 
-                    width={800}
-                    height={600}
-                    sizes="(max-width: 992px) 100vw, 50vw"
-                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-                    className={styles.projectImage} 
-                  />
+                  <div className={styles.projectImageContainer}>
+                    <Image 
+                      src={project.image} 
+                      alt={project.title} 
+                      width={800}
+                      height={500}
+                      sizes="(max-width: 992px) 100vw, 50vw"
+                      className={styles.projectImage} 
+                    />
+                  </div>
                 </div>
               </div>
             </div>

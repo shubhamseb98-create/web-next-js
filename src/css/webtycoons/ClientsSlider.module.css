@@ -1,7 +1,7 @@
 .section {
-  padding: 80px 0;
+  padding: 80px 0 85px 0;
   background-color: #091308;
-  background-image: 
+  background-image:
     radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.12) 0%, transparent 65%),
     radial-gradient(ellipse 70% 40% at 50% 100%, rgba(46, 117, 28, 0.10) 0%, transparent 65%),
     linear-gradient(180deg, #091308 0%, #0d1a0b 50%, #091308 100%);
@@ -13,11 +13,13 @@
 
 .header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 3rem;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
   padding: 0 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .subtitle {
@@ -27,28 +29,42 @@
   margin-top: 0.75rem;
 }
 
-/* Marquee Container with smooth edge gradient mask */
+/* Marquee Container - z-index: 50 guarantees the tooltip sits completely above the header */
 .marqueeContainer {
   position: relative;
+  z-index: 50;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
-  mask-image: linear-gradient(to right,
-      transparent 0%,
-      black 8%,
-      black 92%,
-      transparent 100%);
-  -webkit-mask-image: linear-gradient(to right,
-      transparent 0%,
-      black 8%,
-      black 92%,
-      transparent 100%);
+}
+
+/* Side Edge Fade Gradients */
+.edgeGradientLeft {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 140px;
+  background: linear-gradient(to right, #091308 15%, rgba(9, 19, 8, 0.85) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.edgeGradientRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 140px;
+  background: linear-gradient(to left, #091308 15%, rgba(9, 19, 8, 0.85) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 20;
 }
 
 .marqueeTrack {
   display: flex;
   align-items: center;
-  gap: 3.25rem;
+  gap: 3.5rem;
   width: max-content;
   animation: scrollClients 32s linear infinite;
   will-change: transform;
@@ -74,8 +90,22 @@
   align-items: center;
   justify-content: center;
   height: 130px;
-  padding: 0 6px;
-  transition: transform 0.3s ease;
+  padding: 0 10px;
+  position: relative;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.logoCard:hover {
+  z-index: 9999;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-decoration: none;
 }
 
 .logoWrapper {
@@ -94,12 +124,11 @@
   filter: brightness(0) invert(1);
   transition: all 0.3s ease;
   user-select: none;
-  pointer-events: auto;
 }
 
 .logoCard:hover .clientLogo {
   opacity: 1;
-  filter: brightness(0) invert(1) drop-shadow(0 0 16px rgba(255, 255, 255, 0.55));
+  filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(82, 164, 54, 0.65));
   transform: scale(1.06);
 }
 
@@ -119,9 +148,240 @@
   color: #52a436;
 }
 
+/* ── Hover Snapshot Preview Tooltip Window (Positioned ABOVE logo with high z-index) ── */
+.snapshotTooltip {
+  position: absolute;
+  bottom: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%) translateY(12px) scale(0.95);
+  width: 295px;
+  background: #0d140e;
+  border: 1px solid rgba(82, 164, 54, 0.5);
+  border-radius: 14px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(82, 164, 54, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 99999;
+}
+
+/* Hover Bridge: ensures hovering between logo and tooltip upwards remains active */
+.snapshotTooltip::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 25px;
+  background: transparent;
+}
+
+.logoCard:hover .snapshotTooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.snapshotCardInner {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  overflow: hidden;
+  border-radius: 13px;
+}
+
+/* Mini Browser Header Bar */
+.tooltipBrowserBar {
+  background: #141c15;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tooltipDots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotRed {
+  background: #ff5f56;
+}
+
+.dotYellow {
+  background: #ffbd2e;
+}
+
+.dotGreen {
+  background: #27c93f;
+}
+
+.tooltipUrl {
+  flex: 1;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 2.5px 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.lockIcon {
+  color: #52a436;
+  flex-shrink: 0;
+}
+
+.domainText {
+  font-size: 10px;
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.liveBadge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #52a436;
+  background: rgba(82, 164, 54, 0.15);
+  border: 1px solid rgba(82, 164, 54, 0.35);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Snapshot Image */
+.tooltipImageContainer {
+  position: relative;
+  width: 100%;
+  height: 165px;
+  overflow: hidden;
+  background: #070c08;
+}
+
+.snapshotImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.logoCard:hover .snapshotImage {
+  transform: scale(1.03);
+}
+
+.hoverOverlayBadge {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+.hoverOverlayBadge span {
+  background: #52a436;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.snapshotCardInner:hover .hoverOverlayBadge {
+  opacity: 1;
+}
+
+/* Tooltip Footer */
+.tooltipFooter {
+  background: #111812;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.footerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.clientTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clientCat {
+  font-size: 10px;
+  color: #52a436;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.openIconWrapper {
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.snapshotCardInner:hover .openIconWrapper {
+  color: #52a436;
+  transform: translate(2px, -2px);
+}
+
+/* Pointer Arrow (pointing DOWN towards logo) */
+.tooltipArrow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: #111812;
+  border-right: 1px solid rgba(82, 164, 54, 0.5);
+  border-bottom: 1px solid rgba(82, 164, 54, 0.5);
+  border-top: none;
+  border-left: none;
+  z-index: 10;
+}
+
 @media (max-width: 768px) {
   .section {
-    padding: 50px 0;
+    padding: 60px 0;
+  }
+
+  .header {
+    margin-bottom: 3.5rem;
   }
 
   .marqueeTrack {
@@ -131,11 +391,19 @@
 
   .logoCard {
     height: 85px;
-    padding: 0 2px;
+    padding: 0 6px;
   }
 
   .clientLogo {
     height: 65px;
     max-width: 170px;
+  }
+
+  .snapshotTooltip {
+    width: 260px;
+  }
+
+  .tooltipImageContainer {
+    height: 140px;
   }
 }

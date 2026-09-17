@@ -1,6 +1,6 @@
 .section {
   background-color: #091308;
-  background-image: 
+  background-image:
     radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.12) 0%, transparent 65%),
     radial-gradient(ellipse 70% 40% at 50% 100%, rgba(46, 117, 28, 0.10) 0%, transparent 65%),
     linear-gradient(180deg, #091308 0%, #0d1a0b 50%, #091308 100%);
@@ -105,14 +105,16 @@
 
 .slantSwiper {
   width: 100%;
-  padding: 2rem 0 4rem 0; /* Extra bottom padding on mobile for arrows */
+  padding: 2rem 0 4rem 0;
+  /* Extra bottom padding on mobile for arrows */
   /* Swiper's built-in overflow:hidden — making it explicit */
   overflow: hidden !important;
 }
 
 @media (min-width: 768px) {
   .slantSwiper {
-    padding: 2rem 0; /* Reset bottom padding on desktop since arrows move to the side */
+    padding: 2rem 0;
+    /* Reset bottom padding on desktop since arrows move to the side */
   }
 }
 
@@ -129,7 +131,8 @@
   will-change: transform;
 }
 
-.activeCard, .cardWrapper:hover {
+.activeCard,
+.cardWrapper:hover {
   transform: skewX(-8deg) scale(1.05);
   z-index: 10;
   box-shadow: var(--shadow-lg);
@@ -137,9 +140,11 @@
 
 /* The inner content gets unskewed so images and text stay straight */
 .cardInner {
-  width: 130%; /* Make wider to compensate for skew clipping */
+  width: 130%;
+  /* Make wider to compensate for skew clipping */
   height: 100%;
-  transform: skewX(8deg) translateX(-11.5%); /* Unskew and precisely re-center */
+  transform: skewX(8deg) translateX(-11.5%);
+  /* Unskew and precisely re-center */
   position: relative;
 }
 
@@ -152,27 +157,27 @@
   transition: transform var(--transition-slow);
 }
 
-.activeCard .bgImage, .cardWrapper:hover .bgImage {
+.activeCard .bgImage,
+.cardWrapper:hover .bgImage {
   transform: scale(1.1);
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.96) 0%,
-    rgba(0, 0, 0, 0.85) 30%,
-    rgba(0, 0, 0, 0.6) 55%,
-    rgba(0, 0, 0, 0.25) 80%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.96) 0%,
+      rgba(0, 0, 0, 0.85) 30%,
+      rgba(0, 0, 0, 0.6) 55%,
+      rgba(0, 0, 0, 0.25) 80%,
+      rgba(0, 0, 0, 0.1) 100%);
   z-index: 1;
   opacity: 0.9;
   transition: opacity var(--transition-normal);
 }
 
-.activeCard .overlay, .cardWrapper:hover .overlay {
+.activeCard .overlay,
+.cardWrapper:hover .overlay {
   opacity: 0.88;
 }
 
@@ -180,7 +185,8 @@
   position: absolute;
   inset: 0;
   z-index: 2;
-  padding: 1.8rem 22%; /* Safe padding inside the skewed card */
+  padding: 1.8rem 22%;
+  /* Safe padding inside the skewed card */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -196,7 +202,8 @@
   transition: border-color var(--transition-normal);
 }
 
-.activeCard .logoContainer, .cardWrapper:hover .logoContainer {
+.activeCard .logoContainer,
+.cardWrapper:hover .logoContainer {
   border-color: var(--clr-primary);
   background: rgba(255, 255, 255, 0.9);
 }
@@ -240,7 +247,8 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95);
 }
 
-.activeCard .description, .cardWrapper:hover .description {
+.activeCard .description,
+.cardWrapper:hover .description {
   opacity: 1;
   max-height: 200px;
   margin-top: 0.8rem;
@@ -260,6 +268,7 @@
   z-index: 3;
 }
 
-.activeCard .activeLine, .cardWrapper:hover .activeLine {
+.activeCard .activeLine,
+.cardWrapper:hover .activeLine {
   transform: scaleX(1);
 }

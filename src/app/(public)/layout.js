@@ -28,8 +28,9 @@ const BASE_NAV = [
     children: [], // To be populated dynamically
   },
   { id: 4, title: "Projects", slug: "/projects", children: [] },
-  { id: 5, title: "Blog", slug: "/blog", children: [] },
-  { id: 6, title: "Contact Us", slug: "/contact", children: [] },
+  { id: 5, title: "Products", slug: "/products", children: [] },
+  { id: 6, title: "Blog", slug: "/blog", children: [] },
+  { id: 7, title: "Contact Us", slug: "/contact", children: [] },
 ];
 
 export default async function PublicLayout({ children }) {

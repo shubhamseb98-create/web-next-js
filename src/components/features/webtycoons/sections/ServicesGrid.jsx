@@ -1,4 +1,5 @@
 'use client';
+import React, { isValidElement } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { fadeUp, staggerContainer, staggerItem, viewportOptions } from '../animations/variants'
@@ -10,7 +11,7 @@ import styles from '../../../../css/webtycoons/ServicesGrid.module.css'
 const services = [
   {
     title: 'Website Designing',
-    slug: 'static-website-development',
+    slug: 'website-designing',
     description: 'Crafting visually stunning, user-centric interfaces that captivate your audience and reflect your brand identity.',
     icon: <FiMonitor />,
     image: './assets/img/homeservice/service2.svg',
@@ -29,9 +30,9 @@ const services = [
     imageStyle: 'full', // Use for background photos
   },
   {
-    title: 'SEO',
+    title: 'Static Website Development',
     slug: 'static-website-development',
-    description: 'Data-driven search engine optimization strategies to boost your online visibility and drive organic traffic.',
+    description: 'Lightning-fast, highly secure, and beautifully designed static websites tailored to showcase your brand with zero compromises.',
     icon: <FiSearch />,
     image: './assets/img/homeservice/service3.svg',
     bgColor: '#ffffffff', // White
@@ -50,7 +51,7 @@ const services = [
   },
   {
     title: 'Logo Designing',
-    slug: 'static-website-development',
+    slug: 'logo-designing',
     description: 'Creating memorable, unique, and impactful logos that establish a strong and recognizable brand presence.',
     icon: <FiPenTool />,
     image: './assets/img/homeservice/service6.webp',
@@ -60,7 +61,7 @@ const services = [
   },
   {
     title: 'Domain',
-    slug: 'static-website-development',
+    slug: 'domain',
     description: 'Secure and reliable domain registration services to help you establish your unique identity on the web.',
     icon: <FiGlobe />,
     image: './assets/img/homeservice/service5.svg',
@@ -70,7 +71,7 @@ const services = [
   },
   {
     title: 'Digital Marketing Solution',
-    slug: 'static-website-development',
+    slug: 'digital-marketing-solution',
     description: 'Comprehensive marketing campaigns spanning social media, content, and paid ads to grow your business.',
     icon: <FiTrendingUp />,
     image: './assets/img/homeservice/service7.webp',
@@ -80,7 +81,7 @@ const services = [
   },
   {
     title: 'Email Solution',
-    slug: 'static-website-development',
+    slug: 'email-solution',
     description: 'Professional, secure, and scalable email hosting solutions tailored for seamless enterprise communication.',
     icon: <FiMail />,
     image: './assets/img/homeservice/service8.webp',
@@ -101,6 +102,28 @@ const BG_COLORS = [
   '#ffffffff',
 ]
 const HOVER_COLORS = ['#000000', '#ffffff', '#000000ff', '#ffffff', '#ffffff', '#000000', '#ffffff', '#000000ff']
+
+const getServiceIcon = (service, index) => {
+  // Only accept if it's already a valid React component element
+  if (isValidElement(service.icon)) return service.icon;
+
+  const t = (service.title || service.slug || '').toLowerCase();
+  if (t.includes('design') || t.includes('logo') || t.includes('ui') || t.includes('ux')) return <FiPenTool />;
+  if (t.includes('ecommerce') || t.includes('e-commerce') || t.includes('shop')) return <FiShoppingCart />;
+  if (t.includes('dynamic') || t.includes('develop') || t.includes('code') || t.includes('software')) return <FiCode />;
+  if (t.includes('static') || t.includes('website')) return <FiMonitor />;
+  if (t.includes('domain') || t.includes('hosting') || t.includes('web')) return <FiGlobe />;
+  if (t.includes('marketing') || t.includes('growth') || t.includes('ads')) return <FiTrendingUp />;
+  if (t.includes('email') || t.includes('mail')) return <FiMail />;
+  if (t.includes('seo') || t.includes('search') || t.includes('analytics')) return <FiSearch />;
+  if (t.includes('cloud') || t.includes('devops')) return <FiCloud />;
+  if (t.includes('security') || t.includes('cyber')) return <FiShield />;
+  if (t.includes('mobile') || t.includes('app')) return <FiSmartphone />;
+  if (t.includes('ai') || t.includes('ml') || t.includes('automation')) return <FiCpu />;
+  
+  const defaultIcons = [<FiMonitor />, <FiCode />, <FiSearch />, <FiShoppingCart />, <FiPenTool />, <FiGlobe />, <FiTrendingUp />, <FiMail />];
+  return defaultIcons[index % defaultIcons.length];
+};
 
 const ServicesGrid = ({ servicesData, homeExtraData }) => {  
   // Real Estate has its own dedicated highlight showcase section right below ServicesGrid.
@@ -150,10 +173,11 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
               // Check if the service has these fields explicitly set in the DB, otherwise fallback
               const bgColor = service.bgColor || (isDynamic ? BG_COLORS[index % BG_COLORS.length] : service.bgColor);
               const hoverColor = service.hoverTextColor || (isDynamic ? HOVER_COLORS[index % HOVER_COLORS.length] : service.hoverTextColor);
-              const description = isDynamic ? (service.shortDesc || service.description) : service.description;
+              const desc = isDynamic ? (service.shortDesc || service.description) : service.description;
               const imageSizeClass = (service.imageStyle === 'small' || service.image?.endsWith('.svg')) ? styles.imageSmall : styles.imageFull;
 
-              const isRealEstate = service.slug === 'real-estate-advisory' || service.title?.toLowerCase().includes('real estate');
+              const serviceIcon = getServiceIcon(service, index);
+              const targetSlug = service.slug || 'static-website-development';
 
               const cardInner = (
                 <>
@@ -163,46 +187,36 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
                     )}
                   </div>
                   <div className={styles.cardContent}>
-                    <span className={styles.label}>SERVICE</span>
-                    <h3 className={styles.title}>{service.title}</h3>
-                    <div className={styles.description} dangerouslySetInnerHTML={{ __html: description }} />
-                    {isRealEstate && (
-                      <div className={styles.cardHoverArrow}>
-                        <span className={styles.expandText}>Explore Advisory</span> <FiArrowRight />
+                    <div className={styles.cardHeader}>
+                      <span className={styles.label}>SERVICE</span>
+                      <div className={styles.iconBadge}>
+                        {serviceIcon}
                       </div>
-                    )}
+                    </div>
+                    <h3 className={styles.title}>{service.title}</h3>
+                    <div className={styles.description} dangerouslySetInnerHTML={{ __html: desc }} />
+                    <div className={styles.cardHoverArrow}>
+                      <span className={styles.expandText}>Explore Service</span>
+                      <span className={styles.arrowCircle}><FiArrowRight /></span>
+                    </div>
                   </div>
                 </>
               );
 
               return (
                 <motion.div key={index} variants={fadeUp} className={styles.gridItem}>
-                  {isRealEstate ? (
-                    <Link 
-                      href="/services/real-estate-advisory"
-                      className={`${styles.card} ${slideClass} ${imageSizeClass}`}
-                      style={{
-                        '--bg-color': bgColor,
-                        '--hover-text': hoverColor,
-                        textDecoration: 'none',
-                        display: 'block'
-                      }}
-                    >
-                      {cardInner}
-                    </Link>
-                  ) : (
-                    <div 
-                      className={`${styles.card} ${slideClass} ${imageSizeClass}`}
-                      style={{
-                        '--bg-color': bgColor,
-                        '--hover-text': hoverColor,
-                        display: 'block',
-                        cursor: 'default'
-                      }}
-                    >
-                      {cardInner}
-                    </div>
-                  )}
+                  <Link 
+                    href={`/services/${targetSlug}`}
+                    className={`${styles.card} ${slideClass} ${imageSizeClass}`}
+                    style={{
+                      '--bg-color': bgColor,
+                      '--hover-text': hoverColor,
+                      textDecoration: 'none',
+                      display: 'block'
+                    }}
+                  >
+                    {cardInner}
+                  </Link>
                 </motion.div>
               )
             })}

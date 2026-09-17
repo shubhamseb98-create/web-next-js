@@ -26,7 +26,8 @@ import {
   LogOut,
   ChevronDown,
   Building2,
-  Menu
+  Menu,
+  Database
 } from 'lucide-react';
 
 /* ─── Navigation config ─────────────────────────────── */
@@ -88,6 +89,16 @@ const NAV = [
     ],
   },
   { id: 'portfolio',     label: 'Portfolio Projects',    icon: Package,        permission: 'portfolio',      href: '/dashboard/portfolio' },
+  {
+    id: 'products',
+    label: 'Products / CRMs',
+    icon: Database,
+    permission: 'products',
+    children: [
+      { label: 'All Products / CRMs', href: '/dashboard/products' },
+      { label: 'Categories',          href: '/dashboard/products/categories' },
+    ],
+  },
   { id: 'blogs',         label: 'Blogs Management',      icon: FileEdit,       permission: 'blogs',          href: '/dashboard/blogs' },
   { id: 'contact-cms',   label: 'Contact Page CMS',      icon: Contact,        permission: 'contact_cms',    href: '/dashboard/contact' },
   { id: 'inner-pages',   label: 'Inner Pages',          icon: FileText,       permission: 'inner_pages',    href: '/dashboard/inner-pages/sections' },

@@ -14,7 +14,7 @@ function BreadcrumbSchema({ breadcrumb }) {
       name: item.name,
       item: item.href.startsWith("http")
         ? item.href
-        : `https://www.webtycoonss.com${item.href}`,
+        : `https://thewebtycoons.com${item.href}`,
     })),
   };
 
@@ -28,9 +28,14 @@ function BreadcrumbSchema({ breadcrumb }) {
 
 export default function PageHeader({
   title,
+  subtitle,
+  description,
   bgImage,
   breadcrumb = [],
 }) {
+  const defaultBg = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop";
+  const finalBg = bgImage || defaultBg;
+
   return (
     <>
       {/* BreadcrumbList structured data for Google sitelinks */}
@@ -39,25 +44,45 @@ export default function PageHeader({
       <section
         className="page-header"
         style={{
-          backgroundImage: `url(${bgImage})`,
+          backgroundImage: `url(${finalBg})`,
         }}
       >
-        <div className="container">
+        <div className="page-header-overlay"></div>
+        <div className="container-fluid-px page-header-container">
           <div className="page-header-content">
-            {/* The banner title is the document's primary heading (H1). */}
-            <h1 dangerouslySetInnerHTML={{ __html: title }}></h1>
+            {/* Breadcrumb placed ABOVE the title — matching the WebTycoons original signature design */}
+            {breadcrumb && breadcrumb.length > 0 && (
+              <nav className="breadcrumb-nav" aria-label="Breadcrumb">
+                {breadcrumb.map((item, index) => (
+                  <span key={index} className="breadcrumb-node">
+                    {item.href ? (
+                      <Link href={item.href} className="breadcrumb-link">
+                        {item.name}
+                      </Link>
+                    ) : (
+                      <span className="breadcrumb-current">{item.name}</span>
+                    )}
+                    {index < breadcrumb.length - 1 && (
+                      <span className="breadcrumb-separator">/</span>
+                    )}
+                  </span>
+                ))}
+              </nav>
+            )}
 
-            <ul className="breadcrumb-list">
-              {breadcrumb.map((item, index) => (
-                <li key={index} className="text-white/80">
-                  {item.href ? (
-                    <Link href={item.href} className="text-white/80 hover:text-white transition-colors">{item.name}</Link>
-                  ) : (
-                    <span className="text-white font-medium">{item.name}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
+            {/* The banner title is the document's primary heading (H1). */}
+            <h1
+              className="page-header-title"
+              dangerouslySetInnerHTML={{ __html: title }}
+            ></h1>
+
+            {subtitle && !description && (
+              <p className="page-header-desc">{subtitle}</p>
+            )}
+
+            {description && (
+              <p className="page-header-desc">{description}</p>
+            )}
           </div>
         </div>
       </section>

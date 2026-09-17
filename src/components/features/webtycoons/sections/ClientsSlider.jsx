@@ -35,6 +35,116 @@ const clients = [
   { name: 'THUKRAL', image: thukralLogo, hasBg: false },
 ]
 
+const clientMetadata = {
+  abrigo: {
+    websiteUrl: 'https://abrigoprotection.com',
+    domain: 'abrigoprotection.com',
+    category: 'Defense & Armored Vehicles',
+    snapshotImage: '/images/clients/snapshots/abrigo.jpg'
+  },
+  ams: {
+    websiteUrl: 'https://aryamodelschool.edu.in',
+    domain: 'aryamodelschool.edu.in',
+    category: 'Senior Secondary Education',
+    snapshotImage: '/images/clients/snapshots/ams.jpg'
+  },
+  austro: {
+    websiteUrl: 'https://austrolabs.com',
+    domain: 'austrolabs.com',
+    category: 'Pharmaceuticals & Biotech',
+    snapshotImage: '/images/clients/snapshots/austrolabs.jpg'
+  },
+  bls: {
+    websiteUrl: 'https://blsworldschool.com',
+    domain: 'blsworldschool.com',
+    category: 'International World School',
+    snapshotImage: '/images/clients/snapshots/blsworldschool.jpg'
+  },
+  catalyst: {
+    websiteUrl: 'https://catalystclinicalservices.com',
+    domain: 'catalystclinicalservices.com',
+    category: 'Clinical Research & Trials',
+    snapshotImage: '/images/clients/snapshots/catalyst.jpg'
+  },
+  chaircraft: {
+    websiteUrl: 'https://chaircraft.in',
+    domain: 'chaircraft.in',
+    category: 'Ergonomic Commercial Seating',
+    snapshotImage: '/images/clients/snapshots/chaircraft.jpg'
+  },
+  digital: {
+    websiteUrl: 'https://dikshavohra.com',
+    domain: 'dikshavohra.com',
+    category: 'Content Marketing & Strategy',
+    snapshotImage: '/images/clients/snapshots/digital.jpg'
+  },
+  iupjindal: {
+    websiteUrl: 'https://iupjindal.com',
+    domain: 'iupjindal.com',
+    category: 'Precision Stainless Metallurgy',
+    snapshotImage: '/images/clients/snapshots/iupjindal.jpg'
+  },
+  kasturi: {
+    websiteUrl: 'https://kasturijewellers.com',
+    domain: 'kasturijewellers.com',
+    category: 'Haute Joaillerie & Gold',
+    snapshotImage: '/images/clients/snapshots/kasturi.jpg'
+  },
+  lapetite: {
+    websiteUrl: 'https://lapetitemontessori.com',
+    domain: 'lapetitemontessori.com',
+    category: 'Montessori Early Education',
+    snapshotImage: '/images/clients/snapshots/lapetite.jpg'
+  },
+  mahavir: {
+    websiteUrl: 'https://msmsdelhi.in',
+    domain: 'msmsdelhi.in',
+    category: 'Senior Model School, Delhi',
+    snapshotImage: '/images/clients/snapshots/mahavir.jpg'
+  },
+  maipo: {
+    websiteUrl: 'https://maipo.in',
+    domain: 'maipo.in',
+    category: 'Heavy Industrial Machinery',
+    snapshotImage: '/images/clients/snapshots/maipo.jpg'
+  },
+  sabkool: {
+    websiteUrl: 'https://sabkool.com',
+    domain: 'sabkool.com',
+    category: 'Commercial HVAC & Air Cooling',
+    snapshotImage: '/images/clients/snapshots/sabkool.jpg'
+  },
+  thukral: {
+    websiteUrl: 'https://thukral.com',
+    domain: 'thukral.com',
+    category: 'Electric Vehicles & Mobility',
+    snapshotImage: '/images/clients/snapshots/thukral.jpg'
+  }
+};
+
+const getClientMeta = (client) => {
+  const nameLower = (client.name || '').toLowerCase();
+  const imgLower = (typeof client.image === 'string' ? client.image : client.image?.src || '').toLowerCase();
+  
+  for (const [key, meta] of Object.entries(clientMetadata)) {
+    if (nameLower.includes(key) || imgLower.includes(key)) {
+      return {
+        websiteUrl: client.websiteUrl || meta.websiteUrl,
+        domain: client.domain || meta.domain,
+        category: client.category || meta.category,
+        snapshotImage: client.snapshotImage || meta.snapshotImage
+      };
+    }
+  }
+
+  return {
+    websiteUrl: client.websiteUrl || '#',
+    domain: client.domain || (client.websiteUrl ? client.websiteUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '') : 'thewebtycoons.com'),
+    category: client.category || 'Enterprise Client',
+    snapshotImage: client.snapshotImage || '/images/clients/snapshots/blsworldschool.jpg'
+  };
+};
+
 const ClientsSlider = ({ clientsData, homeExtraData }) => {
   const rawList = clientsData?.length > 0 ? clientsData : clients;
   // Ensure enough items for seamless infinite looping
@@ -54,24 +164,105 @@ const ClientsSlider = ({ clientsData, homeExtraData }) => {
         </div>
 
         <div className={styles.marqueeContainer}>
+          {/* Side Fade Gradients */}
+          <div className={styles.edgeGradientLeft} />
+          <div className={styles.edgeGradientRight} />
+
           <div className={styles.marqueeTrack}>
-            {[...displayClients, ...displayClients].map((client, index) => (
-              <div key={index} className={styles.logoCard}>
-                {client.image ? (
-                  <div className={styles.logoWrapper}>
-                    <Image 
-                      src={typeof client.image === 'string' ? client.image : (client.image?.src || client.image)} 
-                      alt={client.name || 'Client Logo'}
-                      width={320}
-                      height={140}
-                      className={styles.clientLogo} 
-                    />
+            {[...displayClients, ...displayClients].map((client, index) => {
+              const meta = getClientMeta(client);
+              const clientUrl = meta.websiteUrl;
+              const snapshotImg = meta.snapshotImage;
+              const clientDomain = meta.domain;
+              const clientCategory = meta.category;
+
+              return (
+                <div key={index} className={styles.logoCard}>
+                  {/* Client Logo Link */}
+                  <a
+                    href={clientUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.logoLink}
+                    title={`Visit ${client.name} official website (${clientDomain})`}
+                  >
+                    {client.image ? (
+                      <div className={styles.logoWrapper}>
+                        <Image 
+                          src={typeof client.image === 'string' ? client.image : (client.image?.src || client.image)} 
+                          alt={client.name || 'Client Logo'}
+                          width={320}
+                          height={140}
+                          className={styles.clientLogo} 
+                        />
+                      </div>
+                    ) : (
+                      <div className={styles.placeholderLogo}>{client.name}</div>
+                    )}
+                  </a>
+
+                  {/* Hover Snapshot Preview Window */}
+                  <div className={styles.snapshotTooltip}>
+                    <a 
+                      href={clientUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.snapshotCardInner}
+                    >
+                      {/* Mini Browser Header */}
+                      <div className={styles.tooltipBrowserBar}>
+                        <div className={styles.tooltipDots}>
+                          <span className={`${styles.dot} ${styles.dotRed}`} />
+                          <span className={`${styles.dot} ${styles.dotYellow}`} />
+                          <span className={`${styles.dot} ${styles.dotGreen}`} />
+                        </div>
+                        <div className={styles.tooltipUrl}>
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.lockIcon}>
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                          <span className={styles.domainText}>{clientDomain}</span>
+                        </div>
+                        <span className={styles.liveBadge}>Visit ↗</span>
+                      </div>
+
+                      {/* Snapshot Image */}
+                      <div className={styles.tooltipImageContainer}>
+                        {snapshotImg && (
+                          <Image
+                            src={snapshotImg}
+                            alt={`${client.name} Website Snapshot`}
+                            width={320}
+                            height={190}
+                            className={styles.snapshotImage}
+                          />
+                        )}
+                        <div className={styles.hoverOverlayBadge}>
+                          <span>Open Live Website ↗</span>
+                        </div>
+                      </div>
+
+                      {/* Details Footer */}
+                      <div className={styles.tooltipFooter}>
+                        <div className={styles.footerText}>
+                          <div className={styles.clientTitle}>{client.name}</div>
+                          <div className={styles.clientCat}>{clientCategory}</div>
+                        </div>
+                        <div className={styles.openIconWrapper}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            <polyline points="15 3 21 3 21 9" />
+                            <line x1="10" y1="14" x2="21" y2="3" />
+                          </svg>
+                        </div>
+                      </div>
+                    </a>
+                    {/* Tooltip Arrow pointing down to logo */}
+                    <div className={styles.tooltipArrow} />
                   </div>
-                ) : (
-                  <div className={styles.placeholderLogo}>{client.name}</div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

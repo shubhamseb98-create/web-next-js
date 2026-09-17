@@ -26,12 +26,12 @@ export async function PUT(request, { params }) {
     const formData = await request.formData();
     const body = {};
     for (const [key, value] of formData.entries()) {
-      if (key === 'image') {
-        if (value && typeof value !== 'string') {
+      if (key === 'image' || key === 'snapshotImage') {
+        if (value && typeof value !== 'string' && value.name) {
           const fileUrl = await uploadFile(value, 'clients');
-          if (fileUrl) body.image = fileUrl;
+          if (fileUrl) body[key] = fileUrl;
         } else if (value) {
-          body.image = value;
+          body[key] = value;
         }
       } else if (key === 'hasBg') {
         body[key] = value === 'true';

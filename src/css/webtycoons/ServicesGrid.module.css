@@ -1,34 +1,36 @@
 .section {
   padding: 60px 0;
-  background-color: #091308;
+  background-color: #060806;
   background-image: 
-    radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.12) 0%, transparent 65%),
-    radial-gradient(ellipse 70% 40% at 50% 100%, rgba(46, 117, 28, 0.10) 0%, transparent 65%),
-    linear-gradient(180deg, #091308 0%, #0d1a0b 50%, #091308 100%);
-  border-top: 1px solid rgba(82, 164, 54, 0.14);
-  border-bottom: 1px solid rgba(82, 164, 54, 0.14);
+    radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.04) 0%, transparent 65%),
+    linear-gradient(180deg, #060806 0%, #080a08 50%, #060806 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
 }
 
 .card {
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 4px; 
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  height: 424px;
+  height: 430px;
   width: 100%;
-  max-width: 276px;
-  margin: 0 auto; /* Centers the card within its grid column */
+  max-width: 280px;
+  margin: 0 auto;
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.45s ease;
   cursor: pointer;
   z-index: 1;
   background: var(--bg-color, #090b0a);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-10px);
+  border-color: rgba(82, 164, 54, 0.45);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(82, 164, 54, 0.2);
 }
 
 .cardBg {
@@ -38,6 +40,7 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  pointer-events: none;
 }
 
 .cardImage {
@@ -45,8 +48,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  opacity: 1; /* Fully visible image, no washed out overlay */
-  transition: opacity 0.4s ease, transform 0.6s ease;
+  opacity: 1;
+  transition: opacity 0.45s ease, transform 0.55s ease, filter 0.45s ease;
 }
 
 /* 1st, 3rd, 5th... cards: Small images (illustrations at bottom) */
@@ -64,12 +67,13 @@
 }
 
 .card:hover .cardImage {
-  opacity: 0; /* Fade out image entirely */
-  transform: translateY(40px); /* Image fades DOWN instead of scaling up */
+  opacity: 0.12;
+  transform: translateY(20px) scale(1.05);
+  filter: blur(1px);
 }
 
 .cardContent {
-  padding: 2.5rem 2rem;
+  padding: 2.2rem 1.8rem;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -77,30 +81,65 @@
   z-index: 1;
 }
 
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.6rem;
+}
+
 .label {
   color: var(--hover-text, #ffffff);
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 0.75rem;
+  letter-spacing: 1.5px;
   transition: color 0.3s ease;
+}
+
+.iconBadge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(82, 164, 54, 0.14);
+  border: 1px solid rgba(82, 164, 54, 0.28);
+  color: #52a436;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  backdrop-filter: blur(8px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card:hover .iconBadge {
+  transform: scale(1.15) rotate(6deg);
+  background: rgba(82, 164, 54, 0.28);
+  border-color: rgba(82, 164, 54, 0.65);
+  color: #6ee755;
+  box-shadow: 0 0 20px rgba(82, 164, 54, 0.45);
 }
 
 .title {
   font-family: var(--font-heading);
-  font-size: 1.8rem;
+  font-size: 1.65rem;
   font-weight: 700;
   color: var(--hover-text, #ffffff);
   margin-bottom: 0;
-  line-height: 1.2;
-  transition: color 0.3s ease;
+  line-height: 1.25;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover .title {
+  transform: translateY(-2px);
 }
 
 .description {
   color: var(--hover-text, #ffffff);
-  margin-top: 1.5rem;
-  font-size: 1.05rem;
+  margin-top: 1.25rem;
+  font-size: 0.98rem;
   line-height: 1.6;
   opacity: 0;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -122,26 +161,48 @@
 .cardHoverArrow {
   color: var(--hover-text, #ffffff);
   margin-top: auto;
-  align-self: flex-end;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   opacity: 0;
-  transform: translateX(-15px);
-  transition: all 0.4s ease;
+  transform: translateY(14px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .expandText {
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.arrowCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(82, 164, 54, 0.2);
+  border: 1px solid rgba(82, 164, 54, 0.4);
+  color: #52a436;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover .cardHoverArrow {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
+}
+
+.card:hover .arrowCircle {
+  transform: translateX(4px);
+  background: #52a436;
+  color: #000000;
+  box-shadow: 0 0 14px rgba(82, 164, 54, 0.5);
 }
 
 /* --- TEXT COLORS ON HOVER --- */

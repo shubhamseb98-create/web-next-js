@@ -58,12 +58,17 @@ export default function ServicePageClient({ service, slug, globalTechStack }) {
   };
 
   // Synthesize features, faqs, portfolio, process, and whyChooseUs
+  const isInfrastructureService = slug.includes('domain') || slug.includes('email');
   const features = service.features?.length > 0 ? service.features : oldData?.features;
   const faqs = service.faq?.length > 0 ? service.faq : oldData?.faqs;
-  const currentPortfolio = service.portfolio?.length > 0 ? service.portfolio : portfolioProjects;
+  const currentPortfolio = service.portfolio?.length > 0 
+    ? service.portfolio 
+    : (isInfrastructureService ? [] : portfolioProjects);
   const processSteps = service.process?.length > 0 ? service.process : oldData?.process;
   const whyChooseUs = service.whyChooseUs?.length > 0 ? service.whyChooseUs : whyChooseUsGlobal;
-  const currentTechStack = globalTechStack?.length > 0 ? globalTechStack : (oldData?.technologies || techStackGlobal);
+  const currentTechStack = service.techStack?.length > 0 
+    ? service.techStack 
+    : (isInfrastructureService ? [] : (globalTechStack?.length > 0 ? globalTechStack : (oldData?.technologies || techStackGlobal)));
 
   return (
     <main>

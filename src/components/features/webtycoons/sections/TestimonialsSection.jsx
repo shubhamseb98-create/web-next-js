@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -74,10 +74,21 @@ const fallbackTestimonials = [
 ]
 
 const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
-  const displayData = (testimonialsData && testimonialsData.length > 0) ? testimonialsData : fallbackTestimonials;
+  const [isMounted, setIsMounted] = useState(false)
+  const rawData = (testimonialsData && testimonialsData.length > 0) ? testimonialsData : fallbackTestimonials;
+  
+  // Ensure we have at least 8 slides for Swiper coverflow to loop infinitely without boundary collision
+  const displayData = rawData.length < 8
+    ? Array.from({ length: Math.ceil(8 / rawData.length) }, () => rawData).flat()
+    : rawData;
+
   const sectionRef = useRef(null)
   const headerRef = useRef(null)
   const carouselRef = useRef(null)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -125,55 +136,71 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
 
         {/* Carousel */}
         <div className={styles.carouselContainer} ref={carouselRef}>
-          <Swiper
-            modules={[Navigation, Pagination, EffectCoverflow, Autoplay]}
-            effect="coverflow"
-            grabCursor={true}
-            centeredSlides={true}
-            loop={true}
-            slidesPerView="auto"
-            coverflowEffect={{
-              rotate: 20,
-              stretch: -20,
-              depth: 250,
-              modifier: 1.5,
-              slideShadows: true,
-            }}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-            }}
-            observer={true}
-            observeParents={true}
-            navigation={{
-              nextEl: '.swiper-btn-next',
-              prevEl: '.swiper-btn-prev',
-            }}
-            pagination={{ clickable: true, el: '.swiper-custom-pagination' }}
-            className={styles.swiperWrapper}
-          >
-            {displayData.map((t, idx) => {
-              const quote = t.content || t.quote;
-              const role = t.role || (t.designation ? `${t.designation}${t.company ? `, ${t.company}` : ''}` : t.company);
-              
-              return (
-              <SwiperSlide key={t._id || t.id || idx} className={styles.swiperSlide}>
-                <div className={styles.card}>
-                  <FaQuoteLeft className={styles.quoteIcon} />
-                  <p className={styles.quoteText}>"{quote}"</p>
-                  
-                  <div className={styles.clientInfo}>
-                    <Image src={t.avatar} alt={t.name} width={60} height={60} style={{ objectFit: 'cover', borderRadius: '50%' }} className={styles.clientAvatar} />
-                    <div className={styles.clientDetails}>
-                      <span className={styles.clientName}>{t.name}</span>
-                      <span className={styles.clientRole}>{role}</span>
+          {isMounted ? (
+            <Swiper
+              modules={[Navigation, Pagination, EffectCoverflow, Autoplay]}
+              effect="coverflow"
+              grabCursor={true}
+              centeredSlides={true}
+              loop={true}
+              loopedSlides={4}
+              loopPreventsSliding={false}
+              watchSlidesProgress={true}
+              slidesPerView="auto"
+              coverflowEffect={{
+                rotate: 15,
+                stretch: 0,
+                depth: 220,
+                modifier: 1.3,
+                slideShadows: false,
+              }}
+              autoplay={{
+                delay: 4000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              speed={750}
+              observer={true}
+              observeParents={true}
+              navigation={{
+                nextEl: '.swiper-btn-next',
+                prevEl: '.swiper-btn-prev',
+              }}
+              pagination={{ clickable: true, el: '.swiper-custom-pagination' }}
+              className={styles.swiperWrapper}
+            >
+              {displayData.map((t, idx) => {
+                const quote = t.content || t.quote;
+                const role = t.role || (t.designation ? `${t.designation}${t.company ? `, ${t.company}` : ''}` : t.company);
+                
+                return (
+                  <SwiperSlide key={`${t._id || t.id || 'testi'}-${idx}`} className={styles.swiperSlide}>
+                    <div className={styles.card}>
+                      <FaQuoteLeft className={styles.quoteIcon} />
+                      <p className={styles.quoteText}>"{quote}"</p>
+                      
+                      <div className={styles.clientInfo}>
+                        <Image 
+                          src={t.avatar} 
+                          alt={t.name} 
+                          width={60} 
+                          height={60} 
+                          style={{ objectFit: 'cover', borderRadius: '50%' }} 
+                          className={styles.clientAvatar} 
+                        />
+                        <div className={styles.clientDetails}>
+                          <span className={styles.clientName}>{t.name}</span>
+                          <span className={styles.clientRole}>{role}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-              )
-            })}
-          </Swiper>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          ) : (
+            <div style={{ minHeight: '380px' }} />
+          )}
 
           <div className={styles.controls}>
             <button className={`${styles.controlBtn} swiper-btn-prev`} aria-label="Previous Testimonial">

@@ -27,17 +27,22 @@ export const DEFAULT_HEADER_ITEMS = [
   },
   {
     name: 'Services',
-    path: '/services/static-website-development',
+    path: '/services/website-designing',
     order: 3,
     isActive: true,
     hasDropdown: true,
     openInNewTab: false,
     isSpecialCta: false,
     subItems: [
-      { label: 'Static Websites', path: '/services/static-website-development', order: 1, isActive: true, openInNewTab: false },
-      { label: 'Dynamic Websites', path: '/services/dynamic-website-development', order: 2, isActive: true, openInNewTab: false },
-      { label: 'E-Commerce', path: '/services/e-commerce-website-development', order: 3, isActive: true, openInNewTab: false },
-      { label: 'Real Estate Advisory', path: '/services/real-estate-advisory', order: 4, isActive: true, openInNewTab: false },
+      { label: 'Website Designing', path: '/services/website-designing', order: 1, isActive: true, openInNewTab: false },
+      { label: 'Static Website Development', path: '/services/static-website-development', order: 2, isActive: true, openInNewTab: false },
+      { label: 'Dynamic Website Development', path: '/services/dynamic-website-development', order: 3, isActive: true, openInNewTab: false },
+      { label: 'E-Commerce Website Development', path: '/services/e-commerce-website-development', order: 4, isActive: true, openInNewTab: false },
+      { label: 'Logo Designing', path: '/services/logo-designing', order: 5, isActive: true, openInNewTab: false },
+      { label: 'Domain & Hosting', path: '/services/domain', order: 6, isActive: true, openInNewTab: false },
+      { label: 'Digital Marketing Solution', path: '/services/digital-marketing-solution', order: 7, isActive: true, openInNewTab: false },
+      { label: 'Email Solution', path: '/services/email-solution', order: 8, isActive: true, openInNewTab: false },
+      { label: 'Real Estate Advisory', path: '/services/real-estate-advisory', order: 9, isActive: true, openInNewTab: false },
     ]
   },
   {
@@ -51,9 +56,19 @@ export const DEFAULT_HEADER_ITEMS = [
     subItems: []
   },
   {
+    name: 'CRM Products',
+    path: '/products',
+    order: 5,
+    isActive: true,
+    hasDropdown: false,
+    openInNewTab: false,
+    isSpecialCta: false,
+    subItems: []
+  },
+  {
     name: 'Blog',
     path: '/blog',
-    order: 5,
+    order: 6,
     isActive: true,
     hasDropdown: false,
     openInNewTab: false,
@@ -63,7 +78,7 @@ export const DEFAULT_HEADER_ITEMS = [
   {
     name: 'Contact Us',
     path: '/contact',
-    order: 6,
+    order: 7,
     isActive: true,
     hasDropdown: false,
     openInNewTab: false,

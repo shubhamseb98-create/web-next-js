@@ -565,8 +565,8 @@
 .timeline::before {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 25px;
+  bottom: 25px;
   left: 24px;
   width: 2px;
   background: rgba(255, 255, 255, 0.05);
@@ -574,6 +574,7 @@
 
 .timelineItem {
   display: flex;
+  align-items: center;
   gap: 2rem;
   position: relative;
 }

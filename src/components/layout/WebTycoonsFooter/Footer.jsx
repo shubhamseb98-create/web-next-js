@@ -2,6 +2,7 @@ import Link from 'next/link';
 import styles from './Footer.module.css';
 import GlobalSetting from "src/app/models/GlobalSetting";
 import { connectDB } from "src/app/lib/config";
+import { Phone, Mail } from 'lucide-react';
 
 const Footer = async () => {
   let settings = null;
@@ -36,8 +37,14 @@ const Footer = async () => {
           
           <div className={styles.footerColCenter}>
             <h5 className={styles.colTitle}>REACH OUT TO US</h5>
-            <a href={`tel:${settings?.footerPhone || "+918527458950"}`} className={styles.contactInfo}>{settings?.footerPhone || "+91 8527458950"}</a>
-            <a href={`mailto:${settings?.primaryEmail || "info@thewebtycoons.com"}`} className={styles.contactInfo}>{settings?.primaryEmail || "info@thewebtycoons.com"}</a>
+            <a href={`tel:${settings?.footerPhone || "+918527458950"}`} className={styles.contactInfo}>
+              <Phone className={styles.contactIcon} strokeWidth={1.8} />
+              <span>{settings?.footerPhone || "+91 8527458950"}</span>
+            </a>
+            <a href={`mailto:${settings?.primaryEmail || "info@thewebtycoons.com"}`} className={styles.contactInfo}>
+              <Mail className={styles.contactIcon} strokeWidth={1.8} />
+              <span>{settings?.primaryEmail || "info@thewebtycoons.com"}</span>
+            </a>
             <div className={styles.btnWrapper}>
               <Link href="/contact" className={styles.connectBtn}>
                 Let's Connect ↗

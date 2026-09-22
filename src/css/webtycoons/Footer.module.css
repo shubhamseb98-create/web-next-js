@@ -82,17 +82,34 @@
 
 .contactInfo {
   color: #fff;
-  font-size: clamp(1.2rem, 4vw, 2.5rem);
+  font-size: clamp(1.25rem, 3.2vw, 2.35rem);
   font-weight: 400;
   text-decoration: none;
-  margin-bottom: 0.5rem;
-  transition: color 0.3s ease;
+  margin-bottom: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   word-break: break-word;
-  /* Ensure it wraps nicely instead of overflowing */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45em;
+  letter-spacing: -0.01em;
 }
 
 .contactInfo:hover {
   color: #4CAF50;
+  transform: translateY(-2px);
+}
+
+.contactIcon {
+  width: 0.75em;
+  height: 0.75em;
+  color: #4CAF50;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contactInfo:hover .contactIcon {
+  transform: scale(1.15) rotate(-5deg);
 }
 
 .btnWrapper {

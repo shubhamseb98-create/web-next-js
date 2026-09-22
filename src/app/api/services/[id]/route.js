@@ -38,7 +38,30 @@ export async function GET(request, { params }) {
       const merged = mergeRealEstateData(item);
       return Response.json({ success: true, data: JSON.parse(JSON.stringify(merged)) });
     }
-    if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
+    if (!item) {
+      const formattedTitle = id
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+      
+      const defaultItem = {
+        title: formattedTitle,
+        slug: id,
+        shortDesc: `${formattedTitle} solutions engineered for high performance and conversions.`,
+        description: `High-impact ${formattedTitle} services custom-tailored for your brand.`,
+        status: 'active',
+        isFeatured: false,
+        sort: 0,
+        features: [],
+        benefits: [],
+        faq: [],
+        portfolio: [],
+        process: [],
+        whyChooseUs: [],
+        techStack: []
+      };
+      return Response.json({ success: true, data: defaultItem });
+    }
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });
@@ -124,8 +147,17 @@ export async function PUT(request, { params }) {
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
     
     // Clear Next.js cache so public site reflects changes immediately
-    revalidatePath(`/services/${item.slug}`);
-    revalidatePath('/services', 'page');
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/', 'layout');
+      revalidatePath('/services', 'page');
+      revalidatePath('/services', 'layout');
+      if (item.slug) {
+        revalidatePath(`/services/${item.slug}`, 'page');
+      }
+    } catch (revErr) {
+      console.error("Failed to revalidate cache on Service PUT:", revErr);
+    }
     
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) });
   } catch (error) {
@@ -147,6 +179,19 @@ export async function DELETE(request, { params }) {
       item = await Service.findOneAndDelete({ slug: id });
     }
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/', 'layout');
+      revalidatePath('/services', 'page');
+      revalidatePath('/services', 'layout');
+      if (item.slug) {
+        revalidatePath(`/services/${item.slug}`, 'page');
+      }
+    } catch (revErr) {
+      console.error("Failed to revalidate cache on Service DELETE:", revErr);
+    }
+
     return Response.json({ success: true, message: 'Deleted' });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });

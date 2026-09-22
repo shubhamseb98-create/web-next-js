@@ -9,7 +9,7 @@ import { Button } from '../../../components/ui/button'
 import { Switch } from '../../../components/ui/switch'
 import { FloatingInput, FloatingSelect } from '../../../components/ui/floating-input'
 import { SortInput } from '../../../components/dashboard/SortInput'
-import { Edit2, Trash2 } from 'lucide-react'
+import { Edit2, Trash2, Cpu } from 'lucide-react'
 import { 
   SiReact, SiNextdotjs, SiVuedotjs, SiTailwindcss, SiFigma, SiGreensock, SiTypescript, SiSass,
   SiNodedotjs, SiPython, SiMongodb, SiDocker, SiPostgresql, SiGraphql, SiFirebase
@@ -105,6 +105,8 @@ export default function TechnologiesPage() {
   const [search, setSearch] = useState('');
   const [toasts, setToasts] = useState([]);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null });
+  const [sectionEnabled, setSectionEnabled] = useState(true);
+  const [togglingSection, setTogglingSection] = useState(false);
 
   const addToast = (msg, type = 'success') => setToasts(t => [...t, { id: Date.now(), message: msg, type }]);
 
@@ -119,15 +121,51 @@ export default function TechnologiesPage() {
   async function fetchItems() {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}/api/technologies?all=true`, {
-        headers: { ...getAuthHeaders() },
-      });
-      const json = await res.json();
+      const [resTechs, resStatus] = await Promise.all([
+        fetch(`${BASE_URL}/api/technologies?all=true`, {
+          headers: { ...getAuthHeaders() },
+        }),
+        fetch(`${BASE_URL}/api/technologies/section-status`),
+      ]);
+      const json = await resTechs.json();
       setRows(json.data || []);
+
+      if (resStatus.ok) {
+        const statusJson = await resStatus.json();
+        setSectionEnabled(statusJson.enabled !== false);
+      }
     } catch (err) {
       addToast('Error: ' + err.message, 'error');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleToggleSection(newVal) {
+    try {
+      setTogglingSection(true);
+      setSectionEnabled(newVal);
+      const res = await fetch(`${BASE_URL}/api/technologies/section-status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
+        },
+        body: JSON.stringify({ enabled: newVal }),
+      });
+      const resJson = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(resJson.message || 'Failed to update section status');
+      addToast(
+        newVal 
+          ? 'Modern Tech Stack is now ACTIVE across the entire website!' 
+          : 'Modern Tech Stack is now OFF / HIDDEN across the entire website!',
+        newVal ? 'success' : 'warning'
+      );
+    } catch (err) {
+      setSectionEnabled(!newVal);
+      addToast(err.message || 'Failed to update section status', 'error');
+    } finally {
+      setTogglingSection(false);
     }
   }
 
@@ -201,6 +239,51 @@ export default function TechnologiesPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <Breadcrumb title="Technologies Management" crumbs={[{ label: 'Technologies' }]} />
+
+      {/* Global Master Switch for Website-Wide Modern Tech Stack Section */}
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/40 via-[#0d150e]/90 to-slate-900/60 p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-4">
+            <div className={`p-3 rounded-xl border transition-colors shrink-0 ${
+              sectionEnabled 
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                : 'bg-slate-800/80 border-slate-700 text-slate-400'
+            }`}>
+              <Cpu className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-lg font-bold text-white tracking-wide">
+                  Modern Tech Stack Section (Entire Website)
+                </h2>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
+                  sectionEnabled
+                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                    : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${sectionEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                  {sectionEnabled ? 'Active Across Website' : 'Hidden Across Website'}
+                </span>
+              </div>
+              <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+                Global master switch to control the Modern Tech Stack section across your entire website (Home page, Service pages, etc.). When turned OFF, the section is completely hidden everywhere.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 sm:self-center shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5">
+            <span className="text-xs font-medium text-slate-300">
+              {sectionEnabled ? 'Section Visible' : 'Section Hidden'}
+            </span>
+            <Switch
+              checked={sectionEnabled}
+              disabled={togglingSection || loading}
+              onCheckedChange={handleToggleSection}
+            />
+          </div>
+        </div>
+      </div>
+
       <TableToolbar search={search} onSearchChange={setSearch} selectedCount={0} onAdd={() => setModal('new')} addLabel="Add Technology" />
       <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={[]} onToggleSelectAll={()=>{}} onToggleSelectRow={()=>{}} />
       {modal && <TechnologyModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}

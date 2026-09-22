@@ -14,7 +14,7 @@ import RealEstateCalculator from '../sections/services/RealEstateCalculator';
 import RealEstateAdvisoryPage from './RealEstateAdvisoryPage';
 import { whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, realEstatePortfolioProjects, techStackGlobal } from 'src/data/servicesData';
 
-export default function ServicePageClient({ service, slug, globalTechStack }) {
+export default function ServicePageClient({ service, slug, globalTechStack, homeExtraData }) {
   if (!service) return null;
 
   const isRealEstate = slug.includes('real-estate') || slug.includes('realstate') || slug.includes('advisory');
@@ -66,16 +66,21 @@ export default function ServicePageClient({ service, slug, globalTechStack }) {
     : (isInfrastructureService ? [] : portfolioProjects);
   const processSteps = service.process?.length > 0 ? service.process : oldData?.process;
   const whyChooseUs = service.whyChooseUs?.length > 0 ? service.whyChooseUs : whyChooseUsGlobal;
-  const currentTechStack = service.techStack?.length > 0 
-    ? service.techStack 
-    : (isInfrastructureService ? [] : (globalTechStack?.length > 0 ? globalTechStack : (oldData?.technologies || techStackGlobal)));
+
+  // Centralized Tech Stack: Connect directly with Home Page Technologies
+  const isTechStackGloballyEnabled = homeExtraData?.show_technology !== false;
+  const currentTechStack = (isTechStackGloballyEnabled && Array.isArray(globalTechStack) && globalTechStack.length > 0)
+    ? globalTechStack.filter(t => (t.status ? t.status === 'active' : true))
+    : [];
 
   return (
     <main>
       <ServiceHero data={heroData} breadcrumbTitle={service.title} />
       <ServiceOverview data={overviewData} image={overviewData.image} />
       <ServiceFeatures features={features} />
-      <TechStack techStack={currentTechStack} />
+      {isTechStackGloballyEnabled && currentTechStack.length > 0 && (
+        <TechStack techStack={currentTechStack} homeExtraData={homeExtraData} />
+      )}
       <ServicePortfolio projects={currentPortfolio} serviceTitle={service.title} />
       <DevelopmentProcess processSteps={processSteps} />
       <WhyChooseUsIconCards reasons={whyChooseUs} />

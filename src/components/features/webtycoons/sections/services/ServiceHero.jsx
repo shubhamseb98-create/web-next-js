@@ -21,11 +21,11 @@ const ServiceHero = ({ data, breadcrumbTitle }) => {
           animate="visible"
         >
           {/* Breadcrumb */}
-          <motion.nav aria-label="breadcrumb" variants={fadeUp} className="mb-4">
+          <motion.nav aria-label="breadcrumb" variants={fadeUp} className="mb-2">
             <ol className="breadcrumb mb-0">
               <li className="breadcrumb-item"><Link href="/" className={styles.breadcrumbLink}>Home</Link></li>
               <li className="breadcrumb-item"><Link href="/#services" className={styles.breadcrumbLink}>Services</Link></li>
-              <li className="breadcrumb-item active" aria-current="page" style={{ color: 'var(--clr-primary)' }}>{breadcrumbTitle}</li>
+              <li className="breadcrumb-item active" aria-current="page" style={{ color: 'var(--clr-primary, #6bc24b)' }}>{breadcrumbTitle}</li>
             </ol>
           </motion.nav>
 
@@ -37,7 +37,7 @@ const ServiceHero = ({ data, breadcrumbTitle }) => {
             {data.description}
           </motion.p>
           
-          <motion.div className="d-flex flex-wrap gap-4 mt-5" variants={fadeUp}>
+          <motion.div className="d-flex flex-wrap gap-3 mt-3 pt-1" variants={fadeUp}>
             <Link href="#quote" className="btnPrimary">
               Get Free Quote
             </Link>

@@ -128,8 +128,13 @@ const getServiceIcon = (service, index) => {
 const ServicesGrid = ({ servicesData, homeExtraData }) => {  
   // Real Estate has its own dedicated highlight showcase section right below ServicesGrid.
   // Filter it out so that the green card never pollutes the IT Services Grid!
-  const filteredServices = (servicesData || []).filter(s => s.slug !== 'real-estate-advisory');
-  const displayServices = filteredServices.length > 0 ? filteredServices : services;
+  // Also strictly ensure that only active services (status === 'active') are displayed.
+  const filteredServices = Array.isArray(servicesData)
+    ? servicesData.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true))
+    : services.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true));
+
+  // If servicesData is passed from server, strictly use filteredServices without falling back to hardcoded static items
+  const displayServices = servicesData ? filteredServices : (filteredServices.length > 0 ? filteredServices : []);
 
   const subtitle = homeExtraData?.service_subtitle || 'Our Services';
   const mainTitle = homeExtraData?.service_title || 'Innovative IT Solutions for <br /> Your Business Growth';

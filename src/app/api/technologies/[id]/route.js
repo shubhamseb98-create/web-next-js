@@ -2,6 +2,7 @@ import { connectDB } from '../../../lib/config';
 import Technology from '../../../models/Technology';
 import { requireAuth } from '../../../lib/auth';
 import { uploadFile } from '../../../../lib/upload';
+import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +44,15 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const item = await Technology.findByIdAndUpdate(id, body, { new: true }).lean();
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/', 'layout');
+      revalidatePath('/services/[slug]', 'page');
+      revalidatePath('/services', 'page');
+      revalidatePath('/services', 'layout');
+    } catch {}
+
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });
@@ -57,6 +67,15 @@ export async function DELETE(request, { params }) {
     const { id } = await params;
     const item = await Technology.findByIdAndDelete(id);
     if (!item) return Response.json({ success: false, message: 'Not found' }, { status: 404 });
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/', 'layout');
+      revalidatePath('/services/[slug]', 'page');
+      revalidatePath('/services', 'page');
+      revalidatePath('/services', 'layout');
+    } catch {}
+
     return Response.json({ success: true, message: 'Deleted' });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });

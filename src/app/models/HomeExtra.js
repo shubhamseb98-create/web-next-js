@@ -135,6 +135,10 @@ const HomeExtraSchema = new mongoose.Schema({
       type: String,
       required: false,
     },
+    show_technology: {
+      type: Boolean,
+      default: true,
+    },
     team_title: {
       type: String,
       required: false,

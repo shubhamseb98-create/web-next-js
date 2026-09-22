@@ -1,16 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Breadcrumb from "../../../../components/dashboard/Breadcrumb";
 import DataTable from "../../../../components/dashboard/DataTable";
 import TableToolbar from "../../../../components/dashboard/TableToolbar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../../../../components/ui/dialog";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../../components/ui/card";
 import { Button } from "../../../../components/ui/button";
-import { FloatingInput, FloatingTextarea } from "../../../../components/ui/floating-input";
-import { Save, Plus, Trash2, Edit2, Check, Sparkles, Image as ImageIcon, Upload, HelpCircle, Layers, CheckCircle2 } from "lucide-react";
+import { FloatingInput, FloatingTextarea, FloatingSelect } from "../../../../components/ui/floating-input";
+import { Switch } from "../../../../components/ui/switch";
+import { 
+  Save, Plus, Trash2, Edit2, Check, Sparkles, Image as ImageIcon, 
+  Upload, HelpCircle, Layers, CheckCircle2, ArrowLeft, ExternalLink, 
+  Settings, ChevronDown 
+} from "lucide-react";
 import AIAssistantButton from "../../../../components/dashboard/AIAssistantButton";
 import ConfirmDeleteModal from "../../../../components/dashboard/ConfirmDeleteModal";
+import PortfolioThemePicker from "../../../../components/dashboard/PortfolioThemePicker";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../../lib/utils";
 
@@ -53,9 +60,28 @@ export default function ServiceCMSPage() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
+  const [allServices, setAllServices] = useState([]);
+
   useEffect(() => {
     fetchService();
   }, [slug]);
+
+  useEffect(() => {
+    async function fetchAllServices() {
+      try {
+        const res = await fetch('/api/services');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            setAllServices(json.data.filter(s => s.slug !== 'real-estate-advisory'));
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load all services for switcher:", e);
+      }
+    }
+    fetchAllServices();
+  }, []);
 
   async function fetchService() {
     try {
@@ -170,11 +196,6 @@ export default function ServiceCMSPage() {
 
   const sanitizePayload = (obj) => {
     const payload = { ...obj };
-    // The inner service page editor should NEVER touch or overwrite the home page card image, card style or card theme
-    delete payload.image;
-    delete payload.imageStyle;
-    delete payload.bgColor;
-    delete payload.hoverTextColor;
     return payload;
   };
 
@@ -347,14 +368,15 @@ export default function ServiceCMSPage() {
   }
 
   const tabs = [
-    { id: 'banner', label: 'Banner Info' },
+    { id: 'card', label: 'Card & SEO Settings' },
+    { id: 'banner', label: 'Hero / Banner' },
     { id: 'overview', label: 'Overview Info' },
-    { id: 'features', label: 'Features' },
-    { id: 'benefits', label: 'Benefits' },
-    { id: 'process', label: 'Process' },
-    { id: 'whyChooseUs', label: 'Why Choose Us' },
-    { id: 'portfolio', label: 'Portfolio' },
-    { id: 'faq', label: 'FAQ' },
+    { id: 'features', label: `Features (${data.features?.length || 0})` },
+    { id: 'benefits', label: `Benefits (${data.benefits?.length || 0})` },
+    { id: 'process', label: `Process (${data.process?.length || 0})` },
+    { id: 'whyChooseUs', label: `Why Choose Us (${data.whyChooseUs?.length || 0})` },
+    { id: 'portfolio', label: `Portfolio (${data.portfolio?.length || 0})` },
+    { id: 'faq', label: `FAQ (${data.faq?.length || 0})` },
   ];
 
   // Prepare table data for active list tab
@@ -584,21 +606,83 @@ export default function ServiceCMSPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
-      <Breadcrumb
-        title={data.title || "Service Management"}
-        subtitle="Manage the banner, overview narrative, features, benefits, development roadmap, portfolio, and FAQs."
-        crumbs={[{ label: 'Services' }, { label: data.title || slug }]}
-        rightElement={
+      {/* Enhanced Top Navigation Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard/services"
+            className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white transition-colors shrink-0 shadow-sm"
+            title="Back to All Services"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">{data.title || "Service Management"}</h1>
+              <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${
+                data.status === 'active' 
+                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                  : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+              }`}>
+                {data.status === 'active' ? 'Active' : 'Draft'}
+              </span>
+              {data.isFeatured && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">
+                  Featured
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Manage complete inner page sections, banner, features, FAQs, card settings & SEO for <code className="text-emerald-400">/services/{data.slug || slug}</code>
+            </p>
+          </div>
+        </div>
+
+        {/* Right side controls: Switcher dropdown, Live link, and Save */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {allServices.length > 0 && (
+            <div className="relative">
+              <select
+                value={data.slug || slug}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    router.push(`/dashboard/services/${e.target.value}`);
+                  }
+                }}
+                className="bg-zinc-900 border border-white/15 text-slate-200 text-xs rounded-xl px-3 py-2 pr-8 focus:outline-none focus:border-emerald-500 cursor-pointer appearance-none shadow-sm"
+              >
+                <option value="" disabled>Switch Service...</option>
+                {allServices.map(s => (
+                  <option key={s.slug || s._id} value={s.slug}>
+                    {s.title}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          )}
+
+          <a
+            href={`/services/${data.slug || slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-colors shadow-sm"
+            title="Preview Live Page"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">View Live</span>
+          </a>
+
           <Button
             onClick={() => handleSaveAll(data)}
             disabled={saving}
-            size="lg"
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+            size="default"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold shadow-lg shadow-emerald-950/40 transition-all"
           >
-            <Save className="w-5 h-5 mr-2" /> {saving ? "Saving..." : "Save Service"}
+            <Save className="w-4 h-4 mr-1.5" /> {saving ? "Saving..." : "Save Service"}
           </Button>
-        }
-      />
+        </div>
+      </div>
 
       {/* Tabs Navigation */}
       <div className="flex gap-2 overflow-x-auto pb-2 border-b border-border">
@@ -611,7 +695,7 @@ export default function ServiceCMSPage() {
               setSearch('');
               setSelectedIds([]);
             }}
-            className={`px-4 py-2 font-medium text-sm transition-colors whitespace-nowrap border-b-2 ${
+            className={`px-4 py-2 font-medium text-sm transition-colors whitespace-nowrap border-b-2 flex items-center gap-2 ${
               activeTab === tab.id
                 ? 'border-emerald-500 text-emerald-400 font-bold'
                 : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
@@ -621,6 +705,159 @@ export default function ServiceCMSPage() {
           </button>
         ))}
       </div>
+
+      {/* TAB 0: Card & SEO Settings */}
+      {activeTab === 'card' && (
+        <Card className="border-border shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div>
+              <CardTitle className="text-base font-semibold">Service Card & SEO Settings</CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Configure how this service appears on the homepage cards, listing grid, and search engines.
+              </p>
+            </div>
+            <Button onClick={() => handleSaveAll(data)} disabled={saving} size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">
+              <Save className="w-4 h-4 mr-1.5" /> Save Settings
+            </Button>
+          </CardHeader>
+          <CardContent style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FloatingInput 
+                label="Service Title *" 
+                name="title" 
+                value={data.title || ''} 
+                onChange={(e) => setData({ ...data, title: e.target.value })} 
+                required 
+              />
+              <FloatingInput 
+                label="Slug (URL Path)" 
+                name="slug" 
+                value={data.slug || ''} 
+                disabled 
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FloatingInput 
+                label="Icon / Emoji / Badge Tag" 
+                value={data.icon || ''} 
+                onChange={(e) => setData({ ...data, icon: e.target.value })} 
+                placeholder="e.g. ⚡ or Web" 
+              />
+              <FloatingSelect 
+                label="Image Style in Service Card" 
+                value={data.imageStyle || 'small'} 
+                onChange={(e) => setData({ ...data, imageStyle: e.target.value })}
+              >
+                <option value="small">Small Icon (SVG)</option>
+                <option value="full">Full Cover (Image)</option>
+              </FloatingSelect>
+            </div>
+
+            <FloatingTextarea
+              label="Card Short Description"
+              name="shortDesc"
+              value={data.shortDesc || ''}
+              onChange={(e) => setData({ ...data, shortDesc: e.target.value })}
+              rows={2}
+              rightElement={<AIAssistantButton context={`Service Short Description for ${data.title}`} field="shortDesc" onGenerate={v => setData(p => ({ ...p, shortDesc: v }))} />}
+            />
+
+            {/* Service Card Theme (Background Gradient & Text Color) */}
+            <PortfolioThemePicker
+              title="Service Card Theme (Background Gradient & Text Color)"
+              themeColor={data.bgColor || ''}
+              themeTextColor={data.hoverTextColor || ''}
+              onThemeColorChange={(val) => setData(p => ({ ...p, bgColor: val }))}
+              onThemeTextColorChange={(val) => setData(p => ({ ...p, hoverTextColor: val }))}
+              projectTitle={data.title || 'Service Card Title'}
+            />
+
+            {/* Service Card Image */}
+            <div className="space-y-3 pt-2">
+              <label className="text-sm font-semibold text-foreground">Service Card Image (Homepage / Listing)</label>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                {data.image ? (
+                  <div className="relative rounded-xl overflow-hidden border border-white/15 shadow-md bg-black/40">
+                    <img 
+                      src={data.image} 
+                      alt="Card Preview" 
+                      className="w-36 h-24 object-cover" 
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-36 h-24 rounded-xl border border-dashed border-white/20 bg-white/[0.02] flex items-center justify-center text-xs text-muted-foreground">
+                    No card image
+                  </div>
+                )}
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleImageUpload(e, 'image')} 
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer text-xs text-muted-foreground" 
+                />
+              </div>
+            </div>
+
+            {/* Status, Featured & Sort Order */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+              <FloatingSelect 
+                label="Status" 
+                value={data.status || 'active'} 
+                onChange={(e) => setData({ ...data, status: e.target.value })}
+              >
+                <option value="active">Active (Published)</option>
+                <option value="draft">Draft (Hidden)</option>
+              </FloatingSelect>
+              <FloatingInput
+                label="Sort Order"
+                type="number"
+                value={data.sort ?? 0}
+                onChange={(e) => setData({ ...data, sort: parseInt(e.target.value) || 0 })}
+              />
+              <div className="flex items-center gap-3 h-[50px] border border-input/60 rounded-xl px-4">
+                <Switch 
+                  checked={Boolean(data.isFeatured)} 
+                  onCheckedChange={(c) => setData({ ...data, isFeatured: c })} 
+                />
+                <label className="text-sm font-semibold">Featured Service</label>
+              </div>
+            </div>
+
+            {/* SEO Settings Section */}
+            <div className="pt-6 border-t border-border space-y-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-400" /> SEO & Meta Configuration
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FloatingInput
+                  label="Meta Title (SEO)"
+                  name="metaTitle"
+                  value={data.metaTitle || ''}
+                  onChange={(e) => setData({ ...data, metaTitle: e.target.value })}
+                  placeholder={`${data.title} | WebTycoons`}
+                />
+                <FloatingInput
+                  label="Canonical URL"
+                  name="canonicalUrl"
+                  value={data.canonicalUrl || ''}
+                  onChange={(e) => setData({ ...data, canonicalUrl: e.target.value })}
+                  placeholder={`https://thewebtycoons.com/services/${data.slug}`}
+                />
+              </div>
+              <FloatingTextarea
+                label="Meta Description (Search Engines & Social Cards)"
+                name="metaDescription"
+                value={data.metaDescription || ''}
+                onChange={(e) => setData({ ...data, metaDescription: e.target.value })}
+                rows={2}
+                rightElement={<AIAssistantButton context={`SEO Meta Description for ${data.title}`} field="metaDescription" onGenerate={v => setData(p => ({ ...p, metaDescription: v }))} />}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* TAB 1: Banner Information */}
       {activeTab === 'banner' && (

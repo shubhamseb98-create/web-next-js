@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Breadcrumb from '../../../components/dashboard/Breadcrumb'
 import DataTable from '../../../components/dashboard/DataTable'
 import TableToolbar from '../../../components/dashboard/TableToolbar'
@@ -12,7 +13,7 @@ import { Switch } from '../../../components/ui/switch'
 import { FloatingInput, FloatingTextarea, FloatingSelect } from '../../../components/ui/floating-input'
 import { SlugInput } from '../../../components/dashboard/SlugInput'
 import { SortInput } from '../../../components/dashboard/SortInput'
-import { Edit2, Trash2, Plus, Image as ImageIcon } from 'lucide-react'
+import { Edit2, Trash2, Plus, Image as ImageIcon, FileText, ExternalLink, ArrowRight, Sparkles, Layers } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 import PortfolioThemePicker from '../../../components/dashboard/PortfolioThemePicker'
 
@@ -34,9 +35,9 @@ function ServiceModal({ item, nextSort = 1, onClose, onSave, saving }) {
   const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
   const toSlug = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    onSave({ ...form }, imageFile)
+  function handleSubmit(e, openCMS = false) {
+    if (e && e.preventDefault) e.preventDefault()
+    onSave({ ...form }, imageFile, openCMS)
   }
 
   return (
@@ -45,7 +46,28 @@ function ServiceModal({ item, nextSort = 1, onClose, onSave, saving }) {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">{item ? 'Edit Service' : 'Add New Service'}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+
+        {item && item.slug && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/25">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-white">Full Inner Page Content CMS</div>
+                <div className="text-xs text-slate-400">Hero banner, overview narrative, features, benefits, process, why choose us, portfolio & FAQs</div>
+              </div>
+            </div>
+            <Link 
+              href={`/dashboard/services/${item.slug}`}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-all shrink-0 shadow-md shadow-emerald-950/40"
+            >
+              Open Page CMS <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        )}
+
+        <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6 mt-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FloatingInput 
               label="Service Title *" 
@@ -125,9 +147,19 @@ function ServiceModal({ item, nextSort = 1, onClose, onSave, saving }) {
               <label className="text-sm font-semibold">Featured</label>
             </div>
           </div>
-          <DialogFooter className="pt-6 border-t">
+          <DialogFooter className="pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3">
             <Button variant="ghost" type="button" onClick={onClose} disabled={saving}>Cancel</Button>
-            <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Service'}</Button>
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+              <Button type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save & Close'}</Button>
+              <Button 
+                type="button" 
+                onClick={(e) => handleSubmit(e, true)} 
+                disabled={saving || !form.title}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold"
+              >
+                Save & Open Page CMS <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Button>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -136,6 +168,7 @@ function ServiceModal({ item, nextSort = 1, onClose, onSave, saving }) {
 }
 
 export default function ServicesPage() {
+  const router = useRouter()
   const [rows, setRows] = useState(DEFAULT_SERVICES)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -176,7 +209,7 @@ export default function ServicesPage() {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  async function handleSave(form, imageFile) {
+  async function handleSave(form, imageFile, openCMS = false) {
     try {
       setSaving(true)
       const fd = new FormData()
@@ -211,9 +244,16 @@ export default function ServicesPage() {
         throw new Error(errJson.message || 'Failed to save service')
       }
       
+      const resData = await res.json().catch(() => ({}))
+      const savedSlug = resData?.data?.slug || form.slug
+
       addToast(isEdit ? 'Service updated successfully!' : 'Service created successfully!')
       setModal(null)
       fetchItems()
+
+      if (openCMS && savedSlug) {
+        router.push(`/dashboard/services/${savedSlug}`)
+      }
     } catch (err) {
       addToast(err.message, 'error')
     } finally {
@@ -291,8 +331,27 @@ export default function ServicesPage() {
             )}
           </div>
           <div>
-            <div className="font-semibold text-white text-sm">{r.title || 'Untitled Service'}</div>
-            <div className="text-xs text-slate-400 max-w-[340px] truncate">{r.shortDesc || `/services/${r.slug}`}</div>
+            <div className="flex items-center gap-2">
+              <Link 
+                href={`/dashboard/services/${r.slug}`}
+                className="font-semibold text-white text-sm hover:text-emerald-400 transition-colors inline-block"
+                onClick={e => e.stopPropagation()}
+                title="Edit Complete Inner Page Content"
+              >
+                {r.title || 'Untitled Service'}
+              </Link>
+            </div>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-slate-400 max-w-[260px] truncate">{r.shortDesc || `/services/${r.slug}`}</span>
+              <Link
+                href={`/dashboard/services/${r.slug}`}
+                onClick={e => e.stopPropagation()}
+                className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 transition-all shrink-0"
+                title="Open Inner Page CMS"
+              >
+                <FileText className="w-3 h-3" /> Page CMS
+              </Link>
+            </div>
           </div>
         </div>
       )
@@ -333,19 +392,36 @@ export default function ServicesPage() {
       align: 'right',
       label: 'Action',
       render: r => (
-        <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-end gap-1.5" onClick={e => e.stopPropagation()}>
+          <Link
+            href={`/dashboard/services/${r.slug}`}
+            className="h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 shadow-sm"
+            title="Edit Inner Page CMS (Hero, Overview, Features, FAQs...)"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Inner Page CMS</span>
+          </Link>
           <button 
             type="button"
             onClick={() => setModal(r)} 
-            className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30" 
-            title="Edit Service"
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10" 
+            title="Quick Edit Card Settings"
           >
             <Edit2 className="w-4 h-4" />
           </button>
+          <a
+            href={`/services/${r.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10"
+            title="Preview Live Service Page"
+          >
+            <ExternalLink className="w-4 h-4" />
+          </a>
           <button 
             type="button"
             onClick={() => setConfirmModal({ isOpen: true, id: r._id })} 
-            className="w-8 h-8 rounded flex items-center justify-center transition-colors bg-red-500/10 text-red-600 hover:bg-red-500/20 dark:bg-red-500/20 dark:text-red-400 dark:hover:bg-red-500/30" 
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20" 
             title="Delete Service"
           >
             <Trash2 className="w-4 h-4" />

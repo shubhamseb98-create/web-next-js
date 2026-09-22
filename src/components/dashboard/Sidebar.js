@@ -63,15 +63,7 @@ const NAV = [
       { label: 'Call To Action',     href: '/dashboard/about-page/cta' },
     ],
   },
-  {
-    id: 'services', label: 'Services Management', icon: Briefcase, permission: 'services',
-    children: [
-      { label: 'All Services',       href: '/dashboard/services' },
-      { label: 'Dynamic Website',    href: '/dashboard/services/dynamic-website-development' },
-      { label: 'Ecommerce Website',  href: '/dashboard/services/e-commerce-website-development' },
-      { label: 'Static Website',     href: '/dashboard/services/static-website-development' },
-    ],
-  },
+  { id: 'services', label: 'Services Management', icon: Briefcase, permission: 'services', href: '/dashboard/services' },
   {
     id: 'real-estate',
     label: 'Real Estate Management',
@@ -141,7 +133,9 @@ function isRouteActive(currentPath, targetHref) {
   if (!currentPath || !targetHref) return false;
   const cleanCurrent = currentPath.replace(/\/$/, '');
   const cleanTarget = targetHref.replace(/\/$/, '');
-  return cleanCurrent === cleanTarget;
+  if (cleanCurrent === cleanTarget) return true;
+  if (cleanTarget === '/dashboard/services' && cleanCurrent.startsWith('/dashboard/services')) return true;
+  return false;
 }
 
 function checkItemChildActive(item, currentPath) {

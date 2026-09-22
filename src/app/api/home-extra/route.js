@@ -54,6 +54,7 @@ export async function POST(request) {
             technology_title: body.technology_title || "",
             technology_subtitle: body.technology_subtitle || "",
             technology_description: body.technology_description || "",
+            show_technology: body.show_technology !== undefined ? (body.show_technology === true || body.show_technology === 'true' || body.show_technology === 1 || body.show_technology === '1') : true,
             team_title: body.team_title || "",
             team_subtitle: body.team_subtitle || "",
             team_label: body.team_label || "",
@@ -71,10 +72,16 @@ export async function POST(request) {
             homeExtra = await HomeExtra.create(updateData);
         }
 
-        
-    // On-Demand Revalidation
-    revalidatePath('/', 'layout');
-    return Response.json({
+        // On-Demand Revalidation
+        try {
+            revalidatePath('/', 'page');
+            revalidatePath('/', 'layout');
+            revalidatePath('/services/[slug]', 'page');
+            revalidatePath('/services', 'page');
+            revalidatePath('/services', 'layout');
+        } catch {}
+
+        return Response.json({
             message: "HomeExtra saved successfully",
             data: homeExtra,
         });

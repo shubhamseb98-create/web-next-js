@@ -23,12 +23,13 @@ const STATIC_SERVICES = [
 export async function generateStaticParams() {
   try {
     await connectDB();
-    const services = await Service.find({ status: 'active' }).select('slug').lean();
-    const dbSlugs = services.map(s => ({ slug: s.slug }));
+    const allDbServices = await Service.find({}).select('slug status').lean();
+    const activeSlugs = allDbServices.filter(s => s.status === 'active').map(s => ({ slug: s.slug }));
+    const inactiveSlugs = new Set(allDbServices.filter(s => s.status !== 'active').map(s => s.slug));
     const staticSlugs = STATIC_SERVICES
-      .filter(s => !dbSlugs.find(d => d.slug === s))
+      .filter(s => !inactiveSlugs.has(s) && !activeSlugs.find(d => d.slug === s))
       .map(s => ({ slug: s }));
-    return [...dbSlugs, ...staticSlugs];
+    return [...activeSlugs, ...staticSlugs];
   } catch {
     return STATIC_SERVICES.map(s => ({ slug: s }));
   }
@@ -121,8 +122,14 @@ export async function generateMetadata({ params }) {
 
   try {
     await connectDB();
-    const service = await Service.findOne({ slug: slug, status: 'active' }).lean();
+    const service = await Service.findOne({ slug: slug }).lean();
     if (service) {
+      if (service.status !== 'active') {
+        return {
+          title: 'Service Not Found | WebTycoons',
+          robots: { index: false, follow: false },
+        };
+      }
       return {
         title: `${service.metaTitle || service.title} | WebTycoons`,
         description: service.metaDescription || service.shortDesc,
@@ -141,34 +148,58 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  return { title: 'Service Not Found | WebTycoons' };
+  return { title: 'Service Not Found | WebTycoons', robots: { index: false, follow: false } };
 }
 
 import Technology from "../../../models/Technology";
+import HomeExtra from "../../../models/HomeExtra";
 
 export default async function ServicePage({ params }) {
   const { slug } = await params;
   let serviceData = null;
   let globalTechStack = [];
+  let homeExtra = null;
+  let isInactive = false;
 
   try {
     await connectDB();
-    const service = await Service.findOne({ slug: slug, status: 'active' }).lean();
-    if (service) serviceData = JSON.parse(JSON.stringify(service));
+    const [service, techs, homeExtraDoc] = await Promise.all([
+      Service.findOne({ slug: slug }).lean(),
+      Technology.find({ status: 'active' }).sort({ category: 1, sort: 1 }).lean(),
+      HomeExtra.findOne().lean(),
+    ]);
+
+    if (service) {
+      // If service exists in DB and is NOT active (e.g. draft/turned off), mark inactive
+      if (service.status !== 'active') {
+        isInactive = true;
+      } else {
+        serviceData = JSON.parse(JSON.stringify(service));
+      }
+    }
     
-    const techs = await Technology.find({ status: 'active' }).sort({ category: 1, sort: 1 }).lean();
-    globalTechStack = JSON.parse(JSON.stringify(techs));
-  } catch {}
+    if (techs) globalTechStack = JSON.parse(JSON.stringify(techs));
+    if (homeExtraDoc) homeExtra = JSON.parse(JSON.stringify(homeExtraDoc));
+  } catch (err) {
+    console.error("ServicePage DB fetch error:", err);
+  }
 
-    if (!serviceData) {
-      serviceData = STATIC_SERVICE_DATA[slug] || null;
-    }
+  // If service exists in DB and was turned off (draft), return 404 immediately!
+  // NEVER fall back to static data for an inactive/draft service.
+  if (isInactive) {
+    notFound();
+  }
 
-    if (slug === 'real-estate-advisory' || serviceData?.slug === 'real-estate-advisory') {
-      serviceData = mergeRealEstateData(serviceData || {});
-    }
+  // Only fall back to static data if the service does NOT exist in the database at all
+  if (!serviceData) {
+    serviceData = STATIC_SERVICE_DATA[slug] || null;
+  }
 
-    if (!serviceData) notFound();
+  if (slug === 'real-estate-advisory' || serviceData?.slug === 'real-estate-advisory') {
+    serviceData = mergeRealEstateData(serviceData || {});
+  }
+
+  if (!serviceData) notFound();
 
   const schema = {
     "@context": "https://schema.org",
@@ -182,7 +213,12 @@ export default async function ServicePage({ params }) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      <ServicePageClient service={serviceData} slug={slug} globalTechStack={globalTechStack} />
+      <ServicePageClient 
+        service={serviceData} 
+        slug={slug} 
+        globalTechStack={globalTechStack} 
+        homeExtraData={homeExtra}
+      />
     </>
   );
 }

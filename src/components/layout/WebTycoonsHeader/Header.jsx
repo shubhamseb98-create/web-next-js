@@ -36,10 +36,31 @@ const INITIAL_NAV_LINKS = [
   { name: 'Contact Us', path: '/contact', order: 7, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
 ]
 
-const Header = () => {
-  const [navLinks, setNavLinks]                     = useState(INITIAL_NAV_LINKS)
+const formatInitialNav = (data) => {
+  if (!Array.isArray(data) || data.length === 0) return INITIAL_NAV_LINKS;
+  return data.map((it) => ({
+    id: it.id || it._id || it.title || it.name,
+    name: it.name || it.title,
+    path: it.path || it.slug,
+    order: it.order || it.id || 0,
+    hasDropdown: Boolean(it.hasDropdown ?? ((it.children && it.children.length > 0) || (it.subItems && it.subItems.length > 0))),
+    openInNewTab: Boolean(it.openInNewTab),
+    isSpecialCta: Boolean(it.isSpecialCta || it.slug === '/contact' || it.path === '/contact'),
+    ctaAction: it.ctaAction || (it.slug === '/contact' || it.path === '/contact' ? 'modal' : 'link'),
+    subItems: ((it.subItems || it.children) || []).map((sub, sIdx) => ({
+      _id: sub._id || sub.id || sIdx,
+      label: sub.label || sub.title,
+      path: sub.path || sub.slug,
+      openInNewTab: Boolean(sub.openInNewTab),
+      isActive: sub.isActive !== false,
+    })).filter((sub) => sub.isActive !== false),
+  }));
+};
+
+const Header = ({ initialNavData, initialGlobalSettings }) => {
+  const [navLinks, setNavLinks]                     = useState(() => formatInitialNav(initialNavData))
   const [ctaConfig, setCtaConfig]                   = useState({
-    ctaButtonText: "Let's Talk",
+    ctaButtonText: initialGlobalSettings?.headerCtaText || "Let's Talk",
     ctaButtonAction: "modal",
     ctaButtonLink: "/contact",
     showCtaButton: true,
@@ -83,6 +104,13 @@ const Header = () => {
     fetchMenu()
     return () => { isMounted = false }
   }, [])
+
+  /* Update navLinks if initialNavData changes */
+  useEffect(() => {
+    if (initialNavData && Array.isArray(initialNavData) && initialNavData.length > 0) {
+      setNavLinks(formatInitialNav(initialNavData));
+    }
+  }, [initialNavData])
 
   /* Listen for global modal open events */
   useEffect(() => {

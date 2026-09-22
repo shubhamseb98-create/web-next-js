@@ -15,7 +15,7 @@ const iconMap = {
   'PostgreSQL': SiPostgresql, 'GraphQL': SiGraphql, 'Firebase': SiFirebase, 'AWS': FaAws
 };
 
-const TechStack = ({ techStack = [] }) => {
+const TechStack = ({ techStack = [], homeExtraData }) => {
   if (!techStack || techStack.length === 0) return null;
 
   const frontendTech = techStack.filter(t => t.category?.toLowerCase() === 'frontend');
@@ -72,10 +72,13 @@ const TechStack = ({ techStack = [] }) => {
           viewport={{ once: true, margin: '-100px' }}
         >
           <h2 className={styles.title}>
-            Modern <span className={styles.titleHighlight}>Tech Stack</span>
+            {homeExtraData?.technology_title || 'Modern'}{' '}
+            <span className={styles.titleHighlight}>
+              {homeExtraData?.technology_subtitle || 'Tech Stack'}
+            </span>
           </h2>
           <p className={styles.intro}>
-            We build lightning-fast, highly scalable applications using industry-leading technologies and frameworks to ensure your product is future-proof.
+            {homeExtraData?.technology_description || 'We build lightning-fast, highly scalable applications using industry-leading technologies and frameworks to ensure your product is future-proof.'}
           </p>
         </motion.div>
 

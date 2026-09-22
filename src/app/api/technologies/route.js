@@ -2,6 +2,7 @@ import { connectDB } from '../../lib/config';
 import Technology from '../../models/Technology';
 import { requireAuth } from '../../lib/auth';
 import { uploadFile } from '../../../lib/upload';
+import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,6 +43,15 @@ export async function POST(request) {
     }
 
     const item = await Technology.create(body);
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/', 'layout');
+      revalidatePath('/services/[slug]', 'page');
+      revalidatePath('/services', 'page');
+      revalidatePath('/services', 'layout');
+    } catch {}
+
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) }, { status: 201 });
   } catch (error) {
     return Response.json({ success: false, message: error.message }, { status: 500 });

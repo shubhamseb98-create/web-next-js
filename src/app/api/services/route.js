@@ -2,6 +2,7 @@ import { connectDB } from '../../lib/config';
 import Service from '../../models/Service';
 import { requireAuth } from '../../lib/auth';
 import { uploadFile } from '../../../lib/upload';
+import { revalidatePath } from 'next/cache';
 
 // Trigger Turbopack rebuild
 export const dynamic = 'force-dynamic';
@@ -58,6 +59,19 @@ export async function POST(request) {
       body.slug = body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     }
     const item = await Service.create(body);
+
+    try {
+      revalidatePath('/', 'page');
+      revalidatePath('/', 'layout');
+      revalidatePath('/services', 'page');
+      revalidatePath('/services', 'layout');
+      if (item.slug) {
+        revalidatePath(`/services/${item.slug}`, 'page');
+      }
+    } catch (revErr) {
+      console.error("Failed to revalidate cache on Service POST:", revErr);
+    }
+
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(item)) }, { status: 201 });
   } catch (error) {
     if (error.code === 11000) return Response.json({ success: false, message: 'Slug already exists' }, { status: 409 });

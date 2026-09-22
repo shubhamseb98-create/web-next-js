@@ -39,9 +39,21 @@ const iconMap = {
 };
 
 const TechnologiesSection = ({ technologiesData, homeExtraData }) => {
-  const isDynamic = technologiesData?.length > 0;
-  const frontArr = isDynamic ? technologiesData.filter(t => t.category === 'frontend') : frontendTech;
-  const backArr = isDynamic ? technologiesData.filter(t => t.category === 'backend') : backendTech;
+  // 1. If the Tech Stack section is globally turned off, do not render
+  if (homeExtraData?.show_technology === false) return null;
+
+  // 2. If technologiesData was provided from server, strictly use it; do not fall back to hardcoded items if empty
+  const activeTech = Array.isArray(technologiesData)
+    ? technologiesData.filter(t => (t.status ? t.status === 'active' : true))
+    : (technologiesData === null ? [] : [...frontendTech, ...backendTech]);
+
+  // If there are no active technologies, hide the section entirely
+  if (!activeTech || activeTech.length === 0) return null;
+
+  const frontArr = activeTech.filter(t => t.category?.toLowerCase() === 'frontend');
+  const backArr = activeTech.filter(t => t.category?.toLowerCase() === 'backend');
+
+  if (frontArr.length === 0 && backArr.length === 0) return null;
 
   return (
     <section className={styles.sectionWrapper}>
@@ -101,11 +113,11 @@ const TechnologiesSection = ({ technologiesData, homeExtraData }) => {
           <div className={`${styles.marqueeTrack} ${styles.scrollLeft}`}>
             {/* Render twice for infinite loop effect */}
             {[...frontArr, ...frontArr].map((tech, index) => {
-              const IconComp = isDynamic ? iconMap[tech.name] : tech.icon;
+              const IconComp = iconMap[tech.name] || (typeof tech.icon === 'function' ? tech.icon : (iconMap[tech.icon] || null));
               return (
               <div key={`front-${index}`} className={styles.techCard}>
                 {tech.image ? (
-                  <Image src={tech.image} alt={tech.name} width={40} height={40} className={styles.techIcon} style={{ objectFit: 'contain' }} />
+                  <img src={tech.image} alt={tech.name} className={styles.techIcon} style={{ width: 40, height: 40, objectFit: 'contain' }} />
                 ) : (
                   IconComp && <IconComp className={styles.techIcon} style={{ color: tech.color }} />
                 )}
@@ -122,11 +134,11 @@ const TechnologiesSection = ({ technologiesData, homeExtraData }) => {
           <div className={`${styles.marqueeTrack} ${styles.scrollRight}`}>
             {/* Render twice for infinite loop effect */}
             {[...backArr, ...backArr].map((tech, index) => {
-              const IconComp = isDynamic ? iconMap[tech.name] : tech.icon;
+              const IconComp = iconMap[tech.name] || (typeof tech.icon === 'function' ? tech.icon : (iconMap[tech.icon] || null));
               return (
               <div key={`back-${index}`} className={styles.techCard}>
                 {tech.image ? (
-                  <Image src={tech.image} alt={tech.name} width={40} height={40} className={styles.techIcon} style={{ objectFit: 'contain' }} />
+                  <img src={tech.image} alt={tech.name} className={styles.techIcon} style={{ width: 40, height: 40, objectFit: 'contain' }} />
                 ) : (
                   IconComp && <IconComp className={styles.techIcon} style={{ color: tech.color }} />
                 )}

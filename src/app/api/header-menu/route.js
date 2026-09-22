@@ -1,5 +1,6 @@
 import { connectDB } from "../../lib/config";
 import { HeaderMenuItem, HeaderConfig } from "../../models/HeaderMenu";
+import Service from "../../models/Service";
 import { requireAuth } from "../../lib/auth";
 
 export const dynamic = 'force-dynamic';
@@ -109,6 +110,66 @@ export async function GET() {
         showCtaButton: true,
       });
       config = config.toObject ? config.toObject() : config;
+    }
+
+    // Query active and inactive services from the database to strictly control public visibility
+    try {
+      const dbServices = await Service.find({}, 'slug title status sort').sort({ sort: 1, createdAt: 1 }).lean();
+      if (dbServices && dbServices.length > 0) {
+        const activeDbServices = dbServices.filter(s => s.status === 'active');
+        const inactiveSlugs = new Set(dbServices.filter(s => s.status !== 'active').map(s => s.slug));
+
+        items = items.map((item) => {
+          const isServicesTab = 
+            item.name?.toLowerCase() === 'services' || 
+            item.path?.startsWith('/services');
+
+          if (isServicesTab && item.hasDropdown) {
+            // 1. Remove any subItem whose path points to an inactive/draft service
+            let cleanSubItems = (item.subItems || []).filter((sub) => {
+              const match = sub.path?.match(/\/services\/([a-zA-Z0-9_-]+)/);
+              if (match && match[1]) {
+                const slug = match[1];
+                if (inactiveSlugs.has(slug)) {
+                  return false;
+                }
+              }
+              return sub.isActive !== false;
+            });
+
+            // 2. Ensure active services from DB are present
+            const existingPaths = new Set(cleanSubItems.map(s => s.path));
+            activeDbServices.forEach((svc) => {
+              const svcPath = `/services/${svc.slug}`;
+              if (!existingPaths.has(svcPath)) {
+                cleanSubItems.push({
+                  label: svc.title,
+                  path: svcPath,
+                  order: svc.sort ?? (cleanSubItems.length + 1),
+                  isActive: true,
+                  openInNewTab: false,
+                });
+                existingPaths.add(svcPath);
+              }
+            });
+
+            cleanSubItems.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            const updatedPath = activeDbServices.length > 0 
+              ? `/services/${activeDbServices[0].slug}` 
+              : item.path;
+
+            return {
+              ...item,
+              path: updatedPath,
+              subItems: cleanSubItems,
+            };
+          }
+          return item;
+        });
+      }
+    } catch (svcErr) {
+      console.error("Failed to sync services in header-menu GET:", svcErr);
     }
 
     return Response.json({

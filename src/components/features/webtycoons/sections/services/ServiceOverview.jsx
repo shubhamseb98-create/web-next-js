@@ -19,7 +19,13 @@ const ServiceOverview = ({ data, image }) => {
           <motion.div variants={fadeUp} className={styles.overviewImageSide}>
             <div className={styles.overviewImageWrapper}>
               {image ? (
-                <img src={image} alt="Overview" className={styles.overviewImage} loading="lazy" />
+                <img 
+                  src={image} 
+                  alt="Overview" 
+                  className={styles.overviewImage} 
+                  loading="lazy" 
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
               ) : (
                 <div className={styles.overviewImagePlaceholder}></div>
               )}

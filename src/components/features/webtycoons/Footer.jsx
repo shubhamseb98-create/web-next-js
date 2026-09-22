@@ -42,7 +42,6 @@ const Footer = () => {
         
         <div className={styles.footerMiddle}>
           <div className={styles.copyright}>&copy; 2026 ALL RIGHTS RESERVED</div>
-          <div className={styles.location}>BASED IN INDIA 🇮🇳</div>
         </div>
 
         <div className={styles.footerBottom}>

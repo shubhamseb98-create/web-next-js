@@ -69,7 +69,6 @@ const Footer = async () => {
         
         <div className={styles.footerMiddle}>
           <div className={styles.copyright}>&copy; {new Date().getFullYear()} ALL RIGHTS RESERVED</div>
-          <div className={styles.location}>BASED IN INDIA 🇮🇳</div>
         </div>
 
         <div className={styles.footerBottom}>

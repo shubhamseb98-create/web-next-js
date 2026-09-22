@@ -176,8 +176,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* top padding gives breathing room for the text before the photo */
-  padding: 20px 12px 0;
+  /* top padding gives breathing room for the text before the photo inside the curved dome */
+  padding: 28px 14px 0;
   cursor: pointer;
   position: relative;
   transition:
@@ -210,19 +210,26 @@
   gap: 2px;
   /* Fixed height so the photo always starts at the same vertical point */
   flex-shrink: 0;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   padding: 0 4px;
+  width: 100%;
+  max-width: 160px;
 }
 
 .memberName {
   font-family: var(--font-heading);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: var(--fw-black);
   color: #0a0e08;
   text-align: center;
-  line-height: 1.15;
-  letter-spacing: 0.04em;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
+  max-width: 140px;
+  display: block;
+  word-break: normal;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 
 .memberRole {

@@ -107,6 +107,16 @@ function mod(n, m) {
   return ((n % m) + m) % m
 }
 
+const formatMemberName = (name) => {
+  if (!name) return '';
+  if (name.includes('<br')) return name;
+  const parts = name.trim().split(/\s+/);
+  if (parts.length > 1) {
+    return `${parts[0]}<br />${parts.slice(1).join(' ')}`;
+  }
+  return name;
+};
+
 /* ── Component ──────────────────────────────────────── */
 const TeamSection = ({ teamData, homeExtraData }) => {
   const displayTeam = (teamData && teamData.length > 0) ? teamData : team;
@@ -282,7 +292,7 @@ const TeamSection = ({ teamData, homeExtraData }) => {
                     if (!isCenter) { goTo(idx); resetAutoplay() }
                   }}
                   role={!isCenter ? 'button' : undefined}
-                  aria-label={!isCenter ? `View ${member.name.replace(/<br\s*\/?>/gi, ' ')}` : undefined}
+                  aria-label={!isCenter ? `View ${(member.name || '').replace(/<br\s*\/?>/gi, ' ')}` : undefined}
                 >
                   <div
                     className={`${styles.pillCard} ${isCenter ? styles.pillCardActive : ''}`}
@@ -290,7 +300,7 @@ const TeamSection = ({ teamData, homeExtraData }) => {
                   >
                     {/* name + role */}
                     <div className={styles.cardMeta}>
-                      <span className={styles.memberName} dangerouslySetInnerHTML={{ __html: member.name }}></span>
+                      <span className={styles.memberName} dangerouslySetInnerHTML={{ __html: formatMemberName(member.name) }}></span>
                       <span className={styles.memberRole}>{member.role}</span>
                     </div>
 
@@ -298,7 +308,7 @@ const TeamSection = ({ teamData, homeExtraData }) => {
                     <div className={styles.photoWrap}>
                       <Image
                         src={member.image || member.img}
-                        alt={member.name.replace(/<br\s*\/?>/gi, ' ')}
+                        alt={(member.name || '').replace(/<br\s*\/?>/gi, ' ')}
                         className={styles.memberPhoto}
                         draggable={false}
                         fill

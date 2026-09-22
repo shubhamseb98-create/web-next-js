@@ -125,6 +125,15 @@ const getServiceIcon = (service, index) => {
   return defaultIcons[index % defaultIcons.length];
 };
 
+const serviceCardVariant = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
 const ServicesGrid = ({ servicesData, homeExtraData }) => {  
   // Real Estate has its own dedicated highlight showcase section right below ServicesGrid.
   // Filter it out so that the green card never pollutes the IT Services Grid!
@@ -148,7 +157,7 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
             className="row mb-5"
             initial="hidden"
             whileInView="visible"
-            viewport={viewportOptions}
+            viewport={{ once: true, amount: 0.15 }}
             variants={fadeUp}
           >
             <div className="col-12 col-lg-8">
@@ -162,10 +171,10 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
           </motion.div>
 
           <motion.div 
-            variants={staggerContainer}
+            variants={staggerContainer(0.06, 0.02)}
             initial="hidden"
             whileInView="visible"
-            viewport={viewportOptions}
+            viewport={{ once: true, amount: 0.1 }}
             className={styles.gridContainer}
           >
             {displayServices.map((service, index) => {
@@ -188,7 +197,15 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
                 <>
                   <div className={styles.cardBg}>
                     {service.image && (
-                      <img src={service.image} alt={service.title} className={styles.cardImage} />
+                      <img 
+                        src={service.image} 
+                        alt={service.title} 
+                        className={styles.cardImage} 
+                        loading="lazy"
+                        decoding="async"
+                        width={280}
+                        height={430}
+                      />
                     )}
                   </div>
                   <div className={styles.cardContent}>
@@ -209,7 +226,7 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
               );
 
               return (
-                <motion.div key={index} variants={fadeUp} className={styles.gridItem}>
+                <motion.div key={index} variants={serviceCardVariant} className={styles.gridItem}>
                   <Link 
                     href={`/services/${targetSlug}`}
                     className={`${styles.card} ${slideClass} ${imageSizeClass}`}

@@ -121,7 +121,7 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
             trigger: cards[index + 1],
             start: "top top+=40vh",
             end: "top top+=12vh",
-            scrub: 0.5,
+            scrub: true,
           }
         })
       })

@@ -8,8 +8,8 @@ const PortfolioSchema = new mongoose.Schema(
     description: { type: String, default: "" },
     category: {
       type: String,
-      enum: ["Static Website", "Dynamic Website", "E-Commerce", "Mobile App", "UI/UX Design", "Branding", "Other"],
       default: "Dynamic Website",
+      trim: true,
     },
     technologies: { type: [String], default: [] },
     image: { type: String, default: "" },

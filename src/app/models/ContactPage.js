@@ -12,13 +12,13 @@ const ContactPageSchema = new mongoose.Schema({
     // Page Header
     headerTitle: { type: String, default: "Contact Us" },
     headerImage: { type: String, default: "" },
-    headerDescription: { type: String, default: "Looking for reliable metal solutions? Our experts are ready to assist you." },
+    headerDescription: { type: String, default: "Have a project in mind or looking to accelerate your digital growth? Our experts are ready to assist you." },
     breadcrumb: { type: String, default: "Contact Us" },
 
     // Contact Section
     contactSubTitle: { type: String, default: "Get In Touch" },
     contactTitle: { type: String, default: "Contact Us" },
-    contactDescription: { type: String, default: "Looking for reliable metal solutions? Our experts are ready to assist you." },
+    contactDescription: { type: String, default: "Have a project in mind or looking to accelerate your digital growth? Our experts are ready to assist you." },
     mapIframeUrl: { type: String, default: "" },
 
     // 3D Connect / Contact Form Video & Section Settings

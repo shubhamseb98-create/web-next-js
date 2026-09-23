@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from '../../../../css/webtycoons/PortfolioPage.module.css'
+import PageHeader from 'src/components/layout/PageHeader'
 import { FaArrowRight, FaExternalLinkAlt, FaPlus, FaMinus, FaPaperPlane } from 'react-icons/fa'
 
 const fadeUp = {
@@ -22,11 +23,12 @@ const PLACEHOLDER_PROJECTS = [
 ]
 
 const projectStyles = [
-  { gradient: 'linear-gradient(90deg, #4196ff 0%, #d4e8ff 100%)', textColor: '#111' },
-  { gradient: 'linear-gradient(90deg, #6a4cff 0%, #bca5ff 100%)', textColor: '#fff' },
-  { gradient: 'linear-gradient(90deg, #ffd600 0%, #fff4b3 100%)', textColor: '#111' },
-  { gradient: 'linear-gradient(90deg, #333333 0%, #888888 100%)', textColor: '#fff' },
-  { gradient: 'linear-gradient(90deg, #80c8ff 0%, #e0f2ff 100%)', textColor: '#111' }
+  { gradient: 'linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%)', textColor: '#ffffff' },
+  { gradient: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', textColor: '#ffffff' },
+  { gradient: 'linear-gradient(135deg, #eab308 0%, #fef08a 100%)', textColor: '#111111' },
+  { gradient: 'linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%)', textColor: '#ffffff' },
+  { gradient: 'linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)', textColor: '#ffffff' },
+  { gradient: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)', textColor: '#ffffff' }
 ];
 
 const tagColors = ['#00a3ff', '#00ff88', '#ffb800', '#ff5c5c'];
@@ -62,23 +64,16 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
 
   return (
     <main className={styles.pageWrapper}>
-      {/* Page Hero */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop)' }}></div>
-        <div className={styles.heroOverlay}></div>
-        <div className={`container-fluid-px ${styles.heroContent}`}>
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" className={styles.heroText}>
-            <div className={styles.breadcrumb}>
-              <Link href="/">Home</Link> / <span>Projects</span>
-            </div>
-            <h1 className={styles.heroTitle}>
-              Code That Delivers <br />
-              <span className={styles.textGreen}>– Real Results</span>
-            </h1>
-            <p className={styles.heroDesc}>Discover how we’ve crafted measurable success and digital excellence for leading brands.</p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Page Hero (Standardized PageHeader) */}
+      <PageHeader
+        title={`Code That Delivers <br /><span class="textGreen">– Real Results</span>`}
+        description="Discover how we’ve crafted measurable success and digital excellence for leading brands."
+        bgImage="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
+        breadcrumb={[
+          { name: "Home", href: "/" },
+          { name: "Projects" }
+        ]}
+      />
 
       {/* Grid */}
       <section className={styles.projectsSection}>
@@ -175,25 +170,31 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
                       </div>
                     </div>
                     <div className={styles.cardBottom}>
-                      <div className={styles.detailCol}>
-                        <span className={styles.detailLabel}>Project Name:</span>
-                        <div className={styles.detailValueName}>
-                          <Link href={project.slug && project.slug !== '#' ? `/projects/${project.slug}` : '#'} style={{ color: '#ffffff', textDecoration: 'none', transition: 'color 0.2s' }}>
-                            {project.title}
-                          </Link> 
-                          {project.projectUrl && (
-                            <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className={styles.externalLinkBtn}>
-                              <FaExternalLinkAlt />
-                            </a>
-                          )}
+                      <div className={styles.bottomMainInfo}>
+                        <div className={styles.detailColName}>
+                          <span className={styles.detailLabel}>Project Name:</span>
+                          <div className={styles.detailValueName}>
+                            <Link 
+                              href={project.slug && project.slug !== '#' ? `/projects/${project.slug}` : '#'} 
+                              className={styles.projectTitleLink}
+                              title={project.title}
+                            >
+                              {project.title}
+                            </Link> 
+                            {project.projectUrl && (
+                              <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className={styles.externalLinkBtn} title="Visit live site">
+                                <FaExternalLinkAlt />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                        <div className={styles.detailColIndustry}>
+                          <span className={styles.detailLabel}>Industry:</span>
+                          <span className={styles.detailValue} title={project.category}>{project.category}</span>
                         </div>
                       </div>
-                      <div className={styles.detailCol}>
-                        <span className={styles.detailLabel}>Industry:</span>
-                        <span className={styles.detailValue}>{project.category}</span>
-                      </div>
-                      <div className={styles.detailColTags}>
-                        {project.technologies?.length > 0 && (
+                      {project.technologies?.length > 0 && (
+                        <div className={styles.detailColTags}>
                           <div className={styles.tagsWrapper}>
                             {project.technologies.slice(0,3).map((tech, tIdx) => (
                               <span key={tech} className={styles.tagBadge} style={{ borderColor: tagColors[tIdx % tagColors.length], color: tagColors[tIdx % tagColors.length] }}>
@@ -201,8 +202,8 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
                               </span>
                             ))}
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )

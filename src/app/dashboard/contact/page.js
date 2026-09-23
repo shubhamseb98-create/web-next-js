@@ -99,7 +99,7 @@ export default function ContactPageCMS() {
         setData({
           headerTitle: banner ? banner.title : json.data.headerTitle || "",
           headerImage: banner ? banner.image : json.data.headerImage || "",
-          headerDescription: json.data.headerDescription || "Looking for reliable metal solutions? Our experts are ready to assist you.",
+          headerDescription: json.data.headerDescription || "Have a project in mind or looking to accelerate your digital growth? Our experts are ready to assist you.",
           breadcrumb: json.data.breadcrumb || "Contact Us",
           contactSubTitle: json.data.contactSubTitle || "",
           contactTitle: json.data.contactTitle || "",

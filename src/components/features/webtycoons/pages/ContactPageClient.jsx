@@ -8,6 +8,7 @@ import {
   FaFacebookF, FaYoutube, FaGlobe, FaCheckCircle, FaPaperPlane
 } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/ContactPage.module.css'
+import PageHeader from 'src/components/layout/PageHeader'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -93,26 +94,16 @@ export default function ContactPageClient({ initialData = {}, globalSettings = {
   return (
     <main className={styles.contactPage}>
 
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div className={styles.heroBg} style={initialData?.headerImage ? { backgroundImage: `url(${initialData.headerImage})` } : undefined} />
-        <div className="container-fluid-px">
-          <motion.div
-            className={styles.heroContent}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className={styles.breadcrumb}>
-              <Link href="/">Home</Link> / <span>{initialData?.breadcrumb || "Contact Us"}</span>
-            </div>
-            <h1 className={styles.heroTitle} dangerouslySetInnerHTML={{ __html: formatTitle(initialData?.headerTitle) }} />
-            <p className={styles.heroDesc}>
-              {initialData?.headerDescription || initialData?.contactDescription || "Have a project in mind? We'd love to hear about it. Drop us a message and our team will get back to you within 24 hours."}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* ── Hero (Standardized PageHeader) ── */}
+      <PageHeader
+        title={formatTitle(initialData?.headerTitle || "Contact Us")}
+        description={initialData?.headerDescription || initialData?.contactDescription || "Have a project in mind or looking to accelerate your digital growth? Our experts are ready to assist you."}
+        bgImage={initialData?.headerImage || "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop"}
+        breadcrumb={[
+          { name: "Home", href: "/" },
+          { name: initialData?.breadcrumb || "Contact Us" }
+        ]}
+      />
 
       {/* ── Main Contact Grid ── */}
       <section className={`py-100 ${styles.mainSection}`}>

@@ -700,13 +700,23 @@ function PortfolioModal({ item, nextSort = 1, onClose, onSave, saving }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FloatingSelect label="Category" value={form.category || "Dynamic Website"} onChange={e => f('category', e.target.value)}>
-              <option value="Static Website">Static Website</option>
+              <option value="Corporate Website">Corporate Website</option>
               <option value="Dynamic Website">Dynamic Website</option>
+              <option value="Static Website">Static Website</option>
               <option value="E-Commerce">E-Commerce</option>
+              <option value="SaaS Dashboard">SaaS Dashboard</option>
+              <option value="Landing Page">Landing Page</option>
               <option value="Mobile App">Mobile App</option>
               <option value="UI/UX Design">UI/UX Design</option>
               <option value="Branding">Branding</option>
+              <option value="GenAI">GenAI</option>
               <option value="Other">Other</option>
+              {form.category && ![
+                "Corporate Website", "Dynamic Website", "Static Website", "E-Commerce",
+                "SaaS Dashboard", "Landing Page", "Mobile App", "UI/UX Design", "Branding", "GenAI", "Other"
+              ].includes(form.category) && (
+                <option value={form.category}>{form.category}</option>
+              )}
             </FloatingSelect>
             <FloatingInput label="Client Name" value={form.clientName} onChange={e => f('clientName', e.target.value)} />
           </div>

@@ -114,12 +114,12 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
         if (index === cards.length - 1) return 
 
         gsap.to(card, {
-          scale: 0.94,
-          opacity: 0.25,
+          scale: 0.95,
+          filter: "brightness(0.35)",
           ease: "none",
           scrollTrigger: {
             trigger: cards[index + 1],
-            start: "top top+=40vh",
+            start: "top top+=45vh",
             end: "top top+=12vh",
             scrub: true,
           }
@@ -128,6 +128,7 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
 
       return () => {
         container.removeEventListener("mousemove", handleMouseMove)
+        ScrollTrigger.getAll().forEach(t => t.kill())
       }
     }
   }, { scope: containerRef })

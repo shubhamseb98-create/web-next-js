@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/AboutPage.module.css'
 import TeamSection from '../sections/TeamSection'
+import PageHeader from 'src/components/layout/PageHeader'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -80,29 +81,16 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
 
   return (
     <main className={styles.aboutPage}>
-      {/* ── Hero Banner ── */}
-      <section className={styles.hero}>
-        <div 
-          className={styles.heroBg} 
-          style={{ backgroundImage: `url('${data?.heroImage || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop'}')` }}
-        />
-        <div className="container-fluid-px">
-          <motion.div
-            className={styles.heroContent}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className={styles.breadcrumb}>
-              <Link href="/">Home</Link> / <span>About Us</span>
-            </div>
-            <h1 className={styles.heroTitle} dangerouslySetInnerHTML={{ __html: (data?.heroTitle || 'We Are the King Makers of the Digital World').replace('King Makers', `<span class="${styles.accent}">King Makers</span>`) }} />
-            <p className={styles.heroDesc}>
-              {data?.heroDescription || 'A passionate team of designers, developers, and digital strategists on a mission to build extraordinary web experiences.'}
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* ── Hero Banner (Standardized PageHeader) ── */}
+      <PageHeader
+        title={(data?.heroTitle || 'We Are the King Makers of the Digital World').replace('King Makers', `<span class="textGreen">King Makers</span>`)}
+        description={data?.heroDescription || 'A passionate team of designers, developers, and digital strategists on a mission to build extraordinary web experiences.'}
+        bgImage={data?.heroImage || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop'}
+        breadcrumb={[
+          { name: "Home", href: "/" },
+          { name: "About Us" }
+        ]}
+      />
 
       {/* ── About Us (Who We Are - Ultra Modern Redesign) ── */}
       <section className={`py-100 ${styles.aboutUsSection}`}>

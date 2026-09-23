@@ -32,6 +32,7 @@ export default function PageHeader({
   description,
   bgImage,
   breadcrumb = [],
+  children,
 }) {
   const defaultBg = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop";
   const finalBg = bgImage || defaultBg;
@@ -82,6 +83,12 @@ export default function PageHeader({
 
             {description && (
               <p className="page-header-desc">{description}</p>
+            )}
+
+            {children && (
+              <div className="page-header-actions">
+                {children}
+              </div>
             )}
           </div>
         </div>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { FaCalendarAlt, FaClock, FaUser, FaArrowRight, FaSearch, FaTags } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/BlogPage.module.css'
+import PageHeader from 'src/components/layout/PageHeader'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -38,39 +39,27 @@ export default function BlogPageClient({ initialBlogs = [] }) {
   return (
     <main className={styles.blogPage}>
 
-      {/* ── Hero ── */}
-      <section className={styles.hero}>
-        <div className={styles.heroBg} />
-        <div className="container-fluid-px">
-          <motion.div
-            className={styles.heroContent}
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className={styles.breadcrumb}>
-              <Link href="/">Home</Link> / <span>Blog</span>
-            </div>
-            <h1 className={styles.heroTitle}>
-              Insights, Ideas &amp; <span className={styles.accent}>Digital Wisdom</span>
-            </h1>
-            <p className={styles.heroDesc}>
-              Practical tips, industry trends, and expert insights from the WebTycoons team — helping you make better digital decisions.
-            </p>
-
-            {/* Search */}
-            <div className={styles.searchBar}>
-              <FaSearch className={styles.searchIcon} />
-              <input
-                type="text"
-                placeholder="Search articles..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </motion.div>
+      {/* ── Hero (Standardized PageHeader) ── */}
+      <PageHeader
+        title={`Insights, Ideas &amp; <span class="textGreen">Digital Wisdom</span>`}
+        description="Practical tips, industry trends, and expert insights from the WebTycoons team — helping you make better digital decisions."
+        bgImage="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?q=80&w=2070&auto=format&fit=crop"
+        breadcrumb={[
+          { name: "Home", href: "/" },
+          { name: "Blog" }
+        ]}
+      >
+        {/* Search */}
+        <div className={styles.searchBar}>
+          <FaSearch className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Search articles..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
         </div>
-      </section>
+      </PageHeader>
 
 
       {/* ── Main Content ── */}

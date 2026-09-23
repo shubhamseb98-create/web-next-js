@@ -6,11 +6,21 @@
 /* ── Hero Banner ── */
 .hero {
   position: relative;
-  min-height: 60vh;
+  min-height: 380px;
   display: flex;
   align-items: center;
-  padding: 10rem 0 4rem;
+  padding-top: 130px;
+  padding-bottom: 45px;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 320px;
+    padding-top: 110px;
+    padding-bottom: 35px;
+  }
 }
 
 .heroBg {
@@ -25,7 +35,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.6) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.70) 0%, rgba(0, 0, 0, 0.40) 60%, rgba(0, 0, 0, 0.20) 100%),
+              linear-gradient(to top, rgba(0, 0, 0, 0.90) 0%, transparent 45%);
 }
 
 .heroContent {
@@ -55,6 +66,7 @@
   line-height: 1.25;
   margin-bottom: 1.5rem;
   max-width: 900px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
 }
 
 .accentGreen {

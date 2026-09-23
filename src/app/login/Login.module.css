@@ -1,0 +1,123 @@
+/* ── Admin Login Custom Scoped Styles ── */
+.inputGroup {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.inputLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155; /* Slate-700 */
+  letter-spacing: 0.01em;
+  display: block;
+}
+
+.inputFieldWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  height: 50px;
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #0f172a !important; /* Deep dark slate-900 - 100% crisp and readable */
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.input:hover {
+  background-color: #ffffff;
+  border-color: #94a3b8;
+}
+
+.input:focus {
+  background-color: #ffffff;
+  border-color: #52a436;
+  box-shadow: 0 0 0 3px rgba(82, 164, 54, 0.18);
+  color: #0f172a !important;
+}
+
+.inputPassword {
+  padding-right: 48px;
+}
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover, 
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a !important;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+.togglePasswordBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  z-index: 5;
+}
+
+.togglePasswordBtn:hover {
+  color: #0f172a;
+  background-color: #f1f5f9;
+}
+
+.submitBtn {
+  width: 100%;
+  height: 52px;
+  background: linear-gradient(135deg, #52a436 0%, #3e8027 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(82, 164, 54, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.01em;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #46922e 0%, #356f21 100%);
+  box-shadow: 0 6px 20px rgba(82, 164, 54, 0.45);
+  transform: translateY(-1px);
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

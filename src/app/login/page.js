@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { FloatingInput } from '../../components/ui/floating-input'
-import { Button } from '../../components/ui/button'
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
-import '../../components/dashboard/dashboard.css'
+import styles from './Login.module.css'
 
 // Metadata has been moved to layout.js since this is a Client Component.
 
@@ -152,45 +150,59 @@ export default function LoginPage() {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="flex flex-col gap-6">
-              <div className="relative group">
-                <FloatingInput
-                  label="Email Address"
-                  type="email"
-                  id="email"
-                  required
-                  value={form.username}
-                  onChange={e => setForm({ ...form, username: e.target.value })}
-                />
+            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+              <div className={styles.inputGroup}>
+                <label htmlFor="email" className={styles.inputLabel}>
+                  Email Address
+                </label>
+                <div className={styles.inputFieldWrapper}>
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    placeholder="admin@thewebtycoons.com"
+                    value={form.username}
+                    onChange={e => setForm({ ...form, username: e.target.value })}
+                    className={styles.input}
+                    autoComplete="email"
+                  />
+                </div>
               </div>
 
-              <div className="relative group">
-                <FloatingInput
-                  label="Password"
-                  type={showPwd ? 'text' : 'password'}
-                  id="password"
-                  required
-                  className="pr-12"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                />
+              <div className={styles.inputGroup}>
+                <label htmlFor="password" className={styles.inputLabel}>
+                  Password
+                </label>
+                <div className={styles.inputFieldWrapper}>
+                  <input
+                    type={showPwd ? 'text' : 'password'}
+                    id="password"
+                    required
+                    placeholder="Enter your password"
+                    value={form.password}
+                    onChange={e => setForm({ ...form, password: e.target.value })}
+                    className={`${styles.input} ${styles.inputPassword}`}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd(!showPwd)}
+                    className={styles.togglePasswordBtn}
+                    title={showPwd ? "Hide password" : "Show password"}
+                  >
+                    {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
                 <button
-                  type="button"
-                  onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 transition-colors z-20"
-                >
-                  {showPwd ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-
-              <div className="pt-8">
-                <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-[54px] bg-[#1a1a1a] hover:bg-black text-white rounded-xl font-bold text-[15px] transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.25)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.23)] active:scale-[0.98]"
+                  className={styles.submitBtn}
                 >
                   {loading ? 'Logging in...' : 'Login Now'}
-                </Button>
+                </button>
               </div>
             </form>
 

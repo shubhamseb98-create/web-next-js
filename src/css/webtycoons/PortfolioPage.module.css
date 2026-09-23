@@ -34,13 +34,22 @@
 /* ── Hero Section ── */
 .heroSection {
   position: relative;
-  min-height: 50vh;
+  min-height: 380px;
   display: flex;
   align-items: center;
   padding-top: 130px;
   /* Offset for header */
   overflow: hidden;
   padding-bottom: 45px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    min-height: 320px;
+    padding-top: 110px;
+    padding-bottom: 35px;
+  }
 }
 
 .heroBg {
@@ -126,6 +135,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
+  align-items: stretch;
 }
 
 @media (min-width: 992px) {
@@ -143,60 +153,94 @@
     grid-column: span 2;
   }
 
-  /* Wider aspect ratio for all full-width cards */
+  /* Wider image wrapper for full-width cards */
   .projectCard:nth-child(3n + 1) .projectImageWrapper,
   .projectCard:nth-child(3n + 2):last-child .projectImageWrapper {
-    aspect-ratio: 21 / 9;
+    height: 400px;
+    min-height: 400px;
+    max-height: 400px;
+  }
+
+  .projectCard:nth-child(3n + 1) .verticalTitle,
+  .projectCard:nth-child(3n + 2):last-child .verticalTitle {
+    max-inline-size: 340px;
+    max-height: 340px;
+    font-size: clamp(0.82rem, 1vw, 0.92rem);
   }
 }
 
 /* ── New Project Card Styles ── */
 .projectCard {
-  background: #151515;
-  /* Dark background for the card */
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+  background: #141615;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .projectCard:hover {
   transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
 }
 
 .cardTop {
   display: flex;
   width: 100%;
+  position: relative;
+  align-items: stretch;
+  flex-shrink: 0;
 }
 
 .cardSideTitle {
-  width: 70px;
+  width: 62px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1.25rem 0.5rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+  user-select: none;
 }
 
 .verticalTitle {
   writing-mode: vertical-rl;
+  text-orientation: mixed;
   transform: rotate(180deg);
-  /* color is now applied inline via JSX */
   margin: 0;
   font-family: var(--font-heading);
-  font-size: 1.5rem;
-  /* Removed white-space: nowrap to prevent breaking card height */
-  letter-spacing: 2px;
+  font-size: clamp(0.78rem, 0.95vw, 0.88rem);
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-inline-size: 260px;
+  max-height: 260px;
+  line-height: 1.2;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .projectImageWrapper {
   flex: 1;
   position: relative;
-  aspect-ratio: 16/10;
+  height: 330px;
+  min-height: 330px;
+  max-height: 330px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.25rem 1.25rem 1.25rem 0.5rem;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .projectImageInner {
@@ -273,9 +317,11 @@
 .imageBox {
   position: relative;
   flex: 1;
+  min-height: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #090c0a;
 }
 
 @media (max-width: 768px) {
@@ -306,7 +352,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top;
+  object-position: top center;
   display: block;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -359,93 +405,173 @@
 }
 
 .cardBottom {
-  background: #111;
-  /* Very dark background for the bottom row */
-  padding: 1.5rem;
+  background: #111312;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1;
+  justify-content: space-between;
 }
 
-@media (min-width: 576px) {
-  .cardBottom {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+.bottomMainInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
+  width: 100%;
 }
 
-.detailCol {
+.detailColName {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  flex: 1.4;
+  min-width: 0;
 }
 
-.detailColTags {
+.detailColIndustry {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  flex: 1.5;
-  /* Give tags slightly more room */
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+  text-align: right;
 }
 
 .detailLabel {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--clr-text-light, #a0a0a0);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
+  font-weight: 700;
 }
 
 .detailValueName {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #fff;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-width: 0;
+}
+
+.projectTitleLink {
+  font-weight: 700;
+  font-size: 1.12rem;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  min-width: 0;
+}
+
+.projectTitleLink:hover {
+  color: var(--clr-primary, #00ff88);
 }
 
 .externalLinkBtn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 6px;
   width: 28px;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
 .externalLinkBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 255, 136, 0.12);
   color: var(--clr-primary, #00ff88);
   border-color: var(--clr-primary, #00ff88);
+  transform: translateY(-1px);
 }
 
 .detailValue {
   font-weight: 600;
-  font-size: 1.1rem;
-  color: #fff;
+  font-size: 0.98rem;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detailColTags {
+  display: flex;
+  width: 100%;
 }
 
 .tagsWrapper {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .tagBadge {
   border: 1px solid;
-  border-radius: 20px;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.8rem;
+  border-radius: 100px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: #fff;
+  letter-spacing: 0.3px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
   white-space: nowrap;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.tagBadge:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 992px) {
+  .projectCard:nth-child(3n + 1) .cardBottom,
+  .projectCard:nth-child(3n + 2):last-child .cardBottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.5rem 2rem;
+  }
+
+  .projectCard:nth-child(3n + 1) .bottomMainInfo,
+  .projectCard:nth-child(3n + 2):last-child .bottomMainInfo {
+    flex: 1.6;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .projectCard:nth-child(3n + 1) .detailColIndustry,
+  .projectCard:nth-child(3n + 2):last-child .detailColIndustry {
+    text-align: left;
+  }
+
+  .projectCard:nth-child(3n + 1) .detailColTags,
+  .projectCard:nth-child(3n + 2):last-child .detailColTags {
+    flex: 1;
+    justify-content: flex-end;
+    width: auto;
+  }
+
+  .projectCard:nth-child(3n + 1) .tagsWrapper,
+  .projectCard:nth-child(3n + 2):last-child .tagsWrapper {
+    justify-content: flex-end;
+  }
+
+  .projectCard:nth-child(3n + 1) .projectTitleLink,
+  .projectCard:nth-child(3n + 2):last-child .projectTitleLink {
+    font-size: 1.25rem;
+  }
 }
 
 /* ── FAQ Section ── */
@@ -704,27 +830,66 @@
     font-size: 1.1rem;
   }
 
-  .cardBottom {
+  .bottomMainInfo {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.65rem;
+  }
+
+  .detailColIndustry {
+    text-align: left;
+  }
+
+  .cardBottom {
+    padding: 1rem 1.15rem;
+    gap: 0.85rem;
   }
 
   .verticalTitle {
-    font-size: 0.95rem;
-    letter-spacing: 1px;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    max-inline-size: 200px;
+    max-height: 200px;
   }
 
   .cardSideTitle {
-    width: 50px;
+    width: 48px;
+    padding: 1rem 0.25rem;
   }
 
   .projectImageWrapper {
-    aspect-ratio: 4/3;
-    padding: 1rem;
+    height: 260px;
+    min-height: 260px;
+    max-height: 260px;
+    padding: 0.85rem 0.85rem 0.85rem 0.35rem;
   }
 
   .projectOverlay {
-    inset: 1rem;
+    inset: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .projectImageWrapper {
+    height: 210px;
+    min-height: 210px;
+    max-height: 210px;
+    padding: 0.65rem 0.65rem 0.65rem 0.25rem;
+  }
+
+  .cardSideTitle {
+    width: 38px;
+    padding: 0.75rem 0.15rem;
+  }
+
+  .verticalTitle {
+    font-size: 0.65rem;
+    letter-spacing: 1.5px;
+    max-inline-size: 160px;
+    max-height: 160px;
+  }
+
+  .projectTitleLink {
+    font-size: 1rem;
   }
 }/* -- Filters -- */
 .filterSection {

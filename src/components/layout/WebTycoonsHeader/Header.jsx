@@ -422,11 +422,19 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
           <ul className={styles.drawerList}>
             {navLinks.map((link) => {
               const isExpanded = Boolean(expandedDropdowns[link.id || link.name])
-              const toggleDropdown = () => {
+              const toggleDropdown = (e) => {
+                const key = link.id || link.name;
+                const nextState = !expandedDropdowns[key];
                 setExpandedDropdowns((prev) => ({
                   ...prev,
-                  [link.id || link.name]: !prev[link.id || link.name],
-                }))
+                  [key]: nextState,
+                }));
+                if (nextState) {
+                  const targetEl = e?.currentTarget?.closest?.(`.${styles.drawerItem}`);
+                  setTimeout(() => {
+                    targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 80);
+                }
               }
 
               return (
@@ -438,7 +446,7 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
                           type="button"
                           className={styles.drawerLink}
                           style={{ background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
-                          onClick={toggleDropdown}
+                          onClick={(e) => toggleDropdown(e)}
                         >
                           <div className={styles.hoverBar} aria-hidden="true">
                             <span className={styles.hoverBarLine} />
@@ -452,7 +460,7 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            toggleDropdown()
+                            toggleDropdown(e)
                           }}
                           aria-label={`Toggle ${link.name} sub-menu`}
                         >

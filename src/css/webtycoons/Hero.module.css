@@ -82,24 +82,25 @@
 }
 
 .heading {
-  font-size: clamp(2.5rem, 7vw, 8.5rem);
-  font-weight: 500;
-  line-height: 1.05;
+  font-size: clamp(2.2rem, 5vw, 5.4rem);
+  font-weight: 700;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   color: #fff;
-  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.5);
-  margin: 0 0 1rem;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+  margin: 0 0 1.25rem;
+  max-width: 960px;
 }
 
 .subheading {
-  font-size: clamp(1.05rem, 1.9vw, 1.55rem);
-  font-weight: 500;
-  line-height: 1.5;
-  color: #6bc24b;
-  max-width: 720px;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 780px;
   text-wrap: balance;
-  margin: 0 0 2rem;
-  text-shadow: 0 0 25px rgba(82, 164, 54, 0.55), 0 2px 30px rgba(0, 0, 0, 0.8);
+  margin: 0 0 2.25rem;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
 }
 
 /* ── CTA pill — matches CodePen cream button ── */

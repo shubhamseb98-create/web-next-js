@@ -1,0 +1,50 @@
+[
+  {
+    "index": 1,
+    "name": "Mr. Vishesh Jindal",
+    "designation": "CEO",
+    "company": "www.supplywheels.com",
+    "img": "uploaded_image_home/vishesh-jindal.jpg",
+    "desc": "It feels great to work with Team Web Tycoons. I got a lot of appreciation for unique and wonderful UI for my website."
+  },
+  {
+    "index": 2,
+    "name": "Mr. Rajeev Tyagi",
+    "designation": "Owner",
+    "company": "www.rstimber.com",
+    "img": "uploaded_image_home/01.png",
+    "desc": "Their SEO services are just wonderful. First I got a website and followed by that got huge enquiries. Our site is almost of No. 1 Position of Google's first page with almost 20 keywords."
+  },
+  {
+    "index": 3,
+    "name": "Mr. Prateek Bhardwaj",
+    "designation": "Director",
+    "company": "www.csbskills.com",
+    "img": "uploaded_image_home/prateek-bhardwaj.jpg",
+    "desc": "Team Web Tycoons is quiet professional in what they are doing. They know what clients wants and how to do that."
+  },
+  {
+    "index": 4,
+    "name": "Mr. Ashok Aggarwal",
+    "designation": "Director",
+    "company": "www.austrolabs.com",
+    "img": "uploaded_image_home/austro.jpg",
+    "desc": "Pleasure to give testimonial to Dheeraj and Web Tycoons. They are best at what they do. Choose them if you want to be on top of Google"
+  },
+  {
+    "index": 5,
+    "name": "Mr. Parmod Mittal",
+    "designation": "Director",
+    "company": "www.shriramgps.com/",
+    "img": "uploaded_image_home/parmod.jpg",
+    "desc": "More then 15 websites and 7 SEO projects in past 6 years and still continuing. 100 % satisfied and will recommend to people."
+  },
+  {
+    "index": 6,
+    "name": "Mr. Nitin Goel",
+    "designation": "Director",
+    "company": "www.cocofoam.in",
+    "img": "uploaded_image_home/cocofoam.jpg",
+    "desc": "We had an old site and were looking for a make over. Team Web Tycoons did a wonderful job with a nice revamp from a Dynamic site to an Ecommerce website. I am very Happy."
+  }
+]

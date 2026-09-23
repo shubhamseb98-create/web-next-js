@@ -43,9 +43,9 @@
   gap: 6rem;
 }
 
-/* Project Card */
+/* Project Card - Glassmorphism & Solid Foundation (No Bleed-Through) */
 .projectCard {
-  cursor: none; /* Hide default cursor */
+  cursor: none;
   text-decoration: none;
   width: 100%;
   position: sticky;
@@ -54,9 +54,9 @@
   flex-direction: column;
   background-color: #111312 !important;
   border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 35px rgba(82, 164, 54, 0.04);
   transform-origin: top center;
   will-change: transform, filter;
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
@@ -68,23 +68,22 @@
 }
 
 .projectCard:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(82, 164, 54, 0.45);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 45px rgba(82, 164, 54, 0.18);
 }
 
 @media (min-width: 992px) {
   .projectCard {
     flex-direction: row;
-    height: 420px;
-    /* Restored fixed height to make all cards equal size */
+    height: 440px;
     align-items: stretch;
   }
 }
 
-/* Card Content (Left Side) */
+/* Card Content (Left Side) - Opaque so stacked cards don't bleed through */
 .cardContent {
   width: 100%;
-  padding: 2rem 1.5rem 1rem 1.5rem; /* Reduced padding for mobile */
+  padding: 2.25rem 1.75rem 1.75rem 1.75rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -96,13 +95,46 @@
 @media (min-width: 992px) {
   .cardContent {
     width: 45%;
-    padding: 4rem 3rem 4rem 5rem;
+    padding: 3.5rem 3rem 3.5rem 4.5rem;
   }
+}
+
+/* Category Pill Badge */
+.projectCategoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: rgba(82, 164, 54, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(82, 164, 54, 0.28);
+  border-radius: 30px;
+  width: fit-content;
+  margin-bottom: 1.25rem;
+}
+
+.categoryDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--clr-primary, #52a436);
+  box-shadow: 0 0 8px var(--clr-primary, #52a436);
+  flex-shrink: 0;
+}
+
+.projectSubtitle {
+  font-size: 0.78rem;
+  color: var(--clr-primary, #52a436);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1;
 }
 
 .projectTitle {
   font-family: var(--font-heading);
-  font-size: 30px;
+  font-size: clamp(1.8rem, 2.3vw, 2.2rem);
   color: #ffffff;
   margin-bottom: 1rem;
   font-weight: 800;
@@ -110,60 +142,78 @@
   line-height: 1.2;
 }
 
-.projectSubtitle {
-  font-size: 0.85rem;
-  color: var(--clr-primary, #00ff88);
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.projectSubtitle::before {
-  content: '';
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--clr-primary, #00ff88);
-  border-radius: 2px;
-}
-
 .projectDesc {
-  font-size: 16px;
+  font-size: 15px;
   color: rgba(255, 255, 255, 0.65);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  /* Fixed typo 1s.5rem -> 1.5rem */
+  line-height: 1.65;
+  margin-bottom: 1.75rem;
   max-width: 95%;
 }
 
 .techStack {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 3rem;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
 }
 
+/* Glass Tech Tag Pills */
 .techItem {
-  font-size: 0.85rem;
-  color: #ffffff;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85);
   padding: 0.45rem 1.1rem;
   border-radius: 100px;
-  border: 1px solid transparent;
-  background-image: linear-gradient(#111312, #111312), var(--tag-gradient, linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.15)));
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
   font-weight: 500;
   transition: all 0.3s ease;
 }
 
 .projectCard:hover .techItem:hover {
-  background-image: var(--tag-gradient), var(--tag-gradient);
+  background: rgba(82, 164, 54, 0.22);
+  border-color: rgba(82, 164, 54, 0.5);
   color: #ffffff;
+  box-shadow: 0 0 15px rgba(82, 164, 54, 0.25);
   transform: translateY(-2px);
+}
+
+/* Glass CTA Button */
+.glassCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  border-radius: 50px;
+  background: rgba(82, 164, 54, 0.12);
+  border: 1px solid rgba(82, 164, 54, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #6edb4a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+  transition: all 0.35s ease;
+  width: fit-content;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ctaArrow {
+  font-size: 0.8rem;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.projectCard:hover .glassCta {
+  background: #52a436;
+  color: #ffffff;
+  border-color: #52a436;
+  box-shadow: 0 6px 25px rgba(82, 164, 54, 0.45);
+}
+
+.projectCard:hover .ctaArrow {
+  transform: translateX(4px);
 }
 
 /* Custom Follower Cursor */
@@ -181,14 +231,19 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(12px);
+  background: rgba(20, 30, 22, 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(82, 164, 54, 0.45);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(82, 164, 54, 0.25);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   pointer-events: none;
   opacity: 0;
   transform: scale(0.3);
@@ -200,12 +255,12 @@
   transform: scale(1);
 }
 
-/* Image Wrapper (Right Side) */
+/* Image Wrapper (Right Side) - Opaque so stacked cards don't bleed through */
 .imageWrapper {
   width: 100%;
   display: flex;
   align-items: stretch;
-  padding: 0 1.5rem 2rem 1.5rem; /* Reduced padding for mobile */
+  padding: 0 1.5rem 2rem 1.5rem;
   background-color: #111312;
 }
 
@@ -218,17 +273,17 @@
   }
 }
 
+/* Vibrant Gradient Background Box */
 .gradientBg {
   width: 100%;
-  background: linear-gradient(135deg, #00ff88 0%, #0088ff 100%);
-  border-radius: 16px;
+  border-radius: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* Center vertically so wrapper hugs the image */
-  padding: 1.5rem 1rem; /* Smaller padding for mobile */
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+  padding: 1.5rem 1rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   overflow: hidden;
+  transition: all 0.4s ease;
 }
 
 @media (min-width: 992px) {
@@ -238,7 +293,7 @@
 }
 
 .verticalTitle {
-  display: none; /* Hide on mobile to give image more space */
+  display: none;
 }
 
 @media (min-width: 992px) {
@@ -249,7 +304,7 @@
     transform: rotate(180deg);
     font-family: var(--font-heading);
     font-size: clamp(0.95rem, 1.3vw, 1.15rem);
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 4px;
     white-space: normal;
     line-height: 1.4;
@@ -262,19 +317,21 @@
   }
 }
 
+/* Glass Browser Mockup Chrome */
 .innerImageWrapper {
   flex: 1;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   background: #0f1410;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   display: flex;
   flex-direction: column;
-  height: 285px;
-  max-height: 285px;
+  height: 295px;
+  max-height: 295px;
   min-height: 0;
   position: relative;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
 @media (max-width: 991px) {
@@ -284,15 +341,22 @@
   }
 }
 
+.projectCard:hover .innerImageWrapper {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
 .browserHeaderBar {
-  background: #141715;
-  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 14px;
   display: flex;
   align-items: center;
   gap: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
-  height: 36px;
+  height: 38px;
   box-sizing: border-box;
   z-index: 2;
 }
@@ -311,27 +375,38 @@
   flex-shrink: 0;
 }
 
-.dotRed { background: #ff5f56; }
-.dotYellow { background: #ffbd2e; }
-.dotGreen { background: #27c93f; }
+.dotRed {
+  background: #ff5f56;
+  box-shadow: 0 0 6px rgba(255, 95, 86, 0.4);
+}
+
+.dotYellow {
+  background: #ffbd2e;
+  box-shadow: 0 0 6px rgba(255, 189, 46, 0.4);
+}
+
+.dotGreen {
+  background: #27c93f;
+  box-shadow: 0 0 6px rgba(39, 201, 63, 0.4);
+}
 
 .browserUrlBar {
   flex: 1;
   min-width: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 5px;
-  padding: 3.5px 8px;
+  border-radius: 6px;
+  padding: 4px 9px;
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10.5px;
+  gap: 6px;
+  font-size: 11px;
   font-family: monospace;
   color: rgba(255, 255, 255, 0.65);
 }
 
 .lockIcon {
-  color: var(--clr-primary, #00ff88);
+  color: var(--clr-primary, #52a436);
   flex-shrink: 0;
 }
 
@@ -349,13 +424,16 @@
     gap: 8px;
     height: 32px;
   }
+
   .browserDots {
     gap: 4px;
   }
+
   .dot {
     width: 7px;
     height: 7px;
   }
+
   .browserUrlBar {
     padding: 3px 6px;
     font-size: 9.5px;
@@ -378,11 +456,11 @@
   object-fit: cover;
   object-position: top center;
   display: block;
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .projectCard:hover .projectImage {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
 /* Removed View Bubble styles */

@@ -44,33 +44,33 @@ const fallbackSlides = [
   {
     video: '/assets/img/v1.mp4',
     image: '/assets/img/bn-1.jpg',
-    heading: 'We Build Digital Experiences',
-    subtitle: 'Elevating brands through bespoke web design, cutting-edge code & measurable digital impact.',
-    cta: 'Get Started',
+    heading: 'Enterprise IT Solutions & Digital Engineering',
+    subtitle: 'Architecting robust cloud infrastructures, bespoke enterprise software, and scalable digital ecosystems engineered for modern business growth.',
+    cta: 'Get Free Consultation',
     ctaHref: '/contact'
   },
   {
     video: '/assets/img/v2.mp4',
     image: '/assets/img/bn-2.jpg',
-    heading: 'Creative Design & Branding',
-    subtitle: 'Crafting unforgettable identities and world-class digital interfaces that command attention.',
-    cta: 'See Our Work',
-    ctaHref: '/projects'
+    heading: 'Full-Stack Development & Cloud Architecture',
+    subtitle: 'High-performance Next.js web applications, reactive mobile platforms, and secure microservices built for maximum speed and global scale.',
+    cta: 'Explore Our Services',
+    ctaHref: '/services'
   },
   {
     video: '/assets/img/v3.mp4',
     image: '/assets/img/b-2.jpg',
-    heading: 'Full-Stack Development',
-    subtitle: 'High-performance Next.js architectures, scalable APIs, and bespoke software solutions.',
-    cta: 'Explore Services',
-    ctaHref: '/services/static-website-development'
+    heading: 'Next-Gen UI/UX & Digital Product Design',
+    subtitle: 'Crafting intuitive human-centered interfaces, conversion-driven user journeys, and cutting-edge design systems that elevate tech brands.',
+    cta: 'See Featured Work',
+    ctaHref: '/projects'
   },
   {
     video: '/assets/img/v1.mp4',
     image: '/assets/img/bn-1.jpg',
-    heading: 'SEO & Digital Growth',
-    subtitle: 'Data-driven search dominance and organic conversion funnels engineered to scale your revenue.',
-    cta: "Let's Talk",
+    heading: 'DevOps, Cyber Security & Growth Engineering',
+    subtitle: 'Streamlining continuous delivery pipelines, enterprise-grade cloud security, and data-driven organic growth funnels to scale your revenue.',
+    cta: 'Schedule IT Audit',
     ctaHref: '/contact'
   },
 ]

@@ -84,15 +84,7 @@ const team = [
     twitter: '#',
     instagram: '#',
   },
-  // {
-  //   name: 'chotu budhau',
-  //   role: 'UI/UX Designer',
-  //   img: '/assets/img/team/rahul.png',
-  //   color: '#eb9053ff',
-  //   linkedin: '#',
-  //   twitter: '#',
-  //   instagram: '#',
-  // },
+  
   
 ]
 

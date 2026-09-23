@@ -169,8 +169,12 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
           >
             {/* Left Content Side */}
             <div className={styles.cardContent}>
+              <div className={styles.projectCategoryBadge}>
+                <span className={styles.categoryDot} />
+                <span className={styles.projectSubtitle}>{project.category}</span>
+              </div>
+
               <h3 className={styles.projectTitle}>{project.title}</h3>
-              <p className={styles.projectSubtitle}>{project.category}</p>
               
               <p className={styles.projectDesc}>{project.desc}</p>
               
@@ -179,11 +183,15 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
                   <span 
                     key={i} 
                     className={styles.techItem}
-                    style={{ '--tag-gradient': project.gradient }}
                   >
                     {tech}
                   </span>
                 ))}
+              </div>
+
+              <div className={styles.glassCta}>
+                <span>View Case Study</span>
+                <FaArrowRight className={styles.ctaArrow} />
               </div>
             </div>
 
@@ -191,7 +199,9 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
             <div className={styles.imageWrapper}>
               <div 
                 className={styles.gradientBg} 
-                style={{ background: project.gradient || 'linear-gradient(135deg, #00ff88 0%, #0088ff 100%)' }}
+                style={{ 
+                  background: project.gradient || 'linear-gradient(135deg, #00ff88 0%, #0088ff 100%)' 
+                }}
               >
                 <span 
                   className={styles.verticalTitle}

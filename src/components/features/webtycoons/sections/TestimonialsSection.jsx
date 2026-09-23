@@ -17,59 +17,45 @@ gsap.registerPlugin(ScrollTrigger)
 const fallbackTestimonials = [
   {
     id: 1,
-    quote: "Working with WebTycoons completely transformed our digital presence. Their deep understanding of modern architecture helped us scale our platform seamlessly.",
-    name: "Sarah Jenkins",
-    role: "CTO, TechNova Solutions",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg"
+    quote: "It feels great to work with Team Web Tycoons. I got a lot of appreciation for unique and wonderful UI for my website.",
+    name: "Mr. Vishesh Jindal",
+    role: "CEO, Supply Wheels (www.supplywheels.com)",
+    avatar: "/assets/img/testimonials/vishesh-jindal.jpg"
   },
   {
     id: 2,
-    quote: "The level of engineering precision and attention to UI/UX detail is unmatched. They didn't just build a website; they built a revenue-generating asset.",
-    name: "Michael Chen",
-    role: "Founder, GrowthStack",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+    quote: "Their SEO services are just wonderful. First I got a website and followed by that got huge enquiries. Our site is almost on No. 1 Position of Google's first page with almost 20 keywords.",
+    name: "Mr. Rajeev Tyagi",
+    role: "Owner, RS Timber (www.rstimber.com)",
+    avatar: "/assets/img/testimonials/rajeev-tyagi.png"
   },
   {
     id: 3,
-    quote: "From our first consultation to the final deployment, the team was professional, transparent, and incredibly fast. Highly recommended for enterprise projects.",
-    name: "Elena Rodriguez",
-    role: "Director of Marketing, BlueOcean",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg"
+    quote: "Team Web Tycoons is quite professional in what they are doing. They know what clients want and how to do that.",
+    name: "Mr. Prateek Bhardwaj",
+    role: "Director, CSB Skills (www.csbskills.com)",
+    avatar: "/assets/img/testimonials/prateek-bhardwaj.jpg"
   },
   {
     id: 4,
-    quote: "Our e-commerce conversion rates jumped 40% within two months of launching the new headless setup they designed. Absolutely stellar work.",
-    name: "David Smith",
-    role: "CEO, RetailEdge",
-    avatar: "https://randomuser.me/api/portraits/men/85.jpg"
+    quote: "Pleasure to give testimonial to Dheeraj and Web Tycoons. They are best at what they do. Choose them if you want to be on top of Google.",
+    name: "Mr. Ashok Aggarwal",
+    role: "Director, Austro Labs (www.austrolabs.com)",
+    avatar: "/assets/img/testimonials/ashok-aggarwal.jpg"
   },
   {
     id: 5,
-    quote: "We needed a digital presence that felt calm and trustworthy — and WebTycoons absolutely delivered. They translated our abstract vision into something clear.",
-    name: "Sophie Langford",
-    role: "Sova Health, UK",
-    avatar: "https://randomuser.me/api/portraits/women/12.jpg"
+    quote: "More than 15 websites and 7 SEO projects in past 6 years and still continuing. 100% satisfied and will recommend to people.",
+    name: "Mr. Parmod Mittal",
+    role: "Director, Shriram GPS (www.shriramgps.com)",
+    avatar: "/assets/img/testimonials/parmod-mittal.jpg"
   },
   {
     id: 6,
-    quote: "WebTycoons helped me build a brand that sounds and looks like me. They listened carefully and turned my ideas into something clear, minimalist, and full of character.",
-    name: "Eunji Kwon",
-    role: "LUMN Music, South Korea",
-    avatar: "https://randomuser.me/api/portraits/women/8.jpg"
-  },
-  {
-    id: 7,
-    quote: "They didn't just design a website — they helped us shape the entire product narrative. Smart structure, fast delivery, and a tone that finally felt right for our audience.",
-    name: "Daniel Reyes",
-    role: "Vorte Project, USA",
-    avatar: "https://randomuser.me/api/portraits/men/22.jpg"
-  },
-  {
-    id: 8,
-    quote: "Working with WebTycoons was a relief. The communication was clear and the result was something we were proud to share. Our applications nearly doubled after launch.",
-    name: "Matteo Bianchi",
-    role: "Lunara Language School, Italy",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg"
+    quote: "We had an old site and were looking for a makeover. Team Web Tycoons did a wonderful job with a nice revamp from a Dynamic site to an Ecommerce website. I am very happy.",
+    name: "Mr. Nitin Goel",
+    role: "Director, Coco Foam (www.cocofoam.in)",
+    avatar: "/assets/img/testimonials/nitin-goel.jpg"
   }
 ]
 
@@ -172,6 +158,7 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
               {displayData.map((t, idx) => {
                 const quote = t.content || t.quote;
                 const role = t.role || (t.designation ? `${t.designation}${t.company ? `, ${t.company}` : ''}` : t.company);
+                const avatarSrc = t.avatar || '/assets/img/testimonials/vishesh-jindal.jpg';
                 
                 return (
                   <SwiperSlide key={`${t._id || t.id || 'testi'}-${idx}`} className={styles.swiperSlide}>
@@ -181,8 +168,8 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
                       
                       <div className={styles.clientInfo}>
                         <Image 
-                          src={t.avatar} 
-                          alt={t.name} 
+                          src={avatarSrc} 
+                          alt={t.name || 'Client'} 
                           width={60} 
                           height={60} 
                           style={{ objectFit: 'cover', borderRadius: '50%' }} 

@@ -9,42 +9,37 @@ import Image from 'next/image';
 const fallbackBlogData = [
   {
     id: 1,
-    category: 'BLOG | ARTIFICIAL INTELLIGENCE',
-    title: 'From AI Adoption to AI Advantage',
-    description: "Read our CEO's take on what AI makes newly possible for enterprises focused on the road ahead.",
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1200&auto=format&fit=crop',
+    category: 'SECURITY | CLOUD DEFENSE',
+    title: 'Zero-Trust Security & DevSecOps: Hardening Enterprise Web Applications',
+    image: '/images/blogs/zero-trust-security.jpg',
     gridArea: 'card-1' // tall left card
   },
   {
     id: 2,
-    category: 'BLOG | BANKING AND FINANCIAL SERVICES',
-    title: 'Open Banking at an Inflection Point: Why Banks Must Act Now',
-    description: '',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=800&auto=format&fit=crop',
+    category: 'DESIGN | PRODUCT ENGINEERING',
+    title: 'Design Systems & UI/UX Engineering: Driving 3x Conversions in Digital Products',
+    image: '/images/blogs/design-systems-ui-ux.jpg',
     gridArea: 'card-2' // middle top
   },
   {
     id: 3,
-    category: 'WHITEPAPER | ENERGY AND UTILITIES',
-    title: 'Agentic AI for Oil and Gas Upstream Operations',
-    description: '',
-    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=800&auto=format&fit=crop',
+    category: 'DEVOPS | CLOUD INFRASTRUCTURE',
+    title: 'DevOps & CI/CD Automation: Zero-Downtime Deployment at Scale',
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop',
     gridArea: 'card-3' // right top
   },
   {
     id: 4,
-    category: 'WHITEPAPER | CYBER SECURITY',
-    title: 'Security by Design: A GenAI Model for Trust and Growth',
-    description: '',
-    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop',
+    category: 'SOFTWARE | BACKEND ARCHITECTURE',
+    title: 'Microservices vs. Modular Monoliths: Designing Scalable Cloud Backends',
+    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop',
     gridArea: 'card-4' // middle bottom
   },
   {
     id: 5,
-    category: 'BLOG | ARTIFICIAL INTELLIGENCE',
-    title: 'Transforming Legacy Systems with Modern Cloud Architecture',
-    description: '',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop',
+    category: 'ENGINEERING | FULL-STACK',
+    title: 'Scaling Enterprise Next.js Applications: Cloud Architecture & Edge Performance',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop',
     gridArea: 'card-5' // right bottom
   }
 ];
@@ -103,9 +98,6 @@ const LatestThinking = ({ blogsData, homeExtraData }) => {
                 <div className={styles.categoryBadge}>{post.category}</div>
                 <div className={styles.cardBottom}>
                   <h3 className={styles.cardTitle}>{post.title}</h3>
-                  {(post.excerpt || post.description) && (
-                    <p className={styles.cardDesc}>{post.excerpt || post.description}</p>
-                  )}
                   <div className={styles.readMore}>
                     Read More &rarr;
                   </div>

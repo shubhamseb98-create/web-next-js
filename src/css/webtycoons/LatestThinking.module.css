@@ -165,44 +165,33 @@
 
 .cardTitle {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 600;
   color: var(--clr-white);
-  margin-bottom: 0.5rem;
-  line-height: 1.3;
+  margin-bottom: 0.85rem;
+  line-height: 1.35;
 }
 
 .blogCard:nth-child(1) .cardTitle {
-  font-size: 2rem;
-  /* Make first card title larger */
-}
-
-.cardDesc {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 1.85rem;
 }
 
 .readMore {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--clr-primary-light);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s ease;
+  opacity: 0.9;
+  transform: translateY(0);
+  transition: all 0.3s ease;
 }
 
 .blogCard:hover .readMore {
   opacity: 1;
-  transform: translateY(0);
+  color: var(--clr-white);
+  transform: translateX(4px);
 }
 
 /* ── View All Blogs Button ── */

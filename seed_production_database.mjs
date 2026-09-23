@@ -310,42 +310,47 @@ const teamCol = db.collection('teammembers');
 
 const teamData = [
   {
-    name: 'Dheeraj Aggarwal',
-    role: 'Founder & CEO',
-    image: '/assets/img/team/sitara-removebg-preview.png',
-    color: '#c8d8fc',
+    name: 'Om',
+    role: 'Web Developer',
+    image: '/assets/img/team/om-removebg-preview.png',
+    img: '/assets/img/team/om-removebg-preview.png',
+    color: '#b0e7f5ff',
     status: 'active',
     sort: 1
-  },
-  {
-    name: 'Tarandeep',
-    role: 'Head of Marcomm & Content',
-    image: '/assets/img/team/tara-removebg-preview.png',
-    color: '#d9f5a0',
-    status: 'active',
-    sort: 2
   },
   {
     name: 'Nisha',
     role: 'Business Manager',
     image: '/assets/img/team/nisha-removebg-preview.png',
+    img: '/assets/img/team/nisha-removebg-preview.png',
     color: '#f9d6ea',
     status: 'active',
-    sort: 3
+    sort: 2
   },
   {
-    name: 'Om',
-    role: 'Web Developer',
-    image: '/assets/img/team/om-removebg-preview.png',
-    color: '#b0e7f5ff',
+    name: 'Tarandeep',
+    role: 'Head of Marcomm & Content',
+    image: '/assets/img/team/tara-removebg-preview.png',
+    img: '/assets/img/team/tara-removebg-preview.png',
+    color: '#d9f5a0',
     status: 'active',
-    sort: 4
+    sort: 3
   },
   {
     name: 'Kriti',
     role: 'Admin Manager',
     image: '/assets/img/team/kriti-removebg-preview.png',
+    img: '/assets/img/team/kriti-removebg-preview.png',
     color: '#ffe0b0',
+    status: 'active',
+    sort: 4
+  },
+  {
+    name: 'Dheeraj Aggarwal',
+    role: 'Founder & CEO',
+    image: '/assets/img/team/sitara-removebg-preview.png',
+    img: '/assets/img/team/sitara-removebg-preview.png',
+    color: '#c8d8fc',
     status: 'active',
     sort: 5
   },
@@ -353,6 +358,7 @@ const teamData = [
     name: 'Dheeraj Joshi',
     role: 'SEO & Digital Marketing',
     image: '/assets/img/team/cutiiii-removebg-preview.png',
+    img: '/assets/img/team/cutiiii-removebg-preview.png',
     color: '#fce8ac',
     status: 'active',
     sort: 6
@@ -361,6 +367,7 @@ const teamData = [
     name: 'Anuj',
     role: 'UI/UX Designer',
     image: '/assets/img/team/Anuj-cutiiii-removebg-preview.png',
+    img: '/assets/img/team/Anuj-cutiiii-removebg-preview.png',
     color: '#c8f5b0',
     status: 'active',
     sort: 7
@@ -369,6 +376,7 @@ const teamData = [
     name: 'Muskan',
     role: 'UI/UX Designer',
     image: '/assets/img/team/Muku.png',
+    img: '/assets/img/team/Muku.png',
     color: '#ffb9d6ff',
     status: 'active',
     sort: 8

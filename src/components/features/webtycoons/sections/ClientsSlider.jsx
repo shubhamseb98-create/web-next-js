@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import Image from 'next/image'
 import styles from '../../../../css/webtycoons/ClientsSlider.module.css'
 
@@ -146,13 +146,150 @@ const getClientMeta = (client) => {
 };
 
 const ClientsSlider = ({ clientsData, homeExtraData }) => {
+  const canvasRef = useRef(null);
   const rawList = clientsData?.length > 0 ? clientsData : clients;
   // Ensure enough items for seamless infinite looping
   const displayClients = rawList.length < 8 ? [...rawList, ...rawList, ...rawList] : rawList;
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    const setSize = () => {
+      const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    setSize();
+    window.addEventListener('resize', setSize);
+
+    const rect = canvas.getBoundingClientRect();
+    const w0 = rect.width || 1200;
+    const h0 = rect.height || 450;
+    const count = 38;
+    const particles = Array.from({ length: count }, () => ({
+      x: Math.random() * w0,
+      y: Math.random() * h0,
+      vx: (Math.random() - 0.5) * 0.42,
+      vy: (Math.random() - 0.5) * 0.42,
+      radius: Math.random() * 2 + 1,
+      alpha: Math.random() * 0.45 + 0.3,
+      color: Math.random() > 0.4 ? '#6edb4a' : (Math.random() > 0.5 ? '#22c55e' : '#ffffff')
+    }));
+
+    let mouse = { x: null, y: null };
+    const parent = canvas.parentElement;
+
+    const onMouseMove = (e) => {
+      const b = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - b.left;
+      mouse.y = e.clientY - b.top;
+    };
+    const onMouseLeave = () => {
+      mouse.x = null;
+      mouse.y = null;
+    };
+
+    if (parent) {
+      parent.addEventListener('mousemove', onMouseMove);
+      parent.addEventListener('mouseleave', onMouseLeave);
+    }
+
+    const render = () => {
+      const b = canvas.getBoundingClientRect();
+      const w = b.width;
+      const h = b.height;
+      ctx.clearRect(0, 0, w, h);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+
+        // Connect nearby floating particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 95) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = '#6edb4a';
+            ctx.globalAlpha = (1 - dist / 95) * 0.16;
+            ctx.lineWidth = 0.75;
+            ctx.shadowBlur = 0;
+            ctx.stroke();
+          }
+        }
+
+        // Connect to mouse interaction
+        if (mouse.x !== null) {
+          const mdx = p.x - mouse.x;
+          const mdy = p.y - mouse.y;
+          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+          if (mdist < 130) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = '#6edb4a';
+            ctx.globalAlpha = (1 - mdist / 130) * 0.22;
+            ctx.lineWidth = 0.9;
+            ctx.stroke();
+          }
+        }
+      }
+
+      ctx.globalAlpha = 1;
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', setSize);
+      if (parent) {
+        parent.removeEventListener('mousemove', onMouseMove);
+        parent.removeEventListener('mouseleave', onMouseLeave);
+      }
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   return (
     <section className={styles.section} id="clients">
-      <div className="container-fluid">
+      {/* ── Interactive Floating Particle Constellation Canvas ── */}
+      <canvas ref={canvasRef} className={styles.particleCanvas} aria-hidden="true" />
+
+      {/* ── Floating Ambient Tech Shapes & Orbs ── */}
+      <div className={styles.floatingDecorations} aria-hidden="true">
+        <div className={`${styles.floatingOrb} ${styles.orb1}`} />
+        <div className={`${styles.floatingOrb} ${styles.orb2}`} />
+        <div className={`${styles.floatingRing} ${styles.ring1}`} />
+        <div className={`${styles.floatingRing} ${styles.ring2}`} />
+      </div>
+
+      <div className="container-fluid" style={{ position: 'relative', zIndex: 1 }}>
         <div className={`${styles.header} text-center mb-5`}>
           <span className="section-label">{homeExtraData?.client_title || 'Our Clients'}</span>
           <h2 className="section-heading mb-4">
@@ -162,11 +299,12 @@ const ClientsSlider = ({ clientsData, homeExtraData }) => {
             {homeExtraData?.client_description || 'Some of the customers to whom we have given excellent services, as a Best Website Designing Company in Delhi.'}
           </p>
         </div>
+      </div>
 
-        <div className={styles.marqueeContainer}>
-          {/* Side Fade Gradients */}
-          <div className={styles.edgeGradientLeft} />
-          <div className={styles.edgeGradientRight} />
+      <div className={styles.marqueeContainer}>
+        {/* Side Fade Gradients */}
+        <div className={styles.edgeGradientLeft} />
+        <div className={styles.edgeGradientRight} />
 
           <div className={styles.marqueeTrack}>
             {[...displayClients, ...displayClients].map((client, index) => {
@@ -265,7 +403,6 @@ const ClientsSlider = ({ clientsData, homeExtraData }) => {
             })}
           </div>
         </div>
-      </div>
     </section>
   )
 }

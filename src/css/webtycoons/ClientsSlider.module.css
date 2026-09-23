@@ -1,14 +1,93 @@
 .section {
-  padding: 80px 0 85px 0;
+  padding: 85px 0 90px 0;
   background-color: #091308;
   background-image:
-    radial-gradient(ellipse 75% 50% at 50% 0%, rgba(82, 164, 54, 0.12) 0%, transparent 65%),
-    radial-gradient(ellipse 70% 40% at 50% 100%, rgba(46, 117, 28, 0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 45% at 50% 20%, rgba(82, 164, 54, 0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(46, 117, 28, 0.10) 0%, transparent 65%),
     linear-gradient(180deg, #091308 0%, #0d1a0b 50%, #091308 100%);
   border-top: 1px solid rgba(82, 164, 54, 0.14);
   border-bottom: 1px solid rgba(82, 164, 54, 0.14);
   overflow: hidden;
   position: relative;
+}
+
+/* ── Interactive Particle Canvas ── */
+.particleCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Floating Ambient Tech Elements ── */
+.floatingDecorations {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.floatingOrb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+}
+
+.orb1 {
+  top: 10%;
+  left: 5%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(110, 219, 74, 0.14) 0%, transparent 70%);
+  animation: floatOrbSlow 14s ease-in-out infinite alternate;
+}
+
+.orb2 {
+  bottom: 10%;
+  right: 6%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.12) 0%, transparent 70%);
+  animation: floatOrbSlow 18s ease-in-out infinite alternate-reverse;
+}
+
+.floatingRing {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(110, 219, 74, 0.15);
+  pointer-events: none;
+}
+
+.ring1 {
+  top: 14%;
+  right: 10%;
+  width: 110px;
+  height: 110px;
+  animation: floatSpin 24s linear infinite;
+}
+
+.ring2 {
+  bottom: 18%;
+  left: 8%;
+  width: 85px;
+  height: 85px;
+  animation: floatSpin 20s linear infinite reverse;
+}
+
+@keyframes floatOrbSlow {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, -20px) scale(1.08); }
+  100% { transform: translate(-20px, 15px) scale(0.95); }
+}
+
+@keyframes floatSpin {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
 }
 
 .header {
@@ -38,14 +117,14 @@
   display: flex;
 }
 
-/* Side Edge Fade Gradients */
+/* Side Edge Fade Gradients - 100% Full Viewport Edge-to-Edge */
 .edgeGradientLeft {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  width: 140px;
-  background: linear-gradient(to right, #091308 15%, rgba(9, 19, 8, 0.85) 50%, transparent 100%);
+  width: 200px;
+  background: linear-gradient(to right, #091308 0%, rgba(9, 19, 8, 0.95) 25%, rgba(9, 19, 8, 0.5) 65%, transparent 100%);
   pointer-events: none;
   z-index: 20;
 }
@@ -55,8 +134,8 @@
   top: 0;
   bottom: 0;
   right: 0;
-  width: 140px;
-  background: linear-gradient(to left, #091308 15%, rgba(9, 19, 8, 0.85) 50%, transparent 100%);
+  width: 200px;
+  background: linear-gradient(to left, #091308 0%, rgba(9, 19, 8, 0.95) 25%, rgba(9, 19, 8, 0.5) 65%, transparent 100%);
   pointer-events: none;
   z-index: 20;
 }

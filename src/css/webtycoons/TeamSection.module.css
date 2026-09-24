@@ -162,7 +162,7 @@
    True stadium / capsule shape — equal rounding top & bottom
    ══════════════════════════════════════════════════════════ */
 .pillCard {
-  background-image: url(/public/assets/img/shape/pp1.svg) !important;
+  background-image: url(/public/assets/img/shape/) !important;
   background-position: center;
   background-repeat: repeat !important;
   background-size: 50px !important;

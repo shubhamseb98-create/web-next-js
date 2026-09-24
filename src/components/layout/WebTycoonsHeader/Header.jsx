@@ -36,6 +36,12 @@ const INITIAL_NAV_LINKS = [
   { name: 'Contact Us', path: '/contact', order: 7, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
 ]
 
+const formatSubMenuLabel = (str, max = 24) => {
+  if (!str) return '';
+  if (str.length <= max) return str;
+  return str.slice(0, max).trim() + '...';
+};
+
 const formatInitialNav = (data) => {
   if (!Array.isArray(data) || data.length === 0) return INITIAL_NAV_LINKS;
   return data.map((it) => ({
@@ -255,8 +261,9 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
                         href={sub.path}
                         target={sub.openInNewTab ? '_blank' : undefined}
                         rel={sub.openInNewTab ? 'noopener noreferrer' : undefined}
+                        title={sub.label}
                       >
-                        {sub.label}
+                        {formatSubMenuLabel(sub.label, 24)}
                       </Link>
                     ))}
                   </div>

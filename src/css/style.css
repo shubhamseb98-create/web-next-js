@@ -1,5 +1,17 @@
-@font-face { font-family: 'bootstrap-icons'; src: url('/fonts/bootstrap-icons.woff2') format('woff2'); font-display: swap; } 
-@font-face { font-family: 'boxicons'; font-weight: normal; font-style: normal; src: url('/fonts/boxicons.woff2') format('woff2'); font-display: swap; } 
+@font-face {
+  font-family: 'bootstrap-icons';
+  src: url('/fonts/bootstrap-icons.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'boxicons';
+  font-weight: normal;
+  font-style: normal;
+  src: url('/fonts/boxicons.woff2') format('woff2');
+  font-display: swap;
+}
+
 * {
   margin: 0px;
   padding: 0px;
@@ -36522,7 +36534,7 @@ header.style-4 .mobile-logo-area .menu-close-btn:hover i {
   background-position: center;
   background-repeat: repeat;
   background-size: 100px;
-  background-image: url(/images/pp1.svg) !important;
+  background-image: url(/images/) !important;
 }
 
 .g-map iframe {
@@ -37679,10 +37691,12 @@ header.style-1 {
 .details-content-wrapper ol li {
   display: list-item;
   list-style: decimal;
-}/* Modern Cert Card */
+}
+
+/* Modern Cert Card */
 .modern-cert-card {
   border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid #e2e8f0;
   overflow: hidden;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);

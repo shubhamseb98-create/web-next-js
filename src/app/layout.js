@@ -4,17 +4,16 @@ import "./globals.css";
 import Script from "next/script";
 import NavigationProgress from "src/components/core/NavigationProgress";
 import ClientTracker from "src/components/core/ClientTracker";
-import FloatingContactButtons from "src/components/layout/FloatingContactButtons";
-import SmoothScroller from "src/components/animations/SmoothScroller";
 import { Toaster } from "react-hot-toast";
+import { connectDB } from "./lib/config";
+import GlobalSetting from "./models/GlobalSetting";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
+  display: "swap", // ✅ Prevents FOIT (Flash of Invisible Text) — key for CLS
 });
-import { connectDB } from "./lib/config";
-import GlobalSetting from "./models/GlobalSetting";
 
 export async function generateMetadata() {
   let faviconUrl = '/favicon.ico';

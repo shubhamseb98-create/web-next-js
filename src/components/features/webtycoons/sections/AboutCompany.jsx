@@ -104,7 +104,9 @@ const AboutCompany = ({ aboutData }) => {
                   fill
                   sizes="(max-width: 992px) 100vw, 55vw"
                   style={{ objectFit: 'cover' }}
-                  className={styles.image} 
+                  className={styles.image}
+                  loading="lazy"
+                  quality={80}
                 />
 
                 {/* Cyber Green Light Sweep Sheen - lightweight GPU-only translation */}

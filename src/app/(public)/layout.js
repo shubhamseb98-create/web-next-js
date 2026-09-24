@@ -6,8 +6,7 @@ import FloatingContactButtons from "src/components/layout/FloatingContactButtons
 import ScrollToTopButton from "src/components/layout/ScrollToTopButton";
 import SmoothScroller from "src/components/animations/SmoothScroller";
 import Preloader from "src/components/features/webtycoons/Preloader";
-import "bootstrap/dist/css/bootstrap.min.css";
-
+// swiper/css is imported here to apply to all public pages (hero, testimonials, clients sliders)
 import 'swiper/css';
 
 import { connectDB } from "src/app/lib/config";

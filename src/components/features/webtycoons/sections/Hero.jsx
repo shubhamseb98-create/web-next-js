@@ -349,14 +349,19 @@ const Hero = ({ bannerData }) => {
     if (inInner) gsap.set(inInner, { rotation: 0 })
     if (inText)  gsap.set(inText,  { opacity: 0, y: 40 })
 
-    // ── Play incoming video if it exists ──
+    // ── Play incoming video if it exists (lazy-load src from data-src) ──
     const inVideo = inEl.querySelector('video')
     if (inVideo) {
+      // Lazy-load: assign src from data-src if not yet loaded
       if (!inVideo.src && inVideo.dataset.src) {
         inVideo.src = inVideo.dataset.src;
+      } else if (!inVideo.src && slides[nextIdx]?.video) {
+        inVideo.src = slides[nextIdx].video;
+        inVideo.dataset.src = slides[nextIdx].video;
       }
       inVideo.muted = isMutedRef.current || Boolean(slides[nextIdx]?.audio);
       inVideo.volume = isMutedRef.current ? 0 : 1;
+      inVideo.load();
       inVideo.play().catch(() => {});
     }
 
@@ -489,18 +494,18 @@ const Hero = ({ bannerData }) => {
       {slides.map((slide, idx) => (
         <div key={idx} id={`hs-${idx}`} className={styles.slide}>
           <div ref={el => { innerRefs.current[idx] = el }} className={styles.inner}>
-            {/* If video exists, defer src loading to post-hydration. The poster image will act as an instant LCP. */}
+            {/* Only the first slide loads eagerly; others are lazy-loaded to save bandwidth */}
             {(slide.video || isVideo(slide.image)) ? (
               <video
                 className={styles.bg}
                 data-src={slide.video || slide.image}
-                src={slide.video || slide.image}
+                src={idx === 0 ? (slide.video || slide.image) : undefined}
                 poster={slide.image && !isVideo(slide.image) ? slide.image : undefined}
-                autoPlay
+                autoPlay={idx === 0}
                 muted
                 loop
                 playsInline
-                preload="auto"
+                preload={idx === 0 ? 'metadata' : 'none'}
                 style={{ objectFit: 'cover' }}
               />
             ) : (

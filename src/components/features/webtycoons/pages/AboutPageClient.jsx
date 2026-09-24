@@ -85,7 +85,7 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
       <PageHeader
         title={(data?.heroTitle || 'We Are the King Makers of the Digital World').replace('King Makers', `<span class="textGreen">King Makers</span>`)}
         description={data?.heroDescription || 'A passionate team of designers, developers, and digital strategists on a mission to build extraordinary web experiences.'}
-        bgImage={data?.heroImage || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop'}
+        bgImage={data?.heroImage || '/images/banners/about-it-company.jpg'}
         breadcrumb={[
           { name: "Home", href: "/" },
           { name: "About Us" }

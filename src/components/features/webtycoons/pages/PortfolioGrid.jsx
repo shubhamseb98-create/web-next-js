@@ -68,7 +68,7 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
       <PageHeader
         title={`Code That Delivers <br /><span class="textGreen">– Real Results</span>`}
         description="Discover how we’ve crafted measurable success and digital excellence for leading brands."
-        bgImage="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
+        bgImage="/images/banners/projects-it-company.jpg"
         breadcrumb={[
           { name: "Home", href: "/" },
           { name: "Projects" }

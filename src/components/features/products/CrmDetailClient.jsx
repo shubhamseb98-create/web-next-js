@@ -29,7 +29,7 @@ export default function CrmDetailClient({ product, relatedProducts = [] }) {
       <PageHeader
         title={`${product.name} <br /><span class="textGreen">– ${product.grade || "Enterprise Platform"}</span>`}
         description={product.tagline}
-        bgImage="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
+        bgImage="/images/banners/products-it-company.jpg"
         breadcrumb={breadcrumb}
       />
 

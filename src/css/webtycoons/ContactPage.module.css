@@ -29,7 +29,7 @@
 .heroBg {
   position: absolute;
   inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop');
+  background-image: url('/images/banners/contact-it-company.jpg');
   background-size: cover;
   background-position: center 40%;
   z-index: 0;

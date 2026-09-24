@@ -34,7 +34,7 @@ export default function PageHeader({
   breadcrumb = [],
   children,
 }) {
-  const defaultBg = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop";
+  const defaultBg = "/images/banners/about-it-company.jpg";
   const finalBg = bgImage || defaultBg;
 
   return (

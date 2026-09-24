@@ -98,7 +98,7 @@ export default function ContactPageClient({ initialData = {}, globalSettings = {
       <PageHeader
         title={formatTitle(initialData?.headerTitle || "Contact Us")}
         description={initialData?.headerDescription || initialData?.contactDescription || "Have a project in mind or looking to accelerate your digital growth? Our experts are ready to assist you."}
-        bgImage={initialData?.headerImage || "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop"}
+        bgImage={initialData?.headerImage || "/images/banners/contact-it-company.jpg"}
         breadcrumb={[
           { name: "Home", href: "/" },
           { name: initialData?.breadcrumb || "Contact Us" }

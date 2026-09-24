@@ -4,7 +4,7 @@ const AboutPageConfigSchema = new mongoose.Schema({
   // Hero Section
   heroTitle: { type: String, default: "We Are the King Makers of the Digital World" },
   heroDescription: { type: String, default: "A passionate team of designers, developers, and digital strategists on a mission to build extraordinary web experiences." },
-  heroImage: { type: String, default: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" },
+  heroImage: { type: String, default: "/images/banners/about-it-company.jpg" },
 
   // About Us Section
   aboutUsTitle: { type: String, default: "Your Trusted Partner in Digital Transformation" },

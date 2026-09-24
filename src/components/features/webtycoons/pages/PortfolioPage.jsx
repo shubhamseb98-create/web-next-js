@@ -99,7 +99,7 @@ const PortfolioPage = () => {
     <div className={styles.pageWrapper}>
       {/* ── Hero Section ── */}
       <section className={styles.heroSection}>
-        <div className={styles.heroBg} style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop)' }}></div>
+        <div className={styles.heroBg} style={{ backgroundImage: 'url(/images/banners/projects-it-company.jpg)' }}></div>
         <div className={styles.heroOverlay}></div>
         <div className={`container-fluid-px ${styles.heroContent}`}>
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className={styles.heroText}>

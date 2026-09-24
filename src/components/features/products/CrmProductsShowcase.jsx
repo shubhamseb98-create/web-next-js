@@ -35,7 +35,7 @@ export default function CrmProductsShowcase({ products = [], categories = [] }) 
       <PageHeader
         title={`Enterprise Custom CRMs <br /><span class="textGreen">– Built to Scale</span>`}
         description="Purpose-built custom CRM architectures designed for lead acceleration, multi-pipeline automation, and complete private data ownership."
-        bgImage="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
+        bgImage="/images/banners/products-it-company.jpg"
         breadcrumb={breadcrumb}
       />
 

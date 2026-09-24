@@ -44,14 +44,31 @@ export async function POST(request) {
     if (body.isFeatured === 'false') body.isFeatured = false;
     if (body.sort) body.sort = Number(body.sort);
 
+    if (body.technologies) {
+      try {
+        body.technologies = typeof body.technologies === 'string' ? JSON.parse(body.technologies) : body.technologies;
+      } catch (e) {
+        body.technologies = [];
+      }
+    }
+
     if (!body.slug && body.title) {
       body.slug = body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     }
 
     const { uploadFile, isUploadFile } = await import('../../../lib/upload');
-    const imageFile = formData.get('image');
-    if (isUploadFile(imageFile)) {
-      body.image = await uploadFile(imageFile, 'portfolio');
+    const imageFiles = formData.getAll('image');
+    let uploadableFile = null;
+    for (const f of imageFiles) {
+      if (isUploadFile(f)) {
+        uploadableFile = f;
+        break;
+      }
+    }
+    if (uploadableFile) {
+      body.image = await uploadFile(uploadableFile, 'portfolio');
+    } else if (formData.get('existingImage')) {
+      body.image = formData.get('existingImage');
     }
 
     const item = await Portfolio.create(body);

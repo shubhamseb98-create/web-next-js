@@ -42,9 +42,16 @@ export async function PUT(request, context) {
     }
 
     const { uploadFile, isUploadFile } = await import('../../../../lib/upload');
-    const imageFile = formData.get('image');
-    if (isUploadFile(imageFile)) {
-      body.image = await uploadFile(imageFile, 'portfolio');
+    const imageFiles = formData.getAll('image');
+    let uploadableFile = null;
+    for (const f of imageFiles) {
+      if (isUploadFile(f)) {
+        uploadableFile = f;
+        break;
+      }
+    }
+    if (uploadableFile) {
+      body.image = await uploadFile(uploadableFile, 'portfolio');
     }
 
     const query = { $or: [{ _id: params.id.match(/^[0-9a-fA-F]{24}$/) ? params.id : null }, { slug: params.id }] };

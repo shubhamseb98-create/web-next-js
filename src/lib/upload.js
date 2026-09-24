@@ -70,8 +70,23 @@ export async function uploadFile(file, folder = 'uploads', prefix = '') {
         (error, result) => {
           if (error) {
             console.error("Cloudinary Upload Error:", error);
+            if (!isVercel) {
+              console.warn("Falling back to local filesystem storage...");
+              try {
+                const uploadDir = path.join(process.cwd(), `public/uploads/${folder}`);
+                if (!fs.existsSync(uploadDir)) {
+                  fs.mkdirSync(uploadDir, { recursive: true });
+                }
+                const filePath = path.join(uploadDir, finalFileName);
+                fs.writeFileSync(filePath, buffer);
+                resolve(`/uploads/${folder}/${finalFileName}`);
+                return;
+              } catch (fallbackErr) {
+                console.error("Local disk fallback failed:", fallbackErr);
+              }
+            }
             if (error.http_code === 403) {
-              reject(new Error("Cloudinary Authentication Failed (403): Please check your CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Environment Variables."));
+              reject(new Error("Cloudinary Authentication Failed (403): Please check your Cloudinary credentials."));
             } else {
               reject(error);
             }

@@ -207,7 +207,7 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
                   className={styles.verticalTitle}
                   style={{ color: project.textColor || 'rgba(255, 255, 255, 0.75)' }}
                 >
-                  {project.title}
+                  {project.clientName || project.title}
                 </span>
                 <div className={styles.innerImageWrapper}>
                   {/* Browser Mockup Header Bar */}

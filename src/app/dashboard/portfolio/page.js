@@ -739,9 +739,24 @@ function PortfolioModal({ item, nextSort = 1, onClose, onSave, saving }) {
           </div>
 
           <div className="border border-input/60 rounded-xl p-6 bg-muted/10">
-            <label className="text-sm font-semibold mb-1 block">Project Image</label>
-            <input type="file" accept="image/*" onChange={handleFile} className="flex h-11 w-full rounded-xl border border-input/60 bg-background px-4 py-2 text-sm" />
-            {imagePreview && <img src={imagePreview} alt="preview" className="mt-4 max-h-32 rounded-lg object-cover" />}
+            <label className="text-sm font-semibold mb-1 block">Project Image (Snapshot / Mockup)</label>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleFile} 
+              className="flex h-11 w-full rounded-xl border border-input/60 bg-background px-4 py-2 text-sm cursor-pointer file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/20 file:text-emerald-400 hover:file:bg-emerald-500/30" 
+            />
+            {imageFile && (
+              <p className="text-xs text-emerald-400 mt-2 font-medium flex items-center gap-1.5">
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400" />
+                Selected: {imageFile.name} ({(imageFile.size / 1024).toFixed(1)} KB)
+              </p>
+            )}
+            {imagePreview && (
+              <div className="mt-3 relative inline-block">
+                <img src={imagePreview} alt="preview" className="max-h-36 rounded-lg border border-border/50 object-cover shadow-md" />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -785,12 +800,19 @@ export default function PortfolioPage() {
 
   const addToast = (msg, type = 'success') => setToasts(t => [...t, { id: Date.now(), message: msg, type }])
 
+  const getAuthHeaders = () => {
+    const token = typeof window !== 'undefined' ? (localStorage.getItem('admin_token') || localStorage.getItem('token')) : null;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   useEffect(() => { fetchItems() }, [])
 
   async function fetchItems() {
     try {
       setLoading(true)
-      const res = await fetch(`${BASE_URL}/api/portfolio`)
+      const res = await fetch(`${BASE_URL}/api/portfolio`, {
+        headers: { ...getAuthHeaders() }
+      })
       const json = await res.json()
       setRows(json.data || [])
     } catch (err) { addToast('Error: ' + err.message, 'error') } finally { setLoading(false) }
@@ -801,31 +823,56 @@ export default function PortfolioPage() {
       setSaving(true)
       const fd = new FormData()
       Object.keys(form).forEach(k => {
-        if (k === 'technologies') fd.append(k, JSON.stringify(form[k].split(',').map(t=>t.trim()).filter(Boolean)))
-        else fd.append(k, form[k] === null ? '' : form[k])
+        if (k === 'image') return; // Skip image string so fd only gets the real File object if selected
+        if (k === 'technologies') {
+          const techs = typeof form[k] === 'string'
+            ? form[k].split(',').map(t => t.trim()).filter(Boolean)
+            : (Array.isArray(form[k]) ? form[k] : []);
+          fd.append(k, JSON.stringify(techs))
+        } else {
+          fd.append(k, form[k] === null || form[k] === undefined ? '' : form[k])
+        }
       })
-      if (imageFile) fd.append('image', imageFile)
+      if (imageFile) {
+        fd.append('image', imageFile)
+      } else if (form.image) {
+        fd.append('existingImage', form.image)
+      }
       
       const isEdit = Boolean(form._id)
       const res = await fetch(isEdit ? `${BASE_URL}/api/portfolio/${form._id}` : `${BASE_URL}/api/portfolio`, {
-        method: isEdit ? 'PUT' : 'POST', body: fd
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { ...getAuthHeaders() },
+        body: fd
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.message)
-      addToast(isEdit ? 'Updated!' : 'Created!')
-      setModal(null); fetchItems();
-    } catch (err) { addToast(err.message, 'error') } finally { setSaving(false) }
+      if (!res.ok) throw new Error(data.message || (isEdit ? 'Failed to update project' : 'Failed to create project'))
+      addToast(isEdit ? 'Project updated successfully!' : 'Project created successfully!')
+      setModal(null)
+      fetchItems()
+    } catch (err) { 
+      console.error('Save error:', err)
+      addToast(err.message || 'Error saving project', 'error') 
+    } finally { 
+      setSaving(false) 
+    }
   }
 
   async function handleDelete(id) {
     try {
       setConfirmModal({ isOpen: false, type: 'single' })
       setDeletingId(id)
-      const res = await fetch(`${BASE_URL}/api/portfolio/${id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error()
-      addToast('Deleted.', 'warning')
+      const res = await fetch(`${BASE_URL}/api/portfolio/${id}`, { 
+        method: 'DELETE',
+        headers: { ...getAuthHeaders() }
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.message || 'Delete failed')
+      }
+      addToast('Project deleted.', 'warning')
       setRows(r => r.filter(x => x._id !== id))
-    } catch (err) { addToast('Delete failed', 'error') } finally { setDeletingId(null) }
+    } catch (err) { addToast(err.message || 'Delete failed', 'error') } finally { setDeletingId(null) }
   }
 
   async function handleToggleStatus(id, currentStatus) {
@@ -833,7 +880,12 @@ export default function PortfolioPage() {
       const newStatus = currentStatus === 'active' ? 'draft' : 'active'
       const fd = new FormData()
       fd.append('status', newStatus)
-      await fetch(`${BASE_URL}/api/portfolio/${id}`, { method: 'PUT', body: fd })
+      const res = await fetch(`${BASE_URL}/api/portfolio/${id}`, { 
+        method: 'PUT', 
+        headers: { ...getAuthHeaders() },
+        body: fd 
+      })
+      if (!res.ok) throw new Error()
       setRows(r => r.map(x => x._id === id ? { ...x, status: newStatus } : x))
       addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error')
     } catch {

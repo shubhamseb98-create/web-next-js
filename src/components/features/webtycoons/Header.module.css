@@ -87,7 +87,15 @@
 }
 
 /* ── Desktop Nav ── */
-.desktopNav { gap: 2.5rem; }
+.desktopNav {
+  gap: 1.25rem;
+}
+
+@media (min-width: 1400px) {
+  .desktopNav {
+    gap: 1.4rem;
+  }
+}
 
 .navItemWrapper {
   position: relative;
@@ -124,9 +132,9 @@
 .hasDropdown {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
+  gap: 0.35rem;
+  padding-block: 0.5rem;
+  padding-inline: 0;
   transition: all 0.2s ease;
 }
 

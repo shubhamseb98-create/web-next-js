@@ -53,7 +53,12 @@ export default async function ProjectDetailPage({ params }) {
     allProjects = [];
   }
 
-  let item = allProjects.find(p => p.slug === resolvedParams.slug);
+  let item = null;
+  try {
+    item = await Portfolio.findOne({ slug: resolvedParams.slug, status: 'active' }).lean();
+  } catch (err) {
+    item = null;
+  }
 
   // If not in DB, check fallback demo projects
   const fallbackProjects = [
@@ -258,19 +263,6 @@ export default async function ProjectDetailPage({ params }) {
                 </div>
               )}
 
-              {/* Live Preview Button Card */}
-              {project.projectUrl && (
-                <div className="spec-card cta-spec-card">
-                  <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="live-preview-btn">
-                    <span>Visit Live Site</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7"></line>
-                      <polyline points="7 7 17 7 17 17"></polyline>
-                    </svg>
-                  </a>
-                </div>
-              )}
-
             </div>
           </div>
         </section>
@@ -416,7 +408,7 @@ export default async function ProjectDetailPage({ params }) {
                 {project.projectUrl && (
                   <div className="overview-actions-row">
                     <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="primary-glow-btn">
-                      <span>Launch Live Website</span>
+                      <span>Visit Site</span>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="7" y1="17" x2="17" y2="7"></line>
                         <polyline points="7 7 17 7 17 17"></polyline>
@@ -717,8 +709,13 @@ export default async function ProjectDetailPage({ params }) {
           max-width: 1100px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          grid-template-columns: repeat(3, 1fr);
           gap: 16px;
+        }
+        @media (max-width: 991px) {
+          .specs-grid {
+            grid-template-columns: 1fr;
+          }
         }
         .spec-card {
           background: rgba(255, 255, 255, 0.025);
@@ -766,11 +763,6 @@ export default async function ProjectDetailPage({ params }) {
         .tech-spec-card {
           grid-column: span 1;
         }
-        @media (min-width: 992px) {
-          .tech-spec-card {
-            grid-column: span 2;
-          }
-        }
         .tech-pills-wrapper {
           flex: 1;
         }
@@ -787,36 +779,6 @@ export default async function ProjectDetailPage({ params }) {
           font-size: 11px;
           font-weight: 600;
           color: #e2e8f0;
-        }
-        .cta-spec-card {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 14px;
-        }
-        .live-preview-btn {
-          width: 100%;
-          height: 100%;
-          min-height: 52px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          background: var(--clr-primary);
-          color: #ffffff;
-          border-radius: 14px;
-          font-size: 14px;
-          font-weight: 700;
-          text-decoration: none;
-          text-transform: uppercase;
-          letter-spacing: 0.8px;
-          box-shadow: 0 6px 20px -3px rgba(82, 164, 54, 0.5);
-          transition: all 0.25s ease;
-        }
-        .live-preview-btn:hover {
-          background: #448c2c;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(82, 164, 54, 0.7);
         }
 
         /* Showcase Stage - Refined & Balanced Dimensions */

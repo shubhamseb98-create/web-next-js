@@ -336,7 +336,7 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
               >
                 <FaChevronRight />
               </button>
-            </div>
+            </div>       
           </div>
 
         </div>

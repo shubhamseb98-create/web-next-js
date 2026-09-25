@@ -32,31 +32,41 @@
   line-height: 1.7;
 }
 
-/* Horizontal Track -> Vertical Stack Container */
-.trackWrapper {
+/* Pinned Stage Container */
+.stackStage {
   width: 100%;
-  max-width: 1250px;
-  margin: 0 auto;
-  padding: 0 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 6rem;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+  padding: 0 1rem;
 }
 
-/* Project Card - Glassmorphism & Solid Foundation (No Bleed-Through) */
+/* Cards Stack Wrapper */
+.cardsStack {
+  position: relative;
+  width: 100%;
+  max-width: 1250px;
+  height: 460px;
+}
+
+/* Project Card - Glassmorphism & Solid Foundation */
 .projectCard {
   cursor: none;
   text-decoration: none;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  position: sticky;
-  top: 12vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   background-color: #111312 !important;
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 35px rgba(82, 164, 54, 0.04);
+  box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.75), 0 30px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 35px rgba(82, 164, 54, 0.04);
   transform-origin: top center;
   will-change: transform, filter;
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
@@ -69,13 +79,13 @@
 
 .projectCard:hover {
   border-color: rgba(82, 164, 54, 0.45);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 45px rgba(82, 164, 54, 0.18);
+  box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.75), 0 40px 80px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 0 45px rgba(82, 164, 54, 0.18);
 }
 
 @media (min-width: 992px) {
   .projectCard {
     flex-direction: row;
-    height: 440px;
+    height: 460px;
     align-items: stretch;
   }
 }
@@ -216,7 +226,7 @@
   transform: translateX(4px);
 }
 
-/* Custom Follower Cursor */
+/* Custom Follower Cursor (Desktop fine-pointer only) */
 .cursorWrapper {
   position: fixed;
   top: 0;
@@ -225,6 +235,12 @@
   height: 80px;
   pointer-events: none;
   z-index: 9999;
+}
+
+@media (max-width: 991px), (pointer: coarse) {
+  .cursorWrapper {
+    display: none !important;
+  }
 }
 
 .customCursor {
@@ -465,16 +481,104 @@
 
 /* Removed View Bubble styles */
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Responsive Card Stacking on Mobile & Tablet */
+@media (max-width: 991px) {
+  .cardsStack {
+    max-width: 500px;
+    height: min(500px, calc(100vh - 130px));
+  }
+
   .projectCard {
-    position: relative;
-    top: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    border-radius: 24px;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8), 0 25px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    cursor: pointer !important;
+  }
+
+  .projectCard * {
+    cursor: pointer !important;
+  }
+
+  .cardContent {
+    width: 100%;
+    padding: 1.25rem 1.25rem 0.65rem 1.25rem;
+  }
+
+  .projectCategoryBadge {
+    padding: 4px 11px;
+    margin-bottom: 0.45rem;
+  }
+
+  .projectSubtitle {
+    font-size: 0.72rem;
+    letter-spacing: 1.5px;
+  }
+
+  .projectTitle {
+    font-size: 1.35rem;
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+  }
+
+  .projectDesc {
+    font-size: 13px;
+    line-height: 1.45;
+    margin-bottom: 0.65rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .techStack {
+    gap: 6px;
+    margin-bottom: 0.75rem;
+  }
+
+  .techItem {
+    font-size: 10.5px;
+    padding: 3px 8px;
+  }
+
+  .glassCta {
+    padding: 6px 14px;
+    font-size: 12px;
+    width: fit-content;
+  }
+
+  .imageWrapper {
+    width: 100%;
+    padding: 0 1.15rem 1.15rem 1.15rem;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .gradientBg {
+    width: 100%;
+    height: 100%;
+    padding: 0.75rem;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+  }
+
+  .innerImageWrapper {
+    width: 100%;
+    height: 100%;
+    max-height: 210px;
+    min-height: 140px;
   }
 }
 
 /* ── View All Projects Button ── */
 .viewMoreWrapper {
+  position: relative;
+  z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;

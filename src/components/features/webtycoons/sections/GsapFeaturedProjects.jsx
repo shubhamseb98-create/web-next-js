@@ -84,52 +84,133 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
       }))
     : featuredProjects;
   const containerRef = useRef(null)
+  const stageRef = useRef(null)
   const cursorRef = useRef(null)
   const [isHovering, setIsHovering] = useState(false)
 
   useGSAP(() => {
     const container = containerRef.current
-    if (!container || !cursorRef.current) return
+    const stage = stageRef.current
+    if (!container || !stage) return
 
-    // Custom Cursor tracking - scoped to container and desktop only
-    const isDesktop = window.innerWidth >= 992
-    
-    if (isDesktop) {
+    const mm = gsap.matchMedia(containerRef)
+
+    // Desktop: Cursor follower
+    let handleMouseMove = null
+    if (cursorRef.current && window.matchMedia("(min-width: 992px) and (pointer: fine)").matches) {
       gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50 })
-      
       const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.2, ease: "power3" })
       const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.2, ease: "power3" })
 
-      const handleMouseMove = (e) => {
+      handleMouseMove = (e) => {
         xTo(e.clientX)
         yTo(e.clientY)
       }
-
       container.addEventListener("mousemove", handleMouseMove, { passive: true })
+    }
 
-      // ScrollTrigger card stacking animation on desktop
-      const cards = gsap.utils.toArray(`.${styles.projectCard}`)
-      
-      cards.forEach((card, index) => {
-        if (index === cards.length - 1) return 
+    const cards = gsap.utils.toArray(`.${styles.projectCard}`)
+    if (cards.length <= 1) return
 
-        gsap.to(card, {
-          scale: 0.95,
-          filter: "brightness(0.35)",
-          ease: "none",
-          scrollTrigger: {
-            trigger: cards[index + 1],
-            start: "top top+=45vh",
-            end: "top top+=12vh",
-            scrub: true,
-          }
-        })
+    // Desktop: Pinned stack timeline
+    mm.add("(min-width: 992px)", () => {
+      gsap.set(cards[0], { y: 0, scale: 1, filter: "brightness(1)", autoAlpha: 1, zIndex: 1 })
+      for (let i = 1; i < cards.length; i++) {
+        gsap.set(cards[i], { y: "100vh", scale: 1, filter: "brightness(1)", autoAlpha: 0, zIndex: i + 1 })
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stage,
+          start: "top top+=85px",
+          end: () => `+=${(cards.length - 1) * window.innerHeight * 0.9}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.8,
+          invalidateOnRefresh: true,
+        }
       })
 
-      return () => {
-        container.removeEventListener("mousemove", handleMouseMove)
-        ScrollTrigger.getAll().forEach(t => t.kill())
+      for (let i = 1; i < cards.length; i++) {
+        tl.set(cards[i], { autoAlpha: 1 })
+        tl.fromTo(cards[i],
+          { y: "100vh" },
+          { y: 0, duration: 1, ease: "none" }
+        )
+
+        tl.to(cards[i - 1], {
+          scale: 0.95,
+          y: -18,
+          filter: "brightness(0.38)",
+          transformOrigin: "top center",
+          duration: 1,
+          ease: "none",
+        }, "<")
+
+        for (let j = 0; j < i - 1; j++) {
+          tl.to(cards[j], {
+            scale: Math.max(0.85, 0.95 - (i - j) * 0.03),
+            y: -18 * (i - j + 1),
+            filter: `brightness(${Math.max(0.18, 0.38 - (i - j) * 0.08)})`,
+            duration: 1,
+            ease: "none",
+          }, "<")
+        }
       }
+    })
+
+    // Mobile & Tablet: Pinned stack timeline
+    mm.add("(max-width: 991px)", () => {
+      gsap.set(cards[0], { y: 0, scale: 1, filter: "brightness(1)", autoAlpha: 1, zIndex: 1 })
+      for (let i = 1; i < cards.length; i++) {
+        gsap.set(cards[i], { y: "100vh", scale: 1, filter: "brightness(1)", autoAlpha: 0, zIndex: i + 1 })
+      }
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stage,
+          start: "top top+=75px",
+          end: () => `+=${(cards.length - 1) * window.innerHeight * 0.85}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+        }
+      })
+
+      for (let i = 1; i < cards.length; i++) {
+        tl.set(cards[i], { autoAlpha: 1 })
+        tl.fromTo(cards[i],
+          { y: "100vh" },
+          { y: 0, duration: 1, ease: "none" }
+        )
+
+        tl.to(cards[i - 1], {
+          scale: 0.94,
+          y: -12,
+          filter: "brightness(0.35)",
+          transformOrigin: "top center",
+          duration: 1,
+          ease: "none",
+        }, "<")
+
+        for (let j = 0; j < i - 1; j++) {
+          tl.to(cards[j], {
+            scale: Math.max(0.86, 0.94 - (i - j) * 0.03),
+            y: -12 * (i - j + 1),
+            filter: `brightness(${Math.max(0.16, 0.35 - (i - j) * 0.08)})`,
+            duration: 1,
+            ease: "none",
+          }, "<")
+        }
+      }
+    })
+
+    return () => {
+      if (handleMouseMove) {
+        container.removeEventListener("mousemove", handleMouseMove)
+      }
+      mm.revert()
     }
   }, { scope: containerRef })
 
@@ -156,17 +237,18 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
         </p>
       </div>
 
-      {/* Vertical Sticky Stack Container */}
-      <div className={styles.trackWrapper}>
-        {projects.map((project, index) => (
-          <Link 
-            key={project.id} 
-            href={project.link}
-            className={styles.projectCard}
-            style={{ zIndex: index + 1 }}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
+      {/* Pinned Stage Container */}
+      <div className={styles.stackStage} ref={stageRef}>
+        <div className={styles.cardsStack}>
+          {projects.map((project, index) => (
+            <Link 
+              key={project.id} 
+              href={project.link}
+              className={styles.projectCard}
+              style={{ zIndex: index + 1 }}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
             {/* Left Content Side */}
             <div className={styles.cardContent}>
               <div className={styles.projectCategoryBadge}>
@@ -242,6 +324,7 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
             </div>
           </Link>
         ))}
+        </div>
       </div>
 
       {/* View All Projects Button */}

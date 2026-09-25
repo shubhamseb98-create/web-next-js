@@ -215,29 +215,202 @@
   color: var(--hover-text, #ffffff);
 }
 
-/* Grid Layout */
-.gridContainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
-  width: 100%;
+/* Desktop Grid Layout */
+.desktopGridContainer {
+  display: none;
 }
 
-@media (max-width: 1200px) {
-  .gridContainer {
+@media (min-width: 992px) {
+  .desktopGridContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .desktopGridContainer {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 992px) {
-  .gridContainer {
-    grid-template-columns: repeat(2, 1fr);
+.mobileCarouselWrapper {
+  display: block;
+  width: 100%;
+  position: relative;
+  padding-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .mobileCarouselWrapper {
+    display: none;
   }
 }
 
-@media (max-width: 576px) {
-  .gridContainer {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+.mobileSwiper {
+  width: 100%;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  overflow: visible;
+}
+
+.mobileSwiper :global(.swiper-wrapper) {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  box-sizing: border-box;
+}
+
+.mobileSwiper :global(.swiper-slide) {
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  height: 440px !important;
+  display: flex !important;
+  min-width: 0 !important;
+  opacity: 0.4;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.mobileSwiper :global(.swiper-slide-active) {
+  opacity: 1 !important;
+}
+
+.carouselSlide {
+  height: 440px !important;
+  display: flex !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+
+.carouselCard {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 440px !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+.carouselCard .cardContent {
+  padding: 1.8rem 1.4rem !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+.carouselCard .title {
+  font-size: 1.35rem !important;
+  line-height: 1.3 !important;
+  margin-top: 0.6rem !important;
+  min-width: 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+/* On mobile carousel, show description and cta cleanly */
+.carouselCard .description {
+  opacity: 0.92 !important;
+  transform: none !important;
+  font-size: 0.9rem !important;
+  line-height: 1.55 !important;
+  margin-top: 0.75rem !important;
+  min-width: 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.carouselCard .description :global(p) {
+  margin: 0 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.carouselCard .cardHoverArrow {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.carouselCard .cardImage {
+  opacity: 0.25 !important;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+  position: relative;
+  z-index: 10;
+}
+
+.threeDotsPagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.dotBtn {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dotBtn:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.activeDot {
+  width: 26px;
+  height: 9px;
+  border-radius: 10px;
+  background: var(--clr-primary, #52a436);
+  box-shadow: 0 0 12px rgba(82, 164, 54, 0.6);
+}
+
+.controlBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--clr-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.controlBtn:hover {
+  background: var(--clr-primary, #52a436);
+  border-color: var(--clr-primary, #52a436);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(82, 164, 54, 0.4);
 }

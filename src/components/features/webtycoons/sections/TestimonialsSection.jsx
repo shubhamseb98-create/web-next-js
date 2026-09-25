@@ -61,6 +61,8 @@ const fallbackTestimonials = [
 
 const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
   const [isMounted, setIsMounted] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const swiperRef = useRef(null)
   const rawData = (testimonialsData && testimonialsData.length > 0) ? testimonialsData : fallbackTestimonials;
   
   // Ensure we have at least 8 slides for Swiper coverflow to loop infinitely without boundary collision
@@ -106,6 +108,9 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
     return () => ctx.revert()
   }, [])
 
+  // Calculate which of the 3 dots is active (0, 1, or 2)
+  const activeDot = Math.min(2, Math.floor((activeIndex / displayData.length) * 3));
+
   return (
     <section className={styles.sectionWrapper} ref={sectionRef}>
       <div className="container-fluid-px">
@@ -124,7 +129,7 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
         <div className={styles.carouselContainer} ref={carouselRef}>
           {isMounted ? (
             <Swiper
-              modules={[Navigation, Pagination, EffectCoverflow, Autoplay]}
+              modules={[Navigation, EffectCoverflow, Autoplay]}
               effect="coverflow"
               grabCursor={true}
               centeredSlides={true}
@@ -133,12 +138,33 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
               loopPreventsSliding={false}
               watchSlidesProgress={true}
               slidesPerView="auto"
-              coverflowEffect={{
-                rotate: 15,
-                stretch: 0,
-                depth: 220,
-                modifier: 1.3,
-                slideShadows: false,
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper
+              }}
+              onSlideChange={(swiper) => {
+                setActiveIndex(swiper.realIndex ?? 0)
+              }}
+              breakpoints={{
+                320: {
+                  spaceBetween: 16,
+                  coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 0,
+                    modifier: 1,
+                    slideShadows: false,
+                  }
+                },
+                768: {
+                  spaceBetween: 24,
+                  coverflowEffect: {
+                    rotate: 15,
+                    stretch: 0,
+                    depth: 220,
+                    modifier: 1.3,
+                    slideShadows: false,
+                  }
+                }
               }}
               autoplay={{
                 delay: 4000,
@@ -152,7 +178,6 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
                 nextEl: '.swiper-btn-next',
                 prevEl: '.swiper-btn-prev',
               }}
-              pagination={{ clickable: true, el: '.swiper-custom-pagination' }}
               className={styles.swiperWrapper}
             >
               {displayData.map((t, idx) => {
@@ -190,11 +215,39 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
           )}
 
           <div className={styles.controls}>
-            <button className={`${styles.controlBtn} swiper-btn-prev`} aria-label="Previous Testimonial">
+            <button 
+              type="button"
+              className={`${styles.controlBtn} swiper-btn-prev`} 
+              aria-label="Previous Testimonial"
+              onClick={() => swiperRef.current?.slidePrev()}
+            >
               <FaChevronLeft />
             </button>
-            <div className={`swiper-custom-pagination ${styles.pagination}`}></div>
-            <button className={`${styles.controlBtn} swiper-btn-next`} aria-label="Next Testimonial">
+            
+            {/* Custom 3-circle pagination */}
+            <div className={styles.threeDotsPagination}>
+              {[0, 1, 2].map((dotIdx) => (
+                <button
+                  key={dotIdx}
+                  type="button"
+                  aria-label={`Go to slide group ${dotIdx + 1}`}
+                  className={`${styles.dotBtn} ${activeDot === dotIdx ? styles.activeDot : ''}`}
+                  onClick={() => {
+                    if (swiperRef.current) {
+                      const target = Math.floor((dotIdx / 3) * displayData.length);
+                      swiperRef.current.slideToLoop(target, 600);
+                    }
+                  }}
+                />
+              ))}
+            </div>
+
+            <button 
+              type="button"
+              className={`${styles.controlBtn} swiper-btn-next`} 
+              aria-label="Next Testimonial"
+              onClick={() => swiperRef.current?.slideNext()}
+            >
               <FaChevronRight />
             </button>
           </div>

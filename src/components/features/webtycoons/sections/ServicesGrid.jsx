@@ -1,10 +1,13 @@
 'use client';
-import React, { isValidElement } from 'react'
+import React, { isValidElement, useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay } from 'swiper/modules'
+import 'swiper/css'
 import { fadeUp, staggerContainer, staggerItem, viewportOptions } from '../animations/variants'
 import { FiCode, FiCloud, FiShield, FiTrendingUp, FiSmartphone, FiCpu, FiMonitor, FiSearch, FiShoppingCart, FiPenTool, FiGlobe, FiMail, FiArrowRight } from 'react-icons/fi'
-import { FaBuilding } from 'react-icons/fa'
+import { FaBuilding, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 import styles from '../../../../css/webtycoons/ServicesGrid.module.css'
 
@@ -135,19 +138,77 @@ const serviceCardVariant = {
 };
 
 const ServicesGrid = ({ servicesData, homeExtraData }) => {  
-  // Real Estate has its own dedicated highlight showcase section right below ServicesGrid.
-  // Filter it out so that the green card never pollutes the IT Services Grid!
-  // Also strictly ensure that only active services (status === 'active') are displayed.
+  const [isMounted, setIsMounted] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const swiperRef = useRef(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const filteredServices = Array.isArray(servicesData)
     ? servicesData.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true))
     : services.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true));
 
-  // If servicesData is passed from server, strictly use filteredServices without falling back to hardcoded static items
   const displayServices = servicesData ? filteredServices : (filteredServices.length > 0 ? filteredServices : []);
 
   const subtitle = homeExtraData?.service_subtitle || 'Our Services';
   const mainTitle = homeExtraData?.service_title || 'Innovative IT Solutions for <br /> Your Business Growth';
   const description = homeExtraData?.service_description || 'We provide cutting-edge IT services and digital solutions designed to elevate your brand, streamline your operations, and drive exceptional results in the digital landscape.';
+
+  const activeDot = Math.min(2, Math.floor((activeIndex / (displayServices.length || 1)) * 3));
+
+  const renderCardContent = (service, index, isMobile = false) => {
+    const slideClass = index % 2 === 0 ? styles.slideLeft : styles.slideRight;
+    const isDynamic = !!service._id;
+    const bgColor = service.bgColor || (isDynamic ? BG_COLORS[index % BG_COLORS.length] : service.bgColor);
+    const hoverColor = service.hoverTextColor || (isDynamic ? HOVER_COLORS[index % HOVER_COLORS.length] : service.hoverTextColor);
+    const desc = isDynamic ? (service.shortDesc || service.description) : service.description;
+    const imageSizeClass = (service.imageStyle === 'small' || service.image?.endsWith('.svg')) ? styles.imageSmall : styles.imageFull;
+    const serviceIcon = getServiceIcon(service, index);
+    const targetSlug = service.slug || 'static-website-development';
+
+    return (
+      <Link 
+        href={`/services/${targetSlug}`}
+        className={`${styles.card} ${slideClass} ${imageSizeClass} ${isMobile ? styles.carouselCard : ''}`}
+        style={{
+          '--bg-color': bgColor,
+          '--hover-text': hoverColor,
+          textDecoration: 'none',
+          display: 'flex'
+        }}
+      >
+        <div className={styles.cardBg}>
+          {service.image && (
+            <img 
+              src={service.image} 
+              alt={service.title} 
+              className={styles.cardImage} 
+              loading="lazy"
+              decoding="async"
+              width={280}
+              height={430}
+            />
+          )}
+        </div>
+        <div className={styles.cardContent}>
+          <div className={styles.cardHeader}>
+            <span className={styles.label}>SERVICE</span>
+            <div className={styles.iconBadge}>
+              {serviceIcon}
+            </div>
+          </div>
+          <h3 className={styles.title}>{service.title}</h3>
+          <div className={styles.description} dangerouslySetInnerHTML={{ __html: desc }} />
+          <div className={styles.cardHoverArrow}>
+            <span className={styles.expandText}>Explore Service</span>
+            <span className={styles.arrowCircle}><FiArrowRight /></span>
+          </div>
+        </div>
+      </Link>
+    );
+  };
 
   return (
     <section className={`section-py ${styles.section}`} id="services">
@@ -170,79 +231,114 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
             </div>
           </motion.div>
 
+          {/* Desktop Grid Layout (Visible on desktop/tablet) */}
           <motion.div 
             variants={staggerContainer(0.06, 0.02)}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
-            className={styles.gridContainer}
+            className={styles.desktopGridContainer}
           >
-            {displayServices.map((service, index) => {
-              // Alternate animation direction based on index
-              const slideClass = index % 2 === 0 ? styles.slideLeft : styles.slideRight;
-              
-              // Handle dynamically loaded services logic vs fallback logic
-              const isDynamic = !!service._id;
-              
-              // Check if the service has these fields explicitly set in the DB, otherwise fallback
-              const bgColor = service.bgColor || (isDynamic ? BG_COLORS[index % BG_COLORS.length] : service.bgColor);
-              const hoverColor = service.hoverTextColor || (isDynamic ? HOVER_COLORS[index % HOVER_COLORS.length] : service.hoverTextColor);
-              const desc = isDynamic ? (service.shortDesc || service.description) : service.description;
-              const imageSizeClass = (service.imageStyle === 'small' || service.image?.endsWith('.svg')) ? styles.imageSmall : styles.imageFull;
-
-              const serviceIcon = getServiceIcon(service, index);
-              const targetSlug = service.slug || 'static-website-development';
-
-              const cardInner = (
-                <>
-                  <div className={styles.cardBg}>
-                    {service.image && (
-                      <img 
-                        src={service.image} 
-                        alt={service.title} 
-                        className={styles.cardImage} 
-                        loading="lazy"
-                        decoding="async"
-                        width={280}
-                        height={430}
-                      />
-                    )}
-                  </div>
-                  <div className={styles.cardContent}>
-                    <div className={styles.cardHeader}>
-                      <span className={styles.label}>SERVICE</span>
-                      <div className={styles.iconBadge}>
-                        {serviceIcon}
-                      </div>
-                    </div>
-                    <h3 className={styles.title}>{service.title}</h3>
-                    <div className={styles.description} dangerouslySetInnerHTML={{ __html: desc }} />
-                    <div className={styles.cardHoverArrow}>
-                      <span className={styles.expandText}>Explore Service</span>
-                      <span className={styles.arrowCircle}><FiArrowRight /></span>
-                    </div>
-                  </div>
-                </>
-              );
-
-              return (
-                <motion.div key={index} variants={serviceCardVariant} className={styles.gridItem}>
-                  <Link 
-                    href={`/services/${targetSlug}`}
-                    className={`${styles.card} ${slideClass} ${imageSizeClass}`}
-                    style={{
-                      '--bg-color': bgColor,
-                      '--hover-text': hoverColor,
-                      textDecoration: 'none',
-                      display: 'block'
-                    }}
-                  >
-                    {cardInner}
-                  </Link>
-                </motion.div>
-              )
-            })}
+            {displayServices.map((service, index) => (
+              <motion.div key={index} variants={serviceCardVariant} className={styles.gridItem}>
+                {renderCardContent(service, index, false)}
+              </motion.div>
+            ))}
           </motion.div>
+
+          {/* Mobile Swiper Carousel (Visible on mobile screens) */}
+          <div className={styles.mobileCarouselWrapper}>
+            {isMounted && (
+              <Swiper
+                direction="horizontal"
+                modules={[Autoplay]}
+                slidesPerView={1.2}
+                centeredSlides={true}
+                spaceBetween={16}
+                loop={displayServices.length > 2}
+                autoplay={{
+                  delay: 3600,
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
+                }}
+                speed={600}
+                onSwiper={(swiper) => {
+                  swiperRef.current = swiper;
+                }}
+                onSlideChange={(swiper) => {
+                  setActiveIndex(swiper.realIndex ?? 0);
+                }}
+                className={styles.mobileSwiper}
+                breakpoints={{
+                  320: {
+                    slidesPerView: 1.18,
+                    centeredSlides: true,
+                    spaceBetween: 14,
+                  },
+                  420: {
+                    slidesPerView: 1.25,
+                    centeredSlides: true,
+                    spaceBetween: 16,
+                  },
+                  640: {
+                    slidesPerView: 1.45,
+                    centeredSlides: true,
+                    spaceBetween: 20,
+                  },
+                  768: {
+                    slidesPerView: 2,
+                    centeredSlides: false,
+                    spaceBetween: 24,
+                  }
+                }}
+              >
+                {displayServices.map((service, index) => (
+                  <SwiperSlide key={service._id || service.slug || index} className={styles.carouselSlide}>
+                    {renderCardContent(service, index, true)}
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+
+            {/* Controls with Prev/Next buttons and 3-dot pagination */}
+            <div className={styles.controls}>
+              <button 
+                type="button"
+                className={styles.controlBtn} 
+                aria-label="Previous Service"
+                onClick={() => swiperRef.current?.slidePrev()}
+              >
+                <FaChevronLeft />
+              </button>
+              
+              <div className={styles.threeDotsPagination}>
+                {[0, 1, 2].map((dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    type="button"
+                    aria-label={`Go to service group ${dotIdx + 1}`}
+                    className={`${styles.dotBtn} ${activeDot === dotIdx ? styles.activeDot : ''}`}
+                    onClick={() => {
+                      if (swiperRef.current) {
+                        const target = Math.floor((dotIdx / 3) * displayServices.length);
+                        swiperRef.current.slideToLoop(target, 600);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+
+              <button 
+                type="button"
+                className={styles.controlBtn} 
+                aria-label="Next Service"
+                onClick={() => swiperRef.current?.slideNext()}
+              >
+                <FaChevronRight />
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

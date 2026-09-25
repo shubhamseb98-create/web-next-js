@@ -63,7 +63,91 @@ const GlobalSettingSchema = new mongoose.Schema({
     groqApiKey: { type: String, default: "" },
     cerebrasApiKey: { type: String, default: "" },
     aiProviderSequence: { type: String, default: "groq,cerebras,openrouter,gemini" },
-    preferredAiProvider: { type: String, default: "auto" } // "auto" | "openrouter" | "groq" | "cerebras" | "gemini"
+    preferredAiProvider: { type: String, default: "auto" }, // "auto" | "openrouter" | "groq" | "cerebras" | "gemini"
+
+    // Floating Contact & Quick Action Buttons Management
+    floatingButtons: {
+        isEnabled: { type: Boolean, default: true },
+        position: { type: String, enum: ['right', 'left'], default: 'right' },
+        bottomOffset: { type: Number, default: 24 },
+        sideOffset: { type: Number, default: 20 },
+        buttonSize: { type: Number, default: 44 },
+        showTooltips: { type: Boolean, default: true },
+        buttons: {
+            type: [{
+                id: { type: String },
+                type: { type: String, default: 'custom' }, // 'call', 'whatsapp', 'linkedin', 'scroll_top', 'custom'
+                label: { type: String, default: '' },
+                tooltip: { type: String, default: '' },
+                value: { type: String, default: '' },
+                customMessage: { type: String, default: '' },
+                color: { type: String, default: '#2563eb' },
+                hoverColor: { type: String, default: '#1d4ed8' },
+                icon: { type: String, default: 'phone' },
+                isEnabled: { type: Boolean, default: true },
+                openInNewTab: { type: Boolean, default: false },
+                sort: { type: Number, default: 0 }
+            }],
+            default: [
+                {
+                    id: 'call',
+                    type: 'call',
+                    label: 'Call Us',
+                    tooltip: 'Call Us',
+                    value: '+91 8527458950',
+                    customMessage: '',
+                    color: '#2563eb',
+                    hoverColor: '#1d4ed8',
+                    icon: 'phone',
+                    isEnabled: true,
+                    openInNewTab: false,
+                    sort: 1
+                },
+                {
+                    id: 'whatsapp',
+                    type: 'whatsapp',
+                    label: 'WhatsApp',
+                    tooltip: 'WhatsApp',
+                    value: '+91 8527458950',
+                    customMessage: 'Hello WebTycoons, I would like to enquire about your services.',
+                    color: '#22c55e',
+                    hoverColor: '#16a34a',
+                    icon: 'whatsapp',
+                    isEnabled: true,
+                    openInNewTab: true,
+                    sort: 2
+                },
+                {
+                    id: 'linkedin',
+                    type: 'linkedin',
+                    label: 'LinkedIn',
+                    tooltip: 'LinkedIn',
+                    value: 'https://linkedin.com',
+                    customMessage: '',
+                    color: '#0a66c2',
+                    hoverColor: '#004182',
+                    icon: 'linkedin',
+                    isEnabled: true,
+                    openInNewTab: true,
+                    sort: 3
+                },
+                {
+                    id: 'scroll_top',
+                    type: 'scroll_top',
+                    label: 'Scroll to Top',
+                    tooltip: 'Top',
+                    value: '250',
+                    customMessage: '',
+                    color: '#52a436',
+                    hoverColor: '#3e8027',
+                    icon: 'arrow_up',
+                    isEnabled: true,
+                    openInNewTab: false,
+                    sort: 4
+                }
+            ]
+        }
+    }
 }, { timestamps: true });
 
 // Force-delete any cached model to ensure schema changes are always picked up.

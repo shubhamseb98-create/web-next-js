@@ -64,6 +64,7 @@ const DASHBOARD_PAGES = [
   { name: 'Global Settings',          href: '/dashboard/settings',                 permission: 'global_settings' },
   { name: 'Page Banners',             href: '/dashboard/settings/page-banners',   permission: 'global_settings' },
   { name: 'Home Banner',              href: '/dashboard/home/banner',              permission: 'home' },
+  { name: 'Floating Buttons',         href: '/dashboard/floating-buttons',         permission: 'home' },
   { name: 'Home About',               href: '/dashboard/home/about',               permission: 'home' },
   // { name: 'Home Why Choose',          href: '/dashboard/home/why-choose',          permission: 'home' }, // Hidden as requested
   { name: 'Home Our Work',            href: '/dashboard/home/our-work',            permission: 'home' },

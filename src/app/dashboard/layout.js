@@ -25,6 +25,7 @@ const ROUTE_PERMISSION_MAP = [
   { prefix: '/dashboard/email-templates', permission: 'email_templates' },
   { prefix: '/dashboard/files', permission: 'file_manager' },
   { prefix: '/dashboard/header-menu', permission: ['global_settings', 'home'] },
+  { prefix: '/dashboard/floating-buttons', permission: ['global_settings', 'home'] },
   { prefix: '/dashboard/settings', permission: 'global_settings' },
   { prefix: '/dashboard/advanced/ai', permission: 'ai_features' },
   { prefix: '/dashboard/clients', permission: ['clients', 'home'] },

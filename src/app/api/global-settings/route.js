@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 export const dynamic = 'force-dynamic';
 import { connectDB } from "../../lib/config";
+import mongoose from "mongoose";
 import GlobalSetting from "../../models/GlobalSetting";
 import fs from "fs";
 import path from "path";

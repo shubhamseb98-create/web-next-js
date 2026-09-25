@@ -111,6 +111,7 @@ export default async function PublicLayout({ children }) {
         />
       )}
       <FloatingContactButtons
+        config={globalSettings?.floatingButtons}
         phoneNumber={globalSettings?.primaryPhone || "+91 8527458950"}
         socialLinks={globalSettings?.socialLinks || []}
       />

@@ -41,7 +41,7 @@ const NAV = [
       { label: 'Home Page About',   href: '/dashboard/home/about' },
       { label: 'Call To Action',    href: '/dashboard/home/cta-one' },
       { label: 'Our Work',          href: '/dashboard/home/our-work' },
-
+      
       { label: 'Heading Text',      href: '/dashboard/home/heading-text' },
       // { label: 'Certifications',    href: '/dashboard/home/certifications' },
       // { label: 'Something CTA',     href: '/dashboard/home/cta-two' },
@@ -51,6 +51,7 @@ const NAV = [
       { label: 'Technologies',        href: '/dashboard/technologies' },
       { label: 'Team Management',     href: '/dashboard/team' },
       { label: 'Testimonials',        href: '/dashboard/testimonials' },
+      { label: 'Floating Buttons',  href: '/dashboard/floating-buttons' },
     ],
   },
   {
@@ -103,6 +104,7 @@ const NAV = [
     children: [
       { label: 'General Settings', href: '/dashboard/settings' },
       { label: 'Header Navigation', href: '/dashboard/header-menu' },
+      { label: 'Floating Buttons', href: '/dashboard/floating-buttons' },
       { label: 'Page Banners',     href: '/dashboard/settings/page-banners' },
     ],
   },

@@ -914,7 +914,15 @@ export default function PortfolioPage() {
           }}
         >
           {r.image ? (
-            <img src={r.image} alt={r.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img
+              src={
+                r.image.startsWith('http') ? r.image
+                : r.image.startsWith('/') ? r.image
+                : `/uploads/${r.image}`
+              }
+              alt={r.title}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           ) : (
             <ImageIcon style={{ width: '16px', height: '16px', color: 'rgba(34, 197, 94, 0.6)' }} />
           )}
@@ -954,7 +962,7 @@ export default function PortfolioPage() {
     setRows,
     search,
     addToast,
-    onRefresh: fetchProjects
+    onRefresh: fetchItems
   })
 
   const filtered = rows

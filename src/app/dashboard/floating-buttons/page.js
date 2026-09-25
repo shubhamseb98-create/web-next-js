@@ -757,11 +757,11 @@ export default function FloatingButtonsManagement() {
                 <label className="text-xs font-semibold text-gray-300">Action Type</label>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {[
-                    { id: 'call', label: 'Phone Call', icon: Phone },
-                    { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle },
-                    { id: 'linkedin', label: 'LinkedIn', icon: Linkedin },
-                    { id: 'scroll_top', label: 'Scroll Top', icon: ArrowUp },
-                    { id: 'custom', label: 'Custom Link', icon: LinkIcon },
+                    { id: 'call', label: 'Phone Call', icon: FaPhone },
+                    { id: 'whatsapp', label: 'WhatsApp', icon: FaWhatsapp },
+                    { id: 'linkedin', label: 'LinkedIn', icon: FaLinkedinIn },
+                    { id: 'scroll_top', label: 'Scroll Top', icon: FaArrowUp },
+                    { id: 'custom', label: 'Custom Link', icon: FaLink },
                   ].map(t => {
                     const TIcon = t.icon;
                     return (
@@ -769,7 +769,7 @@ export default function FloatingButtonsManagement() {
                         key={t.id}
                         type="button"
                         onClick={() => {
-                          const matchingIcon = t.id === 'scroll_top' ? 'arrow_up' : t.id;
+                          const matchingIcon = t.id === 'scroll_top' ? 'arrow_up' : t.id === 'call' ? 'phone' : t.id === 'custom' ? 'link' : t.id;
                           setEditingBtn(prev => ({
                             ...prev,
                             type: t.id,

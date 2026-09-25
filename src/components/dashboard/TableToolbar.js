@@ -8,6 +8,7 @@ export default function TableToolbar({
   onSearchChange,
   sort,
   onSortChange,
+  sortOptions,
   selectedCount = 0,
   onBulkDelete,
   bulkDeleting = false,
@@ -16,12 +17,15 @@ export default function TableToolbar({
   extraActions,
   extraFilters
 }) {
-  const SORT_OPTIONS = [
+  const DEFAULT_SORT_OPTIONS = [
+    { value: 'sort', label: 'Position / Sort Order' },
     { value: 'latest', label: 'Latest First' },
     { value: 'oldest', label: 'Oldest First' },
     { value: 'a-z', label: 'A - Z' },
     { value: 'z-a', label: 'Z - A' }
   ];
+
+  const SORT_OPTIONS = sortOptions || DEFAULT_SORT_OPTIONS;
 
   const currentSortLabel = SORT_OPTIONS.find(o => o.value === sort)?.label || 'Sort By';
 

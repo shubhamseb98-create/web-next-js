@@ -16,6 +16,7 @@ import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2, ImageIcon, Video, Sparkles, Upload, Play, RefreshCw, HelpCircle, Plus } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 import PortfolioThemePicker from '../../../components/dashboard/PortfolioThemePicker'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const EMPTY = {
@@ -922,6 +923,7 @@ export default function PortfolioPage() {
     },
     { key: 'title', label: 'Project', render: r => <div className="font-semibold text-white text-sm">{r.title}</div> },
     { key: 'category', label: 'Category', render: r => <Badge variant="outline" className="bg-muted text-foreground/80 font-medium capitalize">{r.category}</Badge> },
+    { key: 'sort', label: 'Sort', render: r => <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{r.sort || 0}</span> },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={() => handleToggleStatus(r._id, r.status)} /> },
     { key: 'featured', label: 'Featured', render: r => r.isFeatured ? <Badge className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs">Featured</Badge> : <span className="text-slate-500 text-xs">-</span> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
@@ -946,7 +948,18 @@ export default function PortfolioPage() {
     )}
   ]
 
-  const filtered = rows.filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
+  const handleReorder = createReorderHandler({
+    entity: 'portfolio',
+    rows,
+    setRows,
+    search,
+    addToast,
+    onRefresh: fetchProjects
+  })
+
+  const filtered = rows
+    .filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => (Number(a.sort) || 0) - (Number(b.sort) || 0))
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
@@ -1013,7 +1026,18 @@ export default function PortfolioPage() {
           </div>
         }
       />
-      <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={selectedIds} onToggleSelectAll={() => setSelectedIds(selectedIds.length === filtered.length ? [] : filtered.map(x=>x._id))} onToggleSelectRow={id => setSelectedIds(p => p.includes(id) ? p.filter(x=>x!==id) : [...p, id])} />
+      <DataTable 
+        columns={columns} 
+        data={filtered} 
+        loading={loading} 
+        onRowClick={setModal} 
+        actions={false} 
+        selectedIds={selectedIds} 
+        onToggleSelectAll={() => setSelectedIds(selectedIds.length === filtered.length ? [] : filtered.map(x=>x._id))} 
+        onToggleSelectRow={id => setSelectedIds(p => p.includes(id) ? p.filter(x=>x!==id) : [...p, id])} 
+        isDraggable={true}
+        onReorder={handleReorder}
+      />
       {modal && <PortfolioModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
       {videoModalOpen && <ContactVideoModal onClose={() => setVideoModalOpen(false)} onSaved={msg => addToast(msg, 'success')} />}
       {faqModalOpen && <ProjectFaqsModal onClose={() => setFaqModalOpen(false)} onSaved={msg => addToast(msg, 'success')} />}

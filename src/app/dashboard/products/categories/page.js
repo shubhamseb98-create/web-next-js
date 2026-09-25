@@ -16,6 +16,7 @@ import { SortInput } from '../../../../components/dashboard/SortInput'
 import { Edit2, Trash2, Plus, ImageIcon } from 'lucide-react'
 import RichEditor from '../../../../components/dashboard/RichEditor'
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../../lib/useTableReorder'
 
 const EMPTY = { 
   name: '', slug: '', description: '', breadcrumb: '', sort: '',
@@ -239,7 +240,7 @@ export default function CategoriesPage() {
   
   // Standardization states
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [deletingId, setDeletingId] = useState(null)
@@ -249,7 +250,7 @@ export default function CategoriesPage() {
   
   const addToast = (msg, type = 'success') => setToasts(t => [...t, { id: Date.now(), message: msg, type }])
 
-  useEffect(() => {
+  const fetchItems = () => {
     fetch('/api/categories')
       .then(r => r.json())
       .then(data => {
@@ -261,7 +262,22 @@ export default function CategoriesPage() {
         addToast('Failed to load categories', 'danger')
         setLoading(false)
       })
+  }
+
+  useEffect(() => {
+    fetchItems()
   }, [])
+
+  const handleReorder = createReorderHandler({
+    entity: 'categories',
+    rows,
+    setRows,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchItems,
+  })
 
   function handleSave(savedCat) {
     setRows(r => {
@@ -342,11 +358,12 @@ export default function CategoriesPage() {
       row.slug?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'latest') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
       if (sort === 'oldest') return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
       if (sort === 'a-z') return (a.name || '').localeCompare(b.name || '')
       if (sort === 'z-a') return (b.name || '').localeCompare(a.name || '')
-      return (a.sort || 0) - (b.sort || 0)
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     })
 
   const columns = [
@@ -389,7 +406,11 @@ export default function CategoriesPage() {
     {
       key: 'sort',
       label: 'Sort',
-      render: (row) => <span className="font-medium text-sm text-muted-foreground">{row.sort}</span>
+      render: (row) => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort ?? 0}
+        </span>
+      )
     },
     {
       key: 'status',
@@ -437,6 +458,13 @@ export default function CategoriesPage() {
         onSearchChange={setSearch}
         sort={sort}
         onSortChange={setSort}
+        sortOptions={[
+          { label: 'Sort Order', value: 'sort' },
+          { label: 'Latest', value: 'latest' },
+          { label: 'Oldest', value: 'oldest' },
+          { label: 'A–Z', value: 'a-z' },
+          { label: 'Z–A', value: 'z-a' },
+        ]}
         selectedCount={selectedIds.length}
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
@@ -453,6 +481,8 @@ export default function CategoriesPage() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
       
       {modal && <CatModal cat={modal === 'new' ? null : modal} nextSort={rows.reduce((max, r) => Math.max(max, Number(r.sort) || 0), 0) + 1} onClose={() => setModal(null)} onSave={handleSave} />}

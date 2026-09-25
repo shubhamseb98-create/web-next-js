@@ -12,6 +12,7 @@ import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2 } from 'lucide-react'
 import { FaCode, FaServer, FaRobot, FaMobileAlt, FaDatabase, FaPaintBrush } from 'react-icons/fa'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const EMPTY = { idNumber: '', title: '', desc: '', image: '', sort: 0, status: 'active' }
@@ -129,6 +130,7 @@ export default function CapabilitiesPage() {
     { key: 'idNumber', label: 'ID', render: r => <div className="font-semibold text-slate-400">{r.idNumber}</div> },
     { key: 'title', label: 'Title', render: r => <div className="font-semibold">{r.title}</div> },
     { key: 'desc', label: 'Description', render: r => <div className="text-xs text-slate-400 max-w-xs truncate">{r.desc}</div> },
+    { key: 'sort', label: 'Sort', render: r => <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{r.sort || 0}</span> },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/capabilities/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex gap-2 justify-end">
@@ -137,13 +139,36 @@ export default function CapabilitiesPage() {
       </div>
     )}
   ]
-  const filtered = rows.filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
+
+  const handleReorder = createReorderHandler({
+    entity: 'capabilities',
+    rows,
+    setRows,
+    search,
+    addToast,
+    onRefresh: fetchItems
+  })
+
+  const filtered = rows
+    .filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => (Number(a.sort) || 0) - (Number(b.sort) || 0))
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <Breadcrumb title="Capabilities Management" crumbs={[{ label: 'Capabilities' }]} />
       <TableToolbar search={search} onSearchChange={setSearch} selectedCount={0} onAdd={() => setModal('new')} addLabel="Add Capability" />
-      <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={[]} onToggleSelectAll={()=>{}} onToggleSelectRow={()=>{}} />
+      <DataTable 
+        columns={columns} 
+        data={filtered} 
+        loading={loading} 
+        onRowClick={setModal} 
+        actions={false} 
+        selectedIds={[]} 
+        onToggleSelectAll={()=>{}} 
+        onToggleSelectRow={()=>{}} 
+        isDraggable={true}
+        onReorder={handleReorder}
+      />
       {modal && <CapabilityModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
       <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Capability" message="Are you sure?" />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />

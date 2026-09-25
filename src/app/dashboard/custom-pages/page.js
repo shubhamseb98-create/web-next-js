@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic'
 import { SlugInput } from '../../../components/dashboard/SlugInput'
 import AIAssistantButton from '../../../components/dashboard/AIAssistantButton'
 const RichEditor = dynamic(() => import('../../../components/dashboard/RichEditor'), { ssr: false })
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const EMPTY = { 
@@ -35,7 +36,7 @@ export default function CustomPages() {
   
   // New States for Standardization
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'single', id: null })
@@ -58,6 +59,17 @@ export default function CustomPages() {
   useEffect(() => {
     fetchPages()
   }, [])
+
+  const handleReorder = createReorderHandler({
+    entity: 'custom-pages',
+    rows,
+    setRows,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchPages,
+  })
 
   async function fetchPages() {
     try {
@@ -222,7 +234,9 @@ export default function CustomPages() {
       key: 'sort',
       label: 'Sort',
       render: (row) => (
-        <span className="font-medium text-muted-foreground text-sm">{row.sort || 0}</span>
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort ?? 0}
+        </span>
       )
     },
     {
@@ -261,11 +275,16 @@ export default function CustomPages() {
     }
   ]
 
-  let filteredRows = [...rows]
-  if (search) {
-    filteredRows = filteredRows.filter(r => r.title.toLowerCase().includes(search.toLowerCase()) || r.slug.toLowerCase().includes(search.toLowerCase()))
-  }
-  if (sort === 'oldest') filteredRows.reverse()
+  const filteredRows = rows
+    .filter(r => !search || r.title.toLowerCase().includes(search.toLowerCase()) || r.slug.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
+      if (sort === 'latest') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      if (sort === 'oldest') return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+      if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '')
+      if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '')
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
+    })
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
@@ -280,6 +299,13 @@ export default function CustomPages() {
         onSearchChange={setSearch}
         sort={sort}
         onSortChange={setSort}
+        sortOptions={[
+          { label: 'Sort Order', value: 'sort' },
+          { label: 'Latest', value: 'latest' },
+          { label: 'Oldest', value: 'oldest' },
+          { label: 'A–Z', value: 'a-z' },
+          { label: 'Z–A', value: 'z-a' },
+        ]}
         selectedCount={selectedIds.length}
         onBulkDelete={handleBulkDelete}
         bulkDeleting={bulkDeleting}
@@ -296,6 +322,8 @@ export default function CustomPages() {
         selectedIds={selectedIds}
         onSelectionChange={setSelectedIds}
         selectable={true}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
 
       <Dialog open={!!modal} onOpenChange={() => closeModal()}>

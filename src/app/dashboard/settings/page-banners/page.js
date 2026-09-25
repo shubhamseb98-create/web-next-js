@@ -13,6 +13,7 @@ import { Switch } from '../../../../components/ui/switch'
 import { FloatingInput, FloatingSelect } from '../../../../components/ui/floating-input'
 import { Edit2, Trash2, ImageIcon } from 'lucide-react'
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../../lib/useTableReorder'
 
 const BASE_URL = ''
 
@@ -30,7 +31,7 @@ export default function PageBanners() {
   
   // Standard states
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [toasts, setToasts] = useState([])
@@ -48,12 +49,24 @@ export default function PageBanners() {
       b.pageKey?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '')
       if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '')
-      return 0
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     })
 
   useEffect(() => { fetchBanners() }, [])
+
+  const handleReorder = createReorderHandler({
+    entity: 'page-banners',
+    rows: banners,
+    setRows: setBanners,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchBanners,
+  })
 
   async function fetchBanners() {
     try {
@@ -191,6 +204,15 @@ export default function PageBanners() {
       )
     },
     {
+      key: 'sort',
+      label: 'Sort',
+      render: (row) => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort ?? 0}
+        </span>
+      )
+    },
+    {
       key: 'status',
       label: 'Status',
       render: (row) => (
@@ -236,6 +258,11 @@ export default function PageBanners() {
         onSearchChange={setSearch}
         sort={sort}
         onSortChange={setSort}
+        sortOptions={[
+          { label: 'Sort Order', value: 'sort' },
+          { label: 'A–Z', value: 'a-z' },
+          { label: 'Z–A', value: 'z-a' },
+        ]}
         selectedCount={selectedIds.length}
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
@@ -252,6 +279,8 @@ export default function PageBanners() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
 
       {modal && (

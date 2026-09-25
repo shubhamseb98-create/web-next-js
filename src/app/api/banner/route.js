@@ -10,11 +10,51 @@ import { uploadFile, isUploadFile } from "../../../lib/upload";
 export async function GET() {
     try {
         await connectDB();
-        const banners = await Banner.find().lean();
+        const banners = await Banner.find().sort({ sort: 1, createdAt: -1 }).lean();
         return Response.json(banners);
     } catch (error) {
         return Response.json(
             { message: "Failed to fetch banners", error: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+export async function PUT(request) {
+    try {
+        await connectDB();
+        const body = await request.json();
+
+        if (body.action === 'reorder' && Array.isArray(body.items)) {
+            const bulkOps = body.items.map((item, index) => ({
+                updateOne: {
+                    filter: { _id: item._id },
+                    update: { $set: { sort: typeof item.sort === 'number' ? item.sort : index + 1 } }
+                }
+            }));
+
+            if (bulkOps.length > 0) {
+                await Banner.bulkWrite(bulkOps);
+            }
+
+            try {
+                const { revalidatePath } = require("next/cache");
+                revalidatePath('/', 'layout');
+            } catch (e) {
+                console.warn("Revalidation warning:", e.message);
+            }
+
+            return Response.json({
+                success: true,
+                message: "Banners reordered successfully"
+            });
+        }
+
+        return Response.json({ message: "Invalid action" }, { status: 400 });
+    } catch (error) {
+        console.error("Banner reorder PUT error:", error);
+        return Response.json(
+            { message: "Reorder failed", error: error.message },
             { status: 500 }
         );
     }

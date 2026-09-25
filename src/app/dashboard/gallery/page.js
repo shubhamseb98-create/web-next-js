@@ -12,13 +12,14 @@ import { FloatingInput } from '../../../components/ui/floating-input'
 import { Switch } from '../../../components/ui/switch'
 import { Image as ImageIcon, Edit2, Trash2, X, UploadCloud } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 export default function GalleryPage() {
   const [images, setImages] = useState([])
   const [loading, setLoading] = useState(true)
   const [lightbox, setLightbox] = useState(null)
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [deletingId, setDeletingId] = useState(null)
   const [bulkDeleting, setBulkDeleting] = useState(false)
@@ -51,6 +52,17 @@ export default function GalleryPage() {
       setLoading(false)
     }
   }
+
+  const handleReorder = createReorderHandler({
+    entity: 'gallery',
+    rows: images,
+    setRows: setImages,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchImages,
+  })
 
   async function deleteImage(id) {
     try {
@@ -172,11 +184,12 @@ export default function GalleryPage() {
       img.caption?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'latest') return new Date(b.date || 0) - new Date(a.date || 0)
       if (sort === 'oldest') return new Date(a.date || 0) - new Date(b.date || 0)
       if (sort === 'a-z') return (a.caption || '').localeCompare(b.caption || '')
       if (sort === 'z-a') return (b.caption || '').localeCompare(a.caption || '')
-      return 0
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     })
 
   const toggleSelectAll = () => {
@@ -217,6 +230,15 @@ export default function GalleryPage() {
       label: 'Date Uploaded',
       render: (row) => (
         <span className="text-xs font-medium text-muted-foreground">{row.date}</span>
+      )
+    },
+    {
+      key: 'sort',
+      label: 'Sort',
+      render: (row) => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort ?? 0}
+        </span>
       )
     },
     {
@@ -265,6 +287,13 @@ export default function GalleryPage() {
         onSearchChange={setSearch}
         sort={sort}
         onSortChange={setSort}
+        sortOptions={[
+          { label: 'Sort Order', value: 'sort' },
+          { label: 'Latest', value: 'latest' },
+          { label: 'Oldest', value: 'oldest' },
+          { label: 'A–Z', value: 'a-z' },
+          { label: 'Z–A', value: 'z-a' },
+        ]}
         selectedCount={selectedIds.length}
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
@@ -281,6 +310,8 @@ export default function GalleryPage() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
 
       {/* Lightbox */}

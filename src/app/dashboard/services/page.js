@@ -16,6 +16,7 @@ import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2, Plus, Image as ImageIcon, FileText, ExternalLink, ArrowRight, Sparkles, Layers } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 import PortfolioThemePicker from '../../../components/dashboard/PortfolioThemePicker'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const EMPTY = { title: '', slug: '', shortDesc: '', icon: '', bgColor: '', hoverTextColor: '', imageStyle: 'small', sort: 0, isFeatured: false, status: 'active' }
@@ -174,7 +175,7 @@ export default function ServicesPage() {
   const [saving, setSaving] = useState(false)
   const [modal, setModal] = useState(null)
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [toasts, setToasts] = useState([])
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null })
@@ -357,6 +358,15 @@ export default function ServicesPage() {
       )
     },
     {
+      key: 'sort',
+      label: 'Sort',
+      render: r => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {r.sort || 0}
+        </span>
+      )
+    },
+    {
       key: 'status',
       label: 'Active',
       render: r => (
@@ -431,15 +441,27 @@ export default function ServicesPage() {
     }
   ]
 
+  const handleReorder = createReorderHandler({
+    entity: 'services',
+    rows,
+    setRows,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchItems
+  })
+
   const filtered = (rows || []).filter(r => 
     (r?.title || '').toLowerCase().includes((search || '').toLowerCase()) ||
     (r?.slug || '').toLowerCase().includes((search || '').toLowerCase()) ||
     (r?.shortDesc || '').toLowerCase().includes((search || '').toLowerCase())
   ).sort((a, b) => {
+    if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '')
     if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '')
-    if (sort === 'oldest') return (a.sort || 0) - (b.sort || 0)
-    return (b.sort || 0) - (a.sort || 0)
+    if (sort === 'oldest') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
+    return (Number(a.sort) || 0) - (Number(b.sort) || 0)
   })
 
   return (
@@ -463,6 +485,8 @@ export default function ServicesPage() {
         selectedIds={selectedIds} 
         onToggleSelectAll={toggleSelectAll} 
         onToggleSelectRow={toggleSelectRow} 
+        isDraggable={true}
+        onReorder={handleReorder}
       />
       {modal && (
         <ServiceModal 

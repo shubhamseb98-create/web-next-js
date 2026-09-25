@@ -16,6 +16,7 @@ import { SlugInput } from '../../../components/dashboard/SlugInput'
 import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2, Plus, ImageIcon } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 
@@ -250,7 +251,7 @@ export default function BlogManagementPage() {
   
   // Standardization states
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [deletingId, setDeletingId] = useState(null)
@@ -406,12 +407,24 @@ export default function BlogManagementPage() {
       r.category?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'latest') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
       if (sort === 'oldest') return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
       if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '')
       if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '')
-      return (a.sort || 0) - (b.sort || 0)
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     })
+
+  const handleReorder = createReorderHandler({
+    entity: 'blogs',
+    rows,
+    setRows,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchBlogs
+  })
 
   const columns = [
     {
@@ -444,6 +457,15 @@ export default function BlogManagementPage() {
         <Badge variant="outline" className="bg-muted text-foreground/80 font-medium">
           {row.category || 'Uncategorized'}
         </Badge>
+      )
+    },
+    {
+      key: 'sort',
+      label: 'Sort',
+      render: (row) => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort || 0}
+        </span>
       )
     },
     {
@@ -517,6 +539,8 @@ export default function BlogManagementPage() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
 
       {modal && (

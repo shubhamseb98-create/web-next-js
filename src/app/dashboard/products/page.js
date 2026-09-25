@@ -10,6 +10,7 @@ import { Badge } from '../../../components/ui/badge'
 import { Switch } from '../../../components/ui/switch'
 import { Edit2, Trash2, Layers, ImageIcon, Eye, ExternalLink } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 // Lazy-load ProductModal so CKEditor doesn't crash the categories route
 const ProductModal = dynamic(() => import('./ProductModal'), { ssr: false })
@@ -22,7 +23,7 @@ export default function ProductsPage() {
   
   // Standardization states
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [deletingId, setDeletingId] = useState(null)
@@ -33,7 +34,7 @@ export default function ProductsPage() {
   const addToast = (msg, type = 'success') => setToasts(t => [...t, { id: Date.now(), message: msg, type }])
   const stripHtml = html => (html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
 
-  useEffect(() => {
+  const fetchItems = () => {
     const t = Date.now();
     Promise.all([
       fetch(`/api/products?t=${t}`, { cache: 'no-store' }).then(r => r.json()),
@@ -47,7 +48,20 @@ export default function ProductsPage() {
       addToast('Failed to load data', 'danger')
       setLoading(false)
     })
-  }, [])
+  }
+
+  useEffect(() => { fetchItems() }, [])
+
+  const handleReorder = createReorderHandler({
+    entity: 'products',
+    rows: products,
+    setRows: setProducts,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchItems,
+  })
 
   function handleSave(savedProd) {
     setProducts(r => {
@@ -130,11 +144,12 @@ export default function ProductsPage() {
       p.category?.name?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'latest') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
       if (sort === 'oldest') return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
       if (sort === 'a-z') return (a.name || '').localeCompare(b.name || '')
       if (sort === 'z-a') return (b.name || '').localeCompare(a.name || '')
-      return (a.sort || 0) - (b.sort || 0)
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     })
 
   const columns = [
@@ -179,7 +194,11 @@ export default function ProductsPage() {
     {
       key: 'sort',
       label: 'Sort',
-      render: (row) => <span className="font-medium text-sm text-muted-foreground">{row.sort}</span>
+      render: (row) => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort ?? 0}
+        </span>
+      )
     },
     {
       key: 'status',
@@ -254,6 +273,13 @@ export default function ProductsPage() {
         onSearchChange={setSearch}
         sort={sort}
         onSortChange={setSort}
+        sortOptions={[
+          { label: 'Sort Order', value: 'sort' },
+          { label: 'Latest', value: 'latest' },
+          { label: 'Oldest', value: 'oldest' },
+          { label: 'A–Z', value: 'a-z' },
+          { label: 'Z–A', value: 'z-a' },
+        ]}
         selectedCount={selectedIds.length}
         onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
         bulkDeleting={bulkDeleting}
@@ -271,6 +297,8 @@ export default function ProductsPage() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
       
       {modal && (

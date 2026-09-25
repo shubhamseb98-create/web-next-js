@@ -15,6 +15,7 @@ import { Switch } from '../../../components/ui/switch'
 import { FloatingInput, FloatingSelect } from '../../../components/ui/floating-input'
 import { Edit2, Trash2, Plus, Briefcase, Mail, Phone, Palette } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const DEPTS = ['Management', 'Operations', 'Quality', 'HR', 'Sales', 'Finance', 'R&D', 'Maintenance']
@@ -150,7 +151,7 @@ export default function TeamPage() {
   
   // Standard states
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [toasts, setToasts] = useState([])
@@ -225,10 +226,22 @@ export default function TeamPage() {
       m.department?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'a-z') return (a.name || '').localeCompare(b.name || '')
       if (sort === 'z-a') return (b.name || '').localeCompare(a.name || '')
-      return (a.sort || 0) - (b.sort || 0)
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0)
     })
+
+  const handleReorder = createReorderHandler({
+    entity: 'team',
+    rows: members,
+    setRows: setMembers,
+    sort,
+    setSort,
+    search,
+    addToast,
+    onRefresh: fetchItems
+  })
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredMembers.length) setSelectedIds([])
@@ -299,7 +312,9 @@ export default function TeamPage() {
       key: 'sort',
       label: 'Sort',
       render: (m) => (
-        <span className="font-medium text-muted-foreground text-sm">{m.sort}</span>
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {m.sort || 0}
+        </span>
       )
     },
     {
@@ -368,6 +383,8 @@ export default function TeamPage() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
 
       {modal && <MemberModal member={modal === 'new' ? null : modal} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}

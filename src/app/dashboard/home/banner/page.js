@@ -36,7 +36,7 @@ export default function BannerPage() {
   
   // New States for Standardization
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState('latest')
+  const [sort, setSort] = useState('sort')
   const [selectedIds, setSelectedIds] = useState([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, type: 'single', id: null })
@@ -290,12 +290,53 @@ export default function BannerPage() {
       row.subtitle?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      if (sort === 'sort') return (Number(a.sort) || 0) - (Number(b.sort) || 0)
       if (sort === 'latest') return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
       if (sort === 'oldest') return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
       if (sort === 'a-z') return (a.title || '').localeCompare(b.title || '')
       if (sort === 'z-a') return (b.title || '').localeCompare(a.title || '')
-      return (a.sort || 0) - (b.sort || 0) // default fallback
+      return (Number(a.sort) || 0) - (Number(b.sort) || 0) // default fallback
     })
+
+  async function handleReorder(newOrderList) {
+    // 1. Auto-switch to position order if not already
+    if (sort !== 'sort') {
+      setSort('sort')
+    }
+
+    // 2. Renumber sort indices 1, 2, 3, ...
+    const renumbered = newOrderList.map((item, index) => ({
+      ...item,
+      sort: index + 1
+    }))
+
+    // 3. Update local state immediately for smooth UI
+    if (search.trim()) {
+      const searchIds = new Set(renumbered.map(x => x._id))
+      const remainingRows = rows.filter(r => !searchIds.has(r._id))
+      setRows([...renumbered, ...remainingRows])
+    } else {
+      setRows(renumbered)
+    }
+
+    // 4. Persist to database
+    try {
+      const res = await fetch(`${BASE_URL}/api/banner`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'reorder',
+          items: renumbered.map(item => ({ _id: item._id, sort: item.sort }))
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to save order')
+      addToast('Banner position updated successfully!', 'success')
+    } catch (err) {
+      addToast('Failed to save order: ' + err.message, 'error')
+      fetchBanners()
+    }
+  }
 
   const columns = [
     {
@@ -346,7 +387,11 @@ export default function BannerPage() {
     {
       key: 'sort',
       label: 'Sort',
-      render: (row) => <span className="font-medium text-sm text-muted-foreground">{row.sort}</span>
+      render: (row) => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {row.sort}
+        </span>
+      )
     },
     {
       key: 'status',
@@ -410,6 +455,8 @@ export default function BannerPage() {
         selectedIds={selectedIds}
         onToggleSelectAll={toggleSelectAll}
         onToggleSelectRow={toggleSelect}
+        isDraggable={true}
+        onReorder={handleReorder}
       />
 
       <Dialog open={!!modal} onOpenChange={(open) => !open && !saving && setModal(null)}>

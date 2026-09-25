@@ -11,6 +11,7 @@ import { FloatingInput, FloatingSelect } from '../../../components/ui/floating-i
 import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2, Image as ImageIcon, Globe, Building2, Sliders, Upload, ExternalLink, Sparkles } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const EMPTY = { 
@@ -376,6 +377,15 @@ export default function ClientsPage() {
         </div>
       )
     },
+    {
+      key: 'sort',
+      label: 'Sort',
+      render: r => (
+        <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          {r.sort || 0}
+        </span>
+      )
+    },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.status === 'active'} onCheckedChange={async () => { const newStatus = r.status==='active'?'draft':'active'; setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x)); try { const fd = new FormData(); fd.append('status', newStatus); await fetch(`${BASE_URL}/api/clients/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus === 'active' ? 'Status activated!' : 'Status deactivated!', newStatus === 'active' ? 'success' : 'error'); } catch(e) { setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
@@ -398,13 +408,36 @@ export default function ClientsPage() {
       </div>
     )}
   ]
-  const filtered = rows.filter(r => (r.name || '').toLowerCase().includes(search.toLowerCase()) || (r.category || '').toLowerCase().includes(search.toLowerCase()) || (r.domain || '').toLowerCase().includes(search.toLowerCase()))
+
+  const handleReorder = createReorderHandler({
+    entity: 'clients',
+    rows,
+    setRows,
+    search,
+    addToast,
+    onRefresh: fetchItems
+  })
+
+  const filtered = rows
+    .filter(r => (r.name || '').toLowerCase().includes(search.toLowerCase()) || (r.category || '').toLowerCase().includes(search.toLowerCase()) || (r.domain || '').toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => (Number(a.sort) || 0) - (Number(b.sort) || 0))
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <Breadcrumb title="Clients Management" crumbs={[{ label: 'Clients' }]} />
       <TableToolbar search={search} onSearchChange={setSearch} selectedCount={0} onAdd={() => setModal('new')} addLabel="Add Client" />
-      <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={[]} onToggleSelectAll={()=>{}} onToggleSelectRow={()=>{}} />
+      <DataTable 
+        columns={columns} 
+        data={filtered} 
+        loading={loading} 
+        onRowClick={setModal} 
+        actions={false} 
+        selectedIds={[]} 
+        onToggleSelectAll={()=>{}} 
+        onToggleSelectRow={()=>{}} 
+        isDraggable={true}
+        onReorder={handleReorder}
+      />
       {modal && <ClientModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
       <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Client" message="Are you sure?" />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />

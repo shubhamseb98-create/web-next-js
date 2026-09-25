@@ -11,6 +11,7 @@ import { FloatingInput, FloatingTextarea } from '../../../components/ui/floating
 import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2 } from 'lucide-react'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
+import { createReorderHandler } from '../../../lib/useTableReorder'
 
 const BASE_URL = ''
 const EMPTY = { name: '', designation: '', content: '', rating: 5, sort: 0, isActive: true }
@@ -141,6 +142,7 @@ export default function TestimonialsPage() {
       )
     },
     { key: 'name', label: 'Client', render: r => <div><div className="font-semibold text-white">{r.name}</div><div className="text-xs text-muted-foreground">{r.designation || r.role}</div></div> },
+    { key: 'sort', label: 'Sort', render: r => <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{r.sort || 0}</span> },
     { key: 'status', label: 'Active', render: r => <Switch checked={r.isActive} onCheckedChange={async () => { const newStatus = !r.isActive; setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: newStatus } : x)); try { const fd = new FormData(); fd.append('isActive', newStatus.toString()); await fetch(`${BASE_URL}/api/testimonials/${r._id}`, { method: 'PUT', body: fd }); addToast(newStatus ? 'Status activated!' : 'Status deactivated!', newStatus ? 'success' : 'error'); } catch { setRows(prev => prev.map(x => x._id === r._id ? { ...x, isActive: r.isActive } : x)); addToast('Error updating status', 'error'); } }} /> },
     { key: 'actions', align: 'right', label: 'Action', render: r => (
       <div className="flex gap-2 justify-end" onClick={e => e.stopPropagation()}>
@@ -149,13 +151,35 @@ export default function TestimonialsPage() {
       </div>
     )}
   ]
-  const filtered = rows.filter(r => r.name.toLowerCase().includes(search.toLowerCase()))
+  const handleReorder = createReorderHandler({
+    entity: 'testimonials',
+    rows,
+    setRows,
+    search,
+    addToast,
+    onRefresh: fetchItems
+  })
+
+  const filtered = rows
+    .filter(r => r.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => (Number(a.sort) || 0) - (Number(b.sort) || 0))
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6">
       <Breadcrumb title="Testimonials" crumbs={[{ label: 'Testimonials' }]} />
       <TableToolbar search={search} onSearchChange={setSearch} selectedCount={0} onAdd={() => setModal('new')} addLabel="Add Testimonial" />
-      <DataTable columns={columns} data={filtered} loading={loading} onRowClick={setModal} actions={false} selectedIds={[]} onToggleSelectAll={()=>{}} onToggleSelectRow={()=>{}} />
+      <DataTable 
+        columns={columns} 
+        data={filtered} 
+        loading={loading} 
+        onRowClick={setModal} 
+        actions={false} 
+        selectedIds={[]} 
+        onToggleSelectAll={()=>{}} 
+        onToggleSelectRow={()=>{}} 
+        isDraggable={true}
+        onReorder={handleReorder}
+      />
       {modal && <TestimonialModal item={modal === 'new' ? null : modal} nextSort={rows.length + 1} onClose={() => setModal(null)} onSave={handleSave} saving={saving} />}
       <ConfirmDeleteModal isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ isOpen: false })} onConfirm={() => handleDelete(confirmModal.id)} title="Delete Testimonial" message="Are you sure you want to delete this testimonial? This action is permanent and cannot be undone." />
       <Toast toasts={toasts} onRemove={id => setToasts(t => t.filter(x => x.id !== id))} />

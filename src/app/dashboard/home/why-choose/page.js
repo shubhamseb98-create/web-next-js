@@ -18,7 +18,7 @@ import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteMo
 import { createReorderHandler } from '../../../../lib/useTableReorder'
 
 const BASE_URL = ''
-const EMPTY = { title: '', content: '', icon: '', status: 'active', sort: '' }
+const EMPTY = { title: '', content: '', tag: '', icon: '', status: 'active', sort: '' }
 
 export default function WhyChoosePage() {
   const [rows, setRows] = useState([])
@@ -31,6 +31,14 @@ export default function WhyChoosePage() {
   const [toasts, setToasts] = useState([])
   const [deletingId, setDeletingId] = useState(null)
   const [statusTogglingId, setStatusTogglingId] = useState(null)
+
+  // Section Headings State
+  const [headingForm, setHeadingForm] = useState({
+    choose_subtitle: '',
+    choose_title: '',
+    choose_description: '',
+  })
+  const [savingHeadings, setSavingHeadings] = useState(false)
 
   // New States for Standardization
   const [search, setSearch] = useState('')
@@ -48,7 +56,44 @@ export default function WhyChoosePage() {
 
   useEffect(() => {
     fetchItems()
+    fetchHeadings()
   }, [])
+
+  async function fetchHeadings() {
+    try {
+      const res = await fetch(`${BASE_URL}/api/home-extra`)
+      if (!res.ok) return
+      const data = await res.json()
+      const extra = Array.isArray(data) ? data[0] : data
+      if (extra) {
+        setHeadingForm({
+          choose_subtitle: extra.choose_subtitle || '',
+          choose_title: extra.choose_title || '',
+          choose_description: extra.choose_description || '',
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function handleSaveHeadings(e) {
+    e?.preventDefault()
+    try {
+      setSavingHeadings(true)
+      const res = await fetch(`${BASE_URL}/api/home-extra`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(headingForm)
+      })
+      if (!res.ok) throw new Error('Failed to update headings')
+      addToast('Section headings saved successfully!')
+    } catch (err) {
+      addToast(err.message, 'error')
+    } finally {
+      setSavingHeadings(false)
+    }
+  }
 
   async function fetchItems() {
     try {
@@ -72,7 +117,7 @@ export default function WhyChoosePage() {
   }
 
   function openEdit(item) {
-    setForm({ ...item })
+    setForm({ ...EMPTY, ...item, tag: item.tag || '' })
     setIconFile(null)
     setPreview(item.icon || '')
     setModal(item)
@@ -87,16 +132,13 @@ export default function WhyChoosePage() {
 
   async function handleSave(e) {
     e.preventDefault()
-    if (!form._id && !iconFile) {
-      addToast('Please upload an icon image.', 'error')
-      return
-    }
     try {
       setSaving(true)
 
       const fd = new FormData()
       fd.append('title', form.title || '')
       fd.append('content', form.content || '')
+      fd.append('tag', form.tag || '')
       fd.append('status', form.status || 'active')
       fd.append('sort', form.sort || 0)
       if (iconFile) fd.append('icon', iconFile)
@@ -239,6 +281,15 @@ export default function WhyChoosePage() {
       )
     },
     {
+      key: 'tag',
+      label: 'Badge / Tag',
+      render: (row) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          {row.tag || 'Feature'}
+        </span>
+      )
+    },
+    {
       key: 'sort',
       label: 'Sort',
       render: (row) => (
@@ -287,6 +338,52 @@ export default function WhyChoosePage() {
         subtitle={`Manage the unique selling points shown on the homepage (${rows.filter(r => r.status === 'active').length} active)`}
         crumbs={[{ label: 'Home Management' }, { label: 'Why Choose' }]} 
       />
+
+      {/* Section Headings Card */}
+      <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
+          <div>
+            <h3 className="text-base font-bold text-foreground">Section Header Settings</h3>
+            <p className="text-xs text-muted-foreground">Manage the main heading, tag, and description for the Why Choose section on the homepage.</p>
+          </div>
+          <Button 
+            type="button" 
+            onClick={handleSaveHeadings} 
+            disabled={savingHeadings}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-4"
+          >
+            {savingHeadings ? 'Saving...' : 'Save Section Headings'}
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FloatingInput 
+            label="Section Tag / Badge" 
+            value={headingForm.choose_subtitle} 
+            placeholder="e.g. Why Choose WebTycoons"
+            onChange={e => setHeadingForm(p => ({ ...p, choose_subtitle: e.target.value }))}
+            rightElement={<AIAssistantButton context="Why Choose Us Tag" field="Tag" onGenerate={v => setHeadingForm(p => ({ ...p, choose_subtitle: v }))} />}
+          />
+          <FloatingInput 
+            label="Main Heading (Wrap *words* to highlight in green)" 
+            value={headingForm.choose_title} 
+            placeholder="e.g. What Makes Us Great as a *Best Website Designing Company* in Delhi?"
+            onChange={e => setHeadingForm(p => ({ ...p, choose_title: e.target.value }))}
+            rightElement={<AIAssistantButton context="Why Choose Us Section" field="Main Heading" onGenerate={v => setHeadingForm(p => ({ ...p, choose_title: v }))} />}
+          />
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold text-foreground/80 block mb-1">Section Subtitle / Description</label>
+          <textarea 
+            rows={2}
+            className="w-full rounded-xl border border-input/60 bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
+            placeholder="Before creating a website we think by putting ourselves in customer's shoes..."
+            value={headingForm.choose_description}
+            onChange={e => setHeadingForm(p => ({ ...p, choose_description: e.target.value }))}
+          />
+        </div>
+      </div>
       
       <TableToolbar 
         search={search}
@@ -328,6 +425,13 @@ export default function WhyChoosePage() {
                 value={form.title}
                 onChange={e => setForm({...form, title: e.target.value})}
                 rightElement={<AIAssistantButton context="Why Choose Us Reason" field="Catchy Title" onGenerate={(val) => setForm({...form, title: val})} />}
+              />
+
+              <FloatingInput
+                label="Badge / Tag (e.g. Intuitive UI/UX)"
+                value={form.tag || ''}
+                placeholder="e.g. Intuitive UI/UX"
+                onChange={e => setForm({...form, tag: e.target.value})}
               />
               
               <div className="border border-input/60 rounded-xl p-4 bg-muted/10 space-y-4">

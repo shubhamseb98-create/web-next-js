@@ -41,7 +41,7 @@ const NAV = [
       { label: 'Home Page About',   href: '/dashboard/home/about' },
       { label: 'Call To Action',    href: '/dashboard/home/cta-one' },
       { label: 'Our Work',          href: '/dashboard/home/our-work' },
-      
+      { label: 'Why Choose Us',     href: '/dashboard/home/why-choose' },
       { label: 'Heading Text',      href: '/dashboard/home/heading-text' },
       // { label: 'Certifications',    href: '/dashboard/home/certifications' },
       // { label: 'Something CTA',     href: '/dashboard/home/cta-two' },

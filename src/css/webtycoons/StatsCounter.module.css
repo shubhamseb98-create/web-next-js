@@ -14,8 +14,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
+  flex-wrap: wrap;
+  gap: 1.25rem;
   padding: 0rem 0 4rem;
+  width: 100%;
 }
 
 .statCardWrapper {
@@ -24,14 +26,14 @@
 
 .statCard {
   position: relative;
-  width: 250px;
-  height: 250px;
+  width: 206px;
+  height: 215px;
   border-radius: 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1.15rem;
   background: #111;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -90,9 +92,9 @@
 }
 
 .iconBadge {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(16px);
@@ -101,7 +103,7 @@
   align-items: center;
   justify-content: center;
   color: #6bc24b;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35), 0 0 15px rgba(107, 194, 75, 0.12);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
@@ -118,7 +120,7 @@
 .cardLabel {
   align-self: flex-start;
   text-align: right;
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: #fff;
   white-space: pre-line;
@@ -128,11 +130,11 @@
 .cardBottom {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .cardValue {
-  font-size: 3.5rem;
+  font-size: clamp(2.2rem, 3.2vw, 2.75rem);
   font-weight: 700;
   font-family: var(--font-heading);
   color: #fff;
@@ -143,7 +145,7 @@
 }
 
 .suffix {
-  font-size: 2rem;
+  font-size: 1.6rem;
   margin-left: 2px;
 }
 
@@ -157,14 +159,15 @@
   align-items: center;
   justify-content: center;
   transition: all 0.35s ease;
-  margin-bottom: 4px;
+  flex-shrink: 0;
 }
 
 .cardArrow {
-  font-size: 1.15rem;
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.7);
   transform: rotate(-45deg);
   transition: all 0.3s ease;
+  display: block;
 }
 
 .statCard:hover .cardArrowCircle {
@@ -175,7 +178,7 @@
 
 .statCard:hover .cardArrowCircle .cardArrow {
   color: #060806;
-  transform: rotate(-45deg) translate(2px, -2px);
+  transform: rotate(-45deg) scale(1.15);
 }
 
 /* Staggering effect for the row layout */

@@ -51,6 +51,7 @@ export async function PUT(request, context) {
         const updateData = {
             title: formData.get("title"),
             content: formData.get("content"),
+            tag: formData.get("tag") !== null ? formData.get("tag") : (existingWhyChoose.tag || ""),
             status: formData.get("status"),
             sort: Number(formData.get("sort")),
             icon: iconUrl,

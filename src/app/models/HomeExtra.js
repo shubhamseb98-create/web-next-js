@@ -35,6 +35,18 @@ import mongoose from "mongoose";
     // testimonial_description
 
 const HomeExtraSchema = new mongoose.Schema({
+    choose_title: {
+      type: String,
+      required: false,
+    },
+    choose_subtitle: {
+      type: String,
+      required: false,
+    },
+    choose_description: {
+      type: String,
+      required: false,
+    },
     work_title: {
     type: String,
     required: false,

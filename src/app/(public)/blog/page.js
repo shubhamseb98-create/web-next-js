@@ -16,7 +16,7 @@ export const metadata = {
   },
 };
 
-export const revalidate = 3600; // 1 hour ISR
+export const dynamic = 'force-dynamic';
 
 async function getBlogs() {
     await connectDB();

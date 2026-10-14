@@ -10,19 +10,18 @@ import Testimonial from "../models/Testimonial";
 // WebTycoons section components - Server Components
 import AboutCompany from "src/components/features/webtycoons/sections/AboutCompany";
 import ServicesGrid from "src/components/features/webtycoons/sections/ServicesGrid";
-import RealEstateHighlight from "src/components/features/webtycoons/sections/RealEstateHighlight";
 import TechnologiesSection from "src/components/features/webtycoons/sections/TechnologiesSection";
 import CallToAction from "src/components/features/webtycoons/sections/CallToAction";
 import LatestThinking from "src/components/features/webtycoons/sections/LatestThinking";
 
 import dynamic from "next/dynamic";
 import Hero from "src/components/features/webtycoons/sections/Hero";
-import SlantSlider from "src/components/features/webtycoons/sections/SlantSlider";
 
 // Dynamically import heavy client components (below the fold)
 const ClientsSlider = dynamic(() => import("src/components/features/webtycoons/sections/ClientsSlider"));
 const StatsCounter = dynamic(() => import("src/components/features/webtycoons/sections/StatsCounter"));
 const GsapFeaturedProjects = dynamic(() => import("src/components/features/webtycoons/sections/GsapFeaturedProjects"));
+const WhyChooseUs = dynamic(() => import("src/components/features/webtycoons/sections/WhyChooseUs"));
 const TeamSection = dynamic(() => import("src/components/features/webtycoons/sections/TeamSection"));
 const TestimonialsSection = dynamic(() => import("src/components/features/webtycoons/sections/TestimonialsSection"));
 
@@ -64,7 +63,7 @@ export async function generateMetadata() {
 export default async function WebTycoonsHomePage() {
   await connectDB();
 
-  const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, works, clients, achievements, technologies, teamMembers, featuredProjectsSection] = await Promise.all([
+  const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, clients, achievements, technologies, teamMembers, featuredProjectsSection, whyChooses] = await Promise.all([
     getHomeSeo(),
     Blog.find({ isPublished: true }).sort({ publishedAt: -1, createdAt: -1 }).limit(5).lean(),
     Portfolio.find({ status: 'active', isFeatured: true }).sort({ sort: 1 }).limit(6).lean(),
@@ -76,12 +75,12 @@ export default async function WebTycoonsHomePage() {
     import('../models/Cta').then(m => m.default.find().lean()),
     import('../models/Banner').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/HomeExtra').then(m => m.default.find().lean()),
-    import('../models/Work').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/Client').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/Achievement').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/Technology').then(m => m.default.find({ status: 'active' }).sort({ category: 1, sort: 1 }).lean()),
     import('../models/TeamMember').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/HomeFeaturedProjectsSection').then(m => m.default.findOne().lean()),
+    import('../models/whyChoose').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
   ]);
 
   const homeAbout = homeAboutArr?.[0] || null;
@@ -130,17 +129,12 @@ export default async function WebTycoonsHomePage() {
       {/* Hero - Client Component for GSAP animations */}
       <Hero bannerData={serialize(banners)} />
 
-      {/* SlantSlider - Client Component for Swiper */}
-      <SlantSlider workData={serialize(works)} homeExtraData={serialize(homeExtra)} />
 
       {/* About Company - Server Component */}
       <AboutCompany aboutData={serialize(homeAbout)} />
 
       {/* Services Grid - Server Component */}
       <ServicesGrid servicesData={serialize(services)} homeExtraData={serialize(homeExtra)} />
-
-      {/* Real Estate Advisory Specialist Highlight - Client Component */}
-      <RealEstateHighlight />
 
       {/* Clients Slider - Client Component */}
       <ClientsSlider clientsData={serialize(clients)} homeExtraData={serialize(homeExtra)} />
@@ -161,6 +155,9 @@ export default async function WebTycoonsHomePage() {
           intro: homeExtra?.featured_project_description || featuredProjectsSection?.intro || 'Explore a curated selection of our most recent and impactful work. Scroll down to experience our stacked GSAP presentation.'
         }} 
       />
+      {/* Why Choose Us - Client Component */}
+      <WhyChooseUs whyChooseData={serialize(whyChooses)} homeExtraData={serialize(homeExtra)} />
+
       {/* Team Section - Client Component for state */}
       <TeamSection teamData={serialize(teamMembers)} homeExtraData={serialize(homeExtra)} />
 

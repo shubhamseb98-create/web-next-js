@@ -33,8 +33,6 @@ export default function BlogPageClient({ initialBlogs = [] }) {
     return matchCat && matchSearch
   })
 
-  const featuredBlogs = filteredBlogs.filter(b => b.featured)
-  const regularBlogs = filteredBlogs.filter(b => !b.featured)
 
   return (
     <main className={styles.blogPage}>
@@ -62,6 +60,24 @@ export default function BlogPageClient({ initialBlogs = [] }) {
       </PageHeader>
 
 
+      {/* ── Category Filters ── */}
+      <section className={styles.filterSection}>
+        <div className="container-fluid-px">
+          <div className={styles.filterTabs}>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                type="button"
+                className={`${styles.filterBtn} ${activeCategory === cat ? styles.filterBtnActive : ''}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Main Content ── */}
       <section className={`py-100 ${styles.contentSection}`}>
         <div className="container-fluid-px">
@@ -73,70 +89,34 @@ export default function BlogPageClient({ initialBlogs = [] }) {
               <p>Try a different search term or category.</p>
             </div>
           ) : (
-            <>
-              {/* Featured (top 2) */}
-              {featuredBlogs.length > 0 && (
-                <motion.div
-                  className={styles.featuredGrid}
-                  variants={staggerContainer}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                >
-                  {featuredBlogs.map(blog => (
-                    <motion.article key={blog.id} variants={fadeUp} className={styles.featuredCard}>
-                      <div className={styles.blogImgWrapper}>
-                        <img src={blog.image} alt={blog.title} className={styles.blogImg} loading="lazy" />
-                        <span className={styles.categoryBadge}>{blog.category}</span>
-                      </div>
-                      <div className={styles.cardBody}>
-                        <div className={styles.meta}>
-                          <span><FaUser /> {blog.author}</span>
-                          <span><FaCalendarAlt /> {blog.date}</span>
-                          <span><FaClock /> {blog.readTime}</span>
-                        </div>
-                        <h2 className={styles.blogTitle}>{blog.title}</h2>
-                        <p className={styles.blogExcerpt}>{blog.excerpt}</p>
-                        <Link href={`/blog/${blog.slug}`} className={styles.readMore}>
-                          Read Article <FaArrowRight />
-                        </Link>
-                      </div>
-                    </motion.article>
-                  ))}
-                </motion.div>
-              )}
-
-              {/* Regular Grid */}
-              {regularBlogs.length > 0 && (
-                <motion.div
-                  className={styles.blogGrid}
-                  variants={staggerContainer}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                >
-                  {regularBlogs.map(blog => (
-                    <motion.article key={blog.id} variants={fadeUp} className={styles.blogCard}>
-                      <div className={styles.blogImgWrapper}>
-                        <img src={blog.image} alt={blog.title} className={styles.blogImg} loading="lazy" />
-                        <span className={styles.categoryBadge}>{blog.category}</span>
-                      </div>
-                      <div className={styles.cardBody}>
-                        <div className={styles.meta}>
-                          <span><FaCalendarAlt /> {blog.date}</span>
-                          <span><FaClock /> {blog.readTime}</span>
-                        </div>
-                        <h3 className={styles.blogTitle}>{blog.title}</h3>
-                        <p className={styles.blogExcerpt}>{blog.excerpt}</p>
-                        <Link href={`/blog/${blog.slug}`} className={styles.readMore}>
-                          Read More <FaArrowRight />
-                        </Link>
-                      </div>
-                    </motion.article>
-                  ))}
-                </motion.div>
-              )}
-            </>
+            <motion.div
+              className={styles.blogGrid}
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {filteredBlogs.map(blog => (
+                <motion.article key={blog.id} variants={fadeUp} className={styles.blogCard}>
+                  <div className={styles.blogImgWrapper}>
+                    <img src={blog.image} alt={blog.title} className={styles.blogImg} loading="lazy" />
+                    <span className={styles.categoryBadge}>{blog.category}</span>
+                  </div>
+                  <div className={styles.cardBody}>
+                    <div className={styles.meta}>
+                      <span><FaUser /> {blog.author}</span>
+                      <span><FaCalendarAlt /> {blog.date}</span>
+                      <span><FaClock /> {blog.readTime}</span>
+                    </div>
+                    <h3 className={styles.blogTitle}>{blog.title}</h3>
+                    <p className={styles.blogExcerpt}>{blog.excerpt}</p>
+                    <Link href={`/blog/${blog.slug}`} className={styles.readMore}>
+                      Read Article <FaArrowRight />
+                    </Link>
+                  </div>
+                </motion.article>
+              ))}
+            </motion.div>
           )}
         </div>
       </section>

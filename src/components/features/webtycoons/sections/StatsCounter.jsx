@@ -72,7 +72,7 @@ import styles from '../../../../css/webtycoons/StatsCounter.module.css'
 
     return (
       <section className={`section-py-sm ${styles.section}`} ref={ref}>
-        <div className="container-fluid-px position-relative z-1">
+        <div className="container position-relative z-1">
           <SectionHeading 
             subtitle={homeExtraData?.achievement_subtitle || "Why Choose Us"}
             title={homeExtraData?.achievement_title || "Numbers That Matter"}

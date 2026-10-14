@@ -21,23 +21,21 @@ export async function POST(request) {
 
         const title = formData.get("title");
         const content = formData.get("content");
-        const status = formData.get("status");
-        const sort = Number(formData.get("sort"));
+        const tag = formData.get("tag") || "";
+        const status = formData.get("status") || "active";
+        const sort = Number(formData.get("sort")) || 0;
         const icon = formData.get("icon"); // FILE
 
-        if (!isUploadFile(icon)) {
-            return Response.json(
-                { message: "Valid icon file is required" },
-                { status: 400 }
-            );
+        let imageUrl = "";
+        if (isUploadFile(icon)) {
+            imageUrl = await uploadFile(icon, "why-choose", "why");
         }
-
-        const imageUrl = await uploadFile(icon, "why-choose", "why");
 
         // save to DB
         const whyChoose = await WhyChoose.create({
             title,
             content,
+            tag,
             status,
             sort,
             icon: imageUrl,

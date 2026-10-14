@@ -66,7 +66,7 @@ const DASHBOARD_PAGES = [
   { name: 'Home Banner',              href: '/dashboard/home/banner',              permission: 'home' },
   { name: 'Floating Buttons',         href: '/dashboard/floating-buttons',         permission: 'home' },
   { name: 'Home About',               href: '/dashboard/home/about',               permission: 'home' },
-  // { name: 'Home Why Choose',          href: '/dashboard/home/why-choose',          permission: 'home' }, // Hidden as requested
+  { name: 'Home Why Choose',          href: '/dashboard/home/why-choose',          permission: 'home' },
   { name: 'Home Our Work',            href: '/dashboard/home/our-work',            permission: 'home' },
   { name: 'Home Certifications',      href: '/dashboard/home/certifications',      permission: 'home' },
   { name: 'Home Heading Text',        href: '/dashboard/home/heading-text',        permission: 'home' },

@@ -30,27 +30,29 @@
 
 .titleHighlight {
   font-family: var(--font-heading);
-  font-size: clamp(36px, 6vw, 56px);
+  font-size: clamp(26px, 3.2vw, 38px);
   font-weight: var(--fw-bold);
   color: var(--clr-primary);
-  line-height: 1.1;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
   display: inline;
 }
 
 .titleSecondary {
   font-family: var(--font-heading);
-  font-size: clamp(36px, 6vw, 56px);
+  font-size: clamp(26px, 3.2vw, 38px);
   font-weight: var(--fw-normal);
   color: var(--clr-white);
-  line-height: 1.1;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
   display: inline;
 }
 
 .text {
-  font-size: 1.125rem;
+  font-size: 0.98rem;
   color: var(--clr-text-light);
-  line-height: 1.8;
-  margin-bottom: 3rem;
+  line-height: 1.75;
+  margin-bottom: 2.2rem;
   max-width: 90%;
 }
 

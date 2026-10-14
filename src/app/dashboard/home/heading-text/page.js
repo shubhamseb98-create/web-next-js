@@ -11,6 +11,7 @@ import { Save, RotateCcw, Type } from 'lucide-react'
 const BASE_URL = ''
 
 const DEFAULT = {
+  choose_title: '', choose_subtitle: '', choose_description: '',
   work_title: '', work_subtitle: '', work_description: '',
   service_title: '', service_subtitle: '', service_description: '',
   blog_title: '', blog_subtitle: '',
@@ -22,21 +23,27 @@ const DEFAULT = {
   technology_title: '', technology_subtitle: '', technology_description: '',
   team_title: '', team_subtitle: '', team_label: '', team_description: '',
   testimonial_title: '', testimonial_subtitle: '', testimonial_description: '',
-}
+  }
 
-const sections = [
-  { key: 'work',        label: 'Global Network',             fields: ['work_subtitle', 'work_title', 'work_description'] },
-  { key: 'service',     label: 'Our Services Section',         fields: ['service_subtitle', 'service_title', 'service_description'] },
-  { key: 'technology',  label: 'Modern Tech Stack Section',    fields: ['technology_title', 'technology_subtitle', 'technology_description'] },
-  { key: 'team',        label: 'Meet The Team Section',        fields: ['team_label', 'team_title', 'team_subtitle', 'team_description'] },
-  { key: 'testimonial', label: 'Testimonials Section',         fields: ['testimonial_title', 'testimonial_subtitle', 'testimonial_description'] },
-  { key: 'client',      label: 'Our Clients Section',          fields: ['client_title', 'client_subtitle', 'client_description'] },
-  { key: 'achievement', label: 'Our Achievements Section',    fields: ['achievement_subtitle', 'achievement_title', 'achievement_description'] },
-  { key: 'blog',        label: 'Blog Section',                 fields: ['blog_title', 'blog_subtitle'] },
-  { key: 'featured_project', label: 'Featured Projects Section', fields: ['featured_project_subtitle', 'featured_project_title', 'featured_project_description'] },
-]
+  const sections = [
+    { key: 'choose',      label: 'Why Choose Us Section',        fields: ['choose_subtitle', 'choose_title', 'choose_description'] },
+    { key: 'work',        label: 'Global Network',             fields: ['work_subtitle', 'work_title', 'work_description'] },
+    { key: 'service',     label: 'Our Services Section',         fields: ['service_subtitle', 'service_title', 'service_description'] },
+    { key: 'technology',  label: 'Modern Tech Stack Section',    fields: ['technology_title', 'technology_subtitle', 'technology_description'] },
+    { key: 'team',        label: 'Meet The Team Section',        fields: ['team_label', 'team_title', 'team_subtitle', 'team_description'] },
+    { key: 'testimonial', label: 'Testimonials Section',         fields: ['testimonial_title', 'testimonial_subtitle', 'testimonial_description'] },
+    { key: 'client',      label: 'Our Clients Section',          fields: ['client_title', 'client_subtitle', 'client_description'] },
+    { key: 'achievement', label: 'Our Achievements Section',    fields: ['achievement_subtitle', 'achievement_title', 'achievement_description'] },
+    { key: 'blog',        label: 'Blog Section',                 fields: ['blog_title', 'blog_subtitle'] },
+    { key: 'featured_project', label: 'Featured Projects Section', fields: ['featured_project_subtitle', 'featured_project_title', 'featured_project_description'] },
+  ]
 
-const FIELD_CONFIG = {
+  const FIELD_CONFIG = {
+  // Why Choose Us
+  choose_subtitle: 'Tag',
+  choose_title: 'Main Heading (Wrap *words* to highlight)',
+  choose_description: 'Description',
+
   // Global Network
   work_subtitle: 'Tag',
   work_title: 'Main Heading',

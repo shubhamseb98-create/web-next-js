@@ -38,6 +38,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'randomuser.me',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.thewebtycoons.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'thewebtycoons.com',
+      },
     ],
   },
 

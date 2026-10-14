@@ -19,7 +19,14 @@ export async function generateStaticParams() {
 
 const getBlogPost = cache(async (slug) => {
   await connectDB();
-  const post = await Blog.findOne({ slug }).lean();
+  const decoded = decodeURIComponent(slug);
+  const post = await Blog.findOne({
+    $or: [
+      { slug: decoded },
+      { slug: decoded.toLowerCase() },
+      { slug: new RegExp(`^${decoded.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+    ]
+  }).lean();
   return post;
 });
 

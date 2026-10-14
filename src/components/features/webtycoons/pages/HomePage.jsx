@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import Hero from '../components/Sections/Hero'
-import SlantSlider from '../components/Sections/SlantSlider'
 import AboutCompany from '../components/Sections/AboutCompany'
 import ServicesGrid from '../components/Sections/ServicesGrid'
 import ClientsSlider from '../components/Sections/ClientsSlider'
@@ -9,7 +8,7 @@ import Industries from '../components/Sections/Industries'
 import TechnicalExpertise from '../components/Sections/TechnicalExpertise'
 import TechnologiesSection from '../components/Sections/TechnologiesSection'
 import GsapFeaturedProjects from '../components/Sections/GsapFeaturedProjects'
-import WhyChooseUs from '../components/Sections/WhyChooseUs'
+import WhyChooseUs from '../sections/WhyChooseUs'
 import TeamSection from '../components/Sections/TeamSection'
 import TestimonialsSection from '../components/Sections/TestimonialsSection'
 import LatestThinking from '../components/Sections/LatestThinking'
@@ -23,7 +22,6 @@ const HomePage = () => {
   return (
     <>
       <Hero />
-      <SlantSlider />
       <AboutCompany />
       <ServicesGrid />
       <ClientsSlider />
@@ -31,7 +29,7 @@ const HomePage = () => {
       {/* <Industries /> */}
       <TechnologiesSection />
       <GsapFeaturedProjects />
-      {/* <WhyChooseUs /> */}
+      <WhyChooseUs />
       <TeamSection />
       <TestimonialsSection />
       <LatestThinking />

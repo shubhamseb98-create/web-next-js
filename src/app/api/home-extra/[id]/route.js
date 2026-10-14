@@ -24,6 +24,7 @@ const body = await request.json()
             {
                 choose_title: body.choose_title,
                 choose_subtitle: body.choose_subtitle,
+                choose_description: body.choose_description,
                 product_title: body.product_title,
                 product_subtitle: body.product_subtitle,
                 certified_title: body.certified_title,

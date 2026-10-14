@@ -29,6 +29,9 @@ export async function POST(request) {
         }
 
         const updateData = {
+            choose_title: body.choose_title || "",
+            choose_subtitle: body.choose_subtitle || "",
+            choose_description: body.choose_description || "",
             work_title: body.work_title || "",
             work_subtitle: body.work_subtitle || "",
             work_description: body.work_description || "",

@@ -13,6 +13,7 @@ const BlogSchema = new mongoose.Schema({
     author: { type: String, default: "" },
     category: { type: String, default: "" },
     isPublished: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: false },
     sort: { type: Number, default: 0 },
     publishedAt: { type: String, default: "" },
 

@@ -1,103 +1,208 @@
-import { useRef } from 'react'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
-import styles from '../../../../css/webtycoons/WhyChooseUs.module.css'
+'use client';
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer, staggerItem, viewportOptions } from '../animations/variants';
+import styles from '../../../../css/webtycoons/WhyChooseUs.module.css';
+import Image from 'next/image';
+import { 
+  Layout, 
+  MonitorSmartphone, 
+  SearchCheck, 
+  Zap, 
+  Sliders, 
+  Layers, 
+  ArrowUpRight 
+} from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger)
-
-const reasons = [
+const defaultFeatures = [
   {
-    number: '01',
-    title: 'Unmatched Expertise',
-    desc: 'Our team comprises industry veterans with decades of collective experience in delivering mission-critical digital transformations.',
+    title: 'Great User Interface',
+    desc: 'A website must be designed with an intuitive, human-centered UI/UX at its core. As a premier website designing company in Delhi, we engineer visually captivating and effortless user journeys that maximize conversions.',
+    tag: 'Intuitive UI/UX',
+    icon: Layout,
+    number: '01'
   },
   {
-    number: '02',
-    title: 'Innovative Methodology',
-    desc: 'We utilize agile, design-thinking methodologies to ensure rapid prototyping, continuous delivery, and scalable outcomes.',
+    title: 'Responsive for All Browsers',
+    desc: 'With WebTycoons, you can ensure that your website functions seamlessly across all modern browsers (Chrome, Safari, Firefox, Edge) and fluidly adapts to every screen size, smartphone, tablet, and desktop.',
+    tag: 'Cross-Platform',
+    icon: MonitorSmartphone,
+    number: '02'
   },
   {
-    number: '03',
-    title: 'Commitment to Excellence',
-    desc: 'We partner closely with you, acting as an extension of your team to ensure every solution aligns perfectly with your vision.',
+    title: 'Optimized for SEO Standards',
+    desc: 'Search visibility is paramount for every digital brand. We architect clean semantic code, optimized headings, schema markup, and metadata from day one to ensure high search engine rankings.',
+    tag: 'Search Optimized',
+    icon: SearchCheck,
+    number: '03'
+  },
+  {
+    title: 'Fastest Loading Speed',
+    desc: 'A superior website means clean code, optimized queries, lightweight assets, and next-gen compression to deliver lightning-fast, sub-second load times that keep visitors engaged.',
+    tag: 'Sub-Second Speed',
+    icon: Zap,
+    number: '04'
+  },
+  {
+    title: 'Easy to Maintain & Manage',
+    desc: 'Website maintenance shouldn\'t require technical headaches. We build intuitive, secure admin panels so business owners can update content, banners, and media effortlessly in just a few clicks.',
+    tag: 'Effortless CMS',
+    icon: Sliders,
+    number: '05'
+  },
+  {
+    title: 'More Flexibility & Scalability',
+    desc: 'We deliver robust, flexible platforms tailored for growth. Enjoy complete operational freedom with easy third-party integrations, custom dashboards, and high-performance scalability as your business expands.',
+    tag: 'Infinite Scale',
+    icon: Layers,
+    number: '06'
   }
-]
+];
 
-const WhyChooseUs = () => {
-  const containerRef = useRef(null)
+const fallbackIcons = [Layout, MonitorSmartphone, SearchCheck, Zap, Sliders, Layers];
+const fallbackTags = ['Intuitive UI/UX', 'Cross-Platform', 'Search Optimized', 'Sub-Second Speed', 'Effortless CMS', 'Infinite Scale'];
 
-  useGSAP(() => {
-    // Title animation
-    gsap.fromTo(".heading-anim", 
-      {
-        y: 50,
-        opacity: 0,
-      },
-      {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 85%",
-        },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-      }
-    )
+const WhyChooseUs = ({ whyChooseData, homeExtraData }) => {
+  const activeItems = Array.isArray(whyChooseData) && whyChooseData.length > 0
+    ? whyChooseData.filter(item => (item.status ? item.status === 'active' : true))
+    : [];
 
-    // Staggered list items animation
-    gsap.fromTo(".list-item-anim", 
-      {
-        x: -50,
-        opacity: 0,
-      },
-      {
-        scrollTrigger: {
-          trigger: ".list-container-anim",
-          start: "top 85%",
-        },
-        x: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power3.out",
-      }
-    )
-  }, { scope: containerRef })
+  const displayItems = activeItems.length > 0 ? activeItems : defaultFeatures;
+
+  const sectionLabel = homeExtraData?.choose_subtitle || 'Why Choose WebTycoons';
+  const rawTitle = homeExtraData?.choose_title || 'What Makes Us Great as a *Best Website Designing Company* in Delhi?';
+  const sectionDesc = homeExtraData?.choose_description || 'Before creating a website we think by putting ourselves in your customer\'s shoes. The process starts with strategic discussion followed by meticulous conceptualization to engineer the perfect high-converting web project.';
+
+  // Format title: wrap words with *asterisks* in titleHighlight, or highlight 'Best Website Designing Company'
+  const renderTitle = (text) => {
+    if (!text) return null;
+    const parts = text.split('*');
+    if (parts.length > 1) {
+      return parts.map((part, i) => 
+        i % 2 === 1 ? (
+          <span key={i} className={styles.titleHighlight}>{part}</span>
+        ) : (
+          part
+        )
+      );
+    }
+    if (text.includes('Best Website Designing Company')) {
+      const sub = text.split('Best Website Designing Company');
+      return (
+        <>
+          {sub[0]}
+          <span className={styles.titleHighlight}>Best Website Designing Company</span>
+          {sub[1]}
+        </>
+      );
+    }
+    return text;
+  };
+
+  // Mouse move handler for spotlight effect on cards
+  const handleMouseMove = (e) => {
+    const { currentTarget, clientX, clientY } = e;
+    const { left, top } = currentTarget.getBoundingClientRect();
+    currentTarget.style.setProperty('--mouse-x', `${clientX - left}px`);
+    currentTarget.style.setProperty('--mouse-y', `${clientY - top}px`);
+  };
 
   return (
-    <section className={`section-py-sm ${styles.section}`} ref={containerRef}>
-      <div className="container-fluid-px">
-        <div className="row mb-5">
-          <div className="col-12 col-lg-8 heading-anim">
-            <span className="section-label">Why Partner With Us</span>
-            <h2 className="section-heading">
-              The WebTycoons Advantage
-            </h2>
-          </div>
-        </div>
+    <section className={styles.section} id="why-choose-us">
+      <div className={styles.ambientGlowTop} />
+      <div className={styles.gridPattern} />
 
-        <div className={`${styles.listContainer} list-container-anim`}>
-          {reasons.map((reason, index) => (
-            <div key={index} className={`${styles.listItem} list-item-anim`}>
-              <div className={styles.itemNumber}>{reason.number}</div>
-              <div className={styles.itemContent}>
-                <h3 className={styles.itemTitle}>{reason.title}</h3>
-                <p className={styles.itemDesc}>{reason.desc}</p>
-              </div>
-              <div className={styles.itemArrow}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="container-fluid-px">
+        {/* Section Header */}
+        <motion.div 
+          className={styles.header}
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+        >
+          <div className={styles.badgePill}>
+            <span className={styles.beaconDot} />
+            <span>{sectionLabel}</span>
+          </div>
+
+          <h2 className={styles.mainTitle}>
+            {renderTitle(rawTitle)}
+          </h2>
+
+          <div 
+            className={styles.headerText}
+            dangerouslySetInnerHTML={{ __html: sectionDesc }}
+          />
+        </motion.div>
+
+        {/* 6 Cards Grid with Spotlight */}
+        <motion.div 
+          className={styles.gridContainer}
+          variants={staggerContainer(0.1, 0.08)}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+        >
+          {displayItems.map((item, index) => {
+            const IconComponent = item.icon && typeof item.icon !== 'string' 
+              ? item.icon 
+              : fallbackIcons[index % fallbackIcons.length];
+            const isImage = typeof item.icon === 'string' && (item.icon.startsWith('http') || item.icon.startsWith('/'));
+            const numStr = String(index + 1).padStart(2, '0');
+            const tag = item.tag || fallbackTags[index % fallbackTags.length];
+            const content = item.content || item.desc || '';
+
+            return (
+              <motion.div 
+                key={item._id || item.id || index}
+                className={styles.card}
+                variants={staggerItem}
+                onMouseMove={handleMouseMove}
+              >
+                {/* Large Background Watermark Number */}
+                <span className={styles.watermarkNumber} aria-hidden="true">
+                  {numStr}
+                </span>
+
+                {/* Top Row: Icon + Badge */}
+                <div className={styles.cardTop}>
+                  <div className={styles.iconBox}>
+                    {isImage ? (
+                      <Image 
+                        src={item.icon} 
+                        alt={item.title || 'Feature'} 
+                        width={32} 
+                        height={32} 
+                        className="object-contain" 
+                      />
+                    ) : (
+                      <IconComponent size={28} strokeWidth={1.8} />
+                    )}
+                  </div>
+                  <span className={styles.badgeNumber}>{numStr}</span>
+                </div>
+
+                {/* Card Title & Description */}
+                <h3 className={styles.cardTitle}>{item.title}</h3>
+                <div 
+                  className={styles.cardDesc} 
+                  dangerouslySetInnerHTML={{ __html: content }} 
+                />
+
+                {/* Footer with Tag and Arrow */}
+                <div className={styles.cardFooter}>
+                  <span className={styles.featureTag}>{tag}</span>
+                  <div className={styles.arrowCircle}>
+                    <ArrowUpRight size={17} strokeWidth={2.2} />
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default WhyChooseUs
+export default WhyChooseUs;

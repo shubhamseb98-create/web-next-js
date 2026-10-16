@@ -76,12 +76,7 @@ export default function ServicePageClient({ service, slug, globalTechStack, home
   return (
     <main>
       <ServiceHero data={heroData} breadcrumbTitle={service.title} />
-      <ServiceOverview data={overviewData} image={overviewData.image} />
-      <ServiceFeatures features={features} />
-      {isTechStackGloballyEnabled && currentTechStack.length > 0 && (
-        <TechStack techStack={currentTechStack} homeExtraData={homeExtraData} />
-      )}
-      <ServicePortfolio projects={currentPortfolio} serviceTitle={service.title} />
+      <ServiceOverview data={overviewData} image={overviewData.image} serviceTitle={service.title} />
       <DevelopmentProcess processSteps={processSteps} />
       <WhyChooseUsIconCards reasons={whyChooseUs} />
       <ServiceFAQs faqs={faqs} />

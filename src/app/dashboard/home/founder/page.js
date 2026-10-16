@@ -77,6 +77,12 @@ export default function FounderCMSPage() {
         setForm({
           ...DEFAULT_FORM,
           ...data,
+          badge_1_number: data.badge_1_number !== undefined ? data.badge_1_number : DEFAULT_FORM.badge_1_number,
+          badge_1_label: data.badge_1_label !== undefined ? data.badge_1_label : DEFAULT_FORM.badge_1_label,
+          badge_2_tag: data.badge_2_tag !== undefined ? data.badge_2_tag : DEFAULT_FORM.badge_2_tag,
+          badge_2_number: data.badge_2_number !== undefined ? data.badge_2_number : DEFAULT_FORM.badge_2_number,
+          badge_2_label: data.badge_2_label !== undefined ? data.badge_2_label : DEFAULT_FORM.badge_2_label,
+          badge_3_text: data.badge_3_text !== undefined ? data.badge_3_text : DEFAULT_FORM.badge_3_text,
           imageFile: null,
         });
         if (data.image) {
@@ -139,6 +145,12 @@ export default function FounderCMSPage() {
         setForm((prev) => ({
           ...prev,
           ...result.data,
+          badge_1_number: result.data.badge_1_number !== undefined ? result.data.badge_1_number : '',
+          badge_1_label: result.data.badge_1_label !== undefined ? result.data.badge_1_label : '',
+          badge_2_tag: result.data.badge_2_tag !== undefined ? result.data.badge_2_tag : '',
+          badge_2_number: result.data.badge_2_number !== undefined ? result.data.badge_2_number : '',
+          badge_2_label: result.data.badge_2_label !== undefined ? result.data.badge_2_label : '',
+          badge_3_text: result.data.badge_3_text !== undefined ? result.data.badge_3_text : '',
           imageFile: null,
         }));
         if (result.data.image) {

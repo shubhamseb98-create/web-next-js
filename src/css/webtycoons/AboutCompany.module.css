@@ -6,20 +6,19 @@
   contain: paint;
 }
 
-/* Subtle geometric background pattern - GPU isolated to prevent scroll repaints */
+/* Subtle ambient lighting - zero box grid */
 .section::before {
   content: '';
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
-  transform: rotate(-15deg) scale(2) translateZ(0);
-  transform-origin: center;
+  top: 50%;
+  left: 20%;
+  width: 600px;
+  height: 600px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%);
+  filter: blur(80px);
   z-index: 0;
   pointer-events: none;
-  will-change: transform;
 }
 
 .contentWrapper {

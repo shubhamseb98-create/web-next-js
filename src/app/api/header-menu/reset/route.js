@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { connectDB } from "../../../lib/config";
 import { HeaderMenuItem, HeaderConfig } from "../../../models/HeaderMenu";
 import { requireAuth } from "../../../lib/auth";
@@ -28,6 +29,10 @@ export async function POST(request) {
     });
 
     const items = await HeaderMenuItem.find().sort({ order: 1 }).lean();
+
+    try {
+      revalidatePath('/', 'layout');
+    } catch (e) {}
 
     return Response.json({
       success: true,

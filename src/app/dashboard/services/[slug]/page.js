@@ -21,7 +21,7 @@ import PortfolioThemePicker from "../../../../components/dashboard/PortfolioThem
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../../../lib/utils";
 
-import { servicesData, whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, techStackGlobal } from "src/data/servicesData";
+import { servicesData, whyChooseUsGlobal } from "src/data/servicesData";
 
 export default function ServiceCMSPage() {
   const { slug } = useParams();
@@ -36,7 +36,7 @@ export default function ServiceCMSPage() {
 
   // Modal State for each tab
   const [modal, setModal] = useState(null); // 'new' or item object
-  const [modalType, setModalType] = useState(''); // 'feature' | 'benefit' | 'process' | 'whyChooseUs' | 'portfolio' | 'faq'
+  const [modalType, setModalType] = useState(''); // 'benefit' | 'process' | 'whyChooseUs' | 'faq'
   const [form, setForm] = useState({});
 
   // Search & Sort per tab
@@ -99,17 +99,11 @@ export default function ServiceCMSPage() {
         }
 
         let fallback = servicesData.static;
-        let fallbackPortfolio = staticPortfolioProjects;
-        if (slug.includes('dynamic')) { fallback = servicesData.dynamic; fallbackPortfolio = dynamicPortfolioProjects; }
-        if (slug.includes('ecommerce') || slug.includes('e-commerce')) { fallback = servicesData.ecommerce; fallbackPortfolio = ecommercePortfolioProjects; }
+        if (slug.includes('dynamic')) { fallback = servicesData.dynamic; }
+        if (slug.includes('ecommerce') || slug.includes('e-commerce')) { fallback = servicesData.ecommerce; }
 
         if (!loadedData.faq || loadedData.faq.length === 0) {
           loadedData.faq = fallback?.faqs?.map(f => ({ question: f.q, answer: f.a })) || [];
-        }
-        if (!loadedData.features || loadedData.features.length === 0) {
-          loadedData.features = fallback?.features?.map(f => typeof f === 'string' ? { title: f, desc: '', image: '' } : { title: f.title, desc: f.desc || '', image: f.image || '' }) || [];
-        } else if (loadedData.features.length > 0 && typeof loadedData.features[0] === 'string') {
-          loadedData.features = loadedData.features.map(f => ({ title: f, desc: '', image: '' }));
         }
         if (!loadedData.benefits || loadedData.benefits.length === 0) {
           loadedData.benefits = (fallback?.overview?.benefits || []).map(b => ({ title: b, desc: "" }));
@@ -119,9 +113,6 @@ export default function ServiceCMSPage() {
         }
         if (!loadedData.whyChooseUs || loadedData.whyChooseUs.length === 0) {
           loadedData.whyChooseUs = whyChooseUsGlobal?.map(w => ({ title: w.title, desc: w.desc, icon: w.icon || "" })) || [];
-        }
-        if (!loadedData.portfolio || loadedData.portfolio.length === 0) {
-          loadedData.portfolio = fallbackPortfolio?.map(p => ({ name: p.name, category: p.category, tech: p.tech, desc: p.desc, image: p.image, link: p.link })) || [];
         }
 
         if (!loadedData.overviewWhatIsIt) loadedData.overviewWhatIsIt = fallback?.overview?.whatIsIt || "";
@@ -368,25 +359,21 @@ export default function ServiceCMSPage() {
   }
 
   const tabs = [
-    { id: 'card', label: 'Card & SEO Settings' },
-    { id: 'banner', label: 'Hero / Banner' },
-    { id: 'overview', label: 'Overview Info' },
-    { id: 'features', label: `Features (${data.features?.length || 0})` },
-    { id: 'benefits', label: `Benefits (${data.benefits?.length || 0})` },
-    { id: 'process', label: `Process (${data.process?.length || 0})` },
+    { id: 'banner', label: 'Hero Banner' },
+    { id: 'overview', label: 'Overview & Bento' },
+    { id: 'benefits', label: `Key Benefits (${data.benefits?.length || 0})` },
+    { id: 'process', label: `Process Steps (${data.process?.length || 0})` },
     { id: 'whyChooseUs', label: `Why Choose Us (${data.whyChooseUs?.length || 0})` },
-    { id: 'portfolio', label: `Portfolio (${data.portfolio?.length || 0})` },
-    { id: 'faq', label: `FAQ (${data.faq?.length || 0})` },
+    { id: 'faq', label: `FAQs (${data.faq?.length || 0})` },
+    { id: 'card', label: 'Card & SEO Settings' },
   ];
 
   // Prepare table data for active list tab
   const getActiveArray = () => {
     switch (activeTab) {
-      case 'features': return data.features || [];
       case 'benefits': return data.benefits || [];
       case 'process': return data.process || [];
       case 'whyChooseUs': return data.whyChooseUs || [];
-      case 'portfolio': return data.portfolio || [];
       case 'faq': return data.faq || [];
       default: return [];
     }
@@ -446,33 +433,6 @@ export default function ServiceCMSPage() {
   // Column definitions per tab
   const getColumns = () => {
     switch (activeTab) {
-      case 'features':
-        return [
-          {
-            key: 'image',
-            label: 'Image / Icon',
-            render: (row) => (
-              row.image ? (
-                <img src={row.image} alt="Feature" className="w-10 h-10 object-cover rounded-lg border border-white/10" />
-              ) : (
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
-                  <Layers className="w-5 h-5" />
-                </div>
-              )
-            )
-          },
-          {
-            key: 'title',
-            label: 'Feature Title',
-            render: (row) => <div className="font-bold text-foreground max-w-[240px] truncate">{row.title || 'Untitled'}</div>
-          },
-          {
-            key: 'desc',
-            label: 'Description Preview',
-            render: (row) => <div className="text-xs text-muted-foreground max-w-[360px] line-clamp-2">{row.desc || 'No description'}</div>
-          },
-          { key: 'actions', align: 'right', label: 'Action', render: renderActions }
-        ];
 
       case 'benefits':
         return [
@@ -546,38 +506,7 @@ export default function ServiceCMSPage() {
           { key: 'actions', align: 'right', label: 'Action', render: renderActions }
         ];
 
-      case 'portfolio':
-        return [
-          {
-            key: 'image',
-            label: 'Project Cover',
-            render: (row) => (
-              row.image ? (
-                <img src={row.image} alt={row.name} className="w-14 h-10 object-cover rounded-lg border border-white/10" />
-              ) : (
-                <div className="w-14 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/40">
-                  <ImageIcon className="w-4 h-4" />
-                </div>
-              )
-            )
-          },
-          {
-            key: 'name',
-            label: 'Project Name',
-            render: (row) => (
-              <div>
-                <div className="font-bold text-foreground">{row.name || 'Untitled Project'}</div>
-                <div className="text-xs text-emerald-400 font-medium">{row.category || 'Dynamic'}</div>
-              </div>
-            )
-          },
-          {
-            key: 'tech',
-            label: 'Technologies',
-            render: (row) => <div className="text-xs text-muted-foreground max-w-[200px] truncate">{row.tech || 'React, Node'}</div>
-          },
-          { key: 'actions', align: 'right', label: 'Action', render: renderActions }
-        ];
+
 
       case 'faq':
         return [
@@ -633,7 +562,7 @@ export default function ServiceCMSPage() {
               )}
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Manage complete inner page sections, banner, features, FAQs, card settings & SEO for <code className="text-emerald-400">/services/{data.slug || slug}</code>
+              Manage live webpage sections: Hero banner, overview & bento cards, benefits, process, why choose us & FAQs for <code className="text-emerald-400">/services/{data.slug || slug}</code>
             </p>
           </div>
         </div>
@@ -909,52 +838,26 @@ export default function ServiceCMSPage() {
         </Card>
       )}
 
-      {/* TAB 2: Overview Information */}
+      {/* TAB 2: Overview & Bento Information */}
       {activeTab === 'overview' && (
         <Card className="border-border shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-base font-semibold">Overview Information</CardTitle>
+            <div>
+              <CardTitle className="text-base font-semibold">Overview & Bento Matrix</CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Manage the showcase image, main intro description, and Bento Cards 01-03 shown on the live webpage.
+              </p>
+            </div>
             <Button onClick={() => handleSaveAll(data)} disabled={saving} size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">
               <Save className="w-4 h-4 mr-1.5" /> Save Overview
             </Button>
           </CardHeader>
           <CardContent style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <FloatingTextarea
-              label="Full Detailed Description"
-              name="description"
-              value={data.description}
-              onChange={(e) => setData({ ...data, description: e.target.value })}
-              rows={4}
-              rightElement={<AIAssistantButton context={`Service Full Desc for ${data.title}`} field="description" onGenerate={v => setData(p => ({ ...p, description: v }))} />}
-            />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <FloatingTextarea
-                label="Overview: What is it?"
-                name="overviewWhatIsIt"
-                value={data.overviewWhatIsIt || ''}
-                onChange={(e) => setData({ ...data, overviewWhatIsIt: e.target.value })}
-                rows={3}
-                rightElement={<AIAssistantButton context={`What is ${data.title}?`} field="overviewWhatIsIt" onGenerate={v => setData(p => ({ ...p, overviewWhatIsIt: v }))} />}
-              />
-              <FloatingTextarea
-                label="Overview: Who Needs It?"
-                name="overviewWhoNeedsIt"
-                value={data.overviewWhoNeedsIt || ''}
-                onChange={(e) => setData({ ...data, overviewWhoNeedsIt: e.target.value })}
-                rows={3}
-                rightElement={<AIAssistantButton context={`Who needs ${data.title}?`} field="overviewWhoNeedsIt" onGenerate={v => setData(p => ({ ...p, overviewWhoNeedsIt: v }))} />}
-              />
-              <FloatingTextarea
-                label="Overview: Why Choose Us (Text)"
-                name="overviewWhyChooseUs"
-                value={data.overviewWhyChooseUs || ''}
-                onChange={(e) => setData({ ...data, overviewWhyChooseUs: e.target.value })}
-                rows={3}
-                rightElement={<AIAssistantButton context={`Why choose our ${data.title} service?`} field="overviewWhyChooseUs" onGenerate={v => setData(p => ({ ...p, overviewWhyChooseUs: v }))} />}
-              />
-            </div>
-            <div className="space-y-3 pt-2">
-              <label className="text-sm font-semibold text-foreground">Overview Section Image</label>
+            <div className="space-y-3 pb-2">
+              <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-emerald-400" />
+                Overview Showcase Image (Rendered at top of Overview section)
+              </label>
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                 {(data.overviewImage || data.image) ? (
                   <div className="relative rounded-xl overflow-hidden border border-white/15 shadow-md bg-black/40">
@@ -977,12 +880,58 @@ export default function ServiceCMSPage() {
                 />
               </div>
             </div>
+
+            <FloatingTextarea
+              label="Main Service Description (Paragraph below the title)"
+              name="description"
+              value={data.description}
+              onChange={(e) => setData({ ...data, description: e.target.value })}
+              rows={4}
+              rightElement={<AIAssistantButton context={`Service Full Desc for ${data.title}`} field="description" onGenerate={v => setData(p => ({ ...p, description: v }))} />}
+            />
+
+            <div className="pt-2 border-t border-border">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" /> 4-Pillar Bento Matrix (Cards 01, 02, 03)
+                </h4>
+                <span className="text-xs text-slate-400 bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">
+                  Card 04 (Key Benefits) is managed in the <strong>Key Benefits</strong> tab
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <FloatingTextarea
+                  label="Bento Card 01: What is this service?"
+                  name="overviewWhatIsIt"
+                  value={data.overviewWhatIsIt || ''}
+                  onChange={(e) => setData({ ...data, overviewWhatIsIt: e.target.value })}
+                  rows={4}
+                  rightElement={<AIAssistantButton context={`What is ${data.title}?`} field="overviewWhatIsIt" onGenerate={v => setData(p => ({ ...p, overviewWhatIsIt: v }))} />}
+                />
+                <FloatingTextarea
+                  label="Bento Card 02: Who Needs It?"
+                  name="overviewWhoNeedsIt"
+                  value={data.overviewWhoNeedsIt || ''}
+                  onChange={(e) => setData({ ...data, overviewWhoNeedsIt: e.target.value })}
+                  rows={4}
+                  rightElement={<AIAssistantButton context={`Who needs ${data.title}?`} field="overviewWhoNeedsIt" onGenerate={v => setData(p => ({ ...p, overviewWhoNeedsIt: v }))} />}
+                />
+                <FloatingTextarea
+                  label="Bento Card 03: Why Choose WebTycoons?"
+                  name="overviewWhyChooseUs"
+                  value={data.overviewWhyChooseUs || ''}
+                  onChange={(e) => setData({ ...data, overviewWhyChooseUs: e.target.value })}
+                  rows={4}
+                  rightElement={<AIAssistantButton context={`Why choose our ${data.title} service?`} field="overviewWhyChooseUs" onGenerate={v => setData(p => ({ ...p, overviewWhyChooseUs: v }))} />}
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {/* LIST TABS: Features, Benefits, Process, Why Choose Us, Portfolio, FAQ */}
-      {['features', 'benefits', 'process', 'whyChooseUs', 'portfolio', 'faq'].includes(activeTab) && (
+      {/* LIST TABS: Benefits, Process, Why Choose Us, FAQ */}
+      {['benefits', 'process', 'whyChooseUs', 'faq'].includes(activeTab) && (
         <div className="space-y-6">
           <TableToolbar
             search={search}
@@ -993,19 +942,15 @@ export default function ServiceCMSPage() {
             onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
             bulkDeleting={false}
             onAdd={() => {
-              if (activeTab === 'features') openCreate('features', { title: '', desc: '', image: '' });
               if (activeTab === 'benefits') openCreate('benefits', { title: '', desc: '' });
               if (activeTab === 'process') openCreate('process', { step: String((data.process?.length || 0) + 1).padStart(2, '0'), title: '', desc: '' });
               if (activeTab === 'whyChooseUs') openCreate('whyChooseUs', { title: '', desc: '', icon: '' });
-              if (activeTab === 'portfolio') openCreate('portfolio', { name: '', category: 'Dynamic', tech: '', desc: '', image: '', link: '' });
               if (activeTab === 'faq') openCreate('faq', { question: '', answer: '' });
             }}
             addLabel={
-              activeTab === 'features' ? 'Add Feature' :
               activeTab === 'benefits' ? 'Add Benefit' :
               activeTab === 'process' ? 'Add Step' :
-              activeTab === 'whyChooseUs' ? 'Add Advantage' :
-              activeTab === 'portfolio' ? 'Add Project' : 'Add FAQ'
+              activeTab === 'whyChooseUs' ? 'Add Advantage' : 'Add FAQ'
             }
           />
 
@@ -1040,52 +985,7 @@ export default function ServiceCMSPage() {
           </DialogHeader>
 
           <form onSubmit={handleSaveModalItem} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* Form Fields according to modalType */}
-            {modalType === 'features' && (
-              <>
-                <FloatingInput
-                  label="Feature Title *"
-                  required
-                  value={form.title || ''}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  rightElement={<AIAssistantButton context="Service Feature" field="Feature Title" onGenerate={v => setForm({ ...form, title: v })} />}
-                />
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Feature Image / Icon</label>
-                  <div className="flex flex-wrap gap-4 items-center">
-                    {form.image && (
-                      <div className="relative group">
-                        <img src={form.image} alt="Feature" className="w-16 h-16 object-cover rounded-xl border border-white/10 shadow" />
-                        <button
-                          type="button"
-                          onClick={() => setForm(prev => ({ ...prev, image: '' }))}
-                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow transition-colors"
-                          title="Remove image"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-3">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        disabled={uploadingImage}
-                        onChange={(e) => handleModalImageUpload(e, 'image')} 
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 disabled:opacity-50" 
-                      />
-                      {uploadingImage && <span className="text-xs text-emerald-400 font-medium animate-pulse">Uploading image...</span>}
-                    </div>
-                  </div>
-                </div>
-                <FloatingTextarea
-                  label="Feature Description"
-                  value={form.desc || ''}
-                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
-                  rows={3}
-                />
-              </>
-            )}
+
 
             {modalType === 'benefits' && (
               <>
@@ -1181,67 +1081,7 @@ export default function ServiceCMSPage() {
               </>
             )}
 
-            {modalType === 'portfolio' && (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <FloatingInput
-                    label="Project Name *"
-                    required
-                    value={form.name || ''}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  />
-                  <FloatingInput
-                    label="Category (e.g. Dynamic)"
-                    value={form.category || ''}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  />
-                  <FloatingInput
-                    label="Tech Stack (e.g. React, Node)"
-                    value={form.tech || ''}
-                    onChange={(e) => setForm({ ...form, tech: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Project Cover Image</label>
-                  <div className="flex flex-wrap gap-4 items-center">
-                    {form.image && (
-                      <div className="relative group">
-                        <img src={form.image} alt="Project" className="w-24 h-16 object-cover rounded-xl border border-white/10 shadow" />
-                        <button
-                          type="button"
-                          onClick={() => setForm(prev => ({ ...prev, image: '' }))}
-                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow transition-colors"
-                          title="Remove image"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-3">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        disabled={uploadingImage}
-                        onChange={(e) => handleModalImageUpload(e, 'image')} 
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 disabled:opacity-50" 
-                      />
-                      {uploadingImage && <span className="text-xs text-emerald-400 font-medium animate-pulse">Uploading image...</span>}
-                    </div>
-                  </div>
-                </div>
-                <FloatingInput
-                  label="External Project Link"
-                  value={form.link || ''}
-                  onChange={(e) => setForm({ ...form, link: e.target.value })}
-                />
-                <FloatingTextarea
-                  label="Short Description"
-                  value={form.desc || ''}
-                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
-                  rows={2}
-                />
-              </>
-            )}
+
 
             {modalType === 'faq' && (
               <>

@@ -48,32 +48,48 @@ const formatSubMenuLabel = (str, max = 40) => {
 
 const formatInitialNav = (data) => {
   if (!Array.isArray(data) || data.length === 0) return INITIAL_NAV_LINKS;
-  return data.map((it) => ({
-    id: it.id || it._id || it.title || it.name,
-    name: it.name || it.title,
-    path: it.path || it.slug,
-    order: it.order || it.id || 0,
-    hasDropdown: Boolean(it.hasDropdown ?? ((it.children && it.children.length > 0) || (it.subItems && it.subItems.length > 0))),
-    openInNewTab: Boolean(it.openInNewTab),
-    isSpecialCta: Boolean(it.isSpecialCta || it.slug === '/contact' || it.path === '/contact'),
-    ctaAction: it.ctaAction || (it.slug === '/contact' || it.path === '/contact' ? 'modal' : 'link'),
-    subItems: ((it.subItems || it.children) || []).map((sub, sIdx) => ({
-      _id: sub._id || sub.id || sIdx,
-      label: sub.label || sub.title,
-      path: sub.path || sub.slug,
-      openInNewTab: Boolean(sub.openInNewTab),
-      isActive: sub.isActive !== false,
-    })).filter((sub) => sub.isActive !== false),
-  }));
+  return data
+    .filter((it) => it.isActive !== false)
+    .map((it) => {
+      const rawSub = it.subItems || it.children || [];
+      const activeSubs = rawSub
+        .filter((sub) => sub.isActive !== false)
+        .map((sub, sIdx) => ({
+          _id: sub._id || sub.id || sIdx,
+          label: sub.label || sub.title,
+          path: sub.path || sub.slug,
+          openInNewTab: Boolean(sub.openInNewTab),
+          isActive: true,
+        }));
+
+      let parentPath = it.path || it.slug || '#';
+      if (Boolean(it.hasDropdown) && activeSubs.length > 0) {
+        if (parentPath === '/services' || parentPath === '#' || !parentPath) {
+          parentPath = activeSubs[0].path;
+        }
+      }
+
+      return {
+        id: it.id || it._id || it.title || it.name,
+        name: it.name || it.title,
+        path: parentPath,
+        order: it.order || it.id || 0,
+        hasDropdown: Boolean(it.hasDropdown ?? (activeSubs.length > 0)),
+        openInNewTab: Boolean(it.openInNewTab),
+        isSpecialCta: Boolean(it.isSpecialCta || it.slug === '/contact' || it.path === '/contact'),
+        ctaAction: it.ctaAction || (it.slug === '/contact' || it.path === '/contact' ? 'modal' : 'link'),
+        subItems: activeSubs,
+      };
+    });
 };
 
-const Header = ({ initialNavData, initialGlobalSettings }) => {
+const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) => {
   const [navLinks, setNavLinks]                     = useState(() => formatInitialNav(initialNavData))
   const [ctaConfig, setCtaConfig]                   = useState({
-    ctaButtonText: initialGlobalSettings?.headerCtaText || "Let's Talk",
-    ctaButtonAction: "modal",
-    ctaButtonLink: "/contact",
-    showCtaButton: true,
+    ctaButtonText: initialHeaderConfig?.ctaButtonText || initialGlobalSettings?.headerCtaText || "Let's Talk",
+    ctaButtonAction: initialHeaderConfig?.ctaButtonAction || "modal",
+    ctaButtonLink: initialHeaderConfig?.ctaButtonLink || "/contact",
+    showCtaButton: initialHeaderConfig?.showCtaButton !== false,
   })
   const [isMenuOpen, setIsMenuOpen]                 = useState(false)
   const [expandedDropdowns, setExpandedDropdowns]   = useState({ Services: false })
@@ -89,20 +105,7 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
         const res = await fetch('/api/header-menu')
         const json = await res.json()
         if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
-          const active = json.data
-            .filter((it) => it.isActive !== false)
-            .map((it) => ({
-              id: it._id,
-              name: it.name,
-              path: it.path,
-              order: it.order || 0,
-              hasDropdown: Boolean(it.hasDropdown),
-              openInNewTab: Boolean(it.openInNewTab),
-              isSpecialCta: Boolean(it.isSpecialCta),
-              ctaAction: it.ctaAction || 'link',
-              subItems: (it.subItems || []).filter((sub) => sub.isActive !== false),
-            }))
-          setNavLinks(active)
+          setNavLinks(formatInitialNav(json.data))
           if (json.config) {
             setCtaConfig(json.config)
           }

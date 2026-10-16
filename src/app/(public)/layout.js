@@ -11,12 +11,12 @@ import 'swiper/css';
 
 import { connectDB } from "src/app/lib/config";
 import GlobalSetting from "src/app/models/GlobalSetting";
-import Service from "src/app/models/Service";
+import { HeaderMenuItem, HeaderConfig } from "src/app/models/HeaderMenu";
 
-// ISR: rebuild layout data every 5 minutes
+// ISR: rebuild layout data every 5 minutes (revalidated on updates)
 export const revalidate = 300;
 
-// WebTycoons base static navigation structure
+// Fallback base navigation structure if DB empty
 const BASE_NAV = [
   { id: 1, title: "Home", slug: "/", children: [] },
   { id: 2, title: "About", slug: "/about", children: [] },
@@ -24,7 +24,7 @@ const BASE_NAV = [
     id: 3,        
     title: "Services",
     slug: "/services",
-    children: [], // To be populated dynamically
+    children: [],
   },
   { id: 4, title: "Projects", slug: "/projects", children: [] },
   { id: 5, title: "Products", slug: "/products", children: [] },
@@ -34,7 +34,8 @@ const BASE_NAV = [
 
 export default async function PublicLayout({ children }) {
   let globalSettings = null;
-  let navData = JSON.parse(JSON.stringify(BASE_NAV));
+  let navData = [];
+  let headerConfig = null;
 
   try {
     await connectDB();
@@ -43,24 +44,21 @@ export default async function PublicLayout({ children }) {
       globalSettings = JSON.parse(JSON.stringify(settings));
     }
 
-    // Fetch active services to populate the Services dropdown
-    const activeServices = await Service.find({ status: "active" }).sort({ sort: 1 }).lean();
-    if (activeServices && activeServices.length > 0) {
-      const servicesNavIndex = navData.findIndex((item) => item.title === "Services");
-      if (servicesNavIndex !== -1) {
-        // Set the parent link to the first service's slug
-        navData[servicesNavIndex].slug = `/services/${activeServices[0].slug}`;
-        
-        navData[servicesNavIndex].children = activeServices.map((service, index) => ({
-          id: `3${index}`,
-          title: service.title,
-          slug: `/services/${service.slug}`,
-          children: [],
-        }));
-      }
+    // Load header navigation strictly from HeaderMenuItem collection
+    const dbMenuItems = await HeaderMenuItem.find().sort({ order: 1 }).lean();
+    if (dbMenuItems && dbMenuItems.length > 0) {
+      navData = JSON.parse(JSON.stringify(dbMenuItems));
+    } else {
+      navData = JSON.parse(JSON.stringify(BASE_NAV));
+    }
+
+    const dbConfig = await HeaderConfig.findOne().lean();
+    if (dbConfig) {
+      headerConfig = JSON.parse(JSON.stringify(dbConfig));
     }
   } catch (error) {
-    console.error("Failed to fetch global settings or services:", error);
+    console.error("Failed to fetch global settings or header menu:", error);
+    navData = JSON.parse(JSON.stringify(BASE_NAV));
   }
 
   if (globalSettings?.emergencyShutdown || globalSettings?.isMaintenanceMode) {
@@ -77,7 +75,7 @@ export default async function PublicLayout({ children }) {
   return (
     <SmoothScroller>
       <Preloader />
-      <Header initialNavData={navData} initialGlobalSettings={globalSettings} />
+      <Header initialNavData={navData} initialGlobalSettings={globalSettings} initialHeaderConfig={headerConfig} />
       {children}
       <Footer />
       {globalSettings?.googleAnalyticsId && (

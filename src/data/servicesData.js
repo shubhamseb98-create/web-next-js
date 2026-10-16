@@ -31,7 +31,7 @@ export const servicesData = {
     hero: {
       title: 'Static Website Development',
       description: 'Lightning-fast, highly secure, and beautifully designed static websites tailored to showcase your brand with zero compromises on performance.',
-      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2000&auto=format&fit=crop'
+      image: '/uploads/services/website-designing-hero.jpg'
     },
     overview: {
       whatIsIt: 'A static website delivers pre-rendered HTML, CSS, and JavaScript directly to the browser. Without needing database queries, these sites offer unparalleled speed, security, and reliability.',
@@ -84,7 +84,7 @@ export const servicesData = {
     hero: {
       title: 'Dynamic Website Development',
       description: 'Robust, scalable, and highly interactive dynamic websites powered by modern CMS and custom backend architectures.',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2000&auto=format&fit=crop'
+      image: '/uploads/services/web-development-hero.jpg'
     },
     overview: {
       whatIsIt: 'Dynamic websites generate content in real-time using a database and backend logic. They allow for user authentication, content management systems (CMS), and complex personalized user experiences.',
@@ -137,7 +137,7 @@ export const servicesData = {
     hero: {
       title: 'E-Commerce Website Development',
       description: 'High-conversion, secure, and lightning-fast online stores designed to scale your business and maximize your digital revenue.',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2000&auto=format&fit=crop'
+      image: '/uploads/services/ecommerce-solution-hero.jpg'
     },
     overview: {
       whatIsIt: 'An e-commerce website allows you to sell products or services online. It includes product catalogs, shopping carts, secure payment gateways, and inventory management.',

@@ -56,7 +56,7 @@ function ServiceModal({ item, nextSort = 1, onClose, onSave, saving }) {
               </div>
               <div>
                 <div className="text-sm font-semibold text-white">Full Inner Page Content CMS</div>
-                <div className="text-xs text-slate-400">Hero banner, overview narrative, features, benefits, process, why choose us, portfolio & FAQs</div>
+                <div className="text-xs text-slate-400">Hero banner, overview & bento cards, benefits, process, why choose us & FAQs</div>
               </div>
             </div>
             <Link 
@@ -332,26 +332,16 @@ export default function ServicesPage() {
             )}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <Link 
-                href={`/dashboard/services/${r.slug}`}
-                className="font-semibold text-white text-sm hover:text-emerald-400 transition-colors inline-block"
-                onClick={e => e.stopPropagation()}
-                title="Edit Complete Inner Page Content"
-              >
-                {r.title || 'Untitled Service'}
-              </Link>
-            </div>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-xs text-slate-400 max-w-[260px] truncate">{r.shortDesc || `/services/${r.slug}`}</span>
-              <Link
-                href={`/dashboard/services/${r.slug}`}
-                onClick={e => e.stopPropagation()}
-                className="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 transition-all shrink-0"
-                title="Open Inner Page CMS"
-              >
-                <FileText className="w-3 h-3" /> Page CMS
-              </Link>
+            <Link 
+              href={`/dashboard/services/${r.slug}`}
+              className="font-semibold text-white text-sm hover:text-emerald-400 transition-colors inline-block"
+              onClick={e => e.stopPropagation()}
+              title="Edit Service Content & Settings"
+            >
+              {r.title || 'Untitled Service'}
+            </Link>
+            <div className="text-xs text-slate-400 max-w-[340px] truncate mt-0.5">
+              {r.shortDesc || `/services/${r.slug}`}
             </div>
           </div>
         </div>
@@ -431,28 +421,19 @@ export default function ServicesPage() {
       align: 'right',
       label: 'Action',
       render: r => (
-        <div className="flex items-center justify-end gap-1.5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
           <Link
             href={`/dashboard/services/${r.slug}`}
-            className="h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border border-emerald-500/30 shadow-sm"
-            title="Edit Inner Page CMS (Hero, Overview, Features, FAQs...)"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Inner Page CMS</span>
-          </Link>
-          <button 
-            type="button"
-            onClick={() => setModal(r)} 
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10" 
-            title="Quick Edit Card Settings"
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-sm"
+            title="Edit Service (Hero Banner, Overview, FAQs & Settings)"
           >
             <Edit2 className="w-4 h-4" />
-          </button>
+          </Link>
           <a
             href={`/services/${r.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10"
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10 shadow-sm"
             title="Preview Live Service Page"
           >
             <ExternalLink className="w-4 h-4" />
@@ -460,7 +441,7 @@ export default function ServicesPage() {
           <button 
             type="button"
             onClick={() => setConfirmModal({ isOpen: true, id: r._id })} 
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20" 
+            className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 shadow-sm" 
             title="Delete Service"
           >
             <Trash2 className="w-4 h-4" />
@@ -509,7 +490,7 @@ export default function ServicesPage() {
         columns={columns} 
         data={filtered} 
         loading={loading} 
-        onRowClick={(row) => setModal(row)} 
+        onRowClick={(row) => router.push(`/dashboard/services/${row.slug}`)} 
         actions={false} 
         selectedIds={selectedIds} 
         onToggleSelectAll={toggleSelectAll} 

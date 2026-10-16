@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { connectDB } from "../../../lib/config";
 import { HeaderMenuItem } from "../../../models/HeaderMenu";
 import { requireAuth } from "../../../lib/auth";
@@ -25,6 +26,10 @@ export async function PUT(request, { params }) {
         { status: 404 }
       );
     }
+
+    try {
+      revalidatePath('/', 'layout');
+    } catch (e) {}
 
     return Response.json({
       success: true,
@@ -56,6 +61,10 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
     }
+
+    try {
+      revalidatePath('/', 'layout');
+    } catch (e) {}
 
     return Response.json({
       success: true,

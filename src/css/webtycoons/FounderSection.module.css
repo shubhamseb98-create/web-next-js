@@ -4,7 +4,7 @@
 
 .section {
   position: relative;
-  background-color: #070b07;
+  background: radial-gradient(circle at 70% 35%, #0b140c 0%, #070c08 45%, #040604 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -12,8 +12,8 @@
   padding: 80px 0;
   overflow: hidden;
   contain: paint;
-  border-top: 1px solid rgba(82, 164, 54, 0.15);
-  border-bottom: 1px solid rgba(82, 164, 54, 0.15);
+  border-top: 1px solid rgba(82, 164, 54, 0.18);
+  border-bottom: 1px solid rgba(82, 164, 54, 0.18);
   box-sizing: border-box;
 }
 
@@ -23,16 +23,27 @@
   }
 }
 
-/* Subtle tech grid background pattern */
+/* Elegant luxury organic topographic curves - NO square grid boxes */
 .section::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(82, 164, 54, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(82, 164, 54, 0.04) 1px, transparent 1px);
-  background-size: 54px 54px;
-  transform: translateZ(0);
+  background-image: url('/assets/img/bg/founder-luxury-waves.svg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle ambient diagonal light sheen */
+.section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(135deg, rgba(82, 164, 54, 0.06) 0%, transparent 40%, rgba(207, 161, 68, 0.04) 70%, transparent 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -40,24 +51,24 @@
 /* Ambient Radial Glows */
 .ambientGlowLeft {
   position: absolute;
-  top: 15%;
-  left: -8%;
-  width: 520px;
-  height: 520px;
-  background: radial-gradient(circle, rgba(82, 164, 54, 0.16) 0%, rgba(82, 164, 54, 0.03) 55%, transparent 75%);
-  filter: blur(85px);
+  top: 18%;
+  left: -6%;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.2) 0%, rgba(82, 164, 54, 0.04) 52%, transparent 75%);
+  filter: blur(90px);
   pointer-events: none;
   z-index: 0;
 }
 
 .ambientGlowRight {
   position: absolute;
-  bottom: 10%;
-  right: -5%;
-  width: 580px;
-  height: 580px;
-  background: radial-gradient(circle, rgba(207, 161, 68, 0.12) 0%, rgba(82, 164, 54, 0.08) 45%, transparent 75%);
-  filter: blur(95px);
+  bottom: 8%;
+  right: -4%;
+  width: 620px;
+  height: 620px;
+  background: radial-gradient(circle, rgba(207, 161, 68, 0.15) 0%, rgba(82, 164, 54, 0.09) 45%, transparent 75%);
+  filter: blur(100px);
   pointer-events: none;
   z-index: 0;
 }

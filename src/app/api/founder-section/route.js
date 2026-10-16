@@ -25,27 +25,34 @@ export async function POST(request) {
 
     const formData = await request.formData();
 
-    const eyebrow = formData.get("eyebrow") || "FROM THE FOUNDER'S DESK";
-    const heading_start = formData.get("heading_start") || "Architecting";
-    const heading_highlight = formData.get("heading_highlight") || "Digital Dominance";
-    const heading_end = formData.get("heading_end") || "& Engineering Real Value";
-    const founder_name = formData.get("founder_name") || "Dheeraj Aggarwal";
-    const founder_role = formData.get("founder_role") || "Founder & CEO";
-    const quote_tag = formData.get("quote_tag") || "OUR FOUNDATIONAL COMMITMENT";
-    const quote_text = formData.get("quote_text") || "";
-    const bio_text = formData.get("bio_text") || "";
-    const primary_btn_text = formData.get("primary_btn_text") || "Work With Our Team";
-    const primary_btn_url = formData.get("primary_btn_url") || "/contact";
-    const linkedin_url = formData.get("linkedin_url") || "https://www.linkedin.com";
-    const signature_text = formData.get("signature_text") || "Dheeraj Aggarwal";
-    const signature_subtext = formData.get("signature_subtext") || "Founder & CEO, WebTycoons";
-    const alt = formData.get("alt") || "Dheeraj Aggarwal - Founder & CEO";
-    const badge_1_number = formData.get("badge_1_number") || "18+";
-    const badge_1_label = formData.get("badge_1_label") || "Years Industry Mastery";
-    const badge_2_tag = formData.get("badge_2_tag") || "PROVEN TRACK RECORD";
-    const badge_2_number = formData.get("badge_2_number") || "350+";
-    const badge_2_label = formData.get("badge_2_label") || "Delivered Worldwide";
-    const badge_3_text = formData.get("badge_3_text") || "100% Code Ownership";
+    const getString = (key) => {
+      const val = formData.get(key);
+      return val !== null ? val.toString().trim() : "";
+    };
+
+    const eyebrow = getString("eyebrow") || "FROM THE FOUNDER'S DESK";
+    const heading_start = getString("heading_start") || "Architecting";
+    const heading_highlight = getString("heading_highlight") || "Digital Dominance";
+    const heading_end = getString("heading_end") || "& Engineering Real Value";
+    const founder_name = getString("founder_name") || "Dheeraj Aggarwal";
+    const founder_role = getString("founder_role") || "Founder & CEO";
+    const quote_tag = getString("quote_tag");
+    const quote_text = getString("quote_text");
+    const bio_text = getString("bio_text");
+    const primary_btn_text = getString("primary_btn_text");
+    const primary_btn_url = getString("primary_btn_url");
+    const linkedin_url = getString("linkedin_url");
+    const signature_text = getString("signature_text");
+    const signature_subtext = getString("signature_subtext");
+    const alt = getString("alt") || "Dheeraj Aggarwal - Founder & CEO";
+
+    // Badges can be completely cleared/blanked by user:
+    const badge_1_number = getString("badge_1_number");
+    const badge_1_label = getString("badge_1_label");
+    const badge_2_tag = getString("badge_2_tag");
+    const badge_2_number = getString("badge_2_number");
+    const badge_2_label = getString("badge_2_label");
+    const badge_3_text = getString("badge_3_text");
     const isActive = formData.get("isActive") !== "false";
 
     // Handle File Upload: check 'imageFile' and 'image'

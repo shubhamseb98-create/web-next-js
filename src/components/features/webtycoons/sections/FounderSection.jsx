@@ -30,12 +30,17 @@ export default function FounderSection({ founderData }) {
   const signature_subtext = founderData?.signature_subtext || "Founder & CEO, WebTycoons";
   const image = founderData?.image || founderData?.img || '/assets/img/team/sitara-removebg-preview.png';
   const alt = founderData?.alt || `${name} - ${role}`;
-  const badge_1_number = founderData?.badge_1_number || "18+";
-  const badge_1_label = founderData?.badge_1_label || "Years Industry Mastery";
-  const badge_2_tag = founderData?.badge_2_tag || "PROVEN TRACK RECORD";
-  const badge_2_number = founderData?.badge_2_number || "350+";
-  const badge_2_label = founderData?.badge_2_label || "Delivered Worldwide";
-  const badge_3_text = founderData?.badge_3_text || "100% Code Ownership";
+  const badge_1_number = founderData?.badge_1_number !== undefined ? founderData.badge_1_number : "18+";
+  const badge_1_label = founderData?.badge_1_label !== undefined ? founderData.badge_1_label : "Years Industry Mastery";
+  const badge_2_tag = founderData?.badge_2_tag !== undefined ? founderData.badge_2_tag : "PROVEN TRACK RECORD";
+  const badge_2_number = founderData?.badge_2_number !== undefined ? founderData.badge_2_number : "350+";
+  const badge_2_label = founderData?.badge_2_label !== undefined ? founderData.badge_2_label : "Delivered Worldwide";
+  const badge_3_text = founderData?.badge_3_text !== undefined ? founderData.badge_3_text : "100% Code Ownership";
+
+  // Badges only show if user entered values (if blank, they hide completely)
+  const hasBadge1 = Boolean(badge_1_number && badge_1_number.trim());
+  const hasBadge2 = Boolean(badge_2_number && badge_2_number.trim());
+  const hasBadge3 = Boolean(badge_3_text && badge_3_text.trim());
 
   return (
     <section className={styles.section} id="founder">
@@ -160,36 +165,46 @@ export default function FounderSection({ founderData }) {
                 </div>
 
                 {/* Floating Glassmorphic Badge 1: 18+ Years Mastery */}
-                {badge_1_number && (
+                {hasBadge1 && (
                   <div className={styles.badgeExperience}>
                     <div className={styles.badgeIconBox}>
                       <FaStar />
                     </div>
                     <div>
-                      <div className={styles.badgeNumber}>
-                        {badge_1_number}
-                      </div>
-                      <div className={styles.badgeLabel}>{badge_1_label}</div>
+                      {badge_1_number && (
+                        <div className={styles.badgeNumber}>
+                          {badge_1_number}
+                        </div>
+                      )}
+                      {badge_1_label && (
+                        <div className={styles.badgeLabel}>{badge_1_label}</div>
+                      )}
                     </div>
                   </div>
                 )}
 
                 {/* Floating Glassmorphic Badge 2: 350+ Projects Delivered */}
-                {badge_2_number && (
+                {hasBadge2 && (
                   <div className={styles.badgeProjects}>
-                    <div className={styles.badgeLiveRow}>
-                      <span className={styles.badgeLiveDot} />
-                      <span className={styles.badgeLiveTag}>{badge_2_tag}</span>
-                    </div>
-                    <div className={styles.badgeProjectsCount}>
-                      {badge_2_number} Projects
-                    </div>
-                    <div className={styles.badgeProjectsSub}>{badge_2_label}</div>
+                    {badge_2_tag && (
+                      <div className={styles.badgeLiveRow}>
+                        <span className={styles.badgeLiveDot} />
+                        <span className={styles.badgeLiveTag}>{badge_2_tag}</span>
+                      </div>
+                    )}
+                    {badge_2_number && (
+                      <div className={styles.badgeProjectsCount}>
+                        {badge_2_number} Projects
+                      </div>
+                    )}
+                    {badge_2_label && (
+                      <div className={styles.badgeProjectsSub}>{badge_2_label}</div>
+                    )}
                   </div>
                 )}
 
                 {/* Floating Micro Badge 3: 100% Code Ownership */}
-                {badge_3_text && (
+                {hasBadge3 && (
                   <div className={styles.badgeCodeOwnership}>
                     <CheckCircle2 className={styles.badgeCheckIcon} size={13} />
                     <span>{badge_3_text}</span>

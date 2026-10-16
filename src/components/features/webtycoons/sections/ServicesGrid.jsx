@@ -147,7 +147,7 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
   }, []);
 
   const filteredServices = Array.isArray(servicesData)
-    ? servicesData.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true))
+    ? servicesData.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true) && Boolean(s.isFeatured))
     : services.filter(s => s.slug !== 'real-estate-advisory' && (s.status ? s.status === 'active' : true));
 
   const displayServices = servicesData ? filteredServices : (filteredServices.length > 0 ? filteredServices : []);

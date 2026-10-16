@@ -37,6 +37,7 @@ export async function generateMetadata() {
 
 import AboutPageConfig from "../../models/AboutPageConfig";
 import TeamMember from "../../models/TeamMember";
+import FounderSection from "../../models/FounderSection";
 
 export default async function AboutPage() {
   await connectDB();
@@ -49,7 +50,11 @@ export default async function AboutPage() {
   // Serialize ObjectId to string
   const serialize = (doc) => JSON.parse(JSON.stringify(doc));
   
-  const teamMembers = await TeamMember.find({ status: 'active' }).sort({ sort: 1 }).lean();
+  const [teamMembers, founderSectionDoc] = await Promise.all([
+    TeamMember.find({ status: 'active' }).sort({ sort: 1 }).lean(),
+    FounderSection.findOne().lean(),
+  ]);
+  const founderMember = founderSectionDoc || teamMembers?.find(m => /founder|ceo/i.test(m.role || m.designation)) || null;
 
   const schemaObj = {
     "@context": "https://schema.org",
@@ -68,7 +73,7 @@ export default async function AboutPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaObj) }} />
-      <AboutPageClient data={serialize(config)} teamData={serialize(teamMembers)} />
+      <AboutPageClient data={serialize(config)} teamData={serialize(teamMembers)} founderData={serialize(founderMember)} />
     </>
   );
 }

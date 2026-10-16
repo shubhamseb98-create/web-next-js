@@ -9,6 +9,11 @@ const bannerSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  titleFontSize: {
+    type: String,
+    required: false,
+    default: "",
+  },
   url: {
     type: String,
     required: false,

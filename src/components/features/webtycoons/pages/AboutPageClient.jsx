@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/AboutPage.module.css'
 import TeamSection from '../sections/TeamSection'
+import FounderSection from '../sections/FounderSection'
 import PageHeader from 'src/components/layout/PageHeader'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -54,7 +55,7 @@ const SectionHeading = ({ subtitle, title, center }) => (
   </div>
 );
 
-export default function AboutPageClient({ data = {}, teamData = [] }) {
+export default function AboutPageClient({ data = {}, teamData = [], founderData = null }) {
   const sectionRef = useRef(null)
   const trackRef = useRef(null)
 
@@ -223,6 +224,9 @@ export default function AboutPageClient({ data = {}, teamData = [] }) {
           </motion.div>
         </div>
       </section>
+
+      {/* ── Founder Section (Leadership Manifesto) ── */}
+      <FounderSection founderData={founderData} />
 
       {/* ── Mission / Vision ── */}
       <section className={styles.missionSection}>

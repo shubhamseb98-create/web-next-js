@@ -20,14 +20,18 @@ const INITIAL_NAV_LINKS = [
     hasDropdown: true,
     subItems: [
       { label: 'Website Designing', path: '/services/website-designing' },
-      { label: 'Static Website Development', path: '/services/static-website-development' },
-      { label: 'Dynamic Website Development', path: '/services/dynamic-website-development' },
-      { label: 'E-Commerce Website Development', path: '/services/e-commerce-website-development' },
+      { label: 'Website Development', path: '/services/web-development' },
+      { label: 'Software Development', path: '/services/software-development' },
+      { label: 'Digital Marketing', path: '/services/digital-marketing' },
+      { label: 'Search Engine Optimization', path: '/services/search-engine-optimization' },
+      { label: 'Ecommerce Solution', path: '/services/ecommerce-solution' },
       { label: 'Logo Designing', path: '/services/logo-designing' },
-      { label: 'Domain & Hosting', path: '/services/domain' },
-      { label: 'Digital Marketing Solution', path: '/services/digital-marketing-solution' },
+      { label: 'Brochure Designing', path: '/services/brochure-designing' },
+      { label: 'Company Profile', path: '/services/company-profile' },
+      { label: 'WhatsApp Promotional Images', path: '/services/whatsapp-promotional-images' },
+      { label: 'Domain', path: '/services/domain' },
+      { label: 'Hosting Solution', path: '/services/hosting-solution' },
       { label: 'Email Solution', path: '/services/email-solution' },
-      { label: 'Real Estate Advisory', path: '/services/real-estate-advisory' },
     ]
   },
   { name: 'Projects', path: '/projects', order: 4, isActive: true, hasDropdown: false, subItems: [] },
@@ -36,7 +40,7 @@ const INITIAL_NAV_LINKS = [
   { name: 'Contact Us', path: '/contact', order: 7, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
 ]
 
-const formatSubMenuLabel = (str, max = 24) => {
+const formatSubMenuLabel = (str, max = 40) => {
   if (!str) return '';
   if (str.length <= max) return str;
   return str.slice(0, max).trim() + '...';
@@ -210,8 +214,12 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
       ════════════════════════════════════════════ */}
       <header className={`${styles.header} ${isScrolled ? styles.headerHidden : ''}`}>
 
-        {/* 5-layer backdrop-blur band */}
-        <div className={styles.headerBlur} aria-hidden="true">
+        {/* 5-layer backdrop-blur band with dark overlay */}
+        <div 
+          className={styles.headerBlur} 
+          aria-hidden="true"
+          style={{ background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.12) 65%, transparent 100%)' }}
+        >
           <span className={`${styles.hbl} ${styles.hbl1}`} />
           <span className={`${styles.hbl} ${styles.hbl2}`} />
           <span className={`${styles.hbl} ${styles.hbl3}`} />
@@ -220,8 +228,32 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
         </div>
 
         <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.headerInner}`}>
-          <Link href="/" className={styles.logo}>
-            <Image src="/assets/img/logo-new.png" alt="WebTycoons Logo" width={200} height={50} style={{ objectFit: 'contain' }} className={styles.logoImg} />
+          <Link
+            href="/"
+            className={styles.logo}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 55%, rgba(255, 255, 255, 0.04) 85%, transparent 100%)',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              padding: '7px 22px',
+              borderRadius: '9999px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 255, 255, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3)',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            <Image
+              src="/assets/img/logo-new.png"
+              alt="WebTycoons Logo"
+              width={200}
+              height={50}
+              style={{ objectFit: 'contain', height: '38px', width: 'auto', display: 'block' }}
+              className={styles.logoImg}
+            />
           </Link>
 
           {/* Desktop Nav */}
@@ -406,13 +438,30 @@ const Header = ({ initialNavData, initialGlobalSettings }) => {
 
         {/* Drawer top bar: Logo + Close 'X' */}
         <div className={styles.drawerHeader}>
-          <Link href="/" className={styles.drawerLogo} onClick={closeMenu}>
+          <Link
+            href="/"
+            className={styles.drawerLogo}
+            onClick={closeMenu}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 55%, rgba(255, 255, 255, 0.04) 85%, transparent 100%)',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12), 0 0 16px rgba(255, 255, 255, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3)',
+              textDecoration: 'none',
+            }}
+          >
             <Image 
               src="/assets/img/logo-new.png" 
               alt="WebTycoons Logo" 
               width={160} 
               height={42} 
-              style={{ objectFit: 'contain' }} 
+              style={{ objectFit: 'contain', height: '34px', width: 'auto', display: 'block' }} 
               className={styles.logoImg} 
             />
           </Link>

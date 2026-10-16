@@ -122,6 +122,7 @@ const Hero = ({ bannerData }) => {
         video: b.video || (isVideo(b.image) ? b.image : null),
         audio: b.audio || null,
         heading: b.title || '',
+        titleFontSize: b.titleFontSize || '',
         subtitle: b.subtitle || b.subTitle || b.subHeading || b.description || '',
         cta: b.buttonText || '',
         ctaHref: b.url || '#',
@@ -519,13 +520,25 @@ const Hero = ({ bannerData }) => {
                 sizes="100vw"
               />
             )}
-            <div className={styles.gradient} />
+            <div 
+              className={styles.gradient} 
+              style={{
+                background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.15) 20%, rgba(0, 0, 0, 0.15) 55%, rgba(0, 0, 0, 0.55) 80%, rgba(10, 14, 8, 0.85) 100%)'
+              }}
+            />
             <div className={styles.textWrap}>
               <div
                 ref={el => { textRefs.current[idx] = el }}
                 className={styles.textInner}
               >
-                {slide.heading ? <h1 className={styles.heading}>{slide.heading}</h1> : null}
+                {slide.heading ? (
+                  <h1 
+                    className={styles.heading}
+                    style={slide.titleFontSize ? { fontSize: `min(${slide.titleFontSize}, 14vw)` } : undefined}
+                  >
+                    {slide.heading}
+                  </h1>
+                ) : null}
                 {slide.subtitle ? <p className={styles.subheading}>{slide.subtitle}</p> : null}
                 {slide.cta ? (
                   <a href={slide.ctaHref || '#'} className={styles.cta}>
@@ -549,40 +562,42 @@ const Hero = ({ bannerData }) => {
 
       {/* ── Controls (only shown when there are multiple slides) ── */}
       {COUNT > 1 && (
-        <div className={styles.controls}>
-          <button
-            className={`${styles.navBtn} ${styles.navPrev}`}
-            onClick={() => navigate(activeRef.current - 1)}
-            aria-label="Previous slide"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
+        <div className={styles.controlsWrapper}>
+          <div className={styles.controls}>
+            <button
+              className={`${styles.navBtn} ${styles.navPrev}`}
+              onClick={() => navigate(activeRef.current - 1)}
+              aria-label="Previous slide"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
 
-          <div className={styles.dots}>
-            {slides.map((_, idx) => (
-              <button
-                key={idx}
-                ref={el => { progressRefs.current[idx] = el }}
-                className={`${styles.dot} ${idx === active ? styles.dotActive : ''}`}
-                onClick={() => navigate(idx)}
-                aria-label={`Slide ${idx + 1}`}
-              >
-                <span className={styles.fill} />
-              </button>
-            ))}
+            <div className={styles.dots}>
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  ref={el => { progressRefs.current[idx] = el }}
+                  className={`${styles.dot} ${idx === active ? styles.dotActive : ''}`}
+                  onClick={() => navigate(idx)}
+                  aria-label={`Slide ${idx + 1}`}
+                >
+                  <span className={styles.fill} />
+                </button>
+              ))}
+            </div>
+
+            <button
+              className={`${styles.navBtn} ${styles.navNext}`}
+              onClick={() => navigate(activeRef.current + 1)}
+              aria-label="Next slide"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
           </div>
-
-          <button
-            className={`${styles.navBtn} ${styles.navNext}`}
-            onClick={() => navigate(activeRef.current + 1)}
-            aria-label="Next slide"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
         </div>
       )}
 

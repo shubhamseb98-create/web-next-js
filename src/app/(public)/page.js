@@ -9,6 +9,7 @@ import Testimonial from "../models/Testimonial";
 
 // WebTycoons section components - Server Components
 import AboutCompany from "src/components/features/webtycoons/sections/AboutCompany";
+import FounderSection from "src/components/features/webtycoons/sections/FounderSection";
 import ServicesGrid from "src/components/features/webtycoons/sections/ServicesGrid";
 import TechnologiesSection from "src/components/features/webtycoons/sections/TechnologiesSection";
 import CallToAction from "src/components/features/webtycoons/sections/CallToAction";
@@ -63,7 +64,7 @@ export async function generateMetadata() {
 export default async function WebTycoonsHomePage() {
   await connectDB();
 
-  const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, clients, achievements, technologies, teamMembers, featuredProjectsSection, whyChooses] = await Promise.all([
+  const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, clients, achievements, technologies, teamMembers, featuredProjectsSection, whyChooses, founderSection] = await Promise.all([
     getHomeSeo(),
     Blog.find({ isPublished: true }).sort({ publishedAt: -1, createdAt: -1 }).limit(5).lean(),
     Portfolio.find({ status: 'active', isFeatured: true }).sort({ sort: 1 }).limit(6).lean(),
@@ -71,7 +72,7 @@ export default async function WebTycoonsHomePage() {
     GlobalSetting.findOne().lean(),
     // New dynamic queries
     import('../models/HomeAbout').then(m => m.default.find().lean()),
-    Service.find({ status: 'active' }).sort({ sort: 1 }).lean(),
+    Service.find({ status: 'active', isFeatured: true }).sort({ sort: 1 }).lean(),
     import('../models/Cta').then(m => m.default.find().lean()),
     import('../models/Banner').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/HomeExtra').then(m => m.default.find().lean()),
@@ -81,11 +82,13 @@ export default async function WebTycoonsHomePage() {
     import('../models/TeamMember').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
     import('../models/HomeFeaturedProjectsSection').then(m => m.default.findOne().lean()),
     import('../models/whyChoose').then(m => m.default.find({ status: 'active' }).sort({ sort: 1 }).lean()),
+    import('../models/FounderSection').then(m => m.default.findOne().lean()),
   ]);
 
   const homeAbout = homeAboutArr?.[0] || null;
   const cta = ctaArr?.[0] || null;
   const homeExtra = homeExtraArr?.[0] || null;
+  const founderMember = founderSection || teamMembers?.find(m => /founder|ceo/i.test(m.role || m.designation)) || null;
 
   const serialize = (doc) => {
     if (!doc) return null;
@@ -132,6 +135,9 @@ export default async function WebTycoonsHomePage() {
 
       {/* About Company - Server Component */}
       <AboutCompany aboutData={serialize(homeAbout)} />
+
+      {/* Founder Section */}
+      <FounderSection founderData={serialize(founderMember)} />
 
       {/* Services Grid - Server Component */}
       <ServicesGrid servicesData={serialize(services)} homeExtraData={serialize(homeExtra)} />

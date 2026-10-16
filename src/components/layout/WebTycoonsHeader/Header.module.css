@@ -22,7 +22,7 @@
   z-index: 2;
 }
 
-/* ── 5-layer backdrop-blur band (CodePen nav blur) ── */
+/* ── 5-layer backdrop-blur band with subtle top overlay ── */
 .headerBlur {
   display: block;
   position: absolute;
@@ -30,6 +30,7 @@
   height: 120px;
   z-index: 0;
   pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.12) 65%, transparent 100%);
 }
 
 .hbl {
@@ -75,15 +76,41 @@
 
 /* ── Logo ── */
 .logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 55%, rgba(255, 255, 255, 0.04) 85%, transparent 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  padding: 7px 22px !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 255, 255, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease !important;
+}
+
+.logo:hover {
+  transform: translateY(-2px) !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.32) 55%, rgba(255, 255, 255, 0.14) 85%, rgba(255, 255, 255, 0.04) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.16), 0 0 30px rgba(255, 255, 255, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.6) !important;
 }
 
 .logoImg {
-  height: 45px;
-  width: auto;
-  display: block;
+  height: 38px !important;
+  width: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+  .logo {
+    padding: 5px 14px !important;
+  }
+  .logoImg {
+    height: 30px !important;
+  }
 }
 
 /* ── Desktop Nav ── */
@@ -157,9 +184,9 @@
   -webkit-backdrop-filter: blur(24px);
   border-radius: 14px;
   padding: 0.45rem 0.35rem;
-  width: 235px;
-  max-width: 245px;
-  min-width: 200px;
+  width: 285px;
+  max-width: 320px;
+  min-width: 250px;
   max-height: calc(100vh - 105px);
   overflow-y: auto;
   scrollbar-width: thin;
@@ -495,8 +522,23 @@
 }
 
 .drawerLogo {
-  display: flex;
-  align-items: center;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.22) 55%, rgba(255, 255, 255, 0.08) 85%, rgba(255, 255, 255, 0.02) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  padding: 6px 16px !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 255, 255, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.drawerLogo:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16), 0 0 25px rgba(255, 255, 255, 0.22) !important;
 }
 
 .drawerCloseBtn {

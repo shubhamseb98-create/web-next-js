@@ -370,31 +370,60 @@ export default function ServicesPage() {
       key: 'status',
       label: 'Active',
       render: r => (
-        <Switch 
-          checked={r.status === 'active'} 
-          onCheckedChange={async (e) => {
-            const newStatus = r.status === 'active' ? 'draft' : 'active'
-            setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x))
-            try {
-              const fd = new FormData()
-              fd.append('status', newStatus)
-              await fetch(`${BASE_URL}/api/services/${r._id}`, { method: 'PUT', body: fd })
-              addToast(newStatus === 'active' ? 'Service activated!' : 'Service drafted!', newStatus === 'active' ? 'success' : 'warning')
-            } catch(e) {
-              setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x))
-              addToast('Error updating status', 'error')
-            }
-          }} 
-        />
+        <div onClick={e => e.stopPropagation()}>
+          <Switch 
+            checked={r.status === 'active'} 
+            onCheckedChange={async (e) => {
+              const newStatus = r.status === 'active' ? 'draft' : 'active'
+              setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: newStatus } : x))
+              try {
+                const fd = new FormData()
+                fd.append('status', newStatus)
+                await fetch(`${BASE_URL}/api/services/${r._id}`, { 
+                  method: 'PUT', 
+                  body: fd,
+                  headers: { ...getAuthHeaders() } 
+                })
+                addToast(newStatus === 'active' ? 'Service activated!' : 'Service drafted!', newStatus === 'active' ? 'success' : 'warning')
+              } catch(e) {
+                setRows(prev => prev.map(x => x._id === r._id ? { ...x, status: r.status } : x))
+                addToast('Error updating status', 'error')
+              }
+            }} 
+          />
+        </div>
       )
     },
     {
       key: 'featured',
-      label: 'Featured',
-      render: r => r.isFeatured ? (
-        <Badge className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs">Featured</Badge>
-      ) : (
-        <span className="text-slate-500 text-xs">-</span>
+      label: 'Featured (Home Grid)',
+      render: r => (
+        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+          <Switch 
+            checked={Boolean(r.isFeatured)} 
+            onCheckedChange={async (checked) => {
+              setRows(prev => prev.map(x => x._id === r._id ? { ...x, isFeatured: checked } : x))
+              try {
+                const fd = new FormData()
+                fd.append('isFeatured', checked)
+                await fetch(`${BASE_URL}/api/services/${r._id}`, { 
+                  method: 'PUT', 
+                  body: fd,
+                  headers: { ...getAuthHeaders() } 
+                })
+                addToast(checked ? `"${r.title}" marked as Featured on Homepage!` : `"${r.title}" removed from Featured!`, checked ? 'success' : 'info')
+              } catch(e) {
+                setRows(prev => prev.map(x => x._id === r._id ? { ...x, isFeatured: r.isFeatured } : x))
+                addToast('Error updating featured status', 'error')
+              }
+            }} 
+          />
+          {r.isFeatured ? (
+            <Badge className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] px-1.5 py-0.5">Featured</Badge>
+          ) : (
+            <span className="text-slate-500 text-xs">-</span>
+          )}
+        </div>
       )
     },
     {

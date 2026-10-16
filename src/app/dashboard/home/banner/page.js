@@ -17,7 +17,7 @@ import { SortInput } from '../../../../components/dashboard/SortInput'
 import ConfirmDeleteModal from '../../../../components/dashboard/ConfirmDeleteModal'
 
 const BASE_URL = ''
-const EMPTY = { title: '', subtitle: '', url: '', buttonText: '', image: '', audio: '', alt: '', status: 'active', sort: '', showCertifications: false, enableSound: false }
+const EMPTY = { title: '', subtitle: '', titleFontSize: '', url: '', buttonText: '', image: '', audio: '', alt: '', status: 'active', sort: '', showCertifications: false, enableSound: false }
 
 export default function BannerPage() {
   const [rows, setRows] = useState([])
@@ -68,7 +68,7 @@ export default function BannerPage() {
 
   function openCreate() {
     const maxSort = rows.reduce((max, r) => Math.max(max, Number(r.sort) || 0), 0)
-    setForm({ ...EMPTY, sort: maxSort + 1 })
+    setForm({ ...EMPTY, sort: maxSort + 1, titleFontSize: '' })
     setImageFile(null)
     setPreview('')
     setAudioFile(null)
@@ -78,7 +78,7 @@ export default function BannerPage() {
   }
 
   function openEdit(banner) {
-    setForm({ ...banner })
+    setForm({ ...banner, titleFontSize: banner.titleFontSize || '' })
     setImageFile(null)
     setPreview(banner.image || '')
     setAudioFile(null)
@@ -165,6 +165,7 @@ export default function BannerPage() {
       const fd = new FormData()
       fd.append('title', form.title || '')
       fd.append('subtitle', form.subtitle || '')
+      fd.append('titleFontSize', form.titleFontSize || '')
       fd.append('url', form.url || '')
       fd.append('buttonText', form.buttonText || '')
       fd.append('alt', form.alt || '')
@@ -252,6 +253,7 @@ export default function BannerPage() {
       const fd = new FormData()
       fd.append('title', row.title || '')
       fd.append('subtitle', row.subtitle || '')
+      fd.append('titleFontSize', row.titleFontSize || '')
       fd.append('url', row.url || '')
       fd.append('buttonText', row.buttonText || '')
       fd.append('alt', row.alt || '')
@@ -366,11 +368,18 @@ export default function BannerPage() {
         <div className="min-w-[120px]">
           <div className="font-bold text-foreground max-w-[200px] truncate" title={row.title}>{row.title}</div>
           <div className="text-xs text-muted-foreground truncate max-w-[200px]" title={row.subtitle}>{row.subtitle || 'No subtitle'}</div>
-          {row.audio && (
-            <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Music className="w-3 h-3" /> Custom Audio
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+            {row.titleFontSize && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                Size: {row.titleFontSize}
+              </span>
+            )}
+            {row.audio && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <Music className="w-3 h-3" /> Custom Audio
+              </span>
+            )}
+          </div>
         </div>
       )
     },
@@ -474,6 +483,102 @@ export default function BannerPage() {
                 onChange={e => setForm({...form, title: e.target.value})}
                 rightElement={<AIAssistantButton context="Homepage Hero Banner" field="Catchy Banner Title" onGenerate={(val) => setForm({...form, title: val})} />}
               />
+
+              {/* Banner Heading Font Size Control */}
+              <div style={{ 
+                padding: '14px 16px', 
+                backgroundColor: 'rgba(255, 255, 255, 0.02)', 
+                border: '1px solid rgba(255, 255, 255, 0.08)', 
+                borderRadius: '12px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '10px' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                  <div>
+                    <label style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ color: '#38bdf8', fontSize: '15px', fontWeight: 700 }}>Aa</span> Banner Heading Font Size
+                    </label>
+                    <p style={{ fontSize: '11px', color: '#94a3b8', margin: '2px 0 0 0' }}>Adjust banner title size on the live website</p>
+                  </div>
+                  <div style={{ fontSize: '11px', padding: '3px 9px', borderRadius: '6px', background: form.titleFontSize ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255,255,255,0.06)', color: form.titleFontSize ? '#38bdf8' : '#94a3b8', border: form.titleFontSize ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid rgba(255,255,255,0.1)' }}>
+                    Active: <strong>{form.titleFontSize || 'Default (Responsive)'}</strong>
+                  </div>
+                </div>
+
+                {/* Quick Presets */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {[
+                    { label: 'Default', value: '' },
+                    { label: 'Small (36px)', value: '36px' },
+                    { label: 'Medium (46px)', value: '46px' },
+                    { label: 'Large (56px)', value: '56px' },
+                    { label: 'Extra Large (68px)', value: '68px' },
+                    { label: 'Huge (80px)', value: '80px' },
+                  ].map((preset) => {
+                    const isSelected = (form.titleFontSize || '') === preset.value;
+                    return (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        onClick={() => setForm(p => ({ ...p, titleFontSize: preset.value }))}
+                        style={{
+                          padding: '5px 12px',
+                          fontSize: '12px',
+                          fontWeight: isSelected ? 600 : 500,
+                          borderRadius: '8px',
+                          border: isSelected ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+                          background: isSelected ? 'rgba(56, 189, 248, 0.22)' : 'rgba(255, 255, 255, 0.04)',
+                          color: isSelected ? '#38bdf8' : '#cbd5e1',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Custom size input */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder="Or type custom size (e.g. 52px, 3.8rem, 5vw)"
+                    value={form.titleFontSize || ''}
+                    onChange={e => setForm(p => ({ ...p, titleFontSize: e.target.value }))}
+                    style={{
+                      flex: 1,
+                      height: '38px',
+                      borderRadius: '8px',
+                      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      padding: '0 12px',
+                      color: 'white',
+                      fontSize: '12px',
+                      outline: 'none',
+                    }}
+                  />
+                  {form.titleFontSize && (
+                    <button
+                      type="button"
+                      onClick={() => setForm(p => ({ ...p, titleFontSize: '' }))}
+                      style={{
+                        height: '38px',
+                        padding: '0 12px',
+                        fontSize: '11px',
+                        color: '#94a3b8',
+                        background: 'rgba(255, 255, 255, 0.06)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+              </div>
               <FloatingInput
                 label="Subtitle"
                 value={form.subtitle}

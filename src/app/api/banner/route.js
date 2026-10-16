@@ -66,6 +66,7 @@ export async function POST(request) {
         const formData = await request.formData();
         const title = formData.get("title");
         const subtitle = formData.get("subtitle");
+        const titleFontSize = formData.get("titleFontSize") || "";
         const url = formData.get("url");
         const buttonText = formData.get("buttonText");
         const alt = formData.get("alt");
@@ -100,6 +101,7 @@ export async function POST(request) {
         const banner = await Banner.create({
             title,
             subtitle,
+            titleFontSize,
             url,
             buttonText,
             alt,

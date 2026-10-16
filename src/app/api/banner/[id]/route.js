@@ -96,6 +96,7 @@ export async function PUT(request, context) {
         const updateData = {
             title: formData.has("title") ? formData.get("title") : existingBanner.title,
             subtitle: formData.has("subtitle") ? formData.get("subtitle") : existingBanner.subtitle,
+            titleFontSize: formData.has("titleFontSize") ? formData.get("titleFontSize") : (existingBanner.titleFontSize || ""),
             url: formData.has("url") ? formData.get("url") : existingBanner.url,
             buttonText: formData.has("buttonText") ? formData.get("buttonText") : existingBanner.buttonText,
             alt: formData.has("alt") ? formData.get("alt") : existingBanner.alt,

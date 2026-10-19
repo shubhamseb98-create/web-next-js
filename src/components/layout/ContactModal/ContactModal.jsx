@@ -161,7 +161,7 @@ export default function ContactModal({ isOpen, onClose }) {
                     <span>Active Engineering Lab</span>
                   </div>
                   <div className={styles.imageCaption}>
-                    <span className={styles.captionTag}>WebTycoons Hub</span>
+                    <span className={styles.captionTag}>WebTycoons</span>
                     <h4 className={styles.captionTitle}>Code. Create. Conquer.</h4>
                   </div>
                 </div>

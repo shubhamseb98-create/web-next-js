@@ -43,7 +43,11 @@ export function proxy(request) {
     const isPublicEndpoint =
       pathname.startsWith('/api/auth/login') ||
       pathname.startsWith('/api/auth/logout') ||
-      pathname.startsWith('/api/enquiries');
+      pathname === '/api/contact' ||
+      pathname.startsWith('/api/contact/') ||
+      pathname.startsWith('/api/enquiries') ||
+      pathname.startsWith('/api/analytics/track') ||
+      pathname.startsWith('/api/public');
 
     if (isMutatingRequest && !isPublicEndpoint && !token) {
       return NextResponse.json(

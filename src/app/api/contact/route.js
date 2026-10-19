@@ -28,7 +28,7 @@ export async function POST(request) {
     const data = await request.json();
 
     // Validate required fields
-    const { name, email, phone, service, message } = data;
+    const { name, email, phone, service, budget, message } = data;
     if (!name || !email || !message) {
       return Response.json({ success: false, message: 'Name, email, and message are required.' }, { status: 400 });
     }
@@ -45,26 +45,29 @@ export async function POST(request) {
     // Dynamically import to avoid circular deps
     const { default: Enquiry } = await import('../../models/Enquiry.js');
     
+    const company = (data.company && typeof data.company === 'string') ? data.company.trim() : '';
+
     // Map WebTycoons form fields to Enquiry model fields
     const enquiry = await Enquiry.create({
-      contactPerson: name,
-      companyName: data.company || 'N/A',
-      email,
-      contactNo: phone || 'N/A',
+      contactPerson: name.trim(),
+      companyName: company || 'N/A',
+      email: email.trim(),
+      contactNo: phone ? phone.trim() : 'N/A',
       endUse: service || '',
-      specialRequirements: message,
+      specialRequirements: budget ? `Budget: ${budget}\n\n${message}` : message,
       status: 'new',
     });
 
     // Send notification email
     try {
       await sendNewEnquiryEmail({
-        companyName: data.company || name,
-        contactPerson: name,
-        email,
-        contactNo: phone || 'N/A',
-        endUse: service || '',
-        specialRequirements: message,
+        companyName: company,
+        contactPerson: name.trim(),
+        email: email.trim(),
+        contactNo: phone ? phone.trim() : '',
+        service: service || '',
+        budget: budget || '',
+        message: message,
         _id: enquiry._id,
       });
     } catch (emailError) {

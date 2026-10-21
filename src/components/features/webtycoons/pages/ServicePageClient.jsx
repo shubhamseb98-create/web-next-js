@@ -10,23 +10,10 @@ import WhyChooseUsIconCards from '../sections/services/WhyChooseUsIconCards';
 import TechStack from '../sections/services/TechStack';
 import ServicePortfolio from '../sections/services/ServicePortfolio';
 import ServiceCTA from '../sections/services/ServiceCTA';
-import RealEstateCalculator from '../sections/services/RealEstateCalculator';
-import RealEstateAdvisoryPage from './RealEstateAdvisoryPage';
-import { whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, realEstatePortfolioProjects, techStackGlobal } from 'src/data/servicesData';
+import { whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, techStackGlobal } from 'src/data/servicesData';
 
 export default function ServicePageClient({ service, slug, globalTechStack, homeExtraData }) {
   if (!service) return null;
-
-  const isRealEstate = slug.includes('real-estate') || slug.includes('realstate') || slug.includes('advisory');
-
-  // If this is the specialized Real Estate Advisory page, render the bespoke luxury layout!
-  if (isRealEstate) {
-    return (
-      <main>
-        <RealEstateAdvisoryPage service={service} />
-      </main>
-    );
-  }
 
   // Find fallback data from the old static data file based on slug keywords
   let oldData = servicesData.static;

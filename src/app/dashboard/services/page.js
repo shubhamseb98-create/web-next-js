@@ -193,8 +193,7 @@ export default function ServicesPage() {
       if (res.ok) {
         const json = await res.json()
         if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          const generalServices = json.data.filter(s => s.slug !== 'real-estate-advisory')
-          setRows(generalServices)
+          setRows(json.data)
         }
       }
     } catch (err) {

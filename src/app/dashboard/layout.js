@@ -11,7 +11,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { ThemeProvider } from '../../components/dashboard/ThemeProvider';
 
 const ROUTE_PERMISSION_MAP = [
-  { prefix: '/dashboard/real-estate', permission: 'real_estate' },
   { prefix: '/dashboard/services', permission: 'services' },
   { prefix: '/dashboard/portfolio', permission: 'portfolio' },
   { prefix: '/dashboard/blogs', permission: 'blogs' },
@@ -33,7 +32,6 @@ const ROUTE_PERMISSION_MAP = [
   { prefix: '/dashboard/technologies', permission: ['technologies', 'home'] },
   { prefix: '/dashboard/team', permission: ['team', 'home'] },
   { prefix: '/dashboard/testimonials', permission: ['testimonials', 'home'] },
-  { prefix: '/dashboard/certifications', permission: ['certifications', 'home'] },
   { prefix: '/dashboard/home', permission: 'home' },
   { prefix: '/dashboard/users', superAdminOnly: true },
   { prefix: '/dashboard/security', superAdminOnly: true },

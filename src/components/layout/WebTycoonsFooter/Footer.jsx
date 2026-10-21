@@ -29,7 +29,7 @@ const Footer = async () => {
             <h5 className={styles.colTitle}>SERVICES & COMPANY</h5>
             <ul className={styles.footerLinks}>
               <li><Link href="/">↗ HOME</Link></li>
-              <li><Link href="/services/real-estate-advisory">↗ REAL ESTATE ADVISORY</Link></li>
+              <li><Link href="/services">↗ SERVICES</Link></li>
               <li><Link href="/about">↗ ABOUT US</Link></li>
               <li><Link href="/projects">↗ PROJECTS</Link></li>
             </ul>

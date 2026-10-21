@@ -73,7 +73,7 @@ export default function ServiceCMSPage() {
         if (res.ok) {
           const json = await res.json();
           if (json.success && Array.isArray(json.data)) {
-            setAllServices(json.data.filter(s => s.slug !== 'real-estate-advisory'));
+            setAllServices(json.data);
           }
         }
       } catch (e) {
@@ -351,12 +351,6 @@ export default function ServiceCMSPage() {
   if (loading) return <div className="p-8 text-center">Loading Service Data...</div>;
   if (!data) return <div className="p-8 text-center text-red-500">Service not found.</div>;
 
-  if (slug === 'real-estate-advisory' || slug === 'realestate-advisory') {
-    if (typeof window !== 'undefined') {
-      router.replace('/dashboard/real-estate/breadcrumb');
-    }
-    return <div className="p-8 text-center text-muted-foreground">Redirecting to Real Estate Management...</div>;
-  }
 
   const tabs = [
     { id: 'banner', label: 'Hero Banner' },

@@ -18,7 +18,6 @@ import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal
 const MODULE_DEFINITIONS = [
   { key: 'home',            label: 'Home Management',         actions: ['read', 'update'] },
   { key: 'services',        label: 'Services Management',     actions: ['create', 'read', 'update', 'delete'] },
-  { key: 'real_estate',     label: 'Real Estate Management',  actions: ['create', 'read', 'update', 'delete'] },
   { key: 'portfolio',       label: 'Portfolio Projects',       actions: ['create', 'read', 'update', 'delete'] },
   { key: 'about',           label: 'About Management',        actions: ['read', 'update'] },
   { key: 'inner_pages',     label: 'Inner & Custom Pages',    actions: ['create', 'read', 'update', 'delete'] },
@@ -26,7 +25,6 @@ const MODULE_DEFINITIONS = [
   { key: 'blogs',           label: 'Blogs Management',        actions: ['create', 'read', 'update', 'delete'] },
   { key: 'enquiries',       label: 'Enquiries',               actions: ['read', 'update', 'delete'] },
   { key: 'contact_cms',     label: 'Contact Page CMS',        actions: ['read', 'update'] },
-  { key: 'gallery',         label: 'Gallery',                 actions: ['create', 'read', 'update', 'delete'] },
   { key: 'team',            label: 'Team Management',         actions: ['create', 'read', 'update', 'delete'] },
   { key: 'clients',         label: 'Clients Management',      actions: ['create', 'read', 'update', 'delete'] },
   { key: 'testimonials',    label: 'Testimonials',            actions: ['create', 'read', 'update', 'delete'] },

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
-import { Calendar, LayoutTemplate, Box, Edit3, MessageSquare, Image as ImageIcon, Users, Star, Award, ArrowRight, Settings, Building, Globe, Plus, Search, Bell, Shield, Key, RefreshCw, ArrowDownUp } from 'lucide-react'
+import { Calendar, LayoutTemplate, Box, Edit3, MessageSquare, Image as ImageIcon, Users, Star, Award, ArrowRight, Settings, Building, Globe, Plus, Search, Bell, Shield, Key, RefreshCw, ArrowDownUp, Briefcase, Package } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
@@ -38,10 +38,10 @@ const STAT_CONFIG = {
   products: { label: 'Products', icon: Box, bgHex: '#E4E7E9' },
   blogs: { label: 'Blogs', icon: Edit3, bgHex: '#F6D3DB' },
   enquiries: { label: 'Enquiries', icon: MessageSquare, bgHex: '#D9E8F5' },
-  gallery: { label: 'Gallery', icon: ImageIcon, bgHex: '#FDF0D1' },
+  services: { label: 'Services', icon: Briefcase, bgHex: '#FDF0D1' },
+  portfolio: { label: 'Portfolio', icon: Package, bgHex: '#EFE3F7' },
   users: { label: 'System Users', icon: Users, bgHex: '#D8F1DD' },
   whyChoose: { label: 'Why Choose', icon: Star, bgHex: '#FADEC9' },
-  certifications: { label: 'Certifications', icon: Award, bgHex: '#EFE3F7' },
 }
 
 // Maps each dashboard page entry to the permission module required to access it.
@@ -51,30 +51,27 @@ const DASHBOARD_PAGES = [
   { name: 'System Users',             href: '/dashboard/users',                    permission: 'users' },
   { name: 'Products Management',      href: '/dashboard/products',                 permission: 'products' },
   { name: 'Product Categories',       href: '/dashboard/products/categories',      permission: 'products' },
-  { name: 'Product SEO',              href: '/dashboard/products/seo',             permission: 'products' },
-  { name: 'Gallery',                  href: '/dashboard/gallery',                  permission: 'gallery' },
-  { name: 'Portfolio',                href: '/dashboard/portfolio',                permission: 'portfolio' },
-  { name: 'Services',                 href: '/dashboard/services',                 permission: 'services' },
+  { name: 'Portfolio Projects',       href: '/dashboard/portfolio',                permission: 'portfolio' },
+  { name: 'Services Management',      href: '/dashboard/services',                 permission: 'services' },
   { name: 'Testimonials',             href: '/dashboard/testimonials',             permission: 'testimonials' },
-  { name: 'Blogs',                    href: '/dashboard/blogs',                    permission: 'blogs' },
+  { name: 'Blogs Management',         href: '/dashboard/blogs',                    permission: 'blogs' },
   { name: 'Enquiries',                href: '/dashboard/enquiries',                permission: 'enquiries' },
-  { name: 'Certifications',           href: '/dashboard/certifications',           permission: 'certifications' },
-  { name: 'Team / Board of Directors', href: '/dashboard/team',                   permission: 'team' },
-  { name: 'Team Jobs',                href: '/dashboard/team/jobs',                permission: 'team' },
+  { name: 'Team Management',          href: '/dashboard/team',                     permission: 'team' },
   { name: 'Global Settings',          href: '/dashboard/settings',                 permission: 'global_settings' },
+  { name: 'Header Management',        href: '/dashboard/header-menu',              permission: 'global_settings' },
   { name: 'Page Banners',             href: '/dashboard/settings/page-banners',   permission: 'global_settings' },
   { name: 'Home Banner',              href: '/dashboard/home/banner',              permission: 'home' },
   { name: 'Floating Buttons',         href: '/dashboard/floating-buttons',         permission: 'home' },
   { name: 'Home About',               href: '/dashboard/home/about',               permission: 'home' },
   { name: 'Home Why Choose',          href: '/dashboard/home/why-choose',          permission: 'home' },
-  { name: 'Home Our Work',            href: '/dashboard/home/our-work',            permission: 'home' },
-  { name: 'Home Certifications',      href: '/dashboard/home/certifications',      permission: 'home' },
   { name: 'Home Heading Text',        href: '/dashboard/home/heading-text',        permission: 'home' },
-  { name: 'Home CTA One',             href: '/dashboard/home/cta-one',             permission: 'home' },
-  { name: 'Home CTA Two',             href: '/dashboard/home/cta-two',             permission: 'home' },
+  { name: 'Home CTA',                 href: '/dashboard/home/cta-one',             permission: 'home' },
   { name: 'Home SEO',                 href: '/dashboard/home/seo',                 permission: 'home' },
   { name: 'Inner Page Sections',      href: '/dashboard/inner-pages/sections',     permission: 'inner_pages' },
   { name: 'Contact Page Management',  href: '/dashboard/contact',                  permission: 'contact_cms' },
+  { name: 'Clients Management',       href: '/dashboard/clients',                  permission: 'clients' },
+  { name: 'Achievements',             href: '/dashboard/achievements',             permission: 'achievements' },
+  { name: 'Technologies',             href: '/dashboard/technologies',             permission: 'technologies' },
 ]
 
 export default function DashboardPage() {
@@ -433,11 +430,12 @@ export default function DashboardPage() {
                  <h2 className="text-xl font-bold text-foreground mb-4">Navigation</h2>
                  <div className="flex flex-col space-y-1">
                    {[
+                     hasModuleAccess('services')       && { label: 'Manage Services',       href: '/dashboard/services' },
+                     hasModuleAccess('portfolio')      && { label: 'Portfolio Projects',    href: '/dashboard/portfolio' },
                      hasModuleAccess('products')       && { label: 'Add New Product',       href: '/dashboard/products' },
                      hasModuleAccess('blogs')          && { label: 'Write Blog Post',        href: '/dashboard/blogs' },
-                     hasModuleAccess('gallery')        && { label: 'Upload to Gallery',      href: '/dashboard/gallery' },
                      hasModuleAccess('home')           && { label: 'Edit Home Banner',       href: '/dashboard/home/banner' },
-                     hasModuleAccess('certifications') && { label: 'Manage Certifications',  href: '/dashboard/certifications' },
+                     hasModuleAccess('enquiries')      && { label: 'View Enquiries',        href: '/dashboard/enquiries' },
                    ].filter(Boolean).map((link, i) => (
                      <Link key={i} href={link.href}>
                        <div 

@@ -56,7 +56,6 @@ const ServiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-ServiceSchema.index({ slug: 1 });
 ServiceSchema.index({ status: 1, sort: 1 });
 
 if (mongoose.models.Service) {

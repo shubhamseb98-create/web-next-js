@@ -6,10 +6,10 @@ import { connectDB } from '@/app/lib/config';
 import Product from '@/app/models/Product';
 import Blog from '@/app/models/Blog';
 import Enquiry from '@/app/models/Enquiry';
-import GalleryImage from '@/app/models/GalleryImage';
+import Service from '@/app/models/Service';
 import Banner from '@/app/models/Banner';
 import WhyChoose from '@/app/models/whyChoose';
-import Certification from '@/app/models/Certification';
+import Portfolio from '@/app/models/Portfolio';
 import User from '@/app/models/User';
 
 import { verifyToken } from '@/app/lib/auth';
@@ -23,20 +23,20 @@ export async function GET(request) {
             productCount,
             blogCount,
             enquiryCount,
-            galleryCount,
+            serviceCount,
             bannerCount,
             whyChooseCount,
-            certificationCount,
+            portfolioCount,
             userCount,
             recentEnquiries
         ] = await Promise.all([
             Product.countDocuments(),
             Blog.countDocuments(),
             Enquiry.countDocuments(),
-            GalleryImage.countDocuments(),
+            Service.countDocuments(),
             Banner.countDocuments(),
             WhyChoose.countDocuments(),
-            Certification.countDocuments(),
+            Portfolio.countDocuments(),
             User.countDocuments(),
             Enquiry.find().sort({ createdAt: -1 }).limit(5).lean()
         ]);
@@ -47,10 +47,10 @@ export async function GET(request) {
                 products: productCount,
                 blogs: blogCount,
                 enquiries: enquiryCount,
-                gallery: galleryCount,
+                services: serviceCount,
                 banners: bannerCount,
                 whyChoose: whyChooseCount,
-                certifications: certificationCount,
+                portfolio: portfolioCount,
                 users: userCount
             },
             recentEnquiries

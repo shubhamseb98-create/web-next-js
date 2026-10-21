@@ -345,14 +345,6 @@ export default function TeamPage() {
     }
   ]
 
-  const extraActions = (
-    <Link href="/dashboard/team/jobs">
-      <Button variant="outline" className="rounded-full px-4 h-10 font-medium whitespace-nowrap">
-        <Briefcase className="w-4 h-4 mr-1.5" /> Job Openings
-      </Button>
-    </Link>
-  )
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 bg-background min-h-full">
       <Breadcrumb 
@@ -371,7 +363,6 @@ export default function TeamPage() {
         bulkDeleting={bulkDeleting}
         onAdd={() => setModal('new')}
         addLabel="Add Member"
-        extraActions={extraActions}
       />
 
       <DataTable 

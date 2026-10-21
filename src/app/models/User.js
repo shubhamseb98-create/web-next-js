@@ -3,15 +3,15 @@ import mongoose from "mongoose";
 // All dashboard modules with their allowed actions
 export const MODULES = {
   home:            ['read', 'update'],
+  services:        ['create', 'read', 'update', 'delete'],
+  portfolio:       ['create', 'read', 'update', 'delete'],
   inner_pages:     ['create', 'read', 'update', 'delete'],
   categories:      ['create', 'read', 'update', 'delete'],
   products:        ['create', 'read', 'update', 'delete'],
   blogs:           ['create', 'read', 'update', 'delete'],
   enquiries:       ['read', 'update', 'delete'],
   contact_cms:     ['read', 'update'],
-  gallery:         ['create', 'read', 'update', 'delete'],
   team:            ['create', 'read', 'update', 'delete'],
-  certifications:  ['create', 'read', 'update', 'delete'],
   global_settings: ['read', 'update'],
   users:           ['create', 'read', 'update', 'delete'],
 };

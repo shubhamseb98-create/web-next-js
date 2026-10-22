@@ -331,50 +331,6 @@
   user-select: none;
 }
 
-/* ── Floating Side Prev / Next Navigation Arrows on Full Banner ── */
-.sideArrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(10, 15, 10, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 0;
-  opacity: 0.85;
-}
-
-.sideArrow:hover {
-  background: var(--clr-primary, #52a436);
-  border-color: var(--clr-primary, #52a436);
-  color: #060906;
-  opacity: 1;
-  transform: translateY(-50%) scale(1.12);
-  box-shadow: 0 0 20px rgba(82, 164, 54, 0.65);
-}
-
-.sideArrow:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-.sideArrowPrev {
-  left: clamp(1rem, 2.5vw, 2.5rem);
-}
-
-.sideArrowNext {
-  right: clamp(1rem, 2.5vw, 2.5rem);
-}
-
 /* ── Scroll Indicator ── */
 .heroScroll {
   position: absolute;

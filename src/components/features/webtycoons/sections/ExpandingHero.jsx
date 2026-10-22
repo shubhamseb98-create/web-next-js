@@ -156,50 +156,52 @@ const ExpandingHero = ({ bannerData }) => {
     if (caption) gsap.set(caption, { opacity: 0, y: 35, pointerEvents: 'none' })
     if (scrollHint) gsap.set(scrollHint, { opacity: 1 })
 
-    // Scroll-Linked Pinned Expansion Timeline (Karma Ayurveda Style)
-    // Pinned for 2.2x viewport height:
-    // 0 -> 40%: Top copy fades out and card smoothly expands to edge-to-edge
-    // 40% -> 65%: Overlay shade & expanded caption reveal
-    // 65% -> 95%: Full screen hold / dwell state so user can admire & interact with full banner
-    // 95% -> 100%: Clean release, then AboutCompany scrolls in naturally
+    // Scroll-Linked Pinned Expansion Timeline (Karma Ayurveda / Apple Style)
+    // Pinned for 2.8x viewport height with buttery smooth inertia scrub (1.2s):
+    // 0.0 -> 1.8 (60%): Continuous linear expansion of preview card to 100% full-screen banner
+    // 0.0 -> 0.7: Top typography & buttons smoothly fade out and drift upwards
+    // 1.0 -> 1.8: Dark luxury overlay shade deepens smoothly as banner completes expansion
+    // 1.2 -> 1.9: Expanded banner caption, buttons, dots, and counter glide in
+    // 1.9 -> 3.0 (40%): Full-screen dwell state allowing the user to view the complete banner before next section
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         id: 'heroPinTrigger',
         trigger: section,
         start: 'top top',
-        end: () => `+=${window.innerHeight * 2.2}`,
+        end: () => `+=${window.innerHeight * 2.8}`,
         pin: true,
         pinSpacing: true,
-        scrub: true,
+        scrub: 1.2,
         anticipatePin: 1,
         invalidateOnRefresh: true,
       }
     })
 
-    // Phase 1: Top text fades up & away (0 to 0.35)
+    // Phase 1: Top text fades up & away gradually
     scrollTl.to(copy, {
       opacity: 0,
-      y: -60,
+      y: -45,
       ease: 'power1.out',
-      duration: 0.35,
+      duration: 0.7,
     }, 0)
 
-    // Scroll hint disappears immediately
+    // Scroll hint disappears smoothly
     if (scrollHint) {
       scrollTl.to(scrollHint, {
         opacity: 0,
-        duration: 0.15,
+        duration: 0.3,
+        ease: 'power1.out',
       }, 0)
     }
 
-    // Phase 2: Media card expands to 100% full screen (0 to 0.85)
+    // Phase 2: Media card expands to 100% full screen — linear, smooth, proportional
     scrollTl.fromTo(
       media,
       { clipPath: initialClip },
       {
         clipPath: 'inset(0% 0% 0% 0% round 0px)',
-        ease: 'power2.inOut',
-        duration: 0.85,
+        ease: 'none',
+        duration: 1.8,
       },
       0
     )
@@ -207,48 +209,48 @@ const ExpandingHero = ({ bannerData }) => {
     if (mediaInner) {
       scrollTl.fromTo(
         mediaInner,
-        { scale: 1.2 },
-        { scale: 1.0, ease: 'power2.inOut', duration: 0.85 },
+        { scale: 1.12 },
+        { scale: 1.0, ease: 'none', duration: 1.8 },
         0
       )
     }
 
     if (frame) {
-      scrollTl.to(frame, { opacity: 0, duration: 0.25 }, 0.1)
+      scrollTl.to(frame, { opacity: 0, duration: 0.5, ease: 'power1.out' }, 0.1)
     }
 
-    // Phase 3: Dark luxury shade overlay & expanded caption reveal (0.7 to 1.1)
+    // Phase 3: Dark luxury shade overlay & expanded caption reveal
     if (shade) {
       scrollTl.fromTo(
         shade,
         { opacity: 0 },
-        { opacity: 0.65, duration: 0.35, ease: 'power1.inOut' },
-        0.7
+        { opacity: 0.65, duration: 0.8, ease: 'power1.inOut' },
+        1.0
       )
     }
 
     if (caption) {
       scrollTl.fromTo(
         caption,
-        { opacity: 0, y: 35, pointerEvents: 'none' },
-        { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.4, ease: 'power2.out' },
-        0.8
+        { opacity: 0, y: 30, pointerEvents: 'none' },
+        { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.7, ease: 'power1.out' },
+        1.2
       )
 
       const captionChildren = caption.children
       if (captionChildren && captionChildren.length > 0) {
         scrollTl.fromTo(
           captionChildren,
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, stagger: 0.08, duration: 0.35, ease: 'power2.out' },
-          0.85
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power1.out' },
+          1.3
         )
       }
     }
 
-    // Phase 4: Full-Screen Dwell / Hold State (1.2 to 2.0)
-    // Keeps hero pinned and 100% full screen so user sees the complete expanded section
-    scrollTl.to({}, { duration: 0.8 })
+    // Phase 4: Full-Screen Dwell / Hold State (1.9 to 3.0)
+    // Keeps hero pinned and 100% full screen for ample runway so user sees the complete expanded banner
+    scrollTl.to({}, { duration: 1.1 })
 
     // Safety refreshes once preloader finishes and layouts settle
     const refreshST = () => {
@@ -396,30 +398,6 @@ const ExpandingHero = ({ bannerData }) => {
 
         {/* Dark luxury overlay for readability on full banner */}
         <div ref={shadeRef} className={styles.heroShade} aria-hidden="true" />
-
-        {/* Floating Side Prev / Next Navigation Arrows on Full Banner */}
-        {slides.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={handlePrevSlide}
-              className={`${styles.sideArrow} ${styles.sideArrowPrev}`}
-              aria-label="Previous slide"
-              title="Previous slide"
-            >
-              <FiChevronLeft size={24} />
-            </button>
-            <button
-              type="button"
-              onClick={handleNextSlide}
-              className={`${styles.sideArrow} ${styles.sideArrowNext}`}
-              aria-label="Next slide"
-              title="Next slide"
-            >
-              <FiChevronRight size={24} />
-            </button>
-          </>
-        )}
 
         {/* ── Expanded Banner Caption (Revealed when opened) ── */}
         <div ref={captionRef} className={styles.heroCaption}>

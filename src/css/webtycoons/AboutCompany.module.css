@@ -6,19 +6,35 @@
   contain: paint;
 }
 
-/* Subtle ambient lighting - zero box grid */
+/* Ambient Cyber Green Glow */
 .section::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 20%;
-  width: 600px;
-  height: 600px;
+  width: 650px;
+  height: 650px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.2) 0%, rgba(82, 164, 54, 0.06) 50%, transparent 75%);
   filter: blur(80px);
   z-index: 0;
   pointer-events: none;
+}
+
+/* Subtle Geometric Tech Grid Pattern */
+.section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  transform: rotate(-15deg) scale(2) translateZ(0);
+  transform-origin: center;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
 }
 
 .contentWrapper {

@@ -55,8 +55,10 @@ const Industries = () => {
           viewport={viewportOptions}
         >
           <motion.div variants={fadeUp}>
-            <span className="section-label">Industry Expertise</span>
-            <h2 className="section-heading mb-4">
+            <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+              <span className="section-label" style={{ marginBottom: 0 }}>INDUSTRY EXPERTISE</span>
+            </div>
+            <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
               Tailored Solutions for Every Sector
             </h2>
           </motion.div>

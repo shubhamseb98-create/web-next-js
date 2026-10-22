@@ -16,7 +16,7 @@ import CallToAction from "src/components/features/webtycoons/sections/CallToActi
 import LatestThinking from "src/components/features/webtycoons/sections/LatestThinking";
 
 import dynamic from "next/dynamic";
-import Hero from "src/components/features/webtycoons/sections/Hero";
+import ExpandingHero from "src/components/features/webtycoons/sections/ExpandingHero";
 
 // Dynamically import heavy client components (below the fold)
 const ClientsSlider = dynamic(() => import("src/components/features/webtycoons/sections/ClientsSlider"));
@@ -129,8 +129,8 @@ export default async function WebTycoonsHomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaObj) }}
       />
       
-      {/* Hero - Client Component for GSAP animations */}
-      <Hero bannerData={serialize(banners)} />
+      {/* Hero - Scroll-Triggered Expanding Banner (Dr Puneet Karma Ayurveda Style) */}
+      <ExpandingHero bannerData={serialize(banners)} />
 
 
       {/* About Company - Server Component */}

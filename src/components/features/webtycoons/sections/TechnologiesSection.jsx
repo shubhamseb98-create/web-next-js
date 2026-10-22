@@ -98,10 +98,15 @@ const TechnologiesSection = ({ technologiesData, homeExtraData }) => {
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
         >
-          <h2 className={styles.title}>
-            {homeExtraData?.technology_title || 'Modern'} <span className={styles.titleHighlight}>{homeExtraData?.technology_subtitle || 'Tech Stack'}</span>
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>
+              {homeExtraData?.technology_label || 'OUR TECH STACK'}
+            </span>
+          </div>
+          <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+            {homeExtraData?.technology_title ? `${homeExtraData.technology_title} ${homeExtraData.technology_subtitle || ''}`.trim() : 'Modern Tech Stack'}
           </h2>
-          <p className={styles.intro}>
+          <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto 2.5rem auto' }}>
             {homeExtraData?.technology_description || 'We build lightning-fast, highly scalable applications using industry-leading technologies and frameworks to ensure your product is future-proof.'}
           </p>
         </motion.div>

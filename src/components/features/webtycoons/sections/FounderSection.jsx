@@ -37,6 +37,29 @@ export default function FounderSection({ founderData }) {
   const badge_2_label = founderData?.badge_2_label !== undefined ? founderData.badge_2_label : "Delivered Worldwide";
   const badge_3_text = founderData?.badge_3_text !== undefined ? founderData.badge_3_text : "100% Code Ownership";
 
+  // Dynamic Bottom Key Value Points (from founderData.points array or fallback fields)
+  const rawPoints = Array.isArray(founderData?.points) && founderData.points.length > 0
+    ? founderData.points
+    : [
+        { number: "01", title: founderData?.point_1_title || "Direct Founder Advisory", desc: founderData?.point_1_desc || "Personal architectural oversight and strategic technical consultation on every enterprise delivery." },
+        { number: "02", title: founderData?.point_2_title || "Zero Software Bloat", desc: founderData?.point_2_desc || "Clean, bespoke codebases engineered for sub-second speeds and ultra-high Lighthouse scores." },
+        { number: "03", title: founderData?.point_3_title || "100% Code & IP Ownership", desc: founderData?.point_3_desc || "Complete transparency, full GitHub repository handover, and zero proprietary lock-in." },
+        { number: "04", title: founderData?.point_4_title || "Measurable Growth ROI", desc: founderData?.point_4_desc || "Sprint-driven execution focused strictly on driving real business pipeline and client revenue." },
+      ];
+
+  const pointsList = rawPoints
+    .filter((p) => p && typeof p.title === 'string' && p.title.trim())
+    .map((p, idx) => ({
+      ...p,
+      number: p.number || (idx < 9 ? `0${idx + 1}` : `${idx + 1}`),
+    }));
+
+  const colClass = pointsList.length === 3 
+    ? "col-12 col-md-4" 
+    : pointsList.length === 2 
+    ? "col-12 col-md-6" 
+    : "col-12 col-sm-6 col-lg-3";
+
   // Badges only show if user entered values (if blank, they hide completely)
   const hasBadge1 = Boolean(badge_1_number && badge_1_number.trim());
   const hasBadge2 = Boolean(badge_2_number && badge_2_number.trim());
@@ -59,20 +82,13 @@ export default function FounderSection({ founderData }) {
               whileInView="visible"
               viewport={viewportOptions}
             >
-              {/* Eyebrow Badge */}
+              {/* Eyebrow Badge & Main Headline */}
               <motion.div variants={fadeUp}>
-                <div className={styles.modernBadgePill}>
-                  <span className={styles.pulseDot} />
-                  <span>{eyebrow}</span>
+                <div style={{ marginBottom: '8px' }}>
+                  <span className="section-label" style={{ marginBottom: 0 }}>{eyebrow}</span>
                 </div>
-              </motion.div>
-
-              {/* Main Headline */}
-              <motion.div variants={fadeUp}>
-                <h2 className={styles.mainTitle}>
-                  {heading_start}{' '}
-                  <span className={styles.titleGradient}>{heading_highlight}</span>
-                  {' '}{heading_end}
+                <h2 className="section-heading mt-0 mb-4" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+                  {heading_start}{' '}{heading_highlight}{' '}{heading_end}
                 </h2>
               </motion.div>
 
@@ -214,6 +230,34 @@ export default function FounderSection({ founderData }) {
             </motion.div>
           </div>
         </div>
+
+        {/* ── Bottom Section: 4 Key Value Points / Pillars ── */}
+        {pointsList.length > 0 && (
+          <motion.div 
+            className={styles.pointsWrapper}
+            variants={staggerContainer(0.08, 0.05)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOptions}
+          >
+            <div className="row g-3 g-lg-4">
+              {pointsList.map((pt, idx) => (
+                <div key={idx} className={colClass}>
+                  <motion.div variants={fadeUp} className={styles.pointCard}>
+                    <div className={styles.pointHeader}>
+                      <span className={styles.pointNumber}>{pt.number}</span>
+                      <div className={styles.pointIconWrap}>
+                        <CheckCircle2 size={15} className={styles.pointIcon} />
+                      </div>
+                    </div>
+                    <h4 className={styles.pointTitle}>{pt.title}</h4>
+                    {pt.desc && <p className={styles.pointDesc}>{pt.desc}</p>}
+                  </motion.div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   );

@@ -229,10 +229,15 @@ const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
 
       {/* Header */}
       <div className={styles.header}>
-        <h2 className={styles.title}>
-          {sectionData?.title || 'Featured'} <span className={styles.titleHighlight}>{sectionData?.titleHighlight || 'Projects'}</span>
+        <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+          <span className="section-label" style={{ marginBottom: 0 }}>
+            {sectionData?.eyebrow || 'OUR PORTFOLIO'}
+          </span>
+        </div>
+        <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+          {sectionData?.title ? `${sectionData.title} ${sectionData.titleHighlight || ''}`.trim() : 'Featured Projects'}
         </h2>
-        <p className={styles.intro}>
+        <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', margin: '0 auto' }}>
           {sectionData?.intro || 'Explore a curated selection of our most recent and impactful work. Scroll down to experience our stacked GSAP presentation.'}
         </p>
       </div>

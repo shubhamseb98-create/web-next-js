@@ -24,7 +24,9 @@ const TrustedClients = () => {
           viewport={viewportOptions}
           variants={fadeUp}
         >
-          <span className="section-label">Trusted by Industry Leaders</span>
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>TRUSTED BY INDUSTRY LEADERS</span>
+          </div>
         </motion.div>
 
         <div className={styles.marquee}>

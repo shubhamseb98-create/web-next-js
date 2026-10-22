@@ -50,12 +50,21 @@ const PreloaderAnimation = () => {
     return () => clearTimeout(timer)
   }, [])
 
-  // Lock scrolling while preloader is active — only via lenis, NOT body overflow
+  // Lock scrolling ONLY while preloader is active, and always restart when finished
   useEffect(() => {
-    // The fullscreen preloader visually blocks the page; lenis handles scroll locking
-    // We avoid touching body/html overflow to prevent scrollbar-induced layout shifts
+    if (typeof window === 'undefined') return
+
+    if (isLoading) {
+      if (window.lenis?.stop) {
+        window.lenis.stop()
+      }
+    } else {
+      if (window.lenis?.start) {
+        window.lenis.start()
+      }
+    }
+
     return () => {
-      // Ensure lenis is always restarted when preloader unmounts
       if (typeof window !== 'undefined' && window.lenis?.start) {
         window.lenis.start()
       }
@@ -74,6 +83,12 @@ const PreloaderAnimation = () => {
             borderBottomLeftRadius: '60%',
             borderBottomRightRadius: '60%',
             transition: { duration: 1.0, ease: [0.76, 0, 0.24, 1], delay: 0.1 },
+          }}
+          onAnimationComplete={() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new Event('scrolltrigger-refresh'));
+              window.dispatchEvent(new Event('resize'));
+            }
           }}
         >
           <div className={styles.content}>

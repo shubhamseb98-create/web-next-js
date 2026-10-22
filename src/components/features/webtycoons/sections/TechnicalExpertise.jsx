@@ -61,10 +61,15 @@ const TechnicalExpertise = ({ capabilitiesData, homeExtraData }) => {
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
         >
-          <h2 className={styles.title}>
-            {homeExtraData?.capability_title || 'Core'} <span className={styles.titleHighlight}>{homeExtraData?.capability_subtitle || 'Capabilities'}</span>
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>
+              {homeExtraData?.capability_label || 'OUR CAPABILITIES'}
+            </span>
+          </div>
+          <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+            {homeExtraData?.capability_title ? `${homeExtraData.capability_title} ${homeExtraData.capability_subtitle || ''}`.trim() : 'Core Capabilities'}
           </h2>
-          <p className={styles.intro}>
+          <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto 2.5rem auto' }}>
             {homeExtraData?.capability_description || 'We combine strategic thinking with deep technical expertise to solve complex business challenges. Our capabilities span the entire modern digital stack.'}
           </p>
         </motion.div>

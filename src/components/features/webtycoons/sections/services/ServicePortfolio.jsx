@@ -15,7 +15,7 @@ const ServicePortfolio = ({ projects, serviceTitle }) => {
       <div className="container-fluid-px">
         <SectionHeading 
           subtitle="OUR PORTFOLIO"
-          title={<>Everything You Need in a <span style={{ color: 'var(--clr-primary)' }}>Powerful</span> <br /> {serviceTitle || 'Dynamic Website'}</>} 
+          title={`Everything You Need in a Powerful ${serviceTitle || 'Dynamic Website'}`} 
           center={true} 
         />
 

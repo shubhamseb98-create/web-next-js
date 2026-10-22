@@ -130,10 +130,11 @@ const AboutPage = () => {
 
             {/* Right — Content */}
             <motion.div variants={fadeUp} className={styles.aboutUsContent}>
-              <div className={styles.sectionLabel}>WHO WE ARE</div>
-              <h2 className={styles.aboutUsTitle}>
-                Your Trusted Partner in<br />
-                <span className={styles.accent}>Digital Transformation</span>
+              <div style={{ marginBottom: '8px' }}>
+                <span className="section-label" style={{ marginBottom: 0 }}>WHO WE ARE</span>
+              </div>
+              <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+                Your Trusted Partner in Digital Transformation
               </h2>
               <p className={styles.aboutUsPara}>
                 Founded in 2011, <strong>WebTycoons</strong> is a full-service digital agency based in Delhi NCR, India. We are a passionate team of designers, developers, strategists, and digital thinkers who believe that a great website is more than just a pretty interface — it's your most powerful business tool.
@@ -226,7 +227,7 @@ const AboutPage = () => {
       {/* ── Our Story (Horizontal GSAP Scroll) ── */}
       <section className={styles.storySection} ref={sectionRef}>
         <div className={styles.storyHeadingContainer}>
-          <SectionHeading subtitle="OUR STORY" title={<>From a Small Studio to a <span className={styles.accent}>Trusted Agency</span></>} center={true} />
+          <SectionHeading subtitle="OUR STORY" title="From a Small Studio to a Trusted Agency" center={true} />
         </div>
         
         <div className={styles.stickyContainer}>
@@ -255,14 +256,13 @@ const AboutPage = () => {
 
         <div className="container-fluid-px" style={{ position: 'relative', zIndex: 1 }}>
           <div className={styles.valuesHeader}>
-            <div className={styles.valuesBadge}>
-              <span className={styles.badgePulseDot} />
-              <span>WHAT WE STAND FOR</span>
+            <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+              <span className="section-label" style={{ marginBottom: 0 }}>WHAT WE STAND FOR</span>
             </div>
-            <h2 className={styles.valuesMainTitle}>
-              Our Core <span className={styles.titleGradient}>Values</span>
+            <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+              Our Core Values
             </h2>
-            <p className={styles.valuesSubtitle}>
+            <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto 2.5rem auto' }}>
               The principles that define our culture, drive our craft, and ensure exceptional results for every client.
             </p>
           </div>

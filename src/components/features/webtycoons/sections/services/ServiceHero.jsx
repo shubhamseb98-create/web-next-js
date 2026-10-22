@@ -3,6 +3,14 @@ import Link from 'next/link'
 import PageHeader from 'src/components/layout/PageHeader'
 
 const ServiceHero = ({ data, breadcrumbTitle }) => {
+  const handleOpenQuoteModal = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('open-contact-modal', {
+        detail: { service: data?.title || 'Web Development' }
+      }));
+    }
+  };
+
   return (
     <PageHeader
       title={data.title}
@@ -15,11 +23,16 @@ const ServiceHero = ({ data, breadcrumbTitle }) => {
       ]}
     >
       <div className="d-flex flex-wrap gap-2 mt-1">
-        <Link href="#quote" className="btnPrimary" style={{ padding: '7px 20px', fontSize: '0.88rem' }}>
+        <button
+          type="button"
+          onClick={handleOpenQuoteModal}
+          className="btnPrimary"
+          style={{ padding: '7px 20px', fontSize: '0.88rem', border: 'none', cursor: 'pointer' }}
+        >
           Get Free Quote
-        </Link>
-        <Link href="#portfolio" className="btnSecondary" style={{ padding: '7px 20px', fontSize: '0.88rem' }}>
-          View Portfolio
+        </button>
+        <Link href="/projects" className="btnSecondary" style={{ padding: '7px 20px', fontSize: '0.88rem' }}>
+          View Projects
         </Link>
       </div>
     </PageHeader>

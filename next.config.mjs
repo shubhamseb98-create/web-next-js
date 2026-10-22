@@ -61,7 +61,7 @@ const nextConfig = {
   experimental: {
     viewTransition: true,
     // Optimize package imports to reduce bundle size
-    optimizePackageImports: ['gsap', 'swiper', 'react-icons', 'framer-motion'],
+    optimizePackageImports: ['swiper', 'react-icons', 'framer-motion'],
   },
 
   async headers() {
@@ -87,16 +87,18 @@ const nextConfig = {
           },
         ],
       },
-      {
-        // ✅ Long-term cache for static assets (images, fonts, js, css)
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
+      ...(process.env.NODE_ENV === 'production' ? [
+        {
+          // ✅ Long-term cache for static assets in production only
+          source: '/_next/static/:path*',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ],
+        },
+      ] : []),
       {
         // ✅ Cache public images for 7 days
         source: '/:path(images|assets)/:rest*',

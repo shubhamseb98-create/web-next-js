@@ -187,7 +187,7 @@ const TeamSection = ({ teamData, homeExtraData }) => {
       <div className="container-fluid-px" style={{ position: 'relative', zIndex: 1 }}>
         <SectionHeading
           subtitle={homeExtraData?.team_label || "MEET THE TEAM"}
-          title={<>{homeExtraData?.team_title || "The Minds Behind"} <span style={{ color: 'var(--clr-primary)' }}>{homeExtraData?.team_subtitle || "WebTycoons"}</span></>}
+          title={`${homeExtraData?.team_title || "The Minds Behind"} ${homeExtraData?.team_subtitle || "WebTycoons"}`}
           description={homeExtraData?.team_description || "Passionate experts dedicated to transforming digital visions into reality."}
           center={true}
           className=""

@@ -16,6 +16,7 @@ export default function HomeAboutPage() {
   const [saving, setSaving] = useState(false)
   const [aboutId, setAboutId] = useState(null)
   const [form, setForm] = useState({
+    badge: 'ABOUT US',
     title_green: '',
     title_white: '',
     description: '',
@@ -63,6 +64,7 @@ export default function HomeAboutPage() {
         }
 
         setForm({
+          badge: about.badge || 'ABOUT US',
           title_green: green,
           title_white: white,
           description: about.description || '',
@@ -85,6 +87,7 @@ export default function HomeAboutPage() {
       setSaving(true)
       const formData = new FormData()
 
+      formData.append('badge', form.badge || 'ABOUT US')
       formData.append('title_green', form.title_green)
       formData.append('title_white', form.title_white)
       formData.append('title', form.title_green ? `[${form.title_green}] ${form.title_white}` : form.title_white)
@@ -219,7 +222,16 @@ export default function HomeAboutPage() {
                   </div>
                 </div>
 
-                {/* Content Section - Headings */}
+                {/* Content Section - Eyebrow Badge & Headings */}
+                <div>
+                  <FloatingInput
+                    label="Section Eyebrow Badge"
+                    value={form.badge}
+                    onChange={e => updateField('badge', e.target.value)}
+                    placeholder="ABOUT US"
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FloatingInput
                     label="Main Heading (Green Color)"

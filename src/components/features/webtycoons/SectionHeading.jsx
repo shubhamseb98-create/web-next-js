@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { motion } from 'framer-motion'
 
 const fadeUp = {
@@ -16,10 +16,14 @@ const SectionHeading = ({ subtitle, title, description, center = false, classNam
       whileInView="visible"
       viewport={{ once: true, margin: '-50px' }}
     >
-      {subtitle && <span className="section-label d-inline-flex mb-2">{subtitle}</span>}
-      <h2 className="section-heading mb-3">{title}</h2>
+      {subtitle && (
+        <div className={center ? "d-flex justify-content-center" : ""} style={{ marginBottom: '8px' }}>
+          <span className="section-label" style={{ marginBottom: 0 }}>{subtitle}</span>
+        </div>
+      )}
+      <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>{title}</h2>
       {description && (
-        <p className="section-description" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6' }}>
+        <p className="section-description" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: center ? '800px' : '100%', margin: center ? '0 auto' : undefined }}>
           {description}
         </p>
       )}

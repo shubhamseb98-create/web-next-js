@@ -92,6 +92,45 @@ const FounderSectionSchema = new mongoose.Schema(
       type: String,
       default: "100% Code Ownership",
     },
+    point_1_title: {
+      type: String,
+      default: "Direct Founder Advisory",
+    },
+    point_1_desc: {
+      type: String,
+      default: "Personal architectural oversight and strategic technical consultation on every enterprise delivery.",
+    },
+    point_2_title: {
+      type: String,
+      default: "Zero Software Bloat",
+    },
+    point_2_desc: {
+      type: String,
+      default: "Clean, bespoke codebases engineered for sub-second speeds and ultra-high Lighthouse scores.",
+    },
+    point_3_title: {
+      type: String,
+      default: "100% Code & IP Ownership",
+    },
+    point_3_desc: {
+      type: String,
+      default: "Complete transparency, full GitHub repository handover, and zero proprietary lock-in.",
+    },
+    point_4_title: {
+      type: String,
+      default: "Measurable Growth ROI",
+    },
+    point_4_desc: {
+      type: String,
+      default: "Sprint-driven execution focused strictly on driving real business pipeline and client revenue.",
+    },
+    points: [
+      {
+        number: { type: String, default: "" },
+        title: { type: String, default: "" },
+        desc: { type: String, default: "" },
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,

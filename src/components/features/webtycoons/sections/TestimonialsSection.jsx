@@ -117,10 +117,15 @@ const TestimonialsSection = ({ testimonialsData, homeExtraData }) => {
         
         {/* Header */}
         <div className={styles.header} ref={headerRef}>
-          <h2 className={styles.title}>
-            {homeExtraData?.testimonial_title || 'What Our'} <span className={styles.titleHighlight}>{homeExtraData?.testimonial_subtitle || 'Partners Say'}</span>
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>
+              {homeExtraData?.testimonial_label || 'TESTIMONIALS'}
+            </span>
+          </div>
+          <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+            {homeExtraData?.testimonial_title ? `${homeExtraData.testimonial_title} ${homeExtraData.testimonial_subtitle || ''}`.trim() : 'What Our Partners Say'}
           </h2>
-          <p className={styles.intro}>
+          <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', margin: '0 auto' }}>
             {homeExtraData?.testimonial_description || "Don't just take our word for it. Here is what industry leaders have to say about our premium engineering and design capabilities."}
           </p>
         </div>

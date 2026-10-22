@@ -50,8 +50,12 @@ const iconMap = {
 // Extracted from original Vite template for visual matching
 const SectionHeading = ({ subtitle, title, center }) => (
   <div className={`section-heading-wrapper ${center ? 'text-center mx-auto' : ''}`} style={{ maxWidth: center ? '700px' : '100%', marginBottom: '40px' }}>
-    {subtitle && <span className="section-label d-inline-flex mb-2">{subtitle}</span>}
-    {title && <h2 className="section-heading mb-3">{title}</h2>}
+    {subtitle && (
+      <div className={center ? "d-flex justify-content-center" : ""} style={{ marginBottom: '8px' }}>
+        <span className="section-label" style={{ marginBottom: 0 }}>{subtitle}</span>
+      </div>
+    )}
+    {title && <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>{title}</h2>}
   </div>
 );
 
@@ -161,13 +165,12 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
 
             {/* Right — High-Impact Storytelling & Interactive Bento Feature Cards */}
             <motion.div variants={fadeUp} className={styles.aboutUsContent}>
-              <div className={styles.modernBadgePill}>
-                <span className={styles.pulseDot} />
-                <span>WHO WE ARE</span>
+              <div style={{ marginBottom: '8px' }}>
+                <span className="section-label" style={{ marginBottom: 0 }}>WHO WE ARE</span>
               </div>
 
-              <h2 className={styles.aboutUsTitle}>
-                Your Strategic Partner in <span className={styles.greenGradientText}>Digital Transformation</span>
+              <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+                Your Strategic Partner in Digital Transformation
               </h2>
 
               <p className={styles.aboutUsLeadPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph1 || 'Founded in 2011, WebTycoons is a high-performance digital agency based in Delhi NCR, India, crafting bespoke web platforms and digital growth engines.').replace('WebTycoons', '<strong>WebTycoons</strong>') }} />
@@ -305,7 +308,7 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
       <section className="story-section-pinned" ref={sectionRef} style={{ background: '#070a06', position: 'relative', overflow: 'hidden', padding: '60px 0 40px 0' }}>
         <div className="container-fluid-px">
           <div style={{ maxWidth: '750px', margin: '0 auto 10px auto', textAlign: 'center' }}>
-            <SectionHeading subtitle="OUR STORY" title={<>From a Small Studio to a <span className={styles.accent}>Trusted Agency</span></>} center={true} />
+            <SectionHeading subtitle="OUR STORY" title="From a Small Studio to a Trusted Agency" center={true} />
           </div>
         </div>
         
@@ -456,14 +459,13 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
 
         <div className="container-fluid-px" style={{ position: 'relative', zIndex: 1 }}>
           <div className={styles.valuesHeader}>
-            <div className={styles.valuesBadge}>
-              <span className={styles.badgePulseDot} />
-              <span>WHAT WE STAND FOR</span>
+            <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+              <span className="section-label" style={{ marginBottom: 0 }}>WHAT WE STAND FOR</span>
             </div>
-            <h2 className={styles.valuesMainTitle}>
-              Our Core <span className={styles.titleGradient}>Values</span>
+            <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+              Our Core Values
             </h2>
-            <p className={styles.valuesSubtitle}>
+            <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto 2.5rem auto' }}>
               The principles that define our culture, drive our craft, and ensure exceptional results for every client.
             </p>
           </div>

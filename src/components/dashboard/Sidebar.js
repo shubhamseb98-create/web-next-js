@@ -38,7 +38,7 @@ const NAV = [
     children: [
       { label: 'Banner Management', href: '/dashboard/home/banner' },
       { label: 'Home Page About',   href: '/dashboard/home/about' },
-      { label: 'Founder Section',   href: '/dashboard/home/founder' },
+      { label: 'Founder & Key Points', href: '/dashboard/home/founder' },
       { label: 'Call To Action',    href: '/dashboard/home/cta-one' },
       { label: 'Why Choose Us',     href: '/dashboard/home/why-choose' },
       { label: 'Heading Text',      href: '/dashboard/home/heading-text' },
@@ -56,7 +56,7 @@ const NAV = [
     children: [
       { label: 'About Breadcrumb',   href: '/dashboard/about-page/breadcrumb' },
       { label: 'About Us Content',   href: '/dashboard/about-page/content' },
-      { label: 'Founder Section',    href: '/dashboard/home/founder' },
+      { label: 'Founder & Key Points', href: '/dashboard/home/founder' },
       { label: 'Mission & Vision',   href: '/dashboard/about-page/mission' },
       { label: 'Stats & Timeline',   href: '/dashboard/about-page/stats-timeline' },
       { label: 'Call To Action',     href: '/dashboard/about-page/cta' },

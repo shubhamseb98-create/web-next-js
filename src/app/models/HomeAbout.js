@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const homeAboutSchema = new mongoose.Schema({
+  badge: {
+    type: String,
+    required: false,
+    default: "ABOUT US",
+  },
   title: {
     type: String,
     required: false,

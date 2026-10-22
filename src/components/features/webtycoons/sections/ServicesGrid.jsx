@@ -222,8 +222,10 @@ const ServicesGrid = ({ servicesData, homeExtraData }) => {
             variants={fadeUp}
           >
             <div className="col-12 col-lg-8">
-              <span className="section-label">{subtitle}</span>
-              <h2 className="section-heading mb-4" dangerouslySetInnerHTML={{ __html: mainTitle }}>
+              <div style={{ marginBottom: '8px' }}>
+                <span className="section-label" style={{ marginBottom: 0 }}>{subtitle}</span>
+              </div>
+              <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }} dangerouslySetInnerHTML={{ __html: mainTitle }}>
               </h2>
               <p className="section-description" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6' }}>
                 {description}

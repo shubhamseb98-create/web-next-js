@@ -129,8 +129,13 @@ const FeaturedProjects = () => {
           viewport={viewportOptions}
           variants={fadeUp}
         >
-          <h2 className={styles.mainHeading}>Featured Projects</h2>
-          <p className={styles.headerText}>
+          <div style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>OUR WORK</span>
+          </div>
+          <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+            Featured Projects
+          </h2>
+          <p className="section-description" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', margin: '0 0 2rem 0' }}>
             Explore some of our most impactful work — where innovative design meets powerful technology to drive real business results.
           </p>
         </motion.div>

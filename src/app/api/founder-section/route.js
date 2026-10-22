@@ -13,6 +13,55 @@ export async function GET() {
     if (!doc) {
       doc = await FounderSection.create({});
     }
+
+    // Auto-populate points if missing in the existing MongoDB document
+    if (!doc.points || doc.points.length === 0) {
+      const defaultPoints = [
+        {
+          number: "01",
+          title: doc.point_1_title || "Direct Founder Advisory",
+          desc: doc.point_1_desc || "Personal architectural oversight and strategic technical consultation on every enterprise delivery.",
+        },
+        {
+          number: "02",
+          title: doc.point_2_title || "Zero Software Bloat",
+          desc: doc.point_2_desc || "Clean, bespoke codebases engineered for sub-second speeds and ultra-high Lighthouse scores.",
+        },
+        {
+          number: "03",
+          title: doc.point_3_title || "100% Code & IP Ownership",
+          desc: doc.point_3_desc || "Complete transparency, full GitHub repository handover, and zero proprietary lock-in.",
+        },
+        {
+          number: "04",
+          title: doc.point_4_title || "Measurable Growth ROI",
+          desc: doc.point_4_desc || "Sprint-driven execution focused strictly on driving real business pipeline and client revenue.",
+        },
+      ];
+
+      await FounderSection.findByIdAndUpdate(doc._id, {
+        points: defaultPoints,
+        point_1_title: defaultPoints[0].title,
+        point_1_desc: defaultPoints[0].desc,
+        point_2_title: defaultPoints[1].title,
+        point_2_desc: defaultPoints[1].desc,
+        point_3_title: defaultPoints[2].title,
+        point_3_desc: defaultPoints[2].desc,
+        point_4_title: defaultPoints[3].title,
+        point_4_desc: defaultPoints[3].desc,
+      });
+
+      doc.points = defaultPoints;
+      doc.point_1_title = defaultPoints[0].title;
+      doc.point_1_desc = defaultPoints[0].desc;
+      doc.point_2_title = defaultPoints[1].title;
+      doc.point_2_desc = defaultPoints[1].desc;
+      doc.point_3_title = defaultPoints[2].title;
+      doc.point_3_desc = defaultPoints[2].desc;
+      doc.point_4_title = defaultPoints[3].title;
+      doc.point_4_desc = defaultPoints[3].desc;
+    }
+
     return Response.json(doc);
   } catch (error) {
     return Response.json({ message: "Failed to fetch founder section", error: error.message }, { status: 500 });
@@ -53,7 +102,36 @@ export async function POST(request) {
     const badge_2_number = getString("badge_2_number");
     const badge_2_label = getString("badge_2_label");
     const badge_3_text = getString("badge_3_text");
+    const point_1_title = getString("point_1_title");
+    const point_1_desc = getString("point_1_desc");
+    const point_2_title = getString("point_2_title");
+    const point_2_desc = getString("point_2_desc");
+    const point_3_title = getString("point_3_title");
+    const point_3_desc = getString("point_3_desc");
+    const point_4_title = getString("point_4_title");
+    const point_4_desc = getString("point_4_desc");
     const isActive = formData.get("isActive") !== "false";
+
+    // Parse dynamic points array if provided
+    let points = [];
+    const pointsRaw = formData.get("points");
+    if (pointsRaw) {
+      try {
+        points = JSON.parse(pointsRaw);
+      } catch (e) {
+        console.warn("Could not parse points JSON:", e.message);
+      }
+    }
+
+    if (!Array.isArray(points) || points.length === 0) {
+      // Fallback to point_1..4
+      points = [
+        { number: "01", title: point_1_title, desc: point_1_desc },
+        { number: "02", title: point_2_title, desc: point_2_desc },
+        { number: "03", title: point_3_title, desc: point_3_desc },
+        { number: "04", title: point_4_title, desc: point_4_desc },
+      ].filter((p) => p.title && p.title.trim());
+    }
 
     // Handle File Upload: check 'imageFile' and 'image'
     const imageFile = formData.get("imageFile") || formData.get("image");
@@ -91,6 +169,15 @@ export async function POST(request) {
       badge_2_number,
       badge_2_label,
       badge_3_text,
+      point_1_title: points[0]?.title || point_1_title,
+      point_1_desc: points[0]?.desc || point_1_desc,
+      point_2_title: points[1]?.title || point_2_title,
+      point_2_desc: points[1]?.desc || point_2_desc,
+      point_3_title: points[2]?.title || point_3_title,
+      point_3_desc: points[2]?.desc || point_3_desc,
+      point_4_title: points[3]?.title || point_4_title,
+      point_4_desc: points[3]?.desc || point_4_desc,
+      points,
       isActive,
     };
 

@@ -101,15 +101,15 @@ export default function RealEstateCalculator({ stats: customStats, calcHeader })
       
       <div className="container-fluid-px">
         <div className={styles.sectionHeader}>
-          <div className={styles.badge}>
-            <FaRocket /> {calcHeader?.badge || 'Real Estate Scaling Simulator'}
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>
+              {(calcHeader?.badge || 'REAL ESTATE SCALING SIMULATOR').toUpperCase()}
+            </span>
           </div>
-          <h2 className={styles.calcTitle}>
-            {calcHeader?.title || (
-              <>Real Estate Business <span className={styles.titleHighlight}>Growth &amp; Revenue Calculator</span></>
-            )}
+          <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+            Real Estate Business Growth &amp; Revenue Calculator
           </h2>
-          <p className={styles.calcSubtitle}>
+          <p className="section-description text-center" style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto 2.5rem auto' }}>
             {calcHeader?.subtitle || 'Simulate how our PropTech digital funnels, performance marketing, and automated WhatsApp CRM can scale your monthly leads, site visits, and gross booking volume.'}
           </p>
         </div>

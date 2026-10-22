@@ -14,14 +14,20 @@ const SERVICES = [
   'Real Estate Advisory'
 ];
 
-export default function ContactModal({ isOpen, onClose }) {
+export default function ContactModal({ isOpen, onClose, initialService = 'Web Development' }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    service: 'Web Development',
+    service: initialService,
     message: ''
   });
+
+  useEffect(() => {
+    if (initialService) {
+      setFormData(prev => ({ ...prev, service: initialService }));
+    }
+  }, [initialService, isOpen]);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -233,7 +239,7 @@ export default function ContactModal({ isOpen, onClose }) {
                             onChange={handleChange}
                             className={styles.select}
                           >
-                            {SERVICES.map((srv) => (
+                            {Array.from(new Set([formData.service, ...SERVICES])).filter(Boolean).map((srv) => (
                               <option key={srv} value={srv}>
                                 {srv}
                               </option>

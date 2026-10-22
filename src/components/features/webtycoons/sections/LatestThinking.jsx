@@ -67,7 +67,12 @@ const LatestThinking = ({ blogsData, homeExtraData }) => {
         {/* Header Section */}
         <div className={styles.headerArea}>
           <div className={styles.headerLeft}>
-            <h2 className={`section-heading mb-0 ${styles.sectionHeading}`} style={{ color: 'var(--clr-white)' }}>
+            <div style={{ marginBottom: '8px' }}>
+              <span className="section-label" style={{ marginBottom: 0 }}>
+                {homeExtraData?.blog_label || 'OUR BLOGS & INSIGHTS'}
+              </span>
+            </div>
+            <h2 className={`section-heading mb-0 ${styles.sectionHeading}`} style={{ color: 'var(--clr-white)', marginTop: 0 }}>
               {homeExtraData?.blog_title || 'Latest Thinking'}
             </h2>
           </div>

@@ -120,17 +120,17 @@ const WhyChooseUs = ({ whyChooseData, homeExtraData }) => {
           whileInView="visible"
           viewport={viewportOptions}
         >
-          <div className={styles.badgePill}>
-            <span className={styles.beaconDot} />
-            <span>{sectionLabel}</span>
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>{sectionLabel}</span>
           </div>
 
-          <h2 className={styles.mainTitle}>
-            {renderTitle(rawTitle)}
+          <h2 className="section-heading text-center mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+            {rawTitle ? rawTitle.replace(/[\*\[\]]/g, '') : 'Why Partner With Us'}
           </h2>
 
           <div 
-            className={styles.headerText}
+            className="section-description text-center"
+            style={{ color: 'var(--clr-text-light)', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto 2.5rem auto' }}
             dangerouslySetInnerHTML={{ __html: sectionDesc }}
           />
         </motion.div>

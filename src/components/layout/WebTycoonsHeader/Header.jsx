@@ -94,6 +94,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
   const [isMenuOpen, setIsMenuOpen]                 = useState(false)
   const [expandedDropdowns, setExpandedDropdowns]   = useState({ Services: false })
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  const [contactModalService, setContactModalService] = useState('Web Development')
   const isScrolled                                  = useScrolled(80)
   const location                                    = usePathname()
 
@@ -127,7 +128,12 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
 
   /* Listen for global modal open events */
   useEffect(() => {
-    const handleOpenModal = () => setIsContactModalOpen(true)
+    const handleOpenModal = (e) => {
+      if (e?.detail?.service) {
+        setContactModalService(e.detail.service)
+      }
+      setIsContactModalOpen(true)
+    }
     window.addEventListener('open-contact-modal', handleOpenModal)
     return () => window.removeEventListener('open-contact-modal', handleOpenModal)
   }, [])
@@ -610,6 +616,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
       {/* Interactive Contact / Let's Talk Modal */}
       <ContactModal
         isOpen={isContactModalOpen}
+        initialService={contactModalService}
         onClose={() => setIsContactModalOpen(false)}
       />
     </>

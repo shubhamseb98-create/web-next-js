@@ -18,6 +18,7 @@ const imageEntranceVariant = {
 };
 
 const AboutCompany = ({ aboutData }) => {
+  const badge = aboutData?.badge || aboutData?.subtitle || aboutData?.eyebrow || 'ABOUT US';
   const title_green = aboutData?.title_green;
   const title_white = aboutData?.title_white;
   const title = aboutData?.title || '*Scale at Speed™* with WebTycoons';
@@ -74,8 +75,13 @@ const AboutCompany = ({ aboutData }) => {
             viewport={viewportOptions}
           >
             <motion.div variants={fadeUp}>
-              <h2 className="mb-4">
-                {renderHeading()}
+              {badge && (
+                <div style={{ marginBottom: '8px' }}>
+                  <span className="section-label" style={{ marginBottom: 0 }}>{badge}</span>
+                </div>
+              )}
+              <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+                {title ? title.replace(/[\*\[\]]/g, '') : (title_green ? `${title_green} ${title_white || ''}` : '')}
               </h2>
             </motion.div>
             

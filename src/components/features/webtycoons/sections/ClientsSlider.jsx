@@ -290,12 +290,16 @@ const ClientsSlider = ({ clientsData, homeExtraData }) => {
       </div>
 
       <div className="container-fluid" style={{ position: 'relative', zIndex: 1 }}>
-        <div className={`${styles.header} text-center mb-5`}>
-          <span className="section-label">{homeExtraData?.client_title || 'Our Clients'}</span>
-          <h2 className="section-heading mb-4">
+        <div className={`${styles.header} text-center`}>
+          <div className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+            <span className="section-label" style={{ marginBottom: 0 }}>
+              {(homeExtraData?.client_title || 'Our Clients').toUpperCase()}
+            </span>
+          </div>
+          <h2 className="section-heading" style={{ marginTop: 0, marginBottom: '8px', color: 'var(--clr-white)' }}>
             {homeExtraData?.client_subtitle || 'Trusted by Industry Leaders'}
           </h2>
-          <p className={styles.subtitle}>
+          <p className={styles.subtitle} style={{ marginTop: 0 }}>
             {homeExtraData?.client_description || 'Some of the customers to whom we have given excellent services, as a Best Website Designing Company in Delhi.'}
           </p>
         </div>

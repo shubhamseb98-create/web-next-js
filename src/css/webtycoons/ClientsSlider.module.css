@@ -1,5 +1,5 @@
 .section {
-  padding: 85px 0 90px 0;
+  padding: 55px 0 60px 0;
   background-color: #091308;
   background-image:
     radial-gradient(ellipse 70% 45% at 50% 20%, rgba(82, 164, 54, 0.12) 0%, transparent 65%),
@@ -92,7 +92,7 @@
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -105,7 +105,8 @@
   font-size: 1.05rem;
   color: var(--clr-text-light, rgba(255, 255, 255, 0.75));
   line-height: 1.65;
-  margin-top: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /* Marquee Container - z-index: 50 guarantees the tooltip sits completely above the header */
@@ -456,11 +457,11 @@
 
 @media (max-width: 768px) {
   .section {
-    padding: 60px 0;
+    padding: 45px 0;
   }
 
   .header {
-    margin-bottom: 3.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .marqueeTrack {

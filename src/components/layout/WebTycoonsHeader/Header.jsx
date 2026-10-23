@@ -95,7 +95,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
   const [expandedDropdowns, setExpandedDropdowns]   = useState({ Services: false })
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [contactModalService, setContactModalService] = useState('Web Development')
-  const isScrolled                                  = useScrolled(80)
+  const isScrolled                                  = useScrolled(30)
   const location                                    = usePathname()
 
   /* Fetch dynamic header navigation menu from API */
@@ -219,49 +219,23 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
   return (
     <>
       {/* ════════════════════════════════════════════
-          Main transparent header
+          Fixed & Sticky Glassmorphism Header
       ════════════════════════════════════════════ */}
-      <header className={`${styles.header} ${isScrolled ? styles.headerHidden : ''}`}>
-
-        {/* 5-layer backdrop-blur band with dark overlay */}
-        <div 
-          className={styles.headerBlur} 
-          aria-hidden="true"
-          style={{ background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.12) 65%, transparent 100%)' }}
-        >
-          <span className={`${styles.hbl} ${styles.hbl1}`} />
-          <span className={`${styles.hbl} ${styles.hbl2}`} />
-          <span className={`${styles.hbl} ${styles.hbl3}`} />
-          <span className={`${styles.hbl} ${styles.hbl4}`} />
-          <span className={`${styles.hbl} ${styles.hbl5}`} />
-        </div>
-
+      <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ''}`}>
         <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.headerInner}`}>
           <Link
             href="/"
-            className={styles.logo}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 55%, rgba(255, 255, 255, 0.04) 85%, transparent 100%)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              padding: '7px 22px',
-              borderRadius: '9999px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 255, 255, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3)',
-              textDecoration: 'none',
-              transition: 'all 0.3s ease',
-            }}
+            className={styles.logoLink}
+            aria-label="WebTycoons Home"
           >
             <Image
               src="/assets/img/logo-new.png"
               alt="WebTycoons Logo"
               width={200}
               height={50}
-              style={{ objectFit: 'contain', height: '38px', width: 'auto', display: 'block' }}
+              style={{ objectFit: 'contain', height: '40px', width: 'auto', display: 'block' }}
               className={styles.logoImg}
+              priority
             />
           </Link>
 
@@ -335,7 +309,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
               )
             )}
             <button
-              className={styles.mobileToggle}
+              className={`d-flex d-lg-none ${styles.mobileToggle}`}
               onClick={() => setIsMenuOpen(v => !v)}
               aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             >
@@ -356,28 +330,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
         </div>
       </header>
 
-      {/* ════════════════════════════════════════════
-          Floating pill (on scroll)
-      ════════════════════════════════════════════ */}
-      <AnimatePresence>
-        {isScrolled && !isMenuOpen && (
-          <motion.button
-            className={styles.floatingPill}
-            onClick={() => setIsMenuOpen(true)}
-            initial={{ opacity: 0, scale: 0.7, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.7, y: -20 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            aria-label="Open Menu"
-          >
-            <svg width="20" height="10" viewBox="0 0 35 10" fill="none">
-              <rect width="35" height="1.5" fill="currentColor" />
-              <rect y="8" width="35" height="1.5" fill="currentColor" />
-            </svg>
-            <span>Menu</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+
 
       {/* ════════════════════════════════════════════
           Drawer Backdrop (click outside to close)

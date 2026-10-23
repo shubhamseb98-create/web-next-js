@@ -10,6 +10,7 @@ import {
   FaLinkedinIn, FaTwitter, FaInstagram
 } from 'react-icons/fa'
 import styles from '../../../../css/webtycoons/AboutPage.module.css'
+import { ArrowUpRight } from 'lucide-react'
 import { fadeUp, staggerContainer } from '../animations/variants'
 import SectionHeading from '../components/SectionHeading/SectionHeading'
 import TeamSection from '../components/Sections/TeamSection'
@@ -276,18 +277,36 @@ const AboutPage = () => {
           >
             {values.map((v, i) => {
               const indexFormatted = String(i + 1).padStart(2, '0');
+              const fallbackTags = ['CLIENT CENTRIC', 'MODERN TECH', 'HONEST & CLEAN', 'CRAFT & PRIDE'];
+              const tag = fallbackTags[i % fallbackTags.length];
+
               return (
                 <motion.div key={i} variants={fadeUp} className={styles.valueCard}>
-                  <div className={styles.cardHeader}>
-                    <div className={styles.valueIcon}>
+                  {/* Large Background Watermark Number */}
+                  <span className={styles.watermarkNumber} aria-hidden="true">
+                    {indexFormatted}
+                  </span>
+
+                  {/* Top Row: Icon + Badge */}
+                  <div className={styles.cardTop}>
+                    <div className={styles.iconBox}>
                       <v.icon />
                     </div>
-                    <span className={styles.cardNumber}>{indexFormatted}</span>
+                    <span className={styles.badgeNumber}>{indexFormatted}</span>
                   </div>
 
-                  <div className={styles.cardBody}>
-                    <h3 className={styles.cardTitle}>{v.title}</h3>
-                    <p className={styles.cardDesc}>{v.desc}</p>
+                  {/* Card Title & Description */}
+                  <h3 className={styles.cardTitle}>{v.title}</h3>
+                  <div className={styles.cardDesc}>
+                    <p>{v.desc}</p>
+                  </div>
+
+                  {/* Footer with Tag and Arrow */}
+                  <div className={styles.cardFooter}>
+                    <span className={styles.featureTag}>{tag}</span>
+                    <div className={styles.arrowCircle}>
+                      <ArrowUpRight size={17} strokeWidth={2.2} />
+                    </div>
                   </div>
                 </motion.div>
               );

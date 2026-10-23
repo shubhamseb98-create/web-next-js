@@ -1,10 +1,11 @@
 "use client";
 
 import { ReactLenis, useLenis } from "lenis/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import "lenis/dist/lenis.css";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -27,34 +28,36 @@ function LenisGSAPSync() {
     };
     lenis.on("scroll", onScroll);
 
-    // 2. Drive Lenis's raf loop through GSAP's ticker (exact 60/120fps unified animation frame)
-    const updateTicker = (time) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(updateTicker);
-
-    // 3. Disable lag smoothing to prevent desync and micro-stutters during scrolling
-    gsap.ticker.lagSmoothing(0);
-
     return () => {
       lenis.off("scroll", onScroll);
-      gsap.ticker.remove(updateTicker);
     };
   }, [lenis]);
 
   useEffect(() => {
-    // Scroll to top immediately on navigation
+    if (!lenis) return;
+
+    // Handle hash navigation or scroll-to-top on route change
     if (typeof window !== "undefined") {
-      window.scrollTo(0, 0);
-    }
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true });
+      if (window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if (targetElement) {
+          lenis.scrollTo(targetElement, { offset: -90, duration: 1.2 });
+        }
+      } else {
+        window.scrollTo(0, 0);
+        lenis.scrollTo(0, { immediate: true });
+      }
     }
 
-    // Single scheduled refresh after route settles
+    // Scheduled refresh after route settles
     const timer = setTimeout(() => {
       ScrollTrigger.refresh();
-      window.dispatchEvent(new Event("resize"));
+      if (lenis?.resize) {
+        lenis.resize();
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("resize"));
+      }
     }, 200);
 
     return () => clearTimeout(timer);
@@ -64,20 +67,29 @@ function LenisGSAPSync() {
 }
 
 export default function SmoothScroller({ children }) {
+  const lenisRef = useRef(null);
+
+  useEffect(() => {
+    if (lenisRef.current?.lenis && typeof window !== "undefined") {
+      window.lenis = lenisRef.current.lenis;
+    }
+  }, []);
+
   return (
     <ReactLenis
+      ref={lenisRef}
       root
-      autoRaf={false}
+      autoRaf={true}
       options={{
-        duration: 1.1,
-        // Exponential ease-out: immediate responsive start (no sluggish lag) + velvety smooth deceleration
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        lerp: 0.09,
+        duration: 1.2,
         orientation: "vertical",
         gestureOrientation: "vertical",
         smoothWheel: true,
         wheelMultiplier: 1.0,
-        touchMultiplier: 1.0,
+        touchMultiplier: 1.2,
         syncTouch: false,
+        anchors: true,
         autoResize: true,
       }}
     >
@@ -86,3 +98,4 @@ export default function SmoothScroller({ children }) {
     </ReactLenis>
   );
 }
+

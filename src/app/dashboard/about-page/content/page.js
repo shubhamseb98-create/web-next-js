@@ -350,16 +350,22 @@ export default function AboutContent() {
           </div>
 
           <FloatingTextarea
-            label="Paragraph 1"
-            value={data.aboutUsParagraph1}
+            label="Paragraph 1 (Side Lead Paragraph)"
+            value={data.aboutUsParagraph1 || ''}
             onChange={(e) => setData({ ...data, aboutUsParagraph1: e.target.value })}
             rows={3}
           />
           <FloatingTextarea
-            label="Paragraph 2"
-            value={data.aboutUsParagraph2}
+            label="Paragraph 2 (Side Sub Paragraph)"
+            value={data.aboutUsParagraph2 || ''}
             onChange={(e) => setData({ ...data, aboutUsParagraph2: e.target.value })}
             rows={3}
+          />
+          <FloatingTextarea
+            label="Paragraph 3 (Full-Width Bottom Story / Extra Content)"
+            value={data.aboutUsParagraph3 || ''}
+            onChange={(e) => setData({ ...data, aboutUsParagraph3: e.target.value })}
+            rows={4}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">

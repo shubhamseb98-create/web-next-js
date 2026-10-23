@@ -110,7 +110,7 @@ function DashboardShell({ children }) {
       <Sidebar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
       <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden">
         <Topbar mobileMenuOpen={mobileMenuOpen} setMobileMenuOpen={setMobileMenuOpen} />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto" data-lenis-prevent="true">
           {isAllowed ? (
             children
           ) : (

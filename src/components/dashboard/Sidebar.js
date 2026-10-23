@@ -490,6 +490,7 @@ export default function Sidebar({ mobileMenuOpen, setMobileMenuOpen }) {
       )}
 
       <aside
+        data-lenis-prevent="true"
         className={cn(
           /* structure */
           'group font-sans flex flex-col h-screen fixed lg:sticky top-0 z-50 overflow-x-hidden',

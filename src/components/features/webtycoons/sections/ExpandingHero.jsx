@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import Link from 'next/link'
 import { FiArrowRight, FiChevronDown, FiChevronLeft, FiChevronRight, FiVolume2, FiVolumeX } from 'react-icons/fi'
+import { motion, AnimatePresence } from 'framer-motion'
 import styles from '@/css/webtycoons/Hero.module.css'
 
 if (typeof window !== 'undefined') {
@@ -67,8 +68,9 @@ function isVideo(url) {
 }
 
 const ExpandingHero = ({ bannerData }) => {
-  const [activeSlide, setActiveSlide] = useState(0)
+  const [[activeSlide, direction], setSlide] = useState([0, 0])
   const [isMuted, setIsMuted] = useState(true)
+  const [isHovered, setIsHovered] = useState(false)
 
   // Scroll to top immediately on mount
   useEffect(() => {
@@ -138,140 +140,115 @@ const ExpandingHero = ({ bannerData }) => {
 
     if (!section || !media || !copy) return
 
-    const isMobile = window.innerWidth < 768
-    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024
+    const mm = gsap.matchMedia()
 
-    // Initial clip-path for centered preview card
-    const initialClip = isMobile
-      ? 'inset(62% 4% 4% 4% round 16px)'
-      : isTablet
-      ? 'inset(58% 10% 4% 10% round 20px)'
-      : 'inset(54% 20% 4% 20% round 24px)'
+    mm.add({
+      isDesktop: '(min-width: 1025px)',
+      isTablet: '(min-width: 768px) and (max-width: 1024px)',
+      isMobile: '(max-width: 767px)',
+    }, (context) => {
+      const { isMobile, isTablet } = context.conditions
 
-    // Set initial styles
-    gsap.set(copy, { opacity: 1, y: 0 })
-    gsap.set(media, { clipPath: initialClip })
-    if (frame) gsap.set(frame, { opacity: 1 })
-    if (shade) gsap.set(shade, { opacity: 0 })
-    if (caption) gsap.set(caption, { opacity: 0, y: 35, pointerEvents: 'none' })
-    if (scrollHint) gsap.set(scrollHint, { opacity: 1 })
+      const initialClip = isMobile
+        ? 'inset(62% 4% 4% 4% round 16px)'
+        : isTablet
+        ? 'inset(55% 8% 4% 8% round 20px)'
+        : 'inset(52% 16% 4% 16% round 24px)'
 
-    // Scroll-Linked Pinned Expansion Timeline (Karma Ayurveda / Apple Style)
-    // Pinned for 2.8x viewport height with buttery smooth inertia scrub (1.2s):
-    // 0.0 -> 1.8 (60%): Continuous linear expansion of preview card to 100% full-screen banner
-    // 0.0 -> 0.7: Top typography & buttons smoothly fade out and drift upwards
-    // 1.0 -> 1.8: Dark luxury overlay shade deepens smoothly as banner completes expansion
-    // 1.2 -> 1.9: Expanded banner caption, buttons, dots, and counter glide in
-    // 1.9 -> 3.0 (40%): Full-screen dwell state allowing the user to view the complete banner before next section
-    const scrollTl = gsap.timeline({
-      scrollTrigger: {
-        id: 'heroPinTrigger',
-        trigger: section,
-        start: 'top top',
-        end: () => `+=${window.innerHeight * 2.8}`,
-        pin: true,
-        pinSpacing: true,
-        scrub: 1.2,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      }
-    })
+      gsap.set(copy, { opacity: 1, y: 0 })
+      gsap.set(media, { clipPath: initialClip })
+      if (frame) gsap.set(frame, { opacity: 1 })
+      if (shade) gsap.set(shade, { opacity: 0 })
+      if (caption) gsap.set(caption, { opacity: 0, y: 35, pointerEvents: 'none' })
+      if (scrollHint) gsap.set(scrollHint, { opacity: 1 })
 
-    // Phase 1: Top text fades up & away gradually
-    scrollTl.to(copy, {
-      opacity: 0,
-      y: -45,
-      ease: 'power1.out',
-      duration: 0.7,
-    }, 0)
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          id: 'heroPinTrigger',
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${window.innerHeight * 2.8}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: 1.2,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        }
+      })
 
-    // Scroll hint disappears smoothly
-    if (scrollHint) {
-      scrollTl.to(scrollHint, {
+      scrollTl.to(copy, {
         opacity: 0,
-        duration: 0.3,
+        y: -45,
         ease: 'power1.out',
+        duration: 0.7,
       }, 0)
-    }
 
-    // Phase 2: Media card expands to 100% full screen — linear, smooth, proportional
-    scrollTl.fromTo(
-      media,
-      { clipPath: initialClip },
-      {
-        clipPath: 'inset(0% 0% 0% 0% round 0px)',
-        ease: 'none',
-        duration: 1.8,
-      },
-      0
-    )
+      if (scrollHint) {
+        scrollTl.to(scrollHint, {
+          opacity: 0,
+          duration: 0.3,
+          ease: 'power1.out',
+        }, 0)
+      }
 
-    if (mediaInner) {
       scrollTl.fromTo(
-        mediaInner,
-        { scale: 1.12 },
-        { scale: 1.0, ease: 'none', duration: 1.8 },
+        media,
+        { clipPath: initialClip },
+        {
+          clipPath: 'inset(0% 0% 0% 0% round 0px)',
+          ease: 'none',
+          duration: 1.8,
+        },
         0
       )
-    }
 
-    if (frame) {
-      scrollTl.to(frame, { opacity: 0, duration: 0.5, ease: 'power1.out' }, 0.1)
-    }
-
-    // Phase 3: Dark luxury shade overlay & expanded caption reveal
-    if (shade) {
-      scrollTl.fromTo(
-        shade,
-        { opacity: 0 },
-        { opacity: 0.65, duration: 0.8, ease: 'power1.inOut' },
-        1.0
-      )
-    }
-
-    if (caption) {
-      scrollTl.fromTo(
-        caption,
-        { opacity: 0, y: 30, pointerEvents: 'none' },
-        { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.7, ease: 'power1.out' },
-        1.2
-      )
-
-      const captionChildren = caption.children
-      if (captionChildren && captionChildren.length > 0) {
+      if (mediaInner) {
         scrollTl.fromTo(
-          captionChildren,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, stagger: 0.06, duration: 0.5, ease: 'power1.out' },
-          1.3
+          mediaInner,
+          { scale: 1.12 },
+          { scale: 1.0, ease: 'none', duration: 1.8 },
+          0
         )
       }
-    }
 
-    // Phase 4: Full-Screen Dwell / Hold State (1.9 to 3.0)
-    // Keeps hero pinned and 100% full screen for ample runway so user sees the complete expanded banner
-    scrollTl.to({}, { duration: 1.1 })
+      if (frame) {
+        scrollTl.to(frame, { opacity: 0, duration: 0.5, ease: 'power1.out' }, 0.1)
+      }
 
-    // Safety refreshes once preloader finishes and layouts settle
-    const refreshST = () => {
-      ScrollTrigger.refresh()
-    }
+      if (shade) {
+        scrollTl.fromTo(
+          shade,
+          { opacity: 0 },
+          { opacity: 0.65, duration: 0.8, ease: 'power1.inOut' },
+          1.0
+        )
+      }
 
-    const t1 = setTimeout(refreshST, 600)
-    const t2 = setTimeout(refreshST, 2500)
-    const t3 = setTimeout(refreshST, 3600)
+      if (caption) {
+        scrollTl.fromTo(
+          caption,
+          { opacity: 0, y: 30, pointerEvents: 'none' },
+          { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.7, ease: 'power1.out' },
+          1.2
+        )
+      }
 
-    window.addEventListener('scrolltrigger-refresh', refreshST)
-    window.addEventListener('resize', refreshST)
+      scrollTl.to({}, { duration: 1.1 })
+    })
 
     return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      window.removeEventListener('scrolltrigger-refresh', refreshST)
-      window.removeEventListener('resize', refreshST)
+      mm.revert()
     }
   }, { scope: sectionRef })
+
+  // Autoplay functionality with pause on hover
+  useEffect(() => {
+    if (slides.length <= 1 || isHovered) return
+    const timer = setInterval(() => {
+      setSlide(([curr]) => [curr === slides.length - 1 ? 0 : curr + 1, 1])
+    }, 6500)
+    return () => clearInterval(timer)
+  }, [slides.length, isHovered])
 
   // Handle contact modal popup
   const handleOpenContactModal = () => {
@@ -286,7 +263,7 @@ const ExpandingHero = ({ bannerData }) => {
       e.preventDefault()
       e.stopPropagation()
     }
-    setActiveSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
+    setSlide(([curr]) => [curr === 0 ? slides.length - 1 : curr - 1, -1])
   }
 
   const handleNextSlide = (e) => {
@@ -294,7 +271,60 @@ const ExpandingHero = ({ bannerData }) => {
       e.preventDefault()
       e.stopPropagation()
     }
-    setActiveSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
+    setSlide(([curr]) => [curr === slides.length - 1 ? 0 : curr + 1, 1])
+  }
+
+  const handleDotClick = (idx) => {
+    setSlide(([curr]) => {
+      if (idx === curr) return [curr, 0]
+      return [idx, idx > curr ? 1 : -1]
+    })
+  }
+
+  // Animation variants for smooth luxury text entrance/exit
+  const slideVariants = {
+    enter: (dir) => ({
+      opacity: 0,
+      y: dir >= 0 ? 25 : -25,
+      filter: 'blur(4px)',
+    }),
+    center: {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: {
+        duration: 0.55,
+        ease: [0.16, 1, 0.3, 1],
+        staggerChildren: 0.07,
+        delayChildren: 0.04,
+      },
+    },
+    exit: (dir) => ({
+      opacity: 0,
+      y: dir >= 0 ? -20 : 20,
+      filter: 'blur(4px)',
+      transition: {
+        duration: 0.3,
+        ease: [0.4, 0, 1, 1],
+      },
+    }),
+  }
+
+  const childVariants = {
+    enter: (dir) => ({
+      opacity: 0,
+      y: dir >= 0 ? 18 : -18,
+    }),
+    center: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+    },
+    exit: (dir) => ({
+      opacity: 0,
+      y: dir >= 0 ? -12 : 12,
+      transition: { duration: 0.2 },
+    }),
   }
 
   // Audio mute/unmute toggle
@@ -312,7 +342,13 @@ const ExpandingHero = ({ bannerData }) => {
   const isLongHeading = currentSlide.topHeading && currentSlide.topHeading.length > 40
 
   return (
-    <section id="hero" ref={sectionRef} className={styles.heroPin}>
+    <section
+      id="hero"
+      ref={sectionRef}
+      className={styles.heroPin}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* ── Ambient Radial Background ── */}
       <div className={styles.heroBg} aria-hidden="true" />
 
@@ -320,49 +356,61 @@ const ExpandingHero = ({ bannerData }) => {
       <div
         ref={copyRef}
         className={styles.heroCopy}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, pointerEvents: 'auto' }}
       >
-        {/* Eyebrow / Wordmark */}
-        <div className="d-flex justify-content-center" style={{ marginBottom: '10px' }}>
-          <span className="section-label" style={{ marginBottom: 0 }}>
-            {currentSlide.badge}
-          </span>
-        </div>
-
-        {/* Main Hero Headline */}
-        <h1
-          className={styles.heroTitle}
-          style={currentSlide.titleFontSize ? { fontSize: `clamp(1.8rem, 3.5vw, ${currentSlide.titleFontSize})` } : (isLongHeading ? { fontSize: 'clamp(1.9rem, 3.2vw, 2.8rem)' } : undefined)}
-        >
-          {currentSlide.topHeading ? (
-            currentSlide.topHeading
-          ) : (
-            <>
-              Architecting High-Growth <br />
-              <em>Digital Products</em> &amp; Web Platforms.
-            </>
-          )}
-        </h1>
-
-        {/* Subtitle */}
-        <p className={styles.heroSub}>
-          {currentSlide.topSubtitle}
-        </p>
-
-        {/* Hero CTA Button Row */}
-        <div className={styles.heroCta}>
-          <Link href={currentSlide.ctaHref || '/services'} className={styles.primaryBtn}>
-            <span>{currentSlide.cta || 'Explore Our Services'}</span>
-            <FiArrowRight size={16} />
-          </Link>
-          <button
-            type="button"
-            onClick={handleOpenContactModal}
-            className={styles.secondaryBtn}
+        <AnimatePresence mode="wait" custom={direction} initial={false}>
+          <motion.div
+            key={`top-copy-${activeSlide}`}
+            custom={direction}
+            variants={slideVariants}
+            initial={direction === 0 && activeSlide === 0 ? "center" : "enter"}
+            animate="center"
+            exit="exit"
+            className={styles.heroCopyInner}
           >
-            <span>{currentSlide.secondaryCta || 'Get Free Consultation'}</span>
-          </button>
-        </div>
+            {/* Eyebrow / Wordmark */}
+            <motion.div variants={childVariants} className="d-flex justify-content-center" style={{ marginBottom: '10px' }}>
+              <span className="section-label" style={{ marginBottom: 0 }}>
+                {currentSlide.badge}
+              </span>
+            </motion.div>
+
+            {/* Main Hero Headline */}
+            <motion.h1
+              variants={childVariants}
+              className={styles.heroTitle}
+              style={currentSlide.titleFontSize ? { '--custom-title-size': currentSlide.titleFontSize } : undefined}
+            >
+              {currentSlide.topHeading ? (
+                currentSlide.topHeading
+              ) : (
+                <>
+                  Architecting High-Growth <br />
+                  <em>Digital Products</em> &amp; Web Platforms.
+                </>
+              )}
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p variants={childVariants} className={styles.heroSub}>
+              {currentSlide.topSubtitle}
+            </motion.p>
+
+            {/* Hero CTA Button Row */}
+            <motion.div variants={childVariants} className={styles.heroCta}>
+              <Link href={currentSlide.ctaHref || '/services'} className={styles.primaryBtn}>
+                <span>{currentSlide.cta || 'Explore Our Services'}</span>
+                <FiArrowRight size={16} />
+              </Link>
+              <button
+                type="button"
+                onClick={handleOpenContactModal}
+                className={styles.secondaryBtn}
+              >
+                <span>{currentSlide.secondaryCta || 'Get Free Consultation'}</span>
+              </button>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* ── The Media Layer (Preview Card that expands on scroll to full screen banner) ── */}
@@ -372,25 +420,34 @@ const ExpandingHero = ({ bannerData }) => {
         style={{ position: 'absolute', inset: 0, zIndex: 2 }}
       >
         <div ref={mediaInnerRef} className={styles.heroMediaInner}>
-          {currentSlide.video ? (
-            <video
-              key={`hero-vid-${activeSlide}-${currentSlide.video}`}
-              src={currentSlide.video}
-              poster={currentSlide.image}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className={styles.heroMediaEl}
-            />
-          ) : (
-            <img
-              key={`hero-img-${activeSlide}-${currentSlide.image}`}
-              src={currentSlide.image || '/assets/img/bn-1.jpg'}
-              alt={currentSlide.topHeading || 'WebTycoons Hero'}
-              className={styles.heroMediaEl}
-            />
-          )}
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={`slide-media-${activeSlide}`}
+              initial={{ opacity: 0, scale: 1.06 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+              className={styles.heroMediaItemWrap}
+            >
+              {currentSlide.video ? (
+                <video
+                  src={currentSlide.video}
+                  poster={currentSlide.image}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className={styles.heroMediaEl}
+                />
+              ) : (
+                <img
+                  src={currentSlide.image || '/assets/img/bn-1.jpg'}
+                  alt={currentSlide.expandedHeading || currentSlide.topHeading || 'WebTycoons Hero'}
+                  className={styles.heroMediaEl}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Card glow/frame visible in initial preview state */}
@@ -401,33 +458,45 @@ const ExpandingHero = ({ bannerData }) => {
 
         {/* ── Expanded Banner Caption (Revealed when opened) ── */}
         <div ref={captionRef} className={styles.heroCaption}>
-          <div className={styles.captionBadge}>
-            <span className="section-label" style={{ marginBottom: 0 }}>
-              {currentSlide.expandedBadge}
-            </span>
-          </div>
-
-          <h2 className={styles.captionHeading}>
-            {currentSlide.expandedHeading}
-          </h2>
-
-          <p className={styles.captionDesc}>
-            {currentSlide.expandedSubtitle}
-          </p>
-
-          <div className={styles.captionBtns}>
-            <Link href={currentSlide.ctaHref || '/services'} className={styles.primaryBtn}>
-              <span>{currentSlide.cta || 'Explore Our Services'}</span>
-              <FiArrowRight size={16} />
-            </Link>
-            <button
-              type="button"
-              onClick={handleOpenContactModal}
-              className={styles.secondaryBtn}
+          <AnimatePresence mode="wait" custom={direction} initial={false}>
+            <motion.div
+              key={`caption-${activeSlide}`}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className={styles.captionContentWrap}
             >
-              <span>{currentSlide.secondaryCta || 'Schedule IT Consultation'}</span>
-            </button>
-          </div>
+              <motion.div variants={childVariants} className={styles.captionBadge}>
+                <span className="section-label" style={{ marginBottom: 0 }}>
+                  {currentSlide.expandedBadge}
+                </span>
+              </motion.div>
+
+              <motion.h2 variants={childVariants} className={styles.captionHeading}>
+                {currentSlide.expandedHeading}
+              </motion.h2>
+
+              <motion.p variants={childVariants} className={styles.captionDesc}>
+                {currentSlide.expandedSubtitle}
+              </motion.p>
+
+              <motion.div variants={childVariants} className={styles.captionBtns}>
+                <Link href={currentSlide.ctaHref || '/services'} className={styles.primaryBtn}>
+                  <span>{currentSlide.cta || 'Explore Our Services'}</span>
+                  <FiArrowRight size={16} />
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleOpenContactModal}
+                  className={styles.secondaryBtn}
+                >
+                  <span>{currentSlide.secondaryCta || 'Schedule IT Consultation'}</span>
+                </button>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
 
           {/* Slide Switcher Controls (Prev button, Dots, Next button, Counter) */}
           {slides.length > 1 && (
@@ -447,7 +516,7 @@ const ExpandingHero = ({ bannerData }) => {
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => setActiveSlide(idx)}
+                    onClick={() => handleDotClick(idx)}
                     className={`${styles.slideDot} ${idx === activeSlide ? styles.slideDotActive : ''}`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
@@ -464,9 +533,24 @@ const ExpandingHero = ({ bannerData }) => {
                 <FiChevronRight size={18} />
               </button>
 
-              <span className={styles.slideCounter}>
-                0{activeSlide + 1} <span style={{ opacity: 0.4 }}>/</span> 0{slides.length}
-              </span>
+              <div className={styles.slideCounter}>
+                <span style={{ display: 'inline-block', position: 'relative', overflow: 'hidden', verticalAlign: 'middle', minWidth: '1.2ch' }}>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={activeSlide}
+                      initial={{ opacity: 0, y: direction >= 0 ? 10 : -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: direction >= 0 ? -10 : 10 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      style={{ display: 'inline-block' }}
+                    >
+                      0{activeSlide + 1}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+                <span style={{ opacity: 0.4 }}> / </span>
+                0{slides.length}
+              </div>
             </div>
           )}
         </div>

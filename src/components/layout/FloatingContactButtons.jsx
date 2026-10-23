@@ -181,10 +181,14 @@ export default function FloatingContactButtons({ config, phoneNumber, socialLink
   }, [scrollTopBtn, scrollThreshold]);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+    if (typeof window !== "undefined" && window.lenis?.scrollTo) {
+      window.lenis.scrollTo(0, { duration: 1.2 });
+    } else if (typeof window !== "undefined") {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
   };
 
   // If globally disabled, render nothing

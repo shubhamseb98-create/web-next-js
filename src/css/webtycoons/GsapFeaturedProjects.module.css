@@ -35,6 +35,8 @@
 /* Pinned Stage Container */
 .stackStage {
   width: 100%;
+  height: calc(100vh - 85px);
+  min-height: 520px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,8 +49,8 @@
 .cardsStack {
   position: relative;
   width: 100%;
-  max-width: 1250px;
-  height: 460px;
+  max-width: 1280px;
+  height: clamp(460px, 58vh, 550px);
 }
 
 /* Project Card - Glassmorphism & Solid Foundation */
@@ -85,7 +87,7 @@
 @media (min-width: 992px) {
   .projectCard {
     flex-direction: row;
-    height: 460px;
+    height: 100%;
     align-items: stretch;
   }
 }
@@ -304,7 +306,13 @@
 
 @media (min-width: 992px) {
   .gradientBg {
-    padding: 2.5rem 2rem 2.5rem 1.5rem;
+    padding: 2.25rem 2rem 2.25rem 1.5rem;
+    height: 100%;
+  }
+
+  .innerImageWrapper {
+    height: 100%;
+    max-height: 100%;
   }
 }
 
@@ -343,8 +351,7 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   display: flex;
   flex-direction: column;
-  height: 295px;
-  max-height: 295px;
+  height: 100%;
   min-height: 0;
   position: relative;
   transition: border-color 0.35s ease, box-shadow 0.35s ease;
@@ -483,6 +490,11 @@
 
 /* Responsive Card Stacking on Mobile & Tablet */
 @media (max-width: 991px) {
+  .stackStage {
+    height: auto;
+    min-height: calc(100vh - 75px);
+  }
+
   .cardsStack {
     max-width: 500px;
     height: min(500px, calc(100vh - 130px));

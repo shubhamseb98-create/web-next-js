@@ -13,6 +13,7 @@ import {
   FaCheckCircle, FaBolt, FaGlobe, FaGem, FaChartLine,
   FaStar, FaArrowRight
 } from 'react-icons/fa'
+import { ArrowUpRight } from 'lucide-react'
 import styles from '../../../../css/webtycoons/AboutPage.module.css'
 import TeamSection from '../sections/TeamSection'
 import FounderSection from '../sections/FounderSection'
@@ -62,27 +63,113 @@ const SectionHeading = ({ subtitle, title, center }) => (
 export default function AboutPageClient({ data = {}, teamData = [], founderData = null }) {
   const sectionRef = useRef(null)
   const trackRef = useRef(null)
+  const lineProgressRef = useRef(null)
+
+  const handleCardMouseMove = (e) => {
+    const { currentTarget, clientX, clientY } = e;
+    const { left, top } = currentTarget.getBoundingClientRect();
+    currentTarget.style.setProperty('--mouse-x', `${clientX - left}px`);
+    currentTarget.style.setProperty('--mouse-y', `${clientY - top}px`);
+  };
 
   useGSAP(() => {
     const track = trackRef.current
     const section = sectionRef.current
+    const lineProgress = lineProgressRef.current
 
     if (track && section) {
       const getScrollDist = () => track.scrollWidth - window.innerWidth + window.innerWidth * 0.15;
-      gsap.to(track, {
-        x: () => -getScrollDist(),
-        ease: 'none',
+      const milestoneItems = track.querySelectorAll(`.${styles.milestoneItem}`);
+      const count = milestoneItems.length;
+
+      // Function to dynamically compute each node's exact ratio along the progress line
+      const getNodeRatios = () => {
+        const lineWidth = lineProgress ? lineProgress.offsetWidth : 1;
+        const lineLeft = lineProgress ? lineProgress.offsetLeft : 0;
+
+        return Array.from(milestoneItems).map((item, idx) => {
+          const nodeCenterX = item.offsetLeft + item.offsetWidth / 2;
+          const relX = nodeCenterX - lineLeft;
+          // The tip of the green line touches the node (radius ~11px) at relX - 10
+          const computedRatio = (relX - 10) / (lineWidth || 1);
+          if (!isNaN(computedRatio) && computedRatio > 0) {
+            return computedRatio;
+          }
+          return count > 1 ? idx / (count - 1) : 0;
+        });
+      };
+
+      let nodeRatios = getNodeRatios();
+      const startScale = nodeRatios.length > 0 ? Math.max(0.04, nodeRatios[0]) : 0.08;
+      const endScale = nodeRatios.length > 0 ? Math.min(1, Math.max(0.96, nodeRatios[nodeRatios.length - 1] + 0.04)) : 1;
+
+      // Initial state: set initial line scale and activate first milestone
+      if (lineProgress) {
+        gsap.set(lineProgress, { scaleX: startScale });
+      }
+      if (milestoneItems[0]) {
+        milestoneItems[0].classList.add(styles.milestoneActive, styles.milestoneCurrent);
+      }
+
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           pin: true,
           scrub: 1,
           start: 'center center',
-          end: () => `+=${track.scrollWidth}`,
+          end: () => `+=${track.scrollWidth * 1.1}`,
           invalidateOnRefresh: true,
+          onRefresh: () => {
+            nodeRatios = getNodeRatios();
+          },
+          onUpdate: (self) => {
+            const p = self.progress;
+
+            // 1. Advance the green glowing progress line smoothly as you scroll
+            const currentScale = Math.min(1, startScale + p * (endScale - startScale));
+            if (lineProgress) {
+              gsap.set(lineProgress, { scaleX: currentScale });
+            }
+
+            // 2. Exact physical sync: highlight nodes the instant the green line reaches them
+            if (count > 0 && nodeRatios.length > 0) {
+              let latestReachedIdx = 0;
+              nodeRatios.forEach((ratio, idx) => {
+                // When line progress touches or passes this node's physical position
+                if (currentScale >= ratio - 0.003) {
+                  latestReachedIdx = idx;
+                }
+              });
+
+              milestoneItems.forEach((item, idx) => {
+                const isReached = idx <= latestReachedIdx;
+                const isCurrent = idx === latestReachedIdx;
+
+                if (isReached) {
+                  item.classList.add(styles.milestoneActive);
+                } else {
+                  item.classList.remove(styles.milestoneActive);
+                }
+
+                if (isCurrent) {
+                  item.classList.add(styles.milestoneCurrent);
+                } else {
+                  item.classList.remove(styles.milestoneCurrent);
+                }
+              });
+            }
+          }
         }
-      })
+      });
+
+      // Horizontal track movement
+      tl.to(track, {
+        x: () => -getScrollDist(),
+        ease: 'none',
+        duration: 1,
+      }, 0);
     }
-  }, { scope: sectionRef })
+  }, { scope: sectionRef, dependencies: [data?.milestones] })
 
   return (
     <main className={styles.aboutPage}>
@@ -97,134 +184,174 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
         ]}
       />
 
-      {/* ── About Us (Who We Are - Ultra Modern Redesign) ── */}
-      <section className={`py-100 ${styles.aboutUsSection}`}>
-        <div className="container-fluid-px">
-          <motion.div
-            className={styles.aboutUsGrid}
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-80px' }}
-          >
-            {/* Left — Sticky Cyber Bento Visual Showcase */}
-            <div className={styles.stickyVisualCol}>
-              <motion.div variants={fadeUp} className={styles.aboutVisualContainer}>
-                {/* Ambient Glow Backdrop */}
-                <div className={styles.visualAuraGlow} />
+      {/* ── About Us (Who We Are - Float Left Image Flow) ── */}
+      {(() => {
+        // Collect all paragraph strings
+        const rawP1 = data?.aboutUsParagraph1 || 'Founded in 2011, WebTycoons is a high-performance digital agency based in Delhi NCR, India, crafting bespoke web platforms and digital growth engines.';
+        const rawP2 = data?.aboutUsParagraph2 || 'Over the past 15 years, we have delivered 350+ projects for ambitious startups, scaling SMEs, and enterprises across the globe.';
+        const rawP3 = data?.aboutUsParagraph3 || '';
 
-                {/* Main Image Frame */}
-                <div className={styles.mainImageFrame}>
-                  <Image
-                    src={data.aboutUsImage1 || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"}
-                    alt="WebTycoons Digital Agency"
-                    className={styles.mainImage}
-                    width={1000}
-                    height={800}
-                    priority
-                  />
-                  <div className={styles.imageOverlayGradient} />
-                  
-                  {/* Tech Corner Accents */}
-                  <div className={`${styles.cornerAccent} ${styles.cornerTopLeft}`} />
-                  <div className={`${styles.cornerAccent} ${styles.cornerBottomRight}`} />
-                </div>
+        const allParagraphs = [];
+        if (rawP1 && rawP1.trim()) {
+          allParagraphs.push(rawP1.trim());
+        }
+        if (rawP2 && rawP2.trim()) {
+          const p2Split = rawP2.split(/\n\s*\n|\n/).map(p => p.trim()).filter(Boolean);
+          allParagraphs.push(...p2Split);
+        }
+        if (rawP3 && rawP3.trim()) {
+          const p3Split = rawP3.split(/\n\s*\n|\n/).map(p => p.trim()).filter(Boolean);
+          allParagraphs.push(...p3Split);
+        }
 
-                {/* Floating Glassmorphic Badge 1 (Top Left: Years Experience) */}
-                <div className={styles.experienceGlassPill}>
-                  <div className={styles.expIconBox}>
-                    <FaStar className={styles.expIcon} />
-                  </div>
-                  <div>
-                    <div className={styles.expNumberText}>
-                      {data.aboutUsYears || '15'}<span>+</span>
+        const formatAboutText = (text) => {
+          if (!text) return '';
+          return text
+            .replace(/Web\s?Tycoons/g, '<strong>WebTycoons</strong>')
+            .replace(/350\+\s*projects/gi, '<strong>350+ projects</strong>')
+            .replace(/15\s*years/gi, '<strong>15 years</strong>')
+            .replace(/1500\s*website/gi, '<strong>1500 websites</strong>')
+            .replace(/2200\+\s*customers/gi, '<strong>2200+ customers</strong>');
+        };
+
+        return (
+          <section className={`py-100 ${styles.aboutUsSection}`}>
+            <div className="container-fluid-px">
+              <motion.div
+                className={styles.aboutUsFlowWrapper}
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-80px' }}
+              >
+                {/* Floated Left Visual Showcase */}
+                <div className={styles.aboutUsFloatVisual}>
+                  <motion.div variants={fadeUp} className={styles.aboutVisualContainer}>
+                    {/* Ambient Glow Backdrop */}
+                    <div className={styles.visualAuraGlow} />
+
+                    {/* Main Image Frame */}
+                    <div className={styles.mainImageFrame}>
+                      <Image
+                        src={data.aboutUsImage1 || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop"}
+                        alt="WebTycoons Digital Agency"
+                        className={styles.mainImage}
+                        width={1000}
+                        height={800}
+                        priority
+                      />
+                      <div className={styles.imageOverlayGradient} />
+                      
+                      {/* Tech Corner Accents */}
+                      <div className={`${styles.cornerAccent} ${styles.cornerTopLeft}`} />
+                      <div className={`${styles.cornerAccent} ${styles.cornerBottomRight}`} />
                     </div>
-                    <div className={styles.expSubLabel}>Years of Mastery</div>
-                  </div>
+
+                    {/* Floating Glassmorphic Badge 1 (Top Left: Years Experience) */}
+                    <div className={styles.experienceGlassPill}>
+                      <div className={styles.expIconBox}>
+                        <FaStar className={styles.expIcon} />
+                      </div>
+                      <div>
+                        <div className={styles.expNumberText}>
+                          {data.aboutUsYears || '15'}<span>+</span>
+                        </div>
+                        <div className={styles.expSubLabel}>Years of Mastery</div>
+                      </div>
+                    </div>
+
+                    {/* Floating Glassmorphic Badge 2 (Bottom Right: Delivered Projects) */}
+                    <div className={styles.projectsGlassCard}>
+                      <div className={styles.projectsTopRow}>
+                        <span className={styles.livePulseDot} />
+                        <span className={styles.projectsLiveTag}>PROVEN IMPACT</span>
+                      </div>
+                      <div className={styles.projectsCount}>
+                        350<span>+</span> Projects
+                      </div>
+                      <div className={styles.projectsSubText}>Delivered Worldwide</div>
+                    </div>
+
+                    {/* Floating Micro Badge 3 (Bottom Left: Quality / Satisfaction) */}
+                    <div className={styles.qualityPill}>
+                      <FaBolt className={styles.qualityIcon} />
+                      <span>99.8% Client Satisfaction</span>
+                    </div>
+                  </motion.div>
                 </div>
 
-                {/* Floating Glassmorphic Badge 2 (Bottom Right: Delivered Projects) */}
-                <div className={styles.projectsGlassCard}>
-                  <div className={styles.projectsTopRow}>
-                    <span className={styles.livePulseDot} />
-                    <span className={styles.projectsLiveTag}>PROVEN IMPACT</span>
+                {/* Content Flowing Beside and Then Underneath */}
+                <motion.div variants={fadeUp}>
+                  <div style={{ marginBottom: '8px' }}>
+                    <span className="section-label" style={{ marginBottom: 0 }}>WHO WE ARE</span>
                   </div>
-                  <div className={styles.projectsCount}>
-                    350<span>+</span> Projects
-                  </div>
-                  <div className={styles.projectsSubText}>Delivered Worldwide</div>
-                </div>
 
-                {/* Floating Micro Badge 3 (Bottom Left: Quality / Satisfaction) */}
-                <div className={styles.qualityPill}>
-                  <FaBolt className={styles.qualityIcon} />
-                  <span>99.8% Client Satisfaction</span>
-                </div>
+                  <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
+                    {data?.aboutUsTitle || 'Your Strategic Partner in Digital Transformation'}
+                  </h2>
+                </motion.div>
+
+                {allParagraphs.map((para, idx) => (
+                  <motion.p
+                    key={idx}
+                    variants={fadeUp}
+                    className={idx === 0 ? styles.aboutUsLeadPara : styles.aboutUsSubPara}
+                    dangerouslySetInnerHTML={{ __html: formatAboutText(para) }}
+                  />
+                ))}
+
+                {/* Modern Bento Feature Deck */}
+                {Array.isArray(data?.aboutUsHighlights) && data.aboutUsHighlights.length > 0 && (
+                  <motion.div variants={fadeUp} className={styles.bentoDeck}>
+                    {data.aboutUsHighlights.map((hl, i) => {
+                      const Icon = iconMap[hl.icon?.toLowerCase()] || FaAward;
+                      return (
+                        <div key={i} className={styles.bentoCard}>
+                          <div className={styles.bentoIconBox}>
+                            <Icon className={styles.bentoIcon} />
+                          </div>
+                          <div className={styles.bentoText}>
+                            <h4>{hl.title}</h4>
+                            <p>{hl.description}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </motion.div>
+                )}
+
+                {/* CTA Action Row & Trust Checkpoints */}
+                <motion.div variants={fadeUp} className={styles.aboutUsActionRow}>
+                  <div className={styles.aboutUsBtns}>
+                    <Link href="/contact" className={styles.primaryActionButton}>
+                      <span>Work With Us</span>
+                      <FaArrowRight className={styles.btnArrowIcon} />
+                    </Link>
+                  </div>
+
+                  <div className={styles.trustCheckpoints}>
+                    <div className={styles.checkpointItem}>
+                      <FaCheckCircle className={styles.checkIcon} />
+                      <span>100% Code Ownership</span>
+                    </div>
+                    <div className={styles.checkpointItem}>
+                      <FaCheckCircle className={styles.checkIcon} />
+                      <span>Next-Gen Architecture</span>
+                    </div>
+                    <div className={styles.checkpointItem}>
+                      <FaCheckCircle className={styles.checkIcon} />
+                      <span>Global Delivery</span>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Clearfix */}
+                <div style={{ clear: 'both' }} />
               </motion.div>
             </div>
-
-            {/* Right — High-Impact Storytelling & Interactive Bento Feature Cards */}
-            <motion.div variants={fadeUp} className={styles.aboutUsContent}>
-              <div style={{ marginBottom: '8px' }}>
-                <span className="section-label" style={{ marginBottom: 0 }}>WHO WE ARE</span>
-              </div>
-
-              <h2 className="section-heading mb-3" style={{ color: 'var(--clr-white)', marginTop: 0 }}>
-                Your Strategic Partner in Digital Transformation
-              </h2>
-
-              <p className={styles.aboutUsLeadPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph1 || 'Founded in 2011, WebTycoons is a high-performance digital agency based in Delhi NCR, India, crafting bespoke web platforms and digital growth engines.').replace('WebTycoons', '<strong>WebTycoons</strong>') }} />
-
-              <p className={styles.aboutUsSubPara} dangerouslySetInnerHTML={{ __html: (data?.aboutUsParagraph2 || 'Over the past 15 years, we have delivered 350+ projects for ambitious startups, scaling SMEs, and enterprises across the globe.').replace('350+ projects', '<strong>350+ projects</strong>').replace('15 years', '<strong>15 years</strong>') }} />
-
-              {/* Modern Bento Feature Deck */}
-              {Array.isArray(data?.aboutUsHighlights) && data.aboutUsHighlights.length > 0 && (
-                <div className={styles.bentoDeck}>
-                  {data.aboutUsHighlights.map((hl, i) => {
-                    const Icon = iconMap[hl.icon?.toLowerCase()] || FaAward;
-                    return (
-                      <div key={i} className={styles.bentoCard}>
-                        <div className={styles.bentoIconBox}>
-                          <Icon className={styles.bentoIcon} />
-                        </div>
-                        <div className={styles.bentoText}>
-                          <h4>{hl.title}</h4>
-                          <p>{hl.description}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* CTA Action Row */}
-              <div className={styles.aboutUsBtns}>
-                <Link href="/contact" className={styles.primaryActionButton}>
-                  <span>Work With Us</span>
-                  <FaArrowRight className={styles.btnArrowIcon} />
-                </Link>
-             
-              </div>
-
-              {/* Trust Checkpoints */}
-              <div className={styles.trustCheckpoints}>
-                <div className={styles.checkpointItem}>
-                  <FaCheckCircle className={styles.checkIcon} />
-                  <span>100% Code Ownership</span>
-                </div>
-                <div className={styles.checkpointItem}>
-                  <FaCheckCircle className={styles.checkIcon} />
-                  <span>Next-Gen Architecture</span>
-                </div>
-                <div className={styles.checkpointItem}>
-                  <FaCheckCircle className={styles.checkIcon} />
-                  <span>Global Delivery</span>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+          </section>
+        );
+      })()}
 
       {/* ── Founder Section (Leadership Manifesto) ── */}
       <FounderSection founderData={founderData} />
@@ -326,109 +453,38 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
               willChange: 'transform'
             }}
           >
-            {/* Continuous Glowing Horizontal Line */}
-            <div 
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '8vw',
-                right: '0',
-                height: '2px',
-                background: 'linear-gradient(90deg, #52a436 0%, rgba(82, 164, 54, 0.4) 50%, #52a436 100%)',
-                boxShadow: '0 0 10px rgba(82, 164, 54, 0.4)',
-                transform: 'translateY(-50%)',
-                zIndex: 1
-              }}
-            />
+            {/* Inactive Base Guide Line */}
+            <div className={styles.timelineBaseLine} />
+
+            {/* Active Glowing Green Progress Line */}
+            <div ref={lineProgressRef} className={styles.timelineProgressLine} />
             
             {data.milestones?.map((m, i) => {
               const isTop = i % 2 === 0; // Alternates: 0=Top, 1=Bottom, 2=Top, 3=Bottom...
               return (
                 <div 
                   key={i} 
-                  style={{
-                    position: 'relative',
-                    width: '380px',
-                    height: '100%',
-                    marginRight: '80px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    zIndex: 2
-                  }}
+                  className={styles.milestoneItem}
+                  data-milestone-index={i}
                 >
                   {/* Glowing Node on the line */}
-                  <div 
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      backgroundColor: '#52a436',
-                      border: '3px solid #070a06',
-                      boxShadow: '0 0 14px #52a436, 0 0 0 6px rgba(82, 164, 54, 0.2)',
-                      zIndex: 5,
-                      transition: 'all 0.3s ease'
-                    }}
-                  />
+                  <div className={styles.timelineNode} />
 
                   {/* Giant Ghost Year Watermark */}
-                  <div 
-                    style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      fontSize: '6.5rem',
-                      fontWeight: '900',
-                      color: 'rgba(255, 255, 255, 0.04)',
-                      fontFamily: 'var(--font-heading, sans-serif)',
-                      pointerEvents: 'none',
-                      zIndex: 2,
-                      lineHeight: 1,
-                      letterSpacing: '-2px',
-                      userSelect: 'none'
-                    }}
-                  >
+                  <div className={styles.timelineGhostYear}>
                     {m.year}
                   </div>
 
                   {/* Alternating Content Card */}
                   <div 
+                    className={styles.timelineCard}
                     style={{
-                      position: 'absolute',
                       [isTop ? 'bottom' : 'top']: 'calc(50% + 28px)',
-                      left: 0,
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.025)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      backdropFilter: 'blur(15px)',
-                      borderRadius: '18px',
-                      padding: '22px 24px',
-                      boxShadow: '0 15px 35px rgba(0, 0, 0, 0.4)',
-                      zIndex: 4,
-                      transition: 'all 0.3s ease'
                     }}
-                    className="timeline-card hover:border-emerald-500/50 hover:-translate-y-1"
                   >
                     {/* Header Row */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                      <span 
-                        style={{
-                          padding: '3px 12px',
-                          borderRadius: '100px',
-                          background: 'rgba(82, 164, 54, 0.12)',
-                          border: '1px solid rgba(82, 164, 54, 0.3)',
-                          color: '#52a436',
-                          fontSize: '12px',
-                          fontWeight: '800',
-                          letterSpacing: '0.8px'
-                        }}
-                      >
+                      <span className={styles.timelineYearBadge}>
                         {m.year}
                       </span>
                       <span style={{ fontSize: '11px', fontWeight: '800', color: 'rgba(255, 255, 255, 0.3)' }}>
@@ -443,7 +499,6 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
                       {m.description}
                     </p>
                   </div>
-
                 </div>
               );
             })}
@@ -480,18 +535,41 @@ export default function AboutPageClient({ data = {}, teamData = [], founderData 
             {data.values?.map((v, i) => {
               const Icon = iconMap[v.icon?.toLowerCase()] || FaHeart;
               const indexFormatted = String(i + 1).padStart(2, '0');
+              const fallbackTags = ['CLIENT CENTRIC', 'MODERN TECH', 'HONEST & CLEAN', 'CRAFT & PRIDE'];
+              const tag = v.tag || fallbackTags[i % fallbackTags.length];
+
               return (
-                <motion.div key={i} variants={fadeUp} className={styles.valueCard}>
-                  <div className={styles.cardHeader}>
-                    <div className={styles.valueIcon}>
+                <motion.div 
+                  key={i} 
+                  variants={fadeUp} 
+                  className={styles.valueCard}
+                  onMouseMove={handleCardMouseMove}
+                >
+                  {/* Large Background Watermark Number */}
+                  <span className={styles.watermarkNumber} aria-hidden="true">
+                    {indexFormatted}
+                  </span>
+
+                  {/* Top Row: Icon + Badge */}
+                  <div className={styles.cardTop}>
+                    <div className={styles.iconBox}>
                       <Icon />
                     </div>
-                    <span className={styles.cardNumber}>{indexFormatted}</span>
+                    <span className={styles.badgeNumber}>{indexFormatted}</span>
                   </div>
 
-                  <div className={styles.cardBody}>
-                    <h3 className={styles.cardTitle}>{v.title}</h3>
-                    <p className={styles.cardDesc}>{v.description}</p>
+                  {/* Card Title & Description */}
+                  <h3 className={styles.cardTitle}>{v.title}</h3>
+                  <div className={styles.cardDesc}>
+                    <p>{v.description}</p>
+                  </div>
+
+                  {/* Footer with Tag and Arrow */}
+                  <div className={styles.cardFooter}>
+                    <span className={styles.featureTag}>{tag}</span>
+                    <div className={styles.arrowCircle}>
+                      <ArrowUpRight size={17} strokeWidth={2.2} />
+                    </div>
                   </div>
                 </motion.div>
               );

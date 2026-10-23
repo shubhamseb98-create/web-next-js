@@ -10,6 +10,7 @@ const AboutPageConfigSchema = new mongoose.Schema({
   aboutUsTitle: { type: String, default: "Your Trusted Partner in Digital Transformation" },
   aboutUsParagraph1: { type: String, default: "Founded in 2011, WebTycoons is a full-service digital agency based in Delhi NCR, India." },
   aboutUsParagraph2: { type: String, default: "Over the past 15 years, we have delivered 350+ projects for startups, SMEs, and enterprises across industries." },
+  aboutUsParagraph3: { type: String, default: "" },
   aboutUsImage1: { type: String, default: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1000&auto=format&fit=crop" },
   aboutUsImage2: { type: String, default: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop" },
   aboutUsYears: { type: String, default: "15" },

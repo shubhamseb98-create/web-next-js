@@ -4,7 +4,6 @@ import MaintenanceScreen from "src/components/core/MaintenanceScreen";
 import Script from "next/script";
 import FloatingContactButtons from "src/components/layout/FloatingContactButtons";
 import ScrollToTopButton from "src/components/layout/ScrollToTopButton";
-import SmoothScroller from "src/components/animations/SmoothScroller";
 import Preloader from "src/components/features/webtycoons/Preloader";
 // swiper/css is imported here to apply to all public pages (hero, testimonials, clients sliders)
 import 'swiper/css';
@@ -73,7 +72,7 @@ export default async function PublicLayout({ children }) {
   }
 
   return (
-    <SmoothScroller>
+    <>
       <Preloader />
       <Header initialNavData={navData} initialGlobalSettings={globalSettings} initialHeaderConfig={headerConfig} />
       {children}
@@ -114,6 +113,6 @@ export default async function PublicLayout({ children }) {
         socialLinks={globalSettings?.socialLinks || []}
       />
       <ScrollToTopButton />
-    </SmoothScroller>
+    </>
   );
 }

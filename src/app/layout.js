@@ -4,6 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import NavigationProgress from "src/components/core/NavigationProgress";
 import ClientTracker from "src/components/core/ClientTracker";
+import SmoothScroller from "src/components/animations/SmoothScroller";
 import { Toaster } from "react-hot-toast";
 import { connectDB } from "./lib/config";
 import GlobalSetting from "./models/GlobalSetting";
@@ -104,7 +105,9 @@ export default function RootLayout({ children }) {
         />
         <NavigationProgress />
         <ClientTracker />
-        {children}
+        <SmoothScroller>
+          {children}
+        </SmoothScroller>
         <Toaster position="bottom-right" />
       </body>
     </html>

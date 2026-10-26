@@ -157,29 +157,6 @@ const closeBtnVariants = {
   },
 }
 
-const floatingPillVariants = {
-  hidden: {
-    opacity: 0,
-    y: 22,
-    scale: 0.94,
-    transition: {
-      duration: 0.18,
-      ease: 'easeIn',
-    },
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      damping: 24,
-      stiffness: 260,
-      delay: 0.18,
-    },
-  },
-}
-
 const canvasWebsiteVariants = {
   hidden: {
     opacity: 0,
@@ -202,9 +179,11 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
 
   // ── Drag & Momentum Track System ──
   const trackRef = useRef(null)
+  const isPointerDownRef = useRef(false)
   const isDraggingRef = useRef(false)
   const hasMovedRef = useRef(false)
   const startXRef = useRef(0)
+  const startYRef = useRef(0)
   const currentXRef = useRef(0)
   const targetXRef = useRef(0)
   const velocityRef = useRef(0)
@@ -214,6 +193,7 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
   const rafIdRef = useRef(null)
   const oneSetWidthRef = useRef(0)
   const initializedRef = useRef(false)
+  const cardPointerDownRef = useRef({ x: 0, y: 0, time: 0 })
 
   // Close modal on Escape key press and lock body scroll
   useEffect(() => {
@@ -343,62 +323,70 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
   const handlePointerDown = (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return
 
-    isDraggingRef.current = true
-    setIsDragging(true)
+    isPointerDownRef.current = true
+    isDraggingRef.current = false
     hasMovedRef.current = false
     startXRef.current = e.clientX
+    startYRef.current = e.clientY
     lastPointerXRef.current = e.clientX
     lastTimeRef.current = performance.now()
     velocityRef.current = 0
-
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId)
-    } catch (_) {}
+    // Note: Do NOT setPointerCapture on pointerdown so child clicks/pointerups are preserved
   }
 
   const handlePointerMove = (e) => {
-    if (!isDraggingRef.current) return
+    if (!isPointerDownRef.current) return
 
-    const now = performance.now()
-    const dx = e.clientX - lastPointerXRef.current
-    const totalDist = Math.abs(e.clientX - startXRef.current)
+    const dist = Math.hypot(e.clientX - startXRef.current, e.clientY - startYRef.current)
 
-    if (totalDist > 5) {
+    // Activate drag and capture pointer ONLY after moving > 8px
+    if (!isDraggingRef.current && dist > 8) {
+      isDraggingRef.current = true
       hasMovedRef.current = true
+      setIsDragging(true)
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId)
+      } catch (_) {}
     }
 
-    targetXRef.current += dx
+    if (isDraggingRef.current) {
+      const now = performance.now()
+      const dx = e.clientX - lastPointerXRef.current
+      targetXRef.current += dx
 
-    const dt = Math.max(now - lastTimeRef.current, 1)
-    velocityRef.current = (dx / dt) * 16.66
+      const dt = Math.max(now - lastTimeRef.current, 1)
+      velocityRef.current = (dx / dt) * 16.66
 
-    lastPointerXRef.current = e.clientX
-    lastTimeRef.current = now
+      lastPointerXRef.current = e.clientX
+      lastTimeRef.current = now
+    }
   }
 
   const handlePointerUp = (e) => {
-    if (!isDraggingRef.current) return
-    isDraggingRef.current = false
-    setIsDragging(false)
+    isPointerDownRef.current = false
 
-    try {
-      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId)
-      }
-    } catch (_) {}
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false
+      setIsDragging(false)
 
-    const maxVelocity = 40
-    if (velocityRef.current > maxVelocity) velocityRef.current = maxVelocity
-    if (velocityRef.current < -maxVelocity) velocityRef.current = -maxVelocity
+      try {
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId)
+        }
+      } catch (_) {}
 
-    if (hasMovedRef.current) {
-      setTimeout(() => {
-        hasMovedRef.current = false
-      }, 80)
+      const maxVelocity = 40
+      if (velocityRef.current > maxVelocity) velocityRef.current = maxVelocity
+      if (velocityRef.current < -maxVelocity) velocityRef.current = -maxVelocity
     }
+
+    setTimeout(() => {
+      hasMovedRef.current = false
+    }, 50)
   }
 
   const handlePointerCancel = (e) => {
+    isPointerDownRef.current = false
     isDraggingRef.current = false
     setIsDragging(false)
     try {
@@ -408,7 +396,7 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
     } catch (_) {}
     setTimeout(() => {
       hasMovedRef.current = false
-    }, 80)
+    }, 50)
   }
 
   const handleWheel = (e) => {
@@ -419,14 +407,35 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
     }
   }
 
-  const handleCardClick = (e, project) => {
-    // If the user was dragging/scrolling, don't trigger the modal
-    if (hasMovedRef.current || isDraggingRef.current) {
-      e.preventDefault()
-      e.stopPropagation()
-      return
+  // ── Card Click Handlers (Guaranteed Immediate Modal Trigger) ──
+  const handleCardPointerDown = (e) => {
+    cardPointerDownRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      time: Date.now(),
     }
-    setSelectedProject(project)
+  }
+
+  const handleCardPointerUp = (e, project) => {
+    const dx = Math.abs(e.clientX - cardPointerDownRef.current.x)
+    const dy = Math.abs(e.clientY - cardPointerDownRef.current.y)
+    const dist = Math.hypot(dx, dy)
+    const dt = Date.now() - cardPointerDownRef.current.time
+
+    // If movement < 10px and released within 600ms, it is a genuine click!
+    if (dist < 10 && dt < 600 && !hasMovedRef.current) {
+      setSelectedProject(project)
+    }
+  }
+
+  const handleCardClick = (e, project) => {
+    const dx = Math.abs(e.clientX - cardPointerDownRef.current.x)
+    const dy = Math.abs(e.clientY - cardPointerDownRef.current.y)
+    const dist = Math.hypot(dx, dy)
+
+    if (dist < 10 && !hasMovedRef.current) {
+      setSelectedProject(project)
+    }
   }
 
   return (
@@ -458,10 +467,12 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
                   key={`${project.id || project.slug}-${index}`}
                   role="button"
                   tabIndex={0}
+                  onPointerDown={handleCardPointerDown}
+                  onPointerUp={(e) => handleCardPointerUp(e, project)}
                   onClick={(e) => handleCardClick(e, project)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedProject(project) }}
                   className={styles.showcaseCard}
-                  title="Drag to scroll • Click to preview"
+                  title="Click to preview • Drag to scroll"
                   style={{ zIndex: streamProjects.length - (index % streamProjects.length) }}
                   draggable={false}
                 >
@@ -593,34 +604,6 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
                         alt={selectedProject.title}
                         className={styles.canvasWebsiteImg}
                       />
-
-                      {/* Floating Bottom-Right Info Pill (Identical to "Claude Science" card in reference image) */}
-                      <motion.div
-                        className={styles.floatingProjectCard}
-                        variants={floatingPillVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                      >
-                        <div className={styles.floatingCardIconBox}>
-                          <span className={styles.monogram}>
-                            {selectedProject.title.slice(0, 2).toUpperCase()}
-                          </span>
-                        </div>
-                        <div className={styles.floatingCardText}>
-                          <h4 className={styles.floatingCardTitle}>{selectedProject.title}</h4>
-                          <span className={styles.floatingCardCategory}>{selectedProject.category}</span>
-                        </div>
-                        <Link
-                          href={selectedProject.link || `/projects/${selectedProject.slug}`}
-                          className={styles.floatingCardCta}
-                          title="Open full project study"
-                        >
-                          <span>View Study</span>
-                          <FaArrowRight />
-                        </Link>
-                      </motion.div>
-
                     </motion.div>
                   </div>
 

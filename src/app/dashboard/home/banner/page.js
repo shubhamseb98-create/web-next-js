@@ -469,7 +469,7 @@ export default function BannerPage() {
       />
 
       <Dialog open={!!modal} onOpenChange={(open) => !open && !saving && setModal(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh]">
           <DialogHeader style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <DialogTitle style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>{modal === 'new' ? "Add New Banner" : "Edit Banner"}</DialogTitle>
             <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>{modal === 'new' ? "Create a new hero banner" : "Modify existing banner details"}</p>

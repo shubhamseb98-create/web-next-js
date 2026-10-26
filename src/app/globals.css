@@ -364,8 +364,8 @@ select {
 [role="dialog"]::-webkit-scrollbar,
 .custom-thin-scrollbar::-webkit-scrollbar,
 .custom-thin-scrollbar ::-webkit-scrollbar {
-  width: 4px !important;
-  height: 4px !important;
+  width: 5px !important;
+  height: 5px !important;
 }
 
 [role="dialog"] ::-webkit-scrollbar-track,
@@ -391,8 +391,18 @@ select {
 }
 
 [role="dialog"],
-.custom-thin-scrollbar {
-  scrollbar-width: thin;
+[role="dialog"] *,
+.custom-thin-scrollbar,
+.custom-thin-scrollbar * {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent !important;
+}
+
+[role="dialog"]:hover,
+[role="dialog"] *:hover,
+.custom-thin-scrollbar:hover,
+.custom-thin-scrollbar *:hover {
+  scrollbar-color: #52a436 transparent !important;
 }
 
 /* ============================================================

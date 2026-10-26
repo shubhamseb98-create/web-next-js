@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from '../../../../css/webtycoons/PortfolioPage.module.css'
 import PageHeader from 'src/components/layout/PageHeader'
-import { FaArrowRight, FaExternalLinkAlt, FaPlus, FaMinus, FaPaperPlane } from 'react-icons/fa'
+import { FaArrowRight, FaPlus, FaMinus, FaPaperPlane } from 'react-icons/fa'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -180,12 +180,7 @@ export default function PortfolioGrid({ items = [], categories = ['All'], contac
                               title={project.title}
                             >
                               {project.title}
-                            </Link> 
-                            {project.projectUrl && (
-                              <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className={styles.externalLinkBtn} title="Visit live site">
-                                <FaExternalLinkAlt />
-                              </a>
-                            )}
+                            </Link>
                           </div>
                         </div>
                         <div className={styles.detailColIndustry}>

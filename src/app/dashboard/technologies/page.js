@@ -12,9 +12,13 @@ import { SortInput } from '../../../components/dashboard/SortInput'
 import { Edit2, Trash2, Cpu } from 'lucide-react'
 import { 
   SiReact, SiNextdotjs, SiVuedotjs, SiTailwindcss, SiFigma, SiGreensock, SiTypescript, SiSass,
-  SiNodedotjs, SiPython, SiMongodb, SiDocker, SiPostgresql, SiGraphql, SiFirebase
+  SiNodedotjs, SiPython, SiMongodb, SiDocker, SiPostgresql, SiGraphql, SiFirebase, SiJavascript
 } from 'react-icons/si'
-import { FaAws } from 'react-icons/fa'
+import { 
+  FaAws, FaPaintBrush, FaLaptopCode, FaCogs, FaBullhorn, FaSearch, 
+  FaShoppingCart, FaPalette, FaBookOpen, FaGlobe, FaServer, 
+  FaEnvelopeOpenText, FaBuilding, FaWhatsapp, FaChartLine 
+} from 'react-icons/fa'
 import ConfirmDeleteModal from '../../../components/dashboard/ConfirmDeleteModal'
 import { createReorderHandler } from '../../../lib/useTableReorder'
 
@@ -22,10 +26,44 @@ const BASE_URL = ''
 const EMPTY = { name: '', sub: '', image: '', color: '#FFFFFF', category: 'frontend', sort: 0, status: 'active' }
 
 const iconMap = {
+  // Languages & Technologies
   'React': SiReact, 'Next.js': SiNextdotjs, 'Vue 3': SiVuedotjs, 'Tailwind CSS': SiTailwindcss,
   'Figma': SiFigma, 'GSAP': SiGreensock, 'TypeScript': SiTypescript, 'Sass': SiSass,
   'Node.js': SiNodedotjs, 'Python': SiPython, 'MongoDB': SiMongodb, 'Docker': SiDocker,
-  'PostgreSQL': SiPostgresql, 'GraphQL': SiGraphql, 'Firebase': SiFirebase, 'AWS': FaAws
+  'PostgreSQL': SiPostgresql, 'GraphQL': SiGraphql, 'Firebase': SiFirebase, 'AWS': FaAws,
+  'Java script': SiJavascript, 'JavaScript': SiJavascript,
+
+  // Services
+  'Website Designing': FaPaintBrush,
+  'Website Development': FaLaptopCode,
+  'Software Development & CRM': FaCogs,
+  'Digital Marketing': FaBullhorn,
+  'Search Engine Optimization (SEO)': FaSearch,
+  'SEO': FaSearch,
+  'Ecommerce Solution': FaShoppingCart,
+  'Logo Designing & Brand Identity': FaPalette,
+  'Brochure Designing': FaBookOpen,
+  'Domain Registration': FaGlobe,
+  'Web Hosting Solutions': FaServer,
+  'Enterprise Email Solutions': FaEnvelopeOpenText,
+  'Company Profile Designing': FaBuilding,
+  'WhatsApp Promotional Images': FaWhatsapp,
+
+  // Direct icon names
+  'FaPaintBrush': FaPaintBrush,
+  'FaLaptopCode': FaLaptopCode,
+  'FaCogs': FaCogs,
+  'FaBullhorn': FaBullhorn,
+  'FaSearch': FaSearch,
+  'FaShoppingCart': FaShoppingCart,
+  'FaPalette': FaPalette,
+  'FaBookOpen': FaBookOpen,
+  'FaGlobe': FaGlobe,
+  'FaServer': FaServer,
+  'FaEnvelopeOpenText': FaEnvelopeOpenText,
+  'FaBuilding': FaBuilding,
+  'FaWhatsapp': FaWhatsapp,
+  'FaChartLine': FaChartLine
 };
 
 function TechnologyModal({ item, nextSort = 1, onClose, onSave, saving }) {

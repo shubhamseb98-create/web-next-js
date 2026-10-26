@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { FaPlus, FaMinus, FaArrowRight, FaExternalLinkAlt, FaPaperPlane } from 'react-icons/fa'
+import Link from 'next/link'
+import { FaPlus, FaMinus, FaArrowRight, FaPaperPlane } from 'react-icons/fa'
 import styles from './PortfolioPage.module.css'
 import { fadeUp, staggerContainer } from '../animations/variants'
 
@@ -146,7 +146,7 @@ const PortfolioPage = () => {
                   <div className={styles.detailCol}>
                     <span className={styles.detailLabel}>Project Name:</span>
                     <div className={styles.detailValueName}>
-                      {project.title} <button className={styles.externalLinkBtn}><FaExternalLinkAlt /></button>
+                      {project.title}
                     </div>
                   </div>
                   <div className={styles.detailCol}>

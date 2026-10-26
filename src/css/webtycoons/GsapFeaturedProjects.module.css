@@ -239,7 +239,8 @@
   z-index: 9999;
 }
 
-@media (max-width: 991px), (pointer: coarse) {
+@media (max-width: 991px),
+(pointer: coarse) {
   .cursorWrapper {
     display: none !important;
   }

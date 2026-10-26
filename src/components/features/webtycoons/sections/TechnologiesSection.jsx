@@ -5,11 +5,26 @@ import styles from '../../../../css/webtycoons/TechnologiesSection.module.css'
 import Image from 'next/image';
 import { 
   SiReact, SiNextdotjs, SiVuedotjs, SiTailwindcss, SiFigma, SiGreensock, SiTypescript, SiSass,
-  SiNodedotjs, SiPython, SiMongodb, SiDocker, SiPostgresql, SiGraphql, SiFirebase
+  SiNodedotjs, SiPython, SiMongodb, SiDocker, SiPostgresql, SiGraphql, SiFirebase, SiJavascript
 } from 'react-icons/si'
-import { FaAws } from 'react-icons/fa'
+import { 
+  FaAws, FaPaintBrush, FaLaptopCode, FaCogs, FaBullhorn, FaSearch, 
+  FaShoppingCart, FaPalette, FaBookOpen, FaGlobe, FaServer, 
+  FaEnvelopeOpenText, FaBuilding, FaWhatsapp, FaChartLine 
+} from 'react-icons/fa'
 
 const frontendTech = [
+  { name: 'Website Designing', sub: 'UI/UX & Creative', icon: FaPaintBrush, color: '#38BDF8' },
+  { name: 'Website Development', sub: 'Custom Web Apps', icon: FaLaptopCode, color: '#10B981' },
+  { name: 'Software Development & CRM', sub: 'Enterprise & CRM', icon: FaCogs, color: '#8B5CF6' },
+  { name: 'Digital Marketing', sub: 'Performance & Ads', icon: FaBullhorn, color: '#F59E0B' },
+  { name: 'Search Engine Optimization (SEO)', sub: 'Rankings & Traffic', icon: FaSearch, color: '#EC4899' },
+  { name: 'Ecommerce Solution', sub: 'Stores & Shopify', icon: FaShoppingCart, color: '#06B6D4' },
+  { name: 'Logo Designing & Brand Identity', sub: 'Brand Kits & Logos', icon: FaPalette, color: '#F43F5E' },
+  { name: 'Brochure Designing', sub: 'Print & Media', icon: FaBookOpen, color: '#A855F7' },
+]
+
+const backendTech = [
   { name: 'React', sub: 'TypeScript', icon: SiReact, color: '#61DAFB' },
   { name: 'Next.js', sub: 'React Framework', icon: SiNextdotjs, color: '#FFFFFF' },
   { name: 'TypeScript', sub: 'Language', icon: SiTypescript, color: '#3178C6' },
@@ -17,10 +32,6 @@ const frontendTech = [
   { name: 'Vue 3', sub: 'JavaScript', icon: SiVuedotjs, color: '#4FC08D' },
   { name: 'Figma', sub: 'Design Tool', icon: SiFigma, color: '#F24E1E' },
   { name: 'GSAP', sub: 'Animation', icon: SiGreensock, color: '#88CE02' },
-  { name: 'Sass', sub: 'CSS Preprocessor', icon: SiSass, color: '#CC6699' },
-]
-
-const backendTech = [
   { name: 'Node.js', sub: 'Runtime', icon: SiNodedotjs, color: '#339933' },
   { name: 'Python', sub: 'Backend', icon: SiPython, color: '#3776AB' },
   { name: 'AWS', sub: 'Cloud Infra', icon: FaAws, color: '#FF9900' },
@@ -32,10 +43,44 @@ const backendTech = [
 ]
 
 const iconMap = {
+  // Languages & Technologies
   'React': SiReact, 'Next.js': SiNextdotjs, 'Vue 3': SiVuedotjs, 'Tailwind CSS': SiTailwindcss,
   'Figma': SiFigma, 'GSAP': SiGreensock, 'TypeScript': SiTypescript, 'Sass': SiSass,
   'Node.js': SiNodedotjs, 'Python': SiPython, 'MongoDB': SiMongodb, 'Docker': SiDocker,
-  'PostgreSQL': SiPostgresql, 'GraphQL': SiGraphql, 'Firebase': SiFirebase, 'AWS': FaAws
+  'PostgreSQL': SiPostgresql, 'GraphQL': SiGraphql, 'Firebase': SiFirebase, 'AWS': FaAws,
+  'Java script': SiJavascript, 'JavaScript': SiJavascript,
+
+  // Services
+  'Website Designing': FaPaintBrush,
+  'Website Development': FaLaptopCode,
+  'Software Development & CRM': FaCogs,
+  'Digital Marketing': FaBullhorn,
+  'Search Engine Optimization (SEO)': FaSearch,
+  'SEO': FaSearch,
+  'Ecommerce Solution': FaShoppingCart,
+  'Logo Designing & Brand Identity': FaPalette,
+  'Brochure Designing': FaBookOpen,
+  'Domain Registration': FaGlobe,
+  'Web Hosting Solutions': FaServer,
+  'Enterprise Email Solutions': FaEnvelopeOpenText,
+  'Company Profile Designing': FaBuilding,
+  'WhatsApp Promotional Images': FaWhatsapp,
+
+  // Direct icon names fallback
+  'FaPaintBrush': FaPaintBrush,
+  'FaLaptopCode': FaLaptopCode,
+  'FaCogs': FaCogs,
+  'FaBullhorn': FaBullhorn,
+  'FaSearch': FaSearch,
+  'FaShoppingCart': FaShoppingCart,
+  'FaPalette': FaPalette,
+  'FaBookOpen': FaBookOpen,
+  'FaGlobe': FaGlobe,
+  'FaServer': FaServer,
+  'FaEnvelopeOpenText': FaEnvelopeOpenText,
+  'FaBuilding': FaBuilding,
+  'FaWhatsapp': FaWhatsapp,
+  'FaChartLine': FaChartLine
 };
 
 const TechnologiesSection = ({ technologiesData, homeExtraData }) => {

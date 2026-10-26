@@ -293,48 +293,18 @@ export default async function ProjectDetailPage({ params }) {
                       <span className="dot dot-green"></span>
                     </div>
 
-                    {project.projectUrl ? (
-                      <a 
-                        href={project.projectUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="browser-url-bar"
-                        title={`Open ${project.projectUrl}`}
-                      >
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <span className="url-text">
-                          {project.projectUrl.replace(/^https?:\/\//, '')}
-                        </span>
-                      </a>
-                    ) : (
-                      <div className="browser-url-bar">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <span className="url-text">
-                          {`thewebtycoons.com/projects/${project.slug}`}
-                        </span>
-                      </div>
-                    )}
+                    <div className="browser-url-bar">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lock-icon">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                      <span className="url-text">
+                        {project.projectUrl ? project.projectUrl.replace(/^https?:\/\//, '') : `thewebtycoons.com/projects/${project.slug}`}
+                      </span>
+                    </div>
 
                     <div className="browser-actions">
-                      {project.projectUrl ? (
-                        <a 
-                          href={project.projectUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="action-pill"
-                          style={{ textDecoration: 'none' }}
-                        >
-                          Live Preview
-                        </a>
-                      ) : (
-                        <span className="action-pill">Live Preview</span>
-                      )}
+                      <span className="action-pill">Live Preview</span>
                     </div>
                   </div>
 
@@ -404,18 +374,6 @@ export default async function ProjectDetailPage({ params }) {
                   </div>
                 )}
 
-                {/* Action Row */}
-                {project.projectUrl && (
-                  <div className="overview-actions-row">
-                    <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="primary-glow-btn">
-                      <span>Visit Site</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="7" y1="17" x2="17" y2="7"></line>
-                        <polyline points="7 7 17 7 17 17"></polyline>
-                      </svg>
-                    </a>
-                  </div>
-                )}
               </div>
 
             </div>

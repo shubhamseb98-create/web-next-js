@@ -22,6 +22,7 @@ import ExpandingHero from "src/components/features/webtycoons/sections/Expanding
 const ClientsSlider = dynamic(() => import("src/components/features/webtycoons/sections/ClientsSlider"));
 const StatsCounter = dynamic(() => import("src/components/features/webtycoons/sections/StatsCounter"));
 const GsapFeaturedProjects = dynamic(() => import("src/components/features/webtycoons/sections/GsapFeaturedProjects"));
+const WebflowShowcaseProjects = dynamic(() => import("src/components/features/webtycoons/sections/WebflowShowcaseProjects"));
 const WhyChooseUs = dynamic(() => import("src/components/features/webtycoons/sections/WhyChooseUs"));
 const TeamSection = dynamic(() => import("src/components/features/webtycoons/sections/TeamSection"));
 const TestimonialsSection = dynamic(() => import("src/components/features/webtycoons/sections/TestimonialsSection"));
@@ -67,7 +68,7 @@ export default async function WebTycoonsHomePage() {
   const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, clients, achievements, technologies, teamMembers, featuredProjectsSection, whyChooses, founderSection] = await Promise.all([
     getHomeSeo(),
     Blog.find({ isPublished: true }).sort({ publishedAt: -1, createdAt: -1 }).limit(5).lean(),
-    Portfolio.find({ status: 'active', isFeatured: true }).sort({ sort: 1 }).limit(6).lean(),
+    Portfolio.find({ status: 'active' }).sort({ isFeatured: -1, sort: 1 }).lean(),
     Testimonial.find({ isActive: true }).sort({ sort: 1 }).lean(),
     GlobalSetting.findOne().lean(),
     // New dynamic queries
@@ -151,7 +152,7 @@ export default async function WebTycoonsHomePage() {
       {/* Technologies - Server Component */}
       <TechnologiesSection technologiesData={serialize(technologies)} homeExtraData={serialize(homeExtra)} />
 
-      {/* Featured Projects - Client Component for GSAP */}
+      {/* Original Featured Projects - GSAP Stacked Section */}
       <GsapFeaturedProjects 
         portfolioData={serialize(portfolio)} 
         sectionData={{
@@ -159,6 +160,18 @@ export default async function WebTycoonsHomePage() {
           title: homeExtra?.featured_project_title || featuredProjectsSection?.title || 'Featured',
           titleHighlight: homeExtra?.featured_project_subtitle || featuredProjectsSection?.titleHighlight || 'Projects',
           intro: homeExtra?.featured_project_description || featuredProjectsSection?.intro || 'Explore a curated selection of our most recent and impactful work. Scroll down to experience our stacked GSAP presentation.'
+        }} 
+      />
+
+      {/* Webflow-Style 3D Perspective Projects Showcase (New Section Below) */}
+      <WebflowShowcaseProjects 
+        portfolioData={serialize(portfolio)} 
+        sectionData={{
+          ...serialize(featuredProjectsSection),
+          hashtagTitle: '#MadeinWebTycoons',
+          eyebrow: 'WORK IN ACTION',
+          title: 'Crafted with Excellence',
+          intro: 'Explore real-world web applications and digital platforms engineered by WebTycoons.'
         }} 
       />
       {/* Why Choose Us - Client Component */}

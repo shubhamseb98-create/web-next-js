@@ -1,0 +1,786 @@
+/* ── Webflow #MadeinWebflow 3D Perspective Showcase Section ── */
+.showcaseSection {
+  background-color: #000000;
+  position: relative;
+  overflow: hidden;
+  padding: 85px 0 clamp(90px, 10vw, 84px) 0;
+  width: 100%;
+}
+
+/* Header Area: Big Bold Centered Title */
+.headerContainer {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+  margin-bottom: -15px;
+  /* Cards gently brush beneath the baseline just like reference */
+}
+
+/* Iconic #MadeinWebflow-style Headline */
+.bigHeadline {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(3.6rem, 7.5vw, 6.8rem);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin: 0;
+  text-transform: none;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+  text-align: center;
+}
+
+/* ── 3D Perspective Stage ── */
+.perspectiveStage {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  padding: 130px 0 45px 0;
+  z-index: 5;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  --tilt-angle: -4.5deg;
+}
+
+.perspectiveStage:active,
+.isDragging,
+.isDragging .showcaseCard {
+  cursor: grabbing !important;
+}
+
+/* Tilt Wrapper anchored to screen center so cards never plunge downwards */
+.tiltTrackWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transform: rotateZ(var(--tilt-angle, -4.5deg));
+  transform-origin: center center;
+  pointer-events: auto;
+}
+
+/* The Continuous Parallel Stream Track (Translates smoothly along tilted axis) */
+.streamTrack {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+  padding: 20px 40px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Individual Showcase Card (Exact Webflow Overlapping Cascading Deck) ── */
+.showcaseCard {
+  position: relative;
+  width: clamp(320px, 26vw, 440px);
+  height: clamp(200px, 16.5vw, 275px);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0d110e;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  /* Exact Webflow 3D tilt: -10deg rotation + 18deg isometric shear */
+  transform: rotate(-10deg) skewX(18deg);
+  /* Overlap with negative margin so cards cascade seamlessly */
+  margin-right: clamp(-150px, -12vw, -180px);
+  box-shadow:
+    16px 14px 38px rgba(0, 0, 0, 0.9),
+    4px 4px 12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s ease,
+    border-color 0.3s ease;
+  flex-shrink: 0;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Hover elevation: lifts out forward toward the user */
+.showcaseCard:hover {
+  transform: rotate(-10deg) skewX(18deg) translateY(-25px) scale(1.05);
+  z-index: 9999 !important;
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    25px 40px 80px rgba(0, 0, 0, 0.95),
+    0 0 35px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.showcaseCard:active {
+  transform: rotate(-10deg) skewX(18deg) translateY(-14px) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+/* Screenshot Container */
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #090c0a;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.projectImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.4s ease;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+
+.showcaseCard:hover .projectImage {
+  transform: scale(1.03);
+}
+
+/* Clean Bottom Label - Revealed on hover only so screenshot remains 100% visible */
+.cardFooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, transparent 0%, rgba(5, 8, 5, 0.85) 50%, rgba(5, 8, 5, 0.98) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.showcaseCard:hover .cardFooter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cardCategory {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #6edb4a;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.cardTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* ── Floating "Made in Webflow"-style Badge (Bottom-Right) ── */
+.floatingBadge {
+  position: absolute;
+  bottom: 24px;
+  right: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease;
+  z-index: 30;
+}
+
+.floatingBadge:hover {
+  background: #111812;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.badgeIcon {
+  width: 14px;
+  height: 14px;
+  color: #52a436;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ── Webflow Studio Designer Lightbox Popup (Matching Image 2) ──
+   ══════════════════════════════════════════════════════════════ */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 3vw, 36px);
+  overflow: hidden;
+}
+
+.modalContentWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1240px;
+  height: min(88vh, 760px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Blue Circular Close Button (Top-Left of Modal, exact match to reference image 2) */
+.blueCloseBtn {
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #146ef5;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(20, 110, 245, 0.55);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.blueCloseBtn:hover {
+  background: #0d5dd6;
+  box-shadow: 0 10px 28px rgba(20, 110, 245, 0.7);
+}
+
+.blueCloseBtn:active {
+  background: #094cb8;
+}
+
+/* Studio Editor Frame */
+.studioFrame {
+  width: 100%;
+  height: 100%;
+  background: #121413;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(0, 0, 0, 0.7);
+}
+
+/* Studio Top Toolbar */
+.studioTopBar {
+  height: 44px;
+  min-height: 44px;
+  background: #181b19;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  user-select: none;
+}
+
+.topBarLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.studioLogoIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: #146ef5;
+  color: #ffffff;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-family: sans-serif;
+  box-shadow: 0 2px 8px rgba(20, 110, 245, 0.4);
+}
+
+.studioNavTabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.studioTab {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.studioTab:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.studioTabActive {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.topBarCenter {
+  display: flex;
+  align-items: center;
+}
+
+.pagePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 320px;
+}
+
+.pagePillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  flex-shrink: 0;
+}
+
+.pagePillText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: monospace;
+}
+
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatarPills {
+  display: flex;
+  align-items: center;
+}
+
+.avatarDot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #181b19;
+  margin-left: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  user-select: none;
+}
+
+.shareBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.publishBtn {
+  font-size: 11px;
+  font-weight: 700;
+  background: #52a436;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+/* Studio Workspace Area */
+.studioWorkspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Left Micro Toolstrip */
+.leftToolstrip {
+  width: 44px;
+  min-width: 44px;
+  background: #141715;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0;
+  gap: 16px;
+  user-select: none;
+}
+
+.toolstripIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toolstripIcon:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.toolstripActive {
+  background: rgba(82, 164, 54, 0.15);
+  color: #52a436;
+}
+
+/* Center Canvas Viewport */
+.centerCanvas {
+  flex: 1;
+  min-width: 0;
+  background: #090c0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.canvasWebsiteContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvasWebsiteImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  user-select: none;
+}
+
+/* ── Floating Bottom-Right Card (Identical to "Claude Science" in Image 2) ── */
+.floatingProjectCard {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10;
+  background: #ffffff;
+  color: #111111;
+  border-radius: 12px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+}
+
+.floatingCardIconBox {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: #111827;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.floatingCardText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.floatingCardTitle {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.floatingCardCategory {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.floatingCardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-left: 4px;
+}
+
+.floatingCardCta:hover {
+  background: #52a436;
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+/* Right Studio Inspector Panel */
+.rightInspector {
+  width: 250px;
+  min-width: 250px;
+  background: #141715;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.inspectorHeader {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+}
+
+.inspectorTitle {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #ffffff;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.inspectorSub {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  display: block;
+}
+
+.inspectorGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.inspectorLabel {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.inspectorValue {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #e2e8f0;
+  word-break: break-word;
+}
+
+.inspectorActionBox {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.inspectorCtaBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  background: #52a436;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.inspectorCtaBtn:hover {
+  background: #448c2c;
+  transform: translateY(-1px);
+}
+
+/* ── Mobile / Tablet Responsiveness ── */
+@media (max-width: 991px) {
+  .showcaseSection {
+    padding: 60px 0 clamp(140px, 18vw, 190px) 0;
+  }
+
+  .perspectiveStage {
+    padding: 15px 0 25px 0;
+    --tilt-angle: -3.5deg;
+  }
+
+  .streamTrack {
+    padding: 15px 25px;
+  }
+
+  .showcaseCard {
+    width: 290px;
+    height: 180px;
+    margin-right: -120px;
+    transform: rotate(-8deg) skewX(14deg);
+  }
+
+  .showcaseCard:hover {
+    transform: rotate(-8deg) skewX(14deg) translateY(-18px) scale(1.04);
+  }
+
+  .floatingBadge {
+    position: static;
+    margin: 25px auto 0 auto;
+    display: table;
+  }
+
+  /* Modal responsive adjustments */
+  .modalBackdrop {
+    padding: 12px;
+  }
+
+  .modalContentWrapper {
+    height: 90vh;
+  }
+
+  .blueCloseBtn {
+    top: -12px;
+    left: 4px;
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .leftToolstrip,
+  .rightInspector {
+    display: none;
+  }
+
+  .floatingProjectCard {
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+    padding: 10px 14px;
+  }
+
+  .floatingCardTitle {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .bigHeadline {
+    font-size: 2.6rem;
+  }
+
+  .headerContainer {
+    margin-bottom: 5px;
+  }
+
+  .showcaseSection {
+    padding: 50px 0 clamp(120px, 20vw, 160px) 0;
+  }
+
+  .perspectiveStage {
+    --tilt-angle: -2.5deg;
+    padding: 10px 0 20px 0;
+  }
+
+  .streamTrack {
+    padding: 10px 15px;
+  }
+
+  .showcaseCard {
+    width: 230px;
+    height: 145px;
+    margin-right: -95px;
+    transform: rotate(-6deg) skewX(12deg);
+  }
+
+  .showcaseCard:hover {
+    transform: rotate(-6deg) skewX(12deg) translateY(-12px) scale(1.03);
+  }
+
+  .topBarCenter,
+  .avatarPills,
+  .shareBadge {
+    display: none;
+  }
+}

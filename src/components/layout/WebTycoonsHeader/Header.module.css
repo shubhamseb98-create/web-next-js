@@ -13,9 +13,9 @@
   display: flex;
   flex-direction: column;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.3s ease,
-              border-color 0.3s ease,
-              box-shadow 0.3s ease;
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* ══════════════════════════════════════════════════
@@ -27,12 +27,12 @@
   background: rgba(6, 10, 7, 0.75);
   backdrop-filter: blur(16px) saturate(160%);
   -webkit-backdrop-filter: blur(16px) saturate(160%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid #ffffff14;
   overflow: hidden;
   transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.25s ease,
-              transform 0.35s ease,
-              border-color 0.3s ease;
+    opacity 0.25s ease,
+    transform 0.35s ease,
+    border-color 0.3s ease;
   max-height: 44px;
   opacity: 1;
   position: relative;
@@ -171,11 +171,11 @@
   background: rgba(10, 14, 11, 0.55);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #ffffff2b;
   transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.3s ease,
-              border-color 0.3s ease,
-              box-shadow 0.3s ease;
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
   position: relative;
   z-index: 2;
 }
@@ -187,13 +187,14 @@
   -webkit-backdrop-filter: blur(26px) saturate(200%);
   border-bottom: 1px solid rgba(82, 164, 54, 0.3);
   box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7),
-              0 0 20px -5px rgba(82, 164, 54, 0.2);
+    0 0 20px -5px rgba(82, 164, 54, 0.2);
 }
 
 @media (max-width: 991px) {
   .mainServicesBar {
     height: 70px;
   }
+
   .headerScrolled .mainServicesBar {
     height: 64px;
   }
@@ -343,9 +344,9 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 
-              0 0 25px rgba(82, 164, 54, 0.16),
-              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85),
+    0 0 25px rgba(82, 164, 54, 0.16),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
   z-index: 100;
 }
 
@@ -806,8 +807,8 @@
   margin-left: 2px;
 }
 
-.drawerItem:hover > .drawerLink .hoverBar,
-.drawerItem:hover > .drawerDropdownTrigger .drawerLink .hoverBar,
+.drawerItem:hover>.drawerLink .hoverBar,
+.drawerItem:hover>.drawerDropdownTrigger .drawerLink .hoverBar,
 .drawerLink:hover .hoverBar {
   width: 26px;
   max-width: 26px;
@@ -817,7 +818,7 @@
 }
 
 .drawerLink:hover .drawerLinkText,
-.drawerItem:hover > .drawerLink .drawerLinkText {
+.drawerItem:hover>.drawerLink .drawerLinkText {
   color: #6bc24b;
 }
 
@@ -858,6 +859,7 @@
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -957,6 +959,7 @@
   .sideDrawerMenu {
     max-width: 100%;
   }
+
   .drawerHeader,
   .drawerLinksWrapper,
   .drawerFooter {

@@ -152,8 +152,8 @@ const ExpandingHero = ({ bannerData }) => {
       const initialClip = isMobile
         ? 'inset(62% 4% 4% 4% round 16px)'
         : isTablet
-        ? 'inset(55% 8% 4% 8% round 20px)'
-        : 'inset(52% 16% 4% 16% round 24px)'
+        ? 'inset(56% 8% 4% 8% round 20px)'
+        : 'inset(55% 15% 4% 15% round 22px)'
 
       gsap.set(copy, { opacity: 1, y: 0 })
       gsap.set(media, { clipPath: initialClip })
@@ -368,8 +368,8 @@ const ExpandingHero = ({ bannerData }) => {
             className={styles.heroCopyInner}
           >
             {/* Eyebrow / Wordmark */}
-            <motion.div variants={childVariants} className="d-flex justify-content-center" style={{ marginBottom: '10px' }}>
-              <span className="section-label" style={{ marginBottom: 0 }}>
+            <motion.div variants={childVariants} className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
+              <span className={`section-label ${styles.heroBadge}`} style={{ marginBottom: 0 }}>
                 {currentSlide.badge}
               </span>
             </motion.div>
@@ -377,7 +377,7 @@ const ExpandingHero = ({ bannerData }) => {
             {/* Main Hero Headline */}
             <motion.h1
               variants={childVariants}
-              className={styles.heroTitle}
+              className={`${styles.heroTitle} ${isLongHeading ? styles.heroTitleLong : ''}`}
               style={currentSlide.titleFontSize ? { '--custom-title-size': currentSlide.titleFontSize } : undefined}
             >
               {currentSlide.topHeading ? (

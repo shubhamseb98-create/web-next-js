@@ -33,18 +33,17 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
-  bottom: calc(48% + 28px);
+  top: 112px;
+  bottom: calc(45% + 14px);
   z-index: 10;
-  padding-top: clamp(75px, 9vh, 95px);
   padding-inline: 1.5rem;
-  padding-bottom: 0;
-  max-width: 1050px;
+  padding-block: 0;
+  max-width: 1100px;
   margin: 0 auto;
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   pointer-events: auto;
   will-change: transform, opacity;
@@ -56,20 +55,45 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  margin-top: auto;
+  justify-content: center;
+  margin-block: auto;
+}
+
+/* Eyebrow badge pill */
+.heroBadge {
+  font-size: clamp(0.72rem, 0.88vw, 0.82rem) !important;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 9999px;
+  background: rgba(82, 164, 54, 0.12);
+  border: 1px solid rgba(82, 164, 54, 0.35);
+  color: #6edb4a !important;
+  box-shadow: 0 0 15px rgba(82, 164, 54, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.heroBadge::before {
+  display: none !important;
 }
 
 .heroTitle {
   font-family: var(--font-heading, 'Inter', sans-serif);
-  font-size: clamp(2rem, 3.5vw, var(--custom-title-size, 3.2rem));
+  font-size: clamp(1.75rem, 2.75vw, var(--custom-title-size, 2.85rem));
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.16;
   letter-spacing: -0.025em;
   color: #ffffff;
   text-align: center;
-  margin: 0 auto 0.65rem auto;
-  max-width: 900px;
+  margin: 0 auto 0.5rem auto;
+  max-width: 980px;
+}
+
+.heroTitleLong {
+  font-size: clamp(1.55rem, 2.35vw, 2.45rem) !important;
+  max-width: 1040px;
 }
 
 .heroTitle em {
@@ -80,13 +104,13 @@
 
 .heroSub {
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: clamp(0.92rem, 1.1vw, 1.05rem);
+  font-size: clamp(0.88rem, 1.02vw, 1rem);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.45;
   color: rgba(255, 255, 255, 0.72);
   text-align: center;
-  max-width: 720px;
-  margin: 0 auto 1.15rem auto;
+  max-width: 760px;
+  margin: 0 auto 0.95rem auto;
 }
 
 .heroCta {
@@ -104,10 +128,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  padding: 0.85rem 2rem;
+  padding: 0.78rem 1.85rem;
   border-radius: 9999px;
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: #060906;
@@ -131,10 +155,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  padding: 0.85rem 2rem;
+  padding: 0.78rem 1.85rem;
   border-radius: 9999px;
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: 0.03em;
   color: #ffffff;
@@ -161,9 +185,9 @@
   width: 100%;
   height: 100%;
   z-index: 2;
-  /* Default desktop initial clip-path (exact Karma Ayurveda aspect ratio) */
-  -webkit-clip-path: inset(52% 16% 4% 16% round 24px);
-  clip-path: inset(52% 16% 4% 16% round 24px);
+  /* Default desktop initial clip-path (exact aspect ratio giving safe room above) */
+  -webkit-clip-path: inset(55% 15% 4% 15% round 22px);
+  clip-path: inset(55% 15% 4% 15% round 22px);
   will-change: clip-path;
   background-color: #0b110a;
   overflow: hidden;
@@ -428,23 +452,63 @@
   box-shadow: 0 0 15px rgba(82, 164, 54, 0.4);
 }
 
+/* ── Laptop Height Adjustments (Small screen laptop/1366x768) ── */
+@media (max-height: 740px) and (min-width: 992px) {
+  .heroCopy {
+    top: 104px;
+    bottom: calc(44% + 10px);
+  }
+  .heroTitle {
+    font-size: clamp(1.45rem, 2.2vw, 2.15rem);
+    margin-bottom: 0.35rem;
+    line-height: 1.15;
+  }
+  .heroSub {
+    font-size: 0.84rem;
+    line-height: 1.35;
+    margin-bottom: 0.7rem;
+  }
+  .primaryBtn,
+  .secondaryBtn {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.86rem;
+  }
+}
+
+@media (max-height: 620px) and (min-width: 992px) {
+  .heroCopy {
+    top: 96px;
+    bottom: calc(40% + 8px);
+  }
+  .heroTitle {
+    font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+    margin-bottom: 0.25rem;
+  }
+  .heroSub {
+    font-size: 0.78rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+}
+
 /* ── Mobile & Responsive Breakpoints ── */
 @media (max-width: 1024px) {
   .heroMedia {
-    -webkit-clip-path: inset(55% 8% 4% 8% round 20px);
-    clip-path: inset(55% 8% 4% 8% round 20px);
+    -webkit-clip-path: inset(56% 8% 4% 8% round 20px);
+    clip-path: inset(56% 8% 4% 8% round 20px);
   }
   .heroCopy {
-    bottom: calc(45% + 22px);
-    padding-top: 80px;
+    top: 76px;
+    bottom: calc(44% + 14px);
+    padding-inline: 1.25rem;
   }
   .heroTitle {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    margin-bottom: 0.55rem;
+    font-size: clamp(1.65rem, 3.8vw, 2.3rem);
+    margin-bottom: 0.45rem;
   }
   .heroSub {
-    font-size: 0.95rem;
-    margin-bottom: 0.95rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.85rem;
   }
 }
 
@@ -454,18 +518,19 @@
     clip-path: inset(62% 4% 4% 4% round 16px);
   }
   .heroCopy {
-    bottom: calc(38% + 16px);
-    padding-top: 72px;
+    top: 74px;
+    bottom: calc(38% + 12px);
+    padding-inline: 1rem;
   }
   .heroTitle {
-    font-size: clamp(1.35rem, 5.2vw, 1.85rem) !important;
+    font-size: clamp(1.3rem, 5vw, 1.75rem) !important;
     line-height: 1.2;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.4rem;
   }
   .heroSub {
-    font-size: 0.85rem;
-    line-height: 1.4;
-    margin-bottom: 0.8rem;
+    font-size: 0.82rem;
+    line-height: 1.38;
+    margin-bottom: 0.75rem;
   }
   .heroCta {
     gap: 0.5rem;
@@ -474,7 +539,7 @@
   }
   .primaryBtn,
   .secondaryBtn {
-    padding: 0.6rem 1.15rem;
+    padding: 0.55rem 1.1rem;
     font-size: 0.82rem;
     width: auto;
     max-width: none;
@@ -484,11 +549,11 @@
     padding: 0 1.25rem;
   }
   .captionHeading {
-    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    font-size: clamp(1.5rem, 5.5vw, 2.2rem);
   }
   .captionDesc {
-    font-size: 0.92rem;
-    margin-bottom: 1.2rem;
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
   }
   .soundToggleWrap {
     top: 5.5rem;

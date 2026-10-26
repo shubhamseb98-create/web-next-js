@@ -1,7 +1,7 @@
 'use client';
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Eye, X, Lock, ArrowUpRight, ArrowDown } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Lock, ArrowUpRight } from 'lucide-react';
 import styles from './WebsiteSnapshotsShowcase.module.css';
 
 export const DEFAULT_SNAPSHOTS = [
@@ -35,9 +35,9 @@ export const DEFAULT_SNAPSHOTS = [
 ];
 
 /**
- * Compact & Modern Snapshot Card with Auto-Scroll on Hover
+ * Compact & Modern Snapshot Card with Auto-Scroll on Hover (No Popups)
  */
-function SnapshotCard({ snap, index, onEnlarge }) {
+function SnapshotCard({ snap, index }) {
   const imgRef = useRef(null);
   const viewportRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -119,7 +119,7 @@ function SnapshotCard({ snap, index, onEnlarge }) {
               target="_blank"
               rel="noopener noreferrer"
               className={styles.browserExtBtn}
-              title="Open Website"
+              title="Open Website in new tab"
               onClick={(e) => e.stopPropagation()}
             >
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -128,12 +128,10 @@ function SnapshotCard({ snap, index, onEnlarge }) {
         </div>
       </div>
 
-      {/* ── Auto-Scrolling Viewport Window (Height: 340px) ── */}
+      {/* ── Auto-Scrolling Viewport Window (Height: 340px, No Popups) ── */}
       <div
         ref={viewportRef}
         className={styles.imageViewport}
-        onClick={() => onEnlarge(snap)}
-        title="Click to view full preview"
       >
         <img
           ref={imgRef}
@@ -185,8 +183,6 @@ export default function WebsiteSnapshotsShowcase({ snapshots, serviceTitle }) {
     return DEFAULT_SNAPSHOTS.slice(0, 3);
   }, [snapshots]);
 
-  const [selectedSnapshot, setSelectedSnapshot] = useState(null);
-
   return (
     <section id="website-snapshots" className={styles.snapshotsSection}>
       <div className={styles.container}>
@@ -213,82 +209,10 @@ export default function WebsiteSnapshotsShowcase({ snapshots, serviceTitle }) {
               key={snap.id || idx}
               snap={snap}
               index={idx}
-              onEnlarge={setSelectedSnapshot}
             />
           ))}
         </div>
       </div>
-
-      {/* Lightbox Fullscreen Modal */}
-      <AnimatePresence>
-        {selectedSnapshot && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={styles.lightboxBackdrop}
-            onClick={() => setSelectedSnapshot(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.22 }}
-              className={styles.lightboxCard}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={() => setSelectedSnapshot(null)}
-                className={styles.lightboxCloseBtn}
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
-
-              <div className={styles.lightboxImageWrapper}>
-                <img
-                  src={selectedSnapshot.image}
-                  alt={selectedSnapshot.name}
-                  className={styles.lightboxImage}
-                />
-              </div>
-
-              <div className={styles.lightboxInfo}>
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div>
-                    <span className={styles.categoryBadge}>{selectedSnapshot.category}</span>
-                    <h3 className="text-lg font-bold text-white mt-1">{selectedSnapshot.name}</h3>
-                  </div>
-
-                  {selectedSnapshot.link && selectedSnapshot.link !== '#' && (
-                    <a
-                      href={selectedSnapshot.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs inline-flex items-center gap-1.5 transition-colors shadow-lg shadow-emerald-950/40"
-                    >
-                      <span>Visit Live Site</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </div>
-
-                {selectedSnapshot.desc && (
-                  <p className="text-xs text-slate-300 leading-relaxed">{selectedSnapshot.desc}</p>
-                )}
-
-                {selectedSnapshot.tech && (
-                  <div className="flex items-center gap-2 pt-2 border-t border-white/10 text-[11px] text-slate-400 font-mono">
-                    <span className="text-emerald-400 font-semibold">Tech:</span>
-                    <span>{selectedSnapshot.tech}</span>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

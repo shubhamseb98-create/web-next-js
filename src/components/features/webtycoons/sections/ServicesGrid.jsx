@@ -23,49 +23,9 @@ const services = [
     imageStyle: 'small', // Use for SVG illustrations
   },
   {
-    title: 'Website Development',
-    slug: 'dynamic-website-development',
-    description: 'Building robust, scalable, and high-performance websites using the latest technologies and architectures.',
-    icon: <FiCode />,
-    image: './assets/img/homeservice/service1.webp',
-    bgColor: 'linear-gradient(135deg, #091236, #1E215D, #2B32B2)', // Deep Blue/Purple Gradient
-    hoverTextColor: '#ffffff',
-    imageStyle: 'full', // Use for background photos
-  },
-  {
-    title: 'Static Website Development',
-    slug: 'static-website-development',
-    description: 'Lightning-fast, highly secure, and beautifully designed static websites tailored to showcase your brand with zero compromises.',
-    icon: <FiSearch />,
-    image: './assets/img/homeservice/service3.svg',
-    bgColor: '#ffffffff', // White
-    hoverTextColor: '#000000ff',
-    imageStyle: 'small',
-  },
-  {
-    title: 'Ecommerce Solution',
-    slug: 'e-commerce-website-development',
-    description: 'End-to-end ecommerce platforms designed to maximize conversions and deliver seamless shopping experiences.',
-    icon: <FiShoppingCart />,
-    image: './assets/img/homeservice/service4.webp',
-    bgColor: 'linear-gradient(135deg, #2b102b, #451b4d, #70287a)', // Rich Purple Gradient
-    hoverTextColor: '#ffffff',
-    imageStyle: 'full',
-  },
-  {
-    title: 'Logo Designing',
-    slug: 'logo-designing',
-    description: 'Creating memorable, unique, and impactful logos that establish a strong and recognizable brand presence.',
-    icon: <FiPenTool />,
-    image: './assets/img/homeservice/service6.webp',
-    bgColor: 'linear-gradient(135deg, #4b120c, #7a2213, #a43419)', // Warm Rust/Red Gradient
-    hoverTextColor: '#ffffff',
-    imageStyle: 'full',
-  },
-  {
-    title: 'Domain',
+    title: 'Domain & Hosting',
     slug: 'domain',
-    description: 'Secure and reliable domain registration services to help you establish your unique identity on the web.',
+    description: 'Enterprise domain registration, NVMe cloud hosting, and secure business email solutions to establish your online authority.',
     icon: <FiGlobe />,
     image: './assets/img/homeservice/service5.svg',
     bgColor: '#f4f4f5', // Light Gray

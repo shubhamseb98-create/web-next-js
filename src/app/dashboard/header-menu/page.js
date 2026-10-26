@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import Breadcrumb from "../../../components/dashboard/Breadcrumb";
 import Toast from "../../../components/dashboard/Toast";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
@@ -43,6 +44,7 @@ export default function HeaderManagementPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toasts, setToasts] = useState([]);
+  const [tierFilter, setTierFilter] = useState("all"); // 'all' | 'topNav' | 'servicesNav'
 
   // Modal states
   const [isTabModalOpen, setIsTabModalOpen] = useState(false);
@@ -57,6 +59,7 @@ export default function HeaderManagementPage() {
     name: "",
     path: "",
     order: 0,
+    tier: "servicesNav",
     isActive: true,
     hasDropdown: false,
     openInNewTab: false,
@@ -105,6 +108,7 @@ export default function HeaderManagementPage() {
       name: "",
       path: "/",
       order: items.length + 1,
+      tier: tierFilter !== "all" ? tierFilter : "servicesNav",
       isActive: true,
       hasDropdown: false,
       openInNewTab: false,
@@ -124,6 +128,7 @@ export default function HeaderManagementPage() {
       name: item.name,
       path: item.path,
       order: item.order || 0,
+      tier: item.tier || "servicesNav",
       isActive: item.isActive !== false,
       hasDropdown: Boolean(item.hasDropdown),
       openInNewTab: Boolean(item.openInNewTab),
@@ -455,22 +460,22 @@ export default function HeaderManagementPage() {
         </div>
 
         <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800/80 flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-lg bg-[#52a436]/10 border border-[#52a436]/20 flex items-center justify-center text-[#52a436]">
+          <div className="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xl font-bold text-white">{activeItemsCount}</div>
-            <div className="text-xs text-slate-400">Active on Website</div>
+            <div className="text-xl font-bold text-white">{items.filter(i => i.tier === 'topNav').length}</div>
+            <div className="text-xs text-slate-400">Tier 1: Top Bar Tabs</div>
           </div>
         </div>
 
         <div className="p-4 rounded-xl bg-slate-900/70 border border-slate-800/80 flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+          <div className="w-10 h-10 rounded-lg bg-[#52a436]/10 border border-[#52a436]/20 flex items-center justify-center text-[#52a436]">
             <Layers className="w-5 h-5" />
           </div>
           <div>
-            <div className="text-xl font-bold text-white">{dropdownItemsCount}</div>
-            <div className="text-xs text-slate-400">Dropdown Menus</div>
+            <div className="text-xl font-bold text-white">{items.filter(i => (i.tier || 'servicesNav') === 'servicesNav').length}</div>
+            <div className="text-xs text-slate-400">Tier 2: Services Tabs</div>
           </div>
         </div>
 
@@ -487,54 +492,66 @@ export default function HeaderManagementPage() {
         </div>
       </div>
 
-      {/* Live Header Preview Bar */}
+      {/* Live 2-Tier Header Preview */}
       <Card className="bg-slate-900/90 border-slate-800/90 overflow-hidden shadow-xl shadow-black/40">
         <CardHeader className="py-3 px-5 border-b border-slate-800/80 bg-slate-950/60 flex flex-row items-center justify-between">
           <CardTitle className="text-xs font-semibold tracking-wider uppercase text-slate-400 flex items-center gap-2">
             <Eye className="w-3.5 h-3.5 text-[#52a436]" />
-            Live Website Header Preview
+            Live 2-Tier Dual Header Preview
           </CardTitle>
           <span className="text-[11px] text-slate-500 font-mono">
-            {activeItemsCount} tab{activeItemsCount !== 1 ? "s" : ""} visible
+            {activeItemsCount} of {items.length} tabs active
           </span>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5 bg-gradient-to-b from-[#0e140e] to-[#080d08]">
-          <div className="rounded-xl border border-white/10 bg-black/60 backdrop-blur-md p-3 sm:px-6 flex items-center justify-between gap-4 overflow-x-auto">
-            {/* Logo Preview */}
+        <CardContent className="p-4 sm:p-5 bg-gradient-to-b from-[#0e140e] to-[#080d08] space-y-2.5">
+          {/* Tier 1 Preview: Corporate Top Utility Bar */}
+          <div className="rounded-lg border border-white/10 bg-black/80 px-4 py-2 flex items-center justify-between gap-4 text-xs overflow-x-auto">
+            <div className="flex items-center gap-3 text-slate-300 font-medium whitespace-nowrap">
+              <span className="text-sky-400 text-[10px] uppercase tracking-wider font-bold font-mono px-1.5 py-0.5 rounded bg-sky-500/10 border border-sky-500/20">
+                Tier 1 Top Bar
+              </span>
+              {items
+                .filter((item) => item.tier === 'topNav' && item.isActive)
+                .map((tab) => (
+                  <span key={tab._id || tab.name} className="hover:text-white transition-colors">
+                    {tab.name}
+                  </span>
+                ))}
+            </div>
+            {config.showCtaButton && (
+              <div className="flex-shrink-0">
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded bg-white text-black">
+                  {config.ctaButtonText}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Tier 2 Preview: Main Dedicated Services Bar */}
+          <div className="rounded-xl border border-white/15 bg-black/60 backdrop-blur-md px-4 py-2.5 flex items-center justify-between gap-4 overflow-x-auto">
             <div className="flex items-center gap-2 flex-shrink-0">
-              <span className="text-[#52a436] font-bold text-base sm:text-lg tracking-tight flex items-center gap-1.5">
+              <span className="text-[#52a436] font-bold text-sm tracking-tight">
                 <span className="text-white">web</span> tycoons
               </span>
             </div>
-
-            {/* Nav Tabs Preview */}
-            <div className="flex items-center gap-1 sm:gap-4 overflow-x-auto py-1">
+            <div className="flex items-center gap-2.5 overflow-x-auto py-0.5">
+              <span className="text-emerald-400 text-[10px] uppercase tracking-wider font-bold font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 flex-shrink-0">
+                Tier 2 Services
+              </span>
               {items
-                .filter((item) => item.isActive)
+                .filter((item) => (item.tier || 'servicesNav') === 'servicesNav' && item.isActive)
                 .map((tab) => (
                   <div
                     key={tab._id || tab.name}
-                    className="flex items-center gap-1 text-xs sm:text-sm font-medium text-slate-200 hover:text-[#52a436] px-2.5 py-1 rounded-md transition-colors whitespace-nowrap bg-white/[0.02]"
+                    className="flex items-center gap-1 text-xs font-semibold text-slate-200 hover:text-[#52a436] px-2 py-0.5 rounded transition-colors whitespace-nowrap bg-white/[0.02]"
                   >
                     <span>{tab.name}</span>
                     {tab.hasDropdown && (
-                      <ChevronDown className="w-3 h-3 text-slate-400 opacity-75" />
+                      <ChevronDown className="w-2.5 h-2.5 text-slate-400 opacity-75" />
                     )}
                   </div>
                 ))}
             </div>
-
-            {/* CTA Button Preview */}
-            {config.showCtaButton && (
-              <div className="flex-shrink-0">
-                <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/10 text-white border border-white/15 flex items-center gap-1.5">
-                  {config.ctaButtonText}
-                  {config.ctaButtonAction === "modal" && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#52a436]" />
-                  )}
-                </span>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -548,13 +565,53 @@ export default function HeaderManagementPage() {
               Navigation Tabs & Structure
             </CardTitle>
             <p className="text-xs text-slate-400 mt-0.5">
-              Drag or use arrows to change tab sequence. Toggle switches to show or hide items on the site instantly.
+              Manage both Tier 1 (Corporate Top Bar) and Tier 2 (Services Navbar) tabs, reorder, and link to CMS page content.
             </p>
           </div>
           <span className="text-xs text-slate-400 font-mono bg-slate-800/80 px-2.5 py-1 rounded-md self-start sm:self-auto">
             {items.length} Registered Tabs
           </span>
         </CardHeader>
+
+        {/* Tier Filter Tabs */}
+        <div className="px-5 sm:px-6 py-3 bg-slate-950/50 border-b border-slate-800 flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-slate-400 mr-1 font-medium">Filter Navbar:</span>
+          <button
+            type="button"
+            onClick={() => setTierFilter('all')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              tierFilter === 'all'
+                ? 'bg-[#52a436] text-white shadow-md shadow-[#52a436]/20'
+                : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            All Tabs ({items.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTierFilter('topNav')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              tierFilter === 'topNav'
+                ? 'bg-sky-600 text-white shadow-md shadow-sky-600/20'
+                : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-sky-400" />
+            Tier 1: Corporate Top Bar ({items.filter(i => i.tier === 'topNav').length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setTierFilter('servicesNav')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              tierFilter === 'servicesNav'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            Tier 2: Services Navbar ({items.filter(i => (i.tier || 'servicesNav') === 'servicesNav').length})
+          </button>
+        </div>
 
         <CardContent className="p-0">
           {loading ? (
@@ -589,9 +646,13 @@ export default function HeaderManagementPage() {
             </div>
           ) : (
             <div className="divide-y divide-slate-800">
-              {items.map((tab, index) => {
+              {items
+                .filter(tab => tierFilter === 'all' ? true : (tab.tier || 'servicesNav') === tierFilter)
+                .map((tab, index) => {
                 const isExpanded = Boolean(expandedRows[tab._id]);
                 const subItemsCount = Array.isArray(tab.subItems) ? tab.subItems.length : 0;
+                const isServiceParent = tab.path && tab.path.startsWith('/services/');
+                const serviceSlug = isServiceParent ? tab.path.replace('/services/', '').split('/')[0] : null;
 
                 return (
                   <div key={tab._id || index} className="transition-colors hover:bg-slate-800/30">
@@ -633,6 +694,17 @@ export default function HeaderManagementPage() {
                               {tab.name}
                             </span>
 
+                            {/* Tier Badge */}
+                            {tab.tier === 'topNav' ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30">
+                                Tier 1: Top Bar
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                Tier 2: Services
+                              </span>
+                            )}
+
                             {tab.hasDropdown && (
                               <button
                                 type="button"
@@ -672,7 +744,19 @@ export default function HeaderManagementPage() {
                       </div>
 
                       {/* Right: Toggle Status & Actions */}
-                      <div className="flex items-center gap-3 sm:gap-4 self-end sm:self-auto">
+                      <div className="flex items-center gap-2.5 sm:gap-3 self-end sm:self-auto flex-wrap">
+                        {/* Direct link to Page CMS if service */}
+                        {serviceSlug && (
+                          <Link
+                            href={`/dashboard/services/${serviceSlug}`}
+                            className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 font-semibold transition-colors"
+                            title={`Edit ${tab.name} Inner Page CMS Content`}
+                          >
+                            <span>Edit Page CMS</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </Link>
+                        )}
+
                         {/* Visibility Switch */}
                         <div className="flex items-center gap-2">
                           <Switch
@@ -751,6 +835,9 @@ export default function HeaderManagementPage() {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                             {tab.subItems.map((sub, sIdx) => {
                               const isSubActive = sub.isActive !== false;
+                              const isSubService = sub.path && sub.path.startsWith('/services/');
+                              const subServiceSlug = isSubService ? sub.path.replace('/services/', '').split('/')[0] : null;
+
                               return (
                                 <div
                                   key={sub._id || sIdx}
@@ -779,8 +866,20 @@ export default function HeaderManagementPage() {
                                     </div>
                                   </div>
 
-                                  {/* Direct ON / OFF Switch for sub-item */}
                                   <div className="flex items-center gap-2 flex-shrink-0">
+                                    {/* Direct CMS Page Edit Link */}
+                                    {subServiceSlug && (
+                                      <Link
+                                        href={`/dashboard/services/${subServiceSlug}`}
+                                        className="text-[11px] font-semibold px-2 py-1 rounded bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25 border border-emerald-500/30 flex items-center gap-1 transition-colors"
+                                        title={`Edit ${sub.label} Page Content (Hero, Bento Cards, FAQs, etc.)`}
+                                      >
+                                        <span>Edit CMS</span>
+                                        <ExternalLink className="w-2.5 h-2.5" />
+                                      </Link>
+                                    )}
+
+                                    {/* Direct ON / OFF Switch for sub-item */}
                                     <Switch
                                       checked={isSubActive}
                                       onCheckedChange={() => handleToggleSubItemActive(tab, sIdx)}
@@ -825,6 +924,37 @@ export default function HeaderManagementPage() {
 
           <form onSubmit={handleSaveTab} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Navigation Tier Selector (Which Navbar?) */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-300">Navigation Tier (Which Navbar?)</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setTabForm({ ...tabForm, tier: 'topNav' })}
+                    className={`p-3 rounded-xl border text-left transition-all ${
+                      tabForm.tier === 'topNav'
+                        ? 'bg-sky-500/15 border-sky-500 text-white shadow-md shadow-sky-500/20'
+                        : 'bg-black/30 border-white/10 text-slate-400 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="text-xs font-bold text-sky-400">Tier 1: Corporate Top Bar</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">Home, Brand Story, Projects, Blog, Contact</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTabForm({ ...tabForm, tier: 'servicesNav' })}
+                    className={`p-3 rounded-xl border text-left transition-all ${
+                      tabForm.tier === 'servicesNav'
+                        ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                        : 'bg-black/30 border-white/10 text-slate-400 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="text-xs font-bold text-emerald-400">Tier 2: Services Navbar</div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">Website Designing, Social Media, etc.</div>
+                  </button>
+                </div>
+              </div>
+
               {/* Tab Name / Title */}
               <FloatingInput
                 label="Tab Name / Title *"

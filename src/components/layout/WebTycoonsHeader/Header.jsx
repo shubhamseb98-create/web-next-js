@@ -1,44 +1,22 @@
 "use client";
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation'
-import { FaInstagram, FaFacebookF, FaTwitter, FaLinkedinIn, FaYoutube, FaChevronDown } from 'react-icons/fa'
-import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  FaInstagram, 
+  FaFacebookF, 
+  FaTwitter, 
+  FaLinkedinIn, 
+  FaYoutube, 
+  FaChevronDown,
+  FaPhoneAlt,
+  FaEnvelope
+} from 'react-icons/fa'
 import { useScrolled } from '../../features/webtycoons/hooks/useScroll'
 import ContactModal from '../ContactModal/ContactModal'
+import { DEFAULT_HEADER_ITEMS } from '../../../data/headerMenuDefaults'
 import styles from './Header.module.css'
-
-const INITIAL_NAV_LINKS = [
-  { name: 'Home', path: '/', order: 1, isActive: true, hasDropdown: false, subItems: [] },
-  { name: 'Brand Story', path: '/about', order: 2, isActive: true, hasDropdown: false, subItems: [] },
-  {
-    name: 'Services',
-    path: '/services/website-designing',
-    order: 3,
-    isActive: true,
-    hasDropdown: true,
-    subItems: [
-      { label: 'Website Designing', path: '/services/website-designing' },
-      { label: 'Website Development', path: '/services/web-development' },
-      { label: 'Software Development', path: '/services/software-development' },
-      { label: 'Digital Marketing', path: '/services/digital-marketing' },
-      { label: 'Search Engine Optimization', path: '/services/search-engine-optimization' },
-      { label: 'Ecommerce Solution', path: '/services/ecommerce-solution' },
-      { label: 'Logo Designing', path: '/services/logo-designing' },
-      { label: 'Brochure Designing', path: '/services/brochure-designing' },
-      { label: 'Company Profile', path: '/services/company-profile' },
-      { label: 'WhatsApp Promotional Images', path: '/services/whatsapp-promotional-images' },
-      { label: 'Domain', path: '/services/domain' },
-      { label: 'Hosting Solution', path: '/services/hosting-solution' },
-      { label: 'Email Solution', path: '/services/email-solution' },
-    ]
-  },
-  { name: 'Projects', path: '/projects', order: 4, isActive: true, hasDropdown: false, subItems: [] },
-  { name: 'CRM Products', path: '/products', order: 5, isActive: true, hasDropdown: false, subItems: [] },
-  { name: 'Blog', path: '/blog', order: 6, isActive: true, hasDropdown: false, subItems: [] },
-  { name: 'Contact Us', path: '/contact', order: 7, isActive: true, hasDropdown: false, isSpecialCta: true, ctaAction: 'modal', subItems: [] },
-]
 
 const formatSubMenuLabel = (str, max = 40) => {
   if (!str) return '';
@@ -46,9 +24,20 @@ const formatSubMenuLabel = (str, max = 40) => {
   return str.slice(0, max).trim() + '...';
 };
 
+const isCorporateNavName = (name = '') => {
+  const n = name.toLowerCase().trim();
+  return ['home', 'brand story', 'about', 'about us', 'projects', 'portfolio', 'blog', 'contact us', 'contact'].includes(n);
+};
+
 const formatInitialNav = (data) => {
-  if (!Array.isArray(data) || data.length === 0) return INITIAL_NAV_LINKS;
-  return data
+  let source = Array.isArray(data) && data.length > 0 ? data : DEFAULT_HEADER_ITEMS;
+
+  // If source contains legacy single-tab 'Services' without tier, upgrade to dual-tier default
+  if (source.some((it) => (it.name === 'Services' || it.title === 'Services') && !it.tier)) {
+    source = DEFAULT_HEADER_ITEMS;
+  }
+
+  return source
     .filter((it) => it.isActive !== false)
     .map((it) => {
       const rawSub = it.subItems || it.children || [];
@@ -69,11 +58,14 @@ const formatInitialNav = (data) => {
         }
       }
 
+      const inferredTier = it.tier || (isCorporateNavName(it.name || it.title) ? 'topNav' : 'servicesNav');
+
       return {
         id: it.id || it._id || it.title || it.name,
         name: it.name || it.title,
         path: parentPath,
         order: it.order || it.id || 0,
+        tier: inferredTier,
         hasDropdown: Boolean(it.hasDropdown ?? (activeSubs.length > 0)),
         openInNewTab: Boolean(it.openInNewTab),
         isSpecialCta: Boolean(it.isSpecialCta || it.slug === '/contact' || it.path === '/contact'),
@@ -92,11 +84,25 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
     showCtaButton: initialHeaderConfig?.showCtaButton !== false,
   })
   const [isMenuOpen, setIsMenuOpen]                 = useState(false)
-  const [expandedDropdowns, setExpandedDropdowns]   = useState({ Services: false })
+  const [hoveredDropdown, setHoveredDropdown]       = useState(null)
+  const [expandedDropdowns, setExpandedDropdowns]   = useState({})
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [contactModalService, setContactModalService] = useState('Web Development')
   const isScrolled                                  = useScrolled(30)
   const location                                    = usePathname()
+
+  // Partition links cleanly into Top Tier (Corporate) and Main Tier (Services)
+  const topLinks = useMemo(() => {
+    const list = navLinks.filter(it => it.tier === 'topNav');
+    if (list.length > 0) return list;
+    return formatInitialNav(DEFAULT_HEADER_ITEMS).filter(it => it.tier === 'topNav');
+  }, [navLinks]);
+
+  const serviceLinks = useMemo(() => {
+    const list = navLinks.filter(it => it.tier !== 'topNav');
+    if (list.length > 0) return list;
+    return formatInitialNav(DEFAULT_HEADER_ITEMS).filter(it => it.tier !== 'topNav');
+  }, [navLinks]);
 
   /* Fetch dynamic header navigation menu from API */
   useEffect(() => {
@@ -112,7 +118,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
           }
         }
       } catch (err) {
-        // Fallback gracefully to default links
+        // Graceful fallback to initial state
       }
     }
     fetchMenu()
@@ -140,7 +146,6 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
 
   /* Close on route change */
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMenuOpen(false)
     setExpandedDropdowns({})
     if (typeof document !== 'undefined') {
@@ -219,118 +224,183 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
   return (
     <>
       {/* ════════════════════════════════════════════
-          Fixed & Sticky Glassmorphism Header
+          2-Tier (Dual Navbar) Glassmorphism Header
       ════════════════════════════════════════════ */}
       <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ''}`}>
-        <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.headerInner}`}>
-          <Link
-            href="/"
-            className={styles.logoLink}
-            aria-label="WebTycoons Home"
-          >
-            <Image
-              src="/assets/img/logo-new.png"
-              alt="WebTycoons Logo"
-              width={200}
-              height={50}
-              style={{ objectFit: 'contain', height: '40px', width: 'auto', display: 'block' }}
-              className={styles.logoImg}
-              priority
-            />
-          </Link>
+        
+        {/* ── Tier 1: Top Utility & Corporate Bar (Desktop Only) ── */}
+        <div className={`${styles.topUtilityBar} ${isScrolled ? styles.topUtilityBarHidden : ''}`}>
+          <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.topBarInner}`}>
+            {/* Left: Contact Info & Heritage Badge */}
+            <div className={styles.topBarContact}>
+              <span className={styles.heritageBadge}>Since 2010</span>
+              <a href="tel:+918527458950" className={styles.topContactItem} title="Call Us">
+                <FaPhoneAlt className={styles.topContactIcon} />
+                <span>(+91) - 8527458950</span>
+              </a>
+              <span className={styles.contactDivider}>•</span>
+              <a href="mailto:info@thewebtycoons.com" className={styles.topContactItem} title="Email Us">
+                <FaEnvelope className={styles.topContactIcon} />
+                <span>info@thewebtycoons.com</span>
+              </a>
+            </div>
 
-          {/* Desktop Nav */}
-          <nav className={`d-none d-lg-flex align-items-center ${styles.desktopNav}`}>
-            {navLinks.map((link) => (
-              <div key={link.id || link.name} className={styles.navItemWrapper}>
-                {link.isSpecialCta && link.ctaAction === 'modal' ? (
+            {/* Right: Corporate Links */}
+            <nav className={styles.topCorporateNav} aria-label="Corporate Links">
+              {topLinks.map((link) => (
+                link.isSpecialCta && link.ctaAction === 'modal' ? (
                   <button
+                    key={link.id || link.name}
                     type="button"
                     onClick={() => setIsContactModalOpen(true)}
-                    className={styles.navLink}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                    className={styles.topCorporateLink}
                   >
                     {link.name}
                   </button>
                 ) : (
-                  <Link 
-                    href={link.path} 
+                  <Link
+                    key={link.id || link.name}
+                    href={link.path}
                     target={link.openInNewTab ? '_blank' : undefined}
                     rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
-                    className={`${styles.navLink} ${link.hasDropdown ? styles.hasDropdown : ''}`}
+                    className={`${styles.topCorporateLink} ${location === link.path ? styles.activeTopLink : ''}`}
                   >
                     {link.name}
-                    {link.hasDropdown && (
-                      <svg className={styles.dropdownIcon} width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    )}
                   </Link>
-                )}
+                )
+              ))}
+            </nav>
+          </div>
+        </div>
 
-                {link.hasDropdown && link.subItems && link.subItems.length > 0 && (
-                  <div className={styles.dropdownMenu}>
-                    {link.subItems.map((sub, sIdx) => (
-                      <Link 
-                        key={sub._id || sIdx} 
-                        href={sub.path}
-                        target={sub.openInNewTab ? '_blank' : undefined}
-                        rel={sub.openInNewTab ? 'noopener noreferrer' : undefined}
-                        title={sub.label}
-                      >
-                        {formatSubMenuLabel(sub.label, 24)}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </nav>
-
-          <div className="d-flex align-items-center gap-3">
-            {ctaConfig.showCtaButton && (
-              ctaConfig.ctaButtonAction === 'modal' ? (
-                <button
-                  type="button"
-                  onClick={() => setIsContactModalOpen(true)}
-                  className={`d-none d-lg-flex ${styles.ctaButton}`}
-                  aria-label="Open contact modal"
-                >
-                  {ctaConfig.ctaButtonText}
-                </button>
-              ) : (
-                <Link
-                  href={ctaConfig.ctaButtonLink || '/contact'}
-                  className={`d-none d-lg-flex ${styles.ctaButton}`}
-                  aria-label={ctaConfig.ctaButtonText}
-                >
-                  {ctaConfig.ctaButtonText}
-                </Link>
-              )
-            )}
-            <button
-              className={`d-flex d-lg-none ${styles.mobileToggle}`}
-              onClick={() => setIsMenuOpen(v => !v)}
-              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        {/* ── Tier 2: Main Services Navbar + Logo + CTA ── */}
+        <div className={styles.mainServicesBar}>
+          <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.headerInner}`}>
+            
+            {/* WebTycoons Logo */}
+            <Link
+              href="/"
+              className={styles.logoLink}
+              aria-label="WebTycoons Home"
             >
-              {/* Hamburger lines */}
-              <svg width="28" height="10" viewBox="0 0 35 10" fill="none"
-                style={{ opacity: isMenuOpen ? 0 : 1, transform: isMenuOpen ? 'rotate(90deg)' : 'none', transition: 'all 0.25s ease', position: 'absolute' }}>
-                <rect width="35" height="1.5" fill="currentColor" />
-                <rect y="8" width="35" height="1.5" fill="currentColor" />
-              </svg>
-              {/* X icon */}
-              <svg width="20" height="21" viewBox="0 0 22 23" fill="none"
-                style={{ opacity: isMenuOpen ? 1 : 0, transform: isMenuOpen ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'all 0.25s ease' }}>
-                <rect x="1.061" y="0.354" width="29.345" height="1.5" transform="rotate(45 1.061 0.354)" fill="currentColor" />
-                <rect x="21.811" y="1.061" width="29.345" height="1.5" transform="rotate(135 21.811 1.061)" fill="currentColor" />
-              </svg>
-            </button>
+              <Image
+                src="/assets/img/logo-new.png"
+                alt="WebTycoons Logo"
+                width={200}
+                height={50}
+                style={{ objectFit: 'contain', height: '38px', width: 'auto', display: 'block' }}
+                className={styles.logoImg}
+                priority
+              />
+            </Link>
+
+            {/* Desktop Services Navigation Bar */}
+            <nav className={`d-none d-lg-flex align-items-center ${styles.desktopNav}`} aria-label="Services Navigation">
+              {serviceLinks.map((link) => {
+                const key = link.id || link.name;
+                const isDropdownVisible = hoveredDropdown === key;
+                const isCurrentActive = location === link.path || (link.hasDropdown && location.startsWith(link.path) && link.path !== '/');
+
+                return (
+                  <div 
+                    key={key} 
+                    id={`nav-item-${link.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                    className={styles.navItemWrapper}
+                    onMouseEnter={() => setHoveredDropdown(key)}
+                    onMouseLeave={() => setHoveredDropdown(null)}
+                  >
+                    <Link 
+                      href={link.path} 
+                      target={link.openInNewTab ? '_blank' : undefined}
+                      rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
+                      className={`${styles.navLink} ${link.hasDropdown ? styles.hasDropdown : ''} ${isCurrentActive ? styles.activeNavLink : ''}`}
+                    >
+                      <span>{link.name}</span>
+                      {link.hasDropdown && (
+                        <FaChevronDown className={styles.dropdownIcon} size={9} />
+                      )}
+                    </Link>
+
+                    {/* Rich Floating Dropdown Menu */}
+                    {link.hasDropdown && link.subItems && link.subItems.length > 0 && (
+                      <div 
+                        className={styles.dropdownMenu}
+                        data-visible={isDropdownVisible ? "true" : undefined}
+                      >
+                        <div className={styles.dropdownHeader}>
+                          <span>{link.name}</span>
+                        </div>
+                        <div className={styles.dropdownItemsList}>
+                          {link.subItems.map((sub, sIdx) => {
+                            const isSubActive = location === sub.path;
+                            return (
+                              <Link 
+                                key={sub._id || sIdx} 
+                                href={sub.path}
+                                target={sub.openInNewTab ? '_blank' : undefined}
+                                rel={sub.openInNewTab ? 'noopener noreferrer' : undefined}
+                                title={sub.label}
+                                className={`${styles.dropdownSubItem} ${isSubActive ? styles.activeSubLink : ''}`}
+                              >
+                                <span className={styles.dropdownBullet} />
+                                <span className={styles.dropdownLabel}>{formatSubMenuLabel(sub.label, 36)}</span>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
+
+            {/* Right: CTA Button & Mobile Toggle */}
+            <div className="d-flex align-items-center gap-3">
+              {ctaConfig.showCtaButton && (
+                ctaConfig.ctaButtonAction === 'modal' ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsContactModalOpen(true)}
+                    className={`d-none d-lg-flex ${styles.ctaButton}`}
+                    aria-label="Open contact modal"
+                  >
+                    {ctaConfig.ctaButtonText}
+                  </button>
+                ) : (
+                  <Link
+                    href={ctaConfig.ctaButtonLink || '/contact'}
+                    className={`d-none d-lg-flex ${styles.ctaButton}`}
+                    aria-label={ctaConfig.ctaButtonText}
+                  >
+                    {ctaConfig.ctaButtonText}
+                  </Link>
+                )
+              )}
+
+              {/* Hamburger Button for Mobile */}
+              <button
+                className={`d-flex d-lg-none ${styles.mobileToggle}`}
+                onClick={() => setIsMenuOpen(v => !v)}
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              >
+                {/* Hamburger lines */}
+                <svg width="28" height="10" viewBox="0 0 35 10" fill="none"
+                  style={{ opacity: isMenuOpen ? 0 : 1, transform: isMenuOpen ? 'rotate(90deg)' : 'none', transition: 'all 0.25s ease', position: 'absolute' }}>
+                  <rect width="35" height="1.5" fill="currentColor" />
+                  <rect y="8" width="35" height="1.5" fill="currentColor" />
+                </svg>
+                {/* X icon */}
+                <svg width="20" height="21" viewBox="0 0 22 23" fill="none"
+                  style={{ opacity: isMenuOpen ? 1 : 0, transform: isMenuOpen ? 'rotate(0deg)' : 'rotate(-90deg)', transition: 'all 0.25s ease' }}>
+                  <rect x="1.061" y="0.354" width="29.345" height="1.5" transform="rotate(45 1.061 0.354)" fill="currentColor" />
+                  <rect x="21.811" y="1.061" width="29.345" height="1.5" transform="rotate(135 21.811 1.061)" fill="currentColor" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </header>
-
-
 
       {/* ════════════════════════════════════════════
           Drawer Backdrop (click outside to close)
@@ -343,8 +413,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
       />
 
       {/* ════════════════════════════════════════════
-          Compact Side Drawer Menu (like KNYX reference)
-          with preserved floating bubble / shapes effect
+          Segmented Side Drawer Menu (Mobile & Tablet)
       ════════════════════════════════════════════ */}
       <nav
         className={`${styles.sideDrawerMenu} ${isMenuOpen ? styles.glFloat : ''}`}
@@ -353,77 +422,35 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
         aria-hidden={!isMenuOpen}
         inert={!isMenuOpen}
       >
-        {/* Floating Shapes Background Decoration (Preserved Bubble Effects!) */}
+        {/* Floating Shapes Background Decoration */}
         <div className={styles.header__shapes}>
-          {/* HEXAGON shape */}
           <div name="hexagon" className={`${styles.header__shape} ${styles['header__shape--hexagon']}`}>
             <svg viewBox="0 0 360 360" fill="none" className={`${styles.shape} ${styles['shape--hexagon']}`}>
               <path fill="currentColor" className={`${styles.shape__path} ${styles['shape__path--active']}`} transform="translate(19.5 1.5)"
                 d="M132.896 7.43243C149.932 -2.47747 170.922 -2.47748 187.958 7.43242L293.323 68.7223C310.359 78.6322 320.854 96.9465 320.854 116.766L320.854 239.346C320.854 259.166 310.359 277.48 293.323 287.39L187.958 348.68C170.922 358.59 149.932 358.59 132.896 348.68L27.5311 287.39C10.4948 277.48 0 259.166 0 239.346L0 116.766C0 96.9465 10.4948 78.6322 27.5311 68.7223L132.896 7.43243Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(19 19)"
-                d="M160.545 0C249.211 0 321.09 71.879 321.09 160.545C321.09 249.211 249.211 321.09 160.545 321.09C71.879 321.09 0 249.211 0 160.545C0 71.879 71.879 0 160.545 0Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(19.5 19.5)"
-                d="M0 59.7623C0 26.7519 26.7519 0 59.7623 0H261.092C294.102 0 320.854 26.7519 320.854 59.7623V261.092C320.854 294.102 294.102 320.854 261.092 320.854H59.7623C26.7519 320.854 0 294.102 0 261.092V59.7623Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(17 17)"
-                d="M89.8477 0C119.388 1.12081e-05 145.597 14.1722 161.972 36.0494C162.482 36.7304 163.51 36.7304 164.02 36.0495C180.396 14.1731 206.605 0.00203366 236.145 0.00195312C285.764 0.00195312 325.989 39.988 325.989 89.3135C325.989 119.25 311.171 145.745 288.429 161.95C287.716 162.459 287.716 163.528 288.429 164.036C311.172 180.241 325.992 206.737 325.992 236.675C325.992 286 285.767 325.986 236.147 325.986C206.606 325.986 180.395 311.813 164.019 289.933C163.509 289.252 162.481 289.252 161.971 289.933C145.596 311.813 119.386 325.987 89.8447 325.987C40.2252 325.987 0 286.001 0 236.676C3.7764e-05 206.737 14.8197 180.24 37.5637 164.035C38.2774 163.527 38.2775 162.458 37.5638 161.949C14.8217 145.744 0.0039728 119.249 0.00390625 89.3115C0.00390625 39.986 40.2281 0 89.8477 0Z" />
             </svg>
           </div>
-          
-          {/* CIRCLE shape */}
           <div name="circle" className={`${styles.header__shape} ${styles['header__shape--circle']}`}>
             <svg viewBox="0 0 360 360" fill="none" className={`${styles.shape} ${styles['shape--circle']}`}>
-              <path fill="currentColor" className={styles.shape__path} transform="translate(19.5 1.5)"
-                d="M132.896 7.43243C149.932 -2.47747 170.922 -2.47748 187.958 7.43242L293.323 68.7223C310.359 78.6322 320.854 96.9465 320.854 116.766L320.854 239.346C320.854 259.166 310.359 277.48 293.323 287.39L187.958 348.68C170.922 358.59 149.932 358.59 132.896 348.68L27.5311 287.39C10.4948 277.48 0 259.166 0 239.346L0 116.766C0 96.9465 10.4948 78.6322 27.5311 68.7223L132.896 7.43243Z" />
               <path fill="currentColor" className={`${styles.shape__path} ${styles['shape__path--active']}`} transform="translate(19 19)"
                 d="M160.545 0C249.211 0 321.09 71.879 321.09 160.545C321.09 249.211 249.211 321.09 160.545 321.09C71.879 321.09 0 249.211 0 160.545C0 71.879 71.879 0 160.545 0Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(19.5 19.5)"
-                d="M0 59.7623C0 26.7519 26.7519 0 59.7623 0H261.092C294.102 0 320.854 26.7519 320.854 59.7623V261.092C320.854 294.102 294.102 320.854 261.092 320.854H59.7623C26.7519 320.854 0 294.102 0 261.092V59.7623Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(17 17)"
-                d="M89.8477 0C119.388 1.12081e-05 145.597 14.1722 161.972 36.0494C162.482 36.7304 163.51 36.7304 164.02 36.0495C180.396 14.1731 206.605 0.00203366 236.145 0.00195312C285.764 0.00195312 325.989 39.988 325.989 89.3135C325.989 119.25 311.171 145.745 288.429 161.95C287.716 162.459 287.716 163.528 288.429 164.036C311.172 180.241 325.992 206.737 325.992 236.675C325.992 286 285.767 325.986 236.147 325.986C206.606 325.986 180.395 311.813 164.019 289.933C163.509 289.252 162.481 289.252 161.971 289.933C145.596 311.813 119.386 325.987 89.8447 325.987C40.2252 325.987 0 286.001 0 236.676C3.7764e-05 206.737 14.8197 180.24 37.5637 164.035C38.2774 163.527 38.2775 162.458 37.5638 161.949C14.8217 145.744 0.0039728 119.249 0.00390625 89.3115C0.00390625 39.986 40.2281 0 89.8477 0Z" />
-            </svg>
-          </div>
-
-          {/* SQUARE shape */}
-          <div name="square" className={`${styles.header__shape} ${styles['header__shape--square']}`}>
-            <svg viewBox="0 0 360 360" fill="none" className={`${styles.shape} ${styles['shape--square']}`}>
-              <path fill="currentColor" className={styles.shape__path} transform="translate(19.5 1.5)"
-                d="M132.896 7.43243C149.932 -2.47747 170.922 -2.47748 187.958 7.43242L293.323 68.7223C310.359 78.6322 320.854 96.9465 320.854 116.766L320.854 239.346C320.854 259.166 310.359 277.48 293.323 287.39L187.958 348.68C170.922 358.59 149.932 358.59 132.896 348.68L27.5311 287.39C10.4948 277.48 0 259.166 0 239.346L0 116.766C0 96.9465 10.4948 78.6322 27.5311 68.7223L132.896 7.43243Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(19 19)"
-                d="M160.545 0C249.211 0 321.09 71.879 321.09 160.545C321.09 249.211 249.211 321.09 160.545 321.09C71.879 321.09 0 249.211 0 160.545C0 71.879 71.879 0 160.545 0Z" />
-              <path fill="currentColor" className={`${styles.shape__path} ${styles['shape__path--active']}`} transform="translate(19.5 19.5)"
-                d="M0 59.7623C0 26.7519 26.7519 0 59.7623 0H261.092C294.102 0 320.854 26.7519 320.854 59.7623V261.092C320.854 294.102 294.102 320.854 261.092 320.854H59.7623C26.7519 320.854 0 294.102 0 261.092V59.7623Z" />
-              <path fill="currentColor" className={styles.shape__path} transform="translate(17 17)"
-                d="M89.8477 0C119.388 1.12081e-05 145.597 14.1722 161.972 36.0494C162.482 36.7304 163.51 36.7304 164.02 36.0495C180.396 14.1731 206.605 0.00203366 236.145 0.00195312C285.764 0.00195312 325.989 39.988 325.989 89.3135C325.989 119.25 311.171 145.745 288.429 161.95C287.716 162.459 287.716 163.528 288.429 164.036C311.172 180.241 325.992 206.737 325.992 236.675C325.992 286 285.767 325.986 236.147 325.986C206.606 325.986 180.395 311.813 164.019 289.933C163.509 289.252 162.481 289.252 161.971 289.933C145.596 311.813 119.386 325.987 89.8447 325.987C40.2252 325.987 0 286.001 0 236.676C3.7764e-05 206.737 14.8197 180.24 37.5637 164.035C38.2774 163.527 38.2775 162.458 37.5638 161.949C14.8217 145.744 0.0039728 119.249 0.00390625 89.3115C0.00390625 39.986 40.2281 0 89.8477 0Z" />
             </svg>
           </div>
         </div>
 
-        {/* Drawer top bar: Logo + Close 'X' */}
+        {/* Drawer Header: Logo + Close */}
         <div className={styles.drawerHeader}>
           <Link
             href="/"
             className={styles.drawerLogo}
             onClick={closeMenu}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 55%, rgba(255, 255, 255, 0.04) 85%, transparent 100%)',
-              backdropFilter: 'blur(20px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-              border: '1px solid rgba(255, 255, 255, 0.18)',
-              padding: '6px 16px',
-              borderRadius: '9999px',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12), 0 0 16px rgba(255, 255, 255, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.3)',
-              textDecoration: 'none',
-            }}
           >
             <Image 
               src="/assets/img/logo-new.png" 
               alt="WebTycoons Logo" 
               width={160} 
               height={42} 
-              style={{ objectFit: 'contain', height: '34px', width: 'auto', display: 'block' }} 
+              style={{ objectFit: 'contain', height: '32px', width: 'auto', display: 'block' }} 
               className={styles.logoImg} 
             />
           </Link>
@@ -437,11 +464,26 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
 
         {/* Vertical Links List */}
         <div className={styles.drawerLinksWrapper} data-lenis-prevent="true">
+          
+          {/* Quick Call Strip inside Mobile Drawer */}
+          <div className={styles.drawerQuickContactStrip}>
+            <a href="tel:+918527458950" className={styles.drawerCallBtn}>
+              <FaPhoneAlt size={12} />
+              <span>Call Us: (+91) 8527458950</span>
+            </a>
+          </div>
+
+          {/* SECTION 1: OUR SERVICES */}
+          <div className={styles.drawerSectionTitle}>
+            <span>OUR SERVICES</span>
+            <div className={styles.drawerSectionLine} />
+          </div>
+
           <ul className={styles.drawerList}>
-            {navLinks.map((link) => {
-              const isExpanded = Boolean(expandedDropdowns[link.id || link.name])
+            {serviceLinks.map((link) => {
+              const key = link.id || link.name;
+              const isExpanded = Boolean(expandedDropdowns[key]);
               const toggleDropdown = (e) => {
-                const key = link.id || link.name;
                 const nextState = !expandedDropdowns[key];
                 setExpandedDropdowns((prev) => ({
                   ...prev,
@@ -453,10 +495,10 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                     targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }, 80);
                 }
-              }
+              };
 
               return (
-                <li key={link.id || link.name} className={styles.drawerItem}>
+                <li key={key} className={styles.drawerItem}>
                   {link.hasDropdown ? (
                     <>
                       <div className={styles.drawerDropdownTrigger}>
@@ -464,7 +506,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                           type="button"
                           className={styles.drawerLink}
                           style={{ background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
-                          onClick={(e) => toggleDropdown(e)}
+                          onClick={toggleDropdown}
                         >
                           <div className={styles.hoverBar} aria-hidden="true">
                             <span className={styles.hoverBarLine} />
@@ -476,9 +518,9 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                           type="button"
                           className={`${styles.chevronBtn} ${isExpanded ? styles.chevronOpen : ''}`}
                           onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            toggleDropdown(e)
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleDropdown(e);
                           }}
                           aria-label={`Toggle ${link.name} sub-menu`}
                         >
@@ -506,14 +548,45 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                         </div>
                       )}
                     </>
-                  ) : link.isSpecialCta && link.ctaAction === 'modal' ? (
+                  ) : (
+                    <Link
+                      href={link.path}
+                      target={link.openInNewTab ? '_blank' : undefined}
+                      rel={link.openInNewTab ? 'noopener noreferrer' : undefined}
+                      className={styles.drawerLink}
+                      onClick={closeMenu}
+                    >
+                      <div className={styles.hoverBar} aria-hidden="true">
+                        <span className={styles.hoverBarLine} />
+                        <span className={styles.hoverBarDot} />
+                      </div>
+                      <span className={styles.drawerLinkText}>{link.name}</span>
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* SECTION 2: COMPANY QUICK LINKS */}
+          <div className={styles.drawerSectionTitle} style={{ marginTop: '1.25rem' }}>
+            <span>COMPANY</span>
+            <div className={styles.drawerSectionLine} />
+          </div>
+
+          <ul className={styles.drawerList}>
+            {topLinks.map((link) => {
+              const key = link.id || link.name;
+              return (
+                <li key={key} className={styles.drawerItem}>
+                  {link.isSpecialCta && link.ctaAction === 'modal' ? (
                     <button
                       type="button"
                       className={styles.drawerLink}
                       style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
                       onClick={() => {
-                        closeMenu()
-                        setIsContactModalOpen(true)
+                        closeMenu();
+                        setIsContactModalOpen(true);
                       }}
                     >
                       <div className={styles.hoverBar} aria-hidden="true">
@@ -538,9 +611,24 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                     </Link>
                   )}
                 </li>
-              )
+              );
             })}
           </ul>
+
+          {/* Bottom CTA Button inside drawer */}
+          <div style={{ padding: '1.5rem 0.5rem 0.5rem' }}>
+            <button
+              type="button"
+              onClick={() => {
+                closeMenu();
+                setIsContactModalOpen(true);
+              }}
+              className={styles.drawerCtaBtn}
+            >
+              {ctaConfig.ctaButtonText || "Let's Talk"}
+            </button>
+          </div>
+
         </div>
 
         {/* Drawer footer: STALK US & Social Icons */}

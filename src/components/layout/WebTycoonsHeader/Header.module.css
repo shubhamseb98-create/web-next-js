@@ -1,48 +1,201 @@
 /* ══════════════════════════════════════════════════
-   HEADER — Fixed & Sticky Glassmorphism Bar
+   2-TIER (DUAL NAVBAR) HEADER — Fixed & Sticky Glassmorphism
+   Tier 1: Sleek Corporate Top Utility Bar
+   Tier 2: Main Services Navbar + Brand Logo + CTA
 ══════════════════════════════════════════════════ */
+
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 88px;
   z-index: var(--z-header, 1000);
-  background: rgba(10, 14, 11, 0.45);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               background 0.3s ease,
               border-color 0.3s ease,
               box-shadow 0.3s ease;
 }
 
-.headerScrolled {
-  height: 72px;
-  background: rgba(8, 12, 9, 0.82);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border-bottom: 1px solid rgba(82, 164, 54, 0.28);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6),
-              0 0 20px -5px rgba(82, 164, 54, 0.15);
+/* ══════════════════════════════════════════════════
+   TIER 1: TOP UTILITY & CORPORATE BAR (Desktop Only)
+══════════════════════════════════════════════════ */
+.topUtilityBar {
+  width: 100%;
+  height: 38px;
+  background: rgba(6, 10, 7, 0.75);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.25s ease,
+              transform 0.35s ease,
+              border-color 0.3s ease;
+  max-height: 44px;
+  opacity: 1;
+  position: relative;
+  z-index: 3;
+}
+
+/* Automatically slides up and hides when scrolled past 30px */
+.topUtilityBarHidden {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  border-bottom-color: transparent !important;
+  transform: translateY(-100%);
 }
 
 @media (max-width: 991px) {
-  .header {
-    height: 76px;
-  }
-  .headerScrolled {
-    height: 66px;
+  .topUtilityBar {
+    display: none !important;
   }
 }
 
-@media (max-width: 576px) {
-  .header {
+.topBarInner,
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding-left: clamp(1rem, 2.5vw, 3rem) !important;
+  padding-right: clamp(1rem, 2.5vw, 3rem) !important;
+}
+
+.topBarContact {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.heritageBadge {
+  background: rgba(82, 164, 54, 0.16);
+  border: 1px solid rgba(82, 164, 54, 0.38);
+  color: #6bc24b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(82, 164, 54, 0.15);
+}
+
+.topContactItem {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.78rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.topContactItem:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.topContactIcon {
+  color: #52a436;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.contactDivider {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.65rem;
+  user-select: none;
+}
+
+.topCorporateNav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.topCorporateLink {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  position: relative;
+  transition: color 0.2s ease;
+  font-family: inherit;
+}
+
+.topCorporateLink:hover {
+  color: #6bc24b;
+}
+
+.activeTopLink {
+  color: #6bc24b !important;
+  font-weight: 600;
+}
+
+.topCorporateLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0%;
+  height: 1.5px;
+  background: #6bc24b;
+  transition: width 0.25s ease;
+  border-radius: 2px;
+}
+
+.topCorporateLink:hover::after,
+.activeTopLink::after {
+  width: 100%;
+}
+
+/* ══════════════════════════════════════════════════
+   TIER 2: MAIN SERVICES BAR (Logo + Services Strip + CTA)
+══════════════════════════════════════════════════ */
+.mainServicesBar {
+  width: 100%;
+  height: 72px;
+  background: rgba(10, 14, 11, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.headerScrolled .mainServicesBar {
+  height: 64px;
+  background: rgba(8, 12, 9, 0.9);
+  backdrop-filter: blur(26px) saturate(200%);
+  -webkit-backdrop-filter: blur(26px) saturate(200%);
+  border-bottom: 1px solid rgba(82, 164, 54, 0.3);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7),
+              0 0 20px -5px rgba(82, 164, 54, 0.2);
+}
+
+@media (max-width: 991px) {
+  .mainServicesBar {
     height: 70px;
   }
-  .headerScrolled {
-    height: 62px;
+  .headerScrolled .mainServicesBar {
+    height: 64px;
   }
 }
 
@@ -53,8 +206,7 @@
 }
 
 /* ── Logo ── */
-.logoLink,
-.logo {
+.logoLink {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -62,21 +214,17 @@
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
   transition: transform 0.25s ease, opacity 0.25s ease !important;
+  flex-shrink: 0;
 }
 
-.logoLink:hover,
-.logo:hover {
+.logoLink:hover {
   transform: translateY(-1px) !important;
-  opacity: 0.92 !important;
+  opacity: 0.95 !important;
 }
 
 .logoImg {
-  height: 40px !important;
+  height: 38px !important;
   width: auto !important;
   display: block !important;
   object-fit: contain !important;
@@ -88,102 +236,135 @@
   }
 }
 
-/* ── Desktop Nav ── */
+/* ── Desktop Services Nav ── */
 .desktopNav {
-  gap: 1.25rem;
+  gap: 0.75rem;
+  margin-inline: auto 1.25rem;
 }
 
 @media (min-width: 1400px) {
   .desktopNav {
-    gap: 1.4rem;
+    gap: 1.15rem;
+    margin-inline: auto 1.75rem;
   }
 }
 
 .navItemWrapper {
   position: relative;
-  padding-bottom: 10px;
+  padding-block: 10px;
   display: flex;
   align-items: center;
 }
 
 .navLink {
-  font-size: 0.95rem;
+  font-size: 0.84rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.88);
   text-decoration: none;
   position: relative;
-  padding-block: 0.5rem;
-  transition: color 0.2s ease;
+  padding: 0.45rem 0.15rem;
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+@media (min-width: 1400px) {
+  .navLink {
+    font-size: 0.88rem;
+    gap: 0.35rem;
+  }
 }
 
 .navLink:hover {
-  color: #fff;
+  color: #ffffff;
 }
 
 .navLink::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: 0px;
   left: 0;
   width: 0%;
   height: 2px;
-  background: var(--gradient-primary, linear-gradient(135deg, #6e6ef5, #a259ff));
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #52a436, #6bc24b);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 2px;
 }
 
-.navLink:hover::after {
+.navLink:hover::after,
+.activeNavLink::after {
   width: 100%;
 }
 
-.hasDropdown {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding-block: 0.5rem;
-  padding-inline: 0;
-  transition: all 0.2s ease;
+.activeNavLink {
+  color: #6bc24b !important;
+  font-weight: 600;
 }
 
-.hasDropdown:hover {
-  color: #fff;
+.hasDropdown {
+  cursor: pointer;
 }
 
 .dropdownIcon {
-  transition: transform 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
   opacity: 0.7;
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
 }
 
 .navItemWrapper:hover .dropdownIcon {
   transform: rotate(180deg);
+  opacity: 1;
+  color: #6bc24b;
 }
 
+/* ── Rich Floating Dropdown Menu Card ── */
 .dropdownMenu {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% - 2px);
   left: 0;
-  background: rgba(10, 15, 9, 0.97);
-  border: 1px solid rgba(82, 164, 54, 0.25);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  transform: translateY(8px) scale(0.97);
+  background: rgba(12, 17, 13, 0.97);
+  border: 1px solid rgba(82, 164, 54, 0.28);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
   border-radius: 14px;
-  padding: 0.45rem 0.35rem;
-  width: 285px;
+  padding: 0.55rem;
+  width: 280px;
   max-width: 320px;
   min-width: 250px;
-  max-height: calc(100vh - 105px);
+  max-height: calc(100vh - 120px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(82, 164, 54, 0.35) transparent;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(10px) scale(0.98);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(82, 164, 54, 0.12);
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.85), 
+              0 0 25px rgba(82, 164, 54, 0.16),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
   z-index: 100;
+}
+
+/* Invisible bridge so mouse hover doesn't break */
+.dropdownMenu::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: transparent;
+}
+
+/* Align right-hand side dropdowns to the right so they don't clip */
+.navItemWrapper:last-child .dropdownMenu,
+.navItemWrapper:nth-last-child(2) .dropdownMenu {
+  left: auto;
+  right: 0;
 }
 
 .dropdownMenu::-webkit-scrollbar {
@@ -195,84 +376,113 @@
   border-radius: 4px;
 }
 
-.navItemWrapper:hover .dropdownMenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
+.navItemWrapper:hover .dropdownMenu,
+.dropdownMenu[data-visible="true"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+  pointer-events: auto !important;
 }
 
-.dropdownMenu a {
+.dropdownHeader {
+  padding: 0.4rem 0.65rem 0.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 0.35rem;
+}
+
+.dropdownHeader span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6bc24b;
+}
+
+.dropdownItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dropdownSubItem {
   color: rgba(255, 255, 255, 0.85);
   padding: 0.5rem 0.75rem;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 500;
   text-decoration: none;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   border-radius: 8px;
   position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
   box-sizing: border-box;
 }
 
-.dropdownMenu a:hover {
-  background: linear-gradient(90deg, rgba(82, 164, 54, 0.18) 0%, rgba(82, 164, 54, 0.04) 100%);
-  color: #6bc24b;
+.dropdownBullet {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dropdownSubItem:hover {
+  background: linear-gradient(90deg, rgba(82, 164, 54, 0.22) 0%, rgba(82, 164, 54, 0.06) 100%);
+  color: #ffffff;
   transform: translateX(4px);
-  padding-left: 1.15rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  padding-left: 0.95rem;
 }
 
-.dropdownMenu a::before {
-  content: '';
-  position: absolute;
-  left: 0.45rem;
-  width: 3px;
-  height: 0%;
+.dropdownSubItem:hover .dropdownBullet,
+.activeSubLink .dropdownBullet {
   background: #6bc24b;
-  border-radius: 4px;
-  transition: height 0.2s ease;
-  opacity: 0;
+  box-shadow: 0 0 8px #6bc24b;
+  transform: scale(1.3);
 }
 
-.dropdownMenu a:hover::before {
-  height: 55%;
-  opacity: 1;
+.activeSubLink {
+  background: rgba(82, 164, 54, 0.15) !important;
+  color: #6bc24b !important;
+  font-weight: 600;
 }
 
 /* ── CTA Button ── */
 .ctaButton {
-  background: #fff;
-  color: #111;
-  padding: 0.75rem 1.75rem;
+  background: #ffffff;
+  color: #111111;
+  padding: 0.6rem 1.4rem;
   border-radius: 50px;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
   transition: all 0.25s ease;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   text-decoration: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
   display: inline-flex;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .ctaButton:hover {
   background: #52a436;
-  color: #fff;
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(82, 164, 54, 0.4);
+  box-shadow: 0 8px 22px rgba(82, 164, 54, 0.45);
 }
 
 /* ── Hamburger ── */
 .mobileToggle {
   background: none;
   border: none;
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,10 +500,10 @@
 }
 
 /* ══════════════════════════════════════════════════
-   COMPACT SIDE DRAWER MENU (KNYX STYLE)
+   SEGMENTED SIDE DRAWER MENU (Mobile & Tablet)
 ══════════════════════════════════════════════════ */
 
-/* Backdrop overlay (click to close) */
+/* Backdrop overlay */
 .drawerBackdrop {
   position: fixed;
   inset: 0;
@@ -320,7 +530,7 @@
   width: 100%;
   max-width: 440px;
   z-index: calc(var(--z-header, 100) + 20);
-  background: #10150f;
+  background: #0f140e;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: -15px 0 50px rgba(0, 0, 0, 0.85);
   display: flex;
@@ -340,9 +550,7 @@
   pointer-events: auto;
 }
 
-/* ══════════════════════════════════════════════════
-   FUTURISTIC AMBIENT GLOW & WIREFRAME GLASS ORBS
-══════════════════════════════════════════════════ */
+/* ── Ambient Glow Shapes ── */
 .header__shapes {
   position: absolute;
   inset: 0;
@@ -355,35 +563,21 @@
   transition: opacity 0.5s ease;
 }
 
-/* Atmospheric ambient light auras (soft subtle emerald glow) */
+.sideDrawerMenu[data-open="true"] .header__shapes {
+  opacity: 1;
+}
+
 .header__shapes::before {
   content: '';
   position: absolute;
   top: 6%;
   right: -12%;
-  width: 300px;
-  height: 300px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(82, 164, 54, 0.08) 0%, rgba(82, 164, 54, 0.01) 50%, transparent 70%);
+  background: radial-gradient(circle, rgba(82, 164, 54, 0.1) 0%, rgba(82, 164, 54, 0.01) 50%, transparent 70%);
   filter: blur(40px);
   pointer-events: none;
-}
-
-.header__shapes::after {
-  content: '';
-  position: absolute;
-  bottom: 14%;
-  left: -12%;
-  width: 270px;
-  height: 270px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(107, 194, 75, 0.06) 0%, rgba(82, 164, 54, 0.01) 50%, transparent 70%);
-  filter: blur(42px);
-  pointer-events: none;
-}
-
-.sideDrawerMenu[data-open="true"] .header__shapes {
-  opacity: 1;
 }
 
 .header__shape {
@@ -402,12 +596,6 @@
   --shape-size: 210px;
 }
 
-.header__shape--square {
-  --shape-top: 86%;
-  --shape-left: 76%;
-  --shape-size: 170px;
-}
-
 .header__shapes .shape {
   position: absolute;
   top: 0;
@@ -416,12 +604,9 @@
   height: auto;
   margin: var(--shape-top, 0%) 0 0 var(--shape-left, 0%);
   translate: -50% -50%;
-  rotate: var(--shape-rotate, 0deg);
-  transition: rotate 0.15s ease;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.7));
 }
 
-/* Translucent wireframe styling */
 .header__shapes .shape path {
   fill: rgba(255, 255, 255, 0.012) !important;
   stroke: currentColor;
@@ -429,133 +614,22 @@
   stroke-linejoin: round;
 }
 
-/* Three distinct accent wireframe colors: Green, Blue, and Electric Violet */
 .shape--hexagon {
-  color: rgba(107, 194, 75, 0.78);
-  /* WebTycoons Vibrant Emerald Green */
+  color: rgba(107, 194, 75, 0.75);
   filter: drop-shadow(0 0 16px rgba(107, 194, 75, 0.45));
 }
 
 .shape--circle {
-  color: rgba(56, 189, 248, 0.82);
-  /* Vivid Electric Cyber Sky Blue */
+  color: rgba(56, 189, 248, 0.75);
   filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.45));
 }
 
-.shape--square {
-  color: rgba(168, 85, 247, 0.75);
-  /* High-tech Electric Violet */
-  filter: drop-shadow(0 0 16px rgba(168, 85, 247, 0.4));
-}
-
-.header__shapes .shape--hexagon {
-  rotate: -5deg;
-}
-
-.header__shapes .shape--square {
-  rotate: -50deg;
-}
-
-.shape__path {
-  display: none;
-}
-
-.shape__path--active {
-  display: block;
-}
-
-/* Float animation */
-@keyframes gl-float-x {
-
-  0%,
-  100% {
-    transform: translate(0);
-  }
-
-  25% {
-    transform: translate(var(--gl-float-amp-x));
-  }
-
-  75% {
-    transform: translate(calc(var(--gl-float-amp-x) * -1));
-  }
-}
-
-@keyframes gl-float-y {
-
-  0%,
-  100% {
-    transform: translate(0);
-  }
-
-  25% {
-    transform: translateY(var(--gl-float-amp-y));
-  }
-
-  75% {
-    transform: translateY(calc(var(--gl-float-amp-y) * -1));
-  }
-}
-
-@keyframes gl-float-r {
-
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-
-  25% {
-    transform: rotate(var(--gl-float-amp-r));
-  }
-
-  75% {
-    transform: rotate(calc(var(--gl-float-amp-r) * -1));
-  }
-}
-
-.glFloat .shape {
-  --gl-float-duration: 11s;
-  animation:
-    gl-float-x var(--gl-float-duration) ease-in-out var(--gl-float-phase, 0s) infinite,
-    gl-float-y calc(var(--gl-float-duration) * 1.83) ease-in-out calc(var(--gl-float-phase, 0s) * .6) infinite,
-    gl-float-r calc(var(--gl-float-duration) * 1.45) ease-in-out var(--gl-float-phase, 0s) infinite;
-  animation-composition: add;
-}
-
-.header__shape--hexagon {
-  --gl-float-duration: 7s;
-  --gl-float-amp-x: 1.4rem;
-  --gl-float-amp-y: 2.2rem;
-  --gl-float-amp-r: 7deg;
-  --gl-float-phase: -1.2s;
-}
-
-.header__shape--circle {
-  --gl-float-duration: 9s;
-  --gl-float-amp-x: -1.2rem;
-  --gl-float-amp-y: 2rem;
-  --gl-float-amp-r: -5deg;
-  --gl-float-phase: -4.8s;
-}
-
-.header__shape--square {
-  --gl-float-duration: 8.5s;
-  --gl-float-amp-x: .9rem;
-  --gl-float-amp-y: 1.8rem;
-  --gl-float-amp-r: 4deg;
-  --gl-float-phase: -2.6s;
-}
-
-/* ══════════════════════════════════════════════════
-   DRAWER CONTENT
-══════════════════════════════════════════════════ */
-
-/* Drawer top bar: Logo + Close 'X' */
+/* ── Drawer Header ── */
 .drawerHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem 2rem;
+  padding: 1.25rem 1.75rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
   z-index: 2;
@@ -567,27 +641,14 @@
   align-items: center !important;
   justify-content: center !important;
   text-decoration: none !important;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.22) 55%, rgba(255, 255, 255, 0.08) 85%, rgba(255, 255, 255, 0.02) 100%) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
-  padding: 6px 16px !important;
-  border-radius: 9999px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 255, 255, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
-  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
-}
-
-.drawerLogo:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16), 0 0 25px rgba(255, 255, 255, 0.22) !important;
 }
 
 .drawerCloseBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -599,21 +660,72 @@
 .drawerCloseBtn:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: rotate(90deg);
-  color: var(--clr-primary, #52a436);
-  border-color: var(--clr-primary, #52a436);
+  color: #6bc24b;
+  border-color: #6bc24b;
 }
 
-/* Vertical Links List */
+/* ── Drawer Content Wrapper ── */
 .drawerLinksWrapper {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden !important;
-  padding: 0.85rem 1.6rem;
+  padding: 1rem 1.6rem;
   position: relative;
   z-index: 2;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
   overscroll-behavior: contain;
+}
+
+/* Quick Call Banner in Mobile Drawer */
+.drawerQuickContactStrip {
+  margin-bottom: 1.25rem;
+}
+
+.drawerCallBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background: rgba(82, 164, 54, 0.14);
+  border: 1px solid rgba(82, 164, 54, 0.35);
+  border-radius: 10px;
+  color: #6bc24b;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.drawerCallBtn:hover {
+  background: rgba(82, 164, 54, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* Section Title & Glow Line */
+.drawerSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.drawerSectionTitle span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #6bc24b;
+  text-transform: uppercase;
+}
+
+.drawerSectionLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(82, 164, 54, 0.5) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 
 .drawerList {
@@ -625,7 +737,7 @@
 }
 
 .drawerItem {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   position: relative;
 }
 
@@ -647,28 +759,22 @@
 .drawerLink {
   display: flex;
   align-items: center;
-  font-family: var(--font-heading, inherit);
   font-weight: 600;
-  font-size: 1.2rem;
-  line-height: 1.2;
+  font-size: 1.05rem;
+  line-height: 1.25;
   color: #ffffff;
   text-decoration: none;
-  padding: 0.95rem 0;
+  padding: 0.8rem 0;
   transition: color 0.2s ease;
-  letter-spacing: -0.01em;
   width: 100%;
 }
 
 .drawerLinkText {
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: break-word;
-  line-height: 1.3;
   flex: 1;
   transition: color 0.2s ease;
 }
 
-/* ── Compact KNYX-Style Hover Bar: placed BEFORE the tab name ── */
+/* Hover Bar */
 .hoverBar {
   display: inline-flex;
   align-items: center;
@@ -679,72 +785,47 @@
   overflow: hidden;
   pointer-events: none;
   transform: translateX(-8px);
-  transition: width 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-    max-width 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.2s ease,
-    margin-right 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
 }
 
 .hoverBarLine {
-  width: 18px;
+  width: 16px;
   height: 1.5px;
-  background: var(--clr-primary, #52a436);
+  background: #52a436;
   box-shadow: 0 0 6px rgba(82, 164, 54, 0.85);
   border-radius: 1px;
-  flex-shrink: 0;
 }
 
 .hoverBarDot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #6bc24b;
-  box-shadow: 0 0 8px #6bc24b, 0 0 16px rgba(107, 194, 75, 0.95);
-  flex-shrink: 0;
+  box-shadow: 0 0 8px #6bc24b;
   margin-left: 2px;
 }
 
-/* Activate hover bar when hovering on drawerItem, drawerLink, or sub-links */
-.drawerItem:hover>.drawerLink .hoverBar,
-.drawerItem:hover>.drawerDropdownTrigger .drawerLink .hoverBar,
+.drawerItem:hover > .drawerLink .hoverBar,
+.drawerItem:hover > .drawerDropdownTrigger .drawerLink .hoverBar,
 .drawerLink:hover .hoverBar {
-  width: 28px;
-  max-width: 28px;
-  opacity: 1;
-  margin-right: 10px;
-  transform: translateX(0);
-}
-
-.drawerSubLink:hover .hoverBar {
-  width: 22px;
-  max-width: 22px;
+  width: 26px;
+  max-width: 26px;
   opacity: 1;
   margin-right: 8px;
   transform: translateX(0);
 }
 
-.drawerSubLink .hoverBarLine {
-  width: 13px;
-}
-
-.drawerSubLink .hoverBarDot {
-  width: 6px;
-  height: 6px;
-}
-
 .drawerLink:hover .drawerLinkText,
-.drawerItem:hover>.drawerLink .drawerLinkText,
-.drawerItem:hover>.drawerDropdownTrigger .drawerLink .drawerLinkText {
-  color: #ffffff;
+.drawerItem:hover > .drawerLink .drawerLinkText {
+  color: #6bc24b;
 }
 
 .chevronBtn {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.6);
-  padding: 0.6rem 0.2rem 0.6rem 0.6rem;
+  padding: 0.6rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -753,34 +834,30 @@
 }
 
 .chevronBtn:hover {
-  color: var(--clr-primary, #52a436);
+  color: #6bc24b;
 }
 
 .chevronOpen {
   transform: rotate(180deg);
-  color: var(--clr-primary, #52a436);
+  color: #6bc24b;
 }
 
 .drawerSubMenu {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  padding: 0.35rem 0.3rem 0.75rem 0.75rem;
+  gap: 0.25rem;
+  padding: 0.25rem 0.3rem 0.65rem 0.75rem;
   border-left: 2px solid rgba(82, 164, 54, 0.5);
-  margin-left: 0.25rem;
-  margin-bottom: 0.6rem;
-  overflow-x: hidden;
-  width: 100%;
-  box-sizing: border-box;
-  animation: drawerFadeIn 0.25s ease-out;
+  margin-left: 0.35rem;
+  margin-bottom: 0.5rem;
+  animation: drawerFadeIn 0.22s ease-out;
 }
 
 @keyframes drawerFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-5px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -789,43 +866,48 @@
 
 .drawerSubLink {
   display: flex;
-  align-items: flex-start;
-  font-size: 0.94rem;
+  align-items: center;
+  font-size: 0.88rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   padding: 0.35rem 0.5rem;
   border-radius: 6px;
   transition: color 0.2s ease, background-color 0.2s ease;
   width: 100%;
-  box-sizing: border-box;
 }
 
 .drawerSubLink:hover {
   color: #ffffff;
-  background: rgba(82, 164, 54, 0.12);
+  background: rgba(82, 164, 54, 0.14);
 }
 
 .drawerSubLinkText {
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: break-word;
-  line-height: 1.35;
   flex: 1;
-  transition: color 0.2s ease;
 }
 
-.drawerSubLink:hover .drawerSubLinkText {
+.drawerCtaBtn {
+  width: 100%;
+  background: linear-gradient(135deg, #52a436, #6bc24b);
   color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(82, 164, 54, 0.35);
+  transition: all 0.25s ease;
 }
 
-.drawerSubLink .hoverBar {
-  margin-top: 5px;
+.drawerCtaBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(82, 164, 54, 0.5);
 }
 
-/* Drawer Footer: STALK US + Socials */
+/* ── Drawer Footer ── */
 .drawerFooter {
-  padding: 1.5rem 2rem 2rem;
+  padding: 1.25rem 1.75rem 1.75rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   position: relative;
   z-index: 2;
@@ -834,12 +916,12 @@
 
 .drawerSocialTitle {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #ffffff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .drawerSocialRow {
@@ -852,20 +934,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.75);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.2s ease;
   text-decoration: none;
 }
 
 .drawerSocialRow a:hover {
-  background: var(--clr-primary, #52a436);
-  border-color: var(--clr-primary, #52a436);
+  background: #52a436;
+  border-color: #52a436;
   color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(82, 164, 54, 0.4);
@@ -875,10 +957,9 @@
   .sideDrawerMenu {
     max-width: 100%;
   }
-
   .drawerHeader,
   .drawerLinksWrapper,
   .drawerFooter {
-    padding-inline: 1.5rem;
+    padding-inline: 1.25rem;
   }
 }

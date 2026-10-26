@@ -247,34 +247,25 @@ export const whyChooseUsGlobal = [
   { title: 'Affordable Pricing', icon: 'FaDollarSign', desc: 'Premium enterprise quality without the bloat.' }
 ]
 
-// ─── Static Website Portfolio ───────────────────────────────────────────────
+// ─── Static Website Portfolio (Top 3 Featured) ──────────────────────────────
 export const staticPortfolioProjects = [
-  { id: 1, name: 'Corporate Portfolio', category: 'Static', tech: 'HTML, CSS, GSAP', desc: 'Award-winning portfolio for a design agency.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 2, name: 'Brand Landing Page', category: 'Static', tech: 'React, Tailwind', desc: 'High-conversion product launch page.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 3, name: 'Professional Resume Site', category: 'Static', tech: 'HTML, CSS, JS', desc: 'Minimal, elegant online CV.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 4, name: 'Tech Startup Homepage', category: 'Static', tech: 'Vite, React', desc: 'SaaS company homepage with smooth animations.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 5, name: 'Restaurant Website', category: 'Static', tech: 'Bootstrap, GSAP', desc: 'Elegant site for a fine-dining restaurant.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 6, name: 'Event Page', category: 'Static', tech: 'HTML, CSS', desc: 'Countdown & registration page for a conference.', image: '/assets/img/project/snapweb.png', link: '#' },
+  { id: 1, name: 'Next-Gen Corporate Platform', category: 'Creative Agency', tech: 'React, GSAP, Next.js', desc: 'Award-winning interactive digital agency experience featuring full-page scroll animations.', image: '/assets/img/project/snapweb.png', link: 'https://corporateportfolio.com' },
+  { id: 2, name: 'BLS World School Campus Platform', category: 'Educational Portal', tech: 'Next.js, Tailwind, Node.js', desc: 'Comprehensive multi-branch campus platform with interactive student admissions & fee portal.', image: '/images/clients/snapshots/blsworldschool.jpg', link: 'https://blsworldschool.com' },
+  { id: 3, name: 'Jindal Metals Enterprise', category: 'Industrial Enterprise', tech: 'React, Vite, GSAP', desc: 'High-authority industrial manufacturing enterprise portal with dynamic product catalog.', image: '/images/clients/snapshots/iupjindal.jpg', link: 'https://iupjindal.com' },
 ]
 
-// ─── Dynamic Website Portfolio ───────────────────────────────────────────────
+// ─── Dynamic Website Portfolio (Top 3 Featured) ─────────────────────────────
 export const dynamicPortfolioProjects = [
-  { id: 1, name: 'Real Estate Platform', category: 'Dynamic', tech: 'Laravel, Vue.js', desc: 'Property listing & management portal.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 2, name: 'News & Blog Portal', category: 'Dynamic', tech: 'Node.js, React', desc: 'Multi-author publishing platform with CMS.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 3, name: 'Corporate Intranet', category: 'Dynamic', tech: 'PHP, MySQL', desc: 'Internal employee management portal.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 4, name: 'EdTech Learning App', category: 'Dynamic', tech: 'Next.js, MongoDB', desc: 'Online course platform with user accounts.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 5, name: 'Hospital Management', category: 'Dynamic', tech: 'Laravel, MySQL', desc: 'Patient records and appointment system.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 6, name: 'Cloud Security Platform', category: 'Dynamic', tech: 'React, Express', desc: 'Enterprise threat dashboard and log viewer.', image: '/assets/img/project/snapweb.png', link: '#' },
+  { id: 1, name: 'Abrigo Defense Systems', category: 'Engineering & Defense', tech: 'Next.js, 3D Canvas, Framer', desc: 'Defense engineering portal with ballistic specifications and interactive 3D elements.', image: '/images/clients/snapshots/abrigo.jpg', link: 'https://abrigoshield.com' },
+  { id: 2, name: 'Catalyst Clinical Research', category: 'Healthcare & Biotech', tech: 'TypeScript, MongoDB, Tailwind', desc: 'Clinical trial patient recruitment, trial registry, and medical compliance web platform.', image: '/images/clients/snapshots/catalyst.jpg', link: 'https://catalystclinical.com' },
+  { id: 3, name: 'Thukral Electric Mobility', category: 'EV Mobility', tech: 'Next.js, Node.js, Cloudflare', desc: 'Electric vehicle product showcase with dealer locator and online test ride booking engine.', image: '/images/clients/snapshots/thukral.jpg', link: 'https://thukralelectric.com' },
 ]
 
-// ─── E-Commerce Portfolio ────────────────────────────────────────────────────
+// ─── E-Commerce Portfolio (Top 3 Featured) ──────────────────────────────────
 export const ecommercePortfolioProjects = [
-  { id: 1, name: 'Fashion Boutique', category: 'E-Commerce', tech: 'WooCommerce', desc: 'Premium clothing store with filters & wishlist.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 2, name: 'Electronics Superstore', category: 'E-Commerce', tech: 'Next.js, Stripe', desc: 'Massive product catalog with smart search.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 3, name: 'Organic Foods Store', category: 'E-Commerce', tech: 'Shopify, React', desc: 'Subscription-based health food store.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 4, name: 'Furniture & Decor Shop', category: 'E-Commerce', tech: 'Laravel, Vue', desc: 'Room visualizer and product configurator.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 5, name: 'Jewellery Marketplace', category: 'E-Commerce', tech: 'Next.js, MySQL', desc: 'Multi-vendor jewellery marketplace.', image: '/assets/img/project/snapweb.png', link: '#' },
-  { id: 6, name: 'Digital Products Store', category: 'E-Commerce', tech: 'Node.js, Stripe', desc: 'Sell e-books, templates, and courses online.', image: '/assets/img/project/snapweb.png', link: '#' },
+  { id: 1, name: 'Chaircraft Ergonomic Workspaces', category: 'Luxury Furniture', tech: 'Shopify, React, Razorpay', desc: 'Ergonomic office furniture online storefront with 3D product visualizer and room configurator.', image: '/images/clients/snapshots/chaircraft.jpg', link: 'https://chaircraft.in' },
+  { id: 2, name: 'Austrolabs Health Science', category: 'Pharma & Biotech', tech: 'Next.js, PostgreSQL, Tailwind', desc: 'Pharmaceutical science research portal with medicine catalog and export certifications.', image: '/images/clients/snapshots/austrolabs.jpg', link: 'https://austrolabs.com' },
+  { id: 3, name: 'Digital by Diksha Vohra', category: 'Personal Brand & Store', tech: 'Next.js, CSS Modules, SEO', desc: 'High-converting personal branding website for an international author and keynote speaker.', image: '/images/clients/snapshots/digital.jpg', link: 'https://dikshavohra.com' },
 ]
 
 // ─── Real Estate Advisory Portfolio & Scaling Case Studies ───────────────────

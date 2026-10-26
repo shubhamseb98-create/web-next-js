@@ -3,6 +3,7 @@ import Service from '../../models/Service';
 import { requireAuth } from '../../lib/auth';
 import { uploadFile } from '../../../lib/upload';
 import { revalidatePath } from 'next/cache';
+import { NEW_SERVICES_DEFAULTS } from '../../../data/seedServicesDefaults';
 
 // Trigger Turbopack rebuild
 export const dynamic = 'force-dynamic';
@@ -14,10 +15,30 @@ export async function GET(request) {
     const featured = searchParams.get('featured');
     const query = {};
     if (featured === 'true') query.isFeatured = true;
+
+    // Auto-seed missing client services so they appear in Dashboard and are editable
+    const existingSlugs = await Service.distinct('slug');
+    const existingSet = new Set(existingSlugs || []);
+    const missing = NEW_SERVICES_DEFAULTS.filter(s => !existingSet.has(s.slug));
+
+    if (missing.length > 0) {
+      const lastService = await Service.findOne().sort({ sort: -1 }).select('sort').lean();
+      let currentSort = (lastService?.sort || 0) + 1;
+
+      const toInsert = missing.map(item => ({
+        ...item,
+        sort: currentSort++
+      }));
+
+      await Service.insertMany(toInsert, { ordered: false }).catch(err => {
+        console.warn("Auto-seed duplicate/validation note:", err?.message);
+      });
+    }
+
     const items = await Service.find(query).sort({ sort: 1 }).lean();
     return Response.json({ success: true, data: JSON.parse(JSON.stringify(items)) });
   } catch (error) {
-    return Response.json({ success: false, message: 'Failed to fetch services' }, { status: 500 });
+    return Response.json({ success: false, message: 'Failed to fetch services: ' + error.message }, { status: 500 });
   }
 }
 

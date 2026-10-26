@@ -45,6 +45,7 @@ const ServiceSchema = new mongoose.Schema(
       default: [],
     },
     isFeatured: { type: Boolean, default: false },
+    showSnapshots: { type: Boolean, default: true },
     status: { type: String, enum: ["active", "draft"], default: "active" },
     sort: { type: Number, default: 0 },
     metaTitle: { type: String, default: "" },

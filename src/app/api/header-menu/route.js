@@ -5,93 +5,9 @@ import { requireAuth } from "../../lib/auth";
 
 export const dynamic = 'force-dynamic';
 
-export const DEFAULT_HEADER_ITEMS = [
-  {
-    name: 'Home',
-    path: '/',
-    order: 1,
-    isActive: true,
-    hasDropdown: false,
-    openInNewTab: false,
-    isSpecialCta: false,
-    subItems: []
-  },
-  {
-    name: 'Brand Story',
-    path: '/about',
-    order: 2,
-    isActive: true,
-    hasDropdown: false,
-    openInNewTab: false,
-    isSpecialCta: false,
-    subItems: []
-  },
-  {
-    name: 'Services',
-    path: '/services/website-designing',
-    order: 3,
-    isActive: true,
-    hasDropdown: true,
-    openInNewTab: false,
-    isSpecialCta: false,
-    subItems: [
-      { label: 'Website Designing', path: '/services/website-designing', order: 1, isActive: true, openInNewTab: false },
-      { label: 'Website Development', path: '/services/web-development', order: 2, isActive: true, openInNewTab: false },
-      { label: 'Software Development', path: '/services/software-development', order: 3, isActive: true, openInNewTab: false },
-      { label: 'Digital Marketing', path: '/services/digital-marketing', order: 4, isActive: true, openInNewTab: false },
-      { label: 'Search Engine Optimization', path: '/services/search-engine-optimization', order: 5, isActive: true, openInNewTab: false },
-      { label: 'Ecommerce Solution', path: '/services/ecommerce-solution', order: 6, isActive: true, openInNewTab: false },
-      { label: 'Logo Designing', path: '/services/logo-designing', order: 7, isActive: true, openInNewTab: false },
-      { label: 'Brochure Designing', path: '/services/brochure-designing', order: 8, isActive: true, openInNewTab: false },
-      { label: 'Company Profile', path: '/services/company-profile', order: 9, isActive: true, openInNewTab: false },
-      { label: 'WhatsApp Promotional Images', path: '/services/whatsapp-promotional-images', order: 10, isActive: true, openInNewTab: false },
-      { label: 'Domain', path: '/services/domain', order: 11, isActive: true, openInNewTab: false },
-      { label: 'Hosting Solution', path: '/services/hosting-solution', order: 12, isActive: true, openInNewTab: false },
-      { label: 'Email Solution', path: '/services/email-solution', order: 13, isActive: true, openInNewTab: false },
-    ]
-  },
-  {
-    name: 'Projects',
-    path: '/projects',
-    order: 4,
-    isActive: true,
-    hasDropdown: false,
-    openInNewTab: false,
-    isSpecialCta: false,
-    subItems: []
-  },
-  {
-    name: 'CRM Products',
-    path: '/products',
-    order: 5,
-    isActive: true,
-    hasDropdown: false,
-    openInNewTab: false,
-    isSpecialCta: false,
-    subItems: []
-  },
-  {
-    name: 'Blog',
-    path: '/blog',
-    order: 6,
-    isActive: true,
-    hasDropdown: false,
-    openInNewTab: false,
-    isSpecialCta: false,
-    subItems: []
-  },
-  {
-    name: 'Contact Us',
-    path: '/contact',
-    order: 7,
-    isActive: true,
-    hasDropdown: false,
-    openInNewTab: false,
-    isSpecialCta: true,
-    ctaAction: 'modal',
-    subItems: []
-  }
-];
+import { DEFAULT_HEADER_ITEMS } from "../../../data/headerMenuDefaults";
+
+export { DEFAULT_HEADER_ITEMS };
 
 export async function GET() {
   try {
@@ -99,8 +15,10 @@ export async function GET() {
 
     let items = await HeaderMenuItem.find().sort({ order: 1 }).lean();
 
-    // Auto-seed if empty
-    if (!items || items.length === 0) {
+    // Auto-seed if empty or upgrade if legacy single-services structure
+    const isLegacy = !items || items.length === 0 || items.some(it => it.name === 'Services' && !it.tier);
+    if (isLegacy) {
+      await HeaderMenuItem.deleteMany({});
       await HeaderMenuItem.insertMany(DEFAULT_HEADER_ITEMS);
       items = await HeaderMenuItem.find().sort({ order: 1 }).lean();
     }

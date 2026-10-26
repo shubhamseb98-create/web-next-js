@@ -79,7 +79,7 @@ export async function PUT(request, { params }) {
               body[key] = value;
             }
           }
-        } else if (key === 'isFeatured') {
+        } else if (key === 'isFeatured' || key === 'showSnapshots') {
           body[key] = value === 'true' || value === true;
         } else {
           body[key] = value;

@@ -12,6 +12,8 @@ import ServicePortfolio from '../sections/services/ServicePortfolio';
 import ServiceCTA from '../sections/services/ServiceCTA';
 import { whyChooseUsGlobal, staticPortfolioProjects, dynamicPortfolioProjects, ecommercePortfolioProjects, techStackGlobal } from 'src/data/servicesData';
 
+import WebsiteSnapshotsShowcase from '../sections/services/WebsiteSnapshotsShowcase';
+
 export default function ServicePageClient({ service, slug, globalTechStack, homeExtraData }) {
   if (!service) return null;
 
@@ -48,6 +50,7 @@ export default function ServicePageClient({ service, slug, globalTechStack, home
   const isInfrastructureService = slug.includes('domain') || slug.includes('email');
   const features = service.features?.length > 0 ? service.features : oldData?.features;
   const faqs = service.faq?.length > 0 ? service.faq : oldData?.faqs;
+  const isSnapshotsEnabled = service.showSnapshots !== false;
   const currentPortfolio = service.portfolio?.length > 0 
     ? service.portfolio 
     : (isInfrastructureService ? [] : portfolioProjects);
@@ -64,6 +67,9 @@ export default function ServicePageClient({ service, slug, globalTechStack, home
     <main>
       <ServiceHero data={heroData} breadcrumbTitle={service.title} />
       <ServiceOverview data={overviewData} image={overviewData.image} serviceTitle={service.title} />
+      {isSnapshotsEnabled && (
+        <WebsiteSnapshotsShowcase snapshots={currentPortfolio} serviceTitle={service.title} />
+      )}
       <DevelopmentProcess processSteps={processSteps} />
       <WhyChooseUsIconCards reasons={whyChooseUs} />
       <ServiceFAQs faqs={faqs} />

@@ -13,7 +13,7 @@ import { Switch } from "../../../../components/ui/switch";
 import { 
   Save, Plus, Trash2, Edit2, Check, Sparkles, Image as ImageIcon, 
   Upload, HelpCircle, Layers, CheckCircle2, ArrowLeft, ExternalLink, 
-  Settings, ChevronDown 
+  Settings, ChevronDown, Eye, EyeOff 
 } from "lucide-react";
 import AIAssistantButton from "../../../../components/dashboard/AIAssistantButton";
 import ConfirmDeleteModal from "../../../../components/dashboard/ConfirmDeleteModal";
@@ -352,9 +352,47 @@ export default function ServiceCMSPage() {
   if (!data) return <div className="p-8 text-center text-red-500">Service not found.</div>;
 
 
+  const handleLoadTemplateSnapshots = async () => {
+    const templates = [
+      {
+        _id: `snap-${Date.now()}-1`,
+        name: 'Corporate Agency Showcase',
+        category: 'Creative Agency',
+        tech: 'React • GSAP • Next.js',
+        desc: 'Award-winning interactive digital experience featuring full-page scroll animations.',
+        image: '/assets/img/project/snapweb.png',
+        link: 'https://corporateportfolio.com',
+      },
+      {
+        _id: `snap-${Date.now()}-2`,
+        name: 'BLS World School Campus Platform',
+        category: 'Educational Portal',
+        tech: 'Next.js • Tailwind • Node.js',
+        desc: 'Comprehensive multi-branch campus platform with interactive student admissions.',
+        image: '/images/clients/snapshots/blsworldschool.jpg',
+        link: 'https://blsworldschool.com',
+      },
+      {
+        _id: `snap-${Date.now()}-3`,
+        name: 'Jindal Metals Enterprise Portal',
+        category: 'Corporate Enterprise',
+        tech: 'React • Vite • GSAP',
+        desc: 'High-authority industrial manufacturing enterprise portal with dynamic product catalog.',
+        image: '/images/clients/snapshots/iupjindal.jpg',
+        link: 'https://iupjindal.com',
+      },
+    ];
+    const updated = { ...data, portfolio: templates, showSnapshots: true };
+    setData(updated);
+    await handleSaveAll(updated);
+    addToast("3 template snapshots loaded! You can now edit each card.", "success");
+  };
+
+  const isSnapshotsOff = data.showSnapshots === false;
   const tabs = [
     { id: 'banner', label: 'Hero Banner' },
     { id: 'overview', label: 'Overview & Bento' },
+    { id: 'portfolio', label: `Website Snapshots (${data.portfolio?.length || 0})${isSnapshotsOff ? ' • OFF' : ''}` },
     { id: 'benefits', label: `Key Benefits (${data.benefits?.length || 0})` },
     { id: 'process', label: `Process Steps (${data.process?.length || 0})` },
     { id: 'whyChooseUs', label: `Why Choose Us (${data.whyChooseUs?.length || 0})` },
@@ -365,6 +403,7 @@ export default function ServiceCMSPage() {
   // Prepare table data for active list tab
   const getActiveArray = () => {
     switch (activeTab) {
+      case 'portfolio': return data.portfolio || [];
       case 'benefits': return data.benefits || [];
       case 'process': return data.process || [];
       case 'whyChooseUs': return data.whyChooseUs || [];
@@ -427,6 +466,65 @@ export default function ServiceCMSPage() {
   // Column definitions per tab
   const getColumns = () => {
     switch (activeTab) {
+      case 'portfolio':
+        return [
+          {
+            key: 'image',
+            label: 'Snapshot',
+            render: (row) => (
+              <div className="w-16 h-10 rounded-md border border-white/10 overflow-hidden bg-black/40 flex items-center justify-center shrink-0 shadow-sm">
+                {row.image ? (
+                  <img
+                    src={row.image}
+                    alt={row.name || 'Snapshot'}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                  />
+                ) : (
+                  <ImageIcon className="w-4 h-4 text-emerald-400/50" />
+                )}
+              </div>
+            )
+          },
+          {
+            key: 'name',
+            label: 'Website / Project Name',
+            render: (row) => (
+              <div>
+                <div className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                  <span>{row.name || 'Untitled Project'}</span>
+                  {row.link && row.link !== '#' && (
+                    <a href={row.link} target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+                <div className="text-xs text-muted-foreground truncate max-w-[260px]">
+                  {row.desc || 'No description'}
+                </div>
+              </div>
+            )
+          },
+          {
+            key: 'category',
+            label: 'Category',
+            render: (row) => (
+              <span className="inline-flex items-center text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                {row.category || 'Website'}
+              </span>
+            )
+          },
+          {
+            key: 'tech',
+            label: 'Tech Stack',
+            render: (row) => (
+              <span className="text-xs font-mono text-slate-400">
+                {row.tech || '-'}
+              </span>
+            )
+          },
+          { key: 'actions', align: 'right', label: 'Action', render: renderActions }
+        ];
 
       case 'benefits':
         return [
@@ -499,8 +597,6 @@ export default function ServiceCMSPage() {
           },
           { key: 'actions', align: 'right', label: 'Action', render: renderActions }
         ];
-
-
 
       case 'faq':
         return [
@@ -924,9 +1020,59 @@ export default function ServiceCMSPage() {
         </Card>
       )}
 
-      {/* LIST TABS: Benefits, Process, Why Choose Us, FAQ */}
-      {['benefits', 'process', 'whyChooseUs', 'faq'].includes(activeTab) && (
+      {/* LIST TABS: Portfolio, Benefits, Process, Why Choose Us, FAQ */}
+      {['portfolio', 'benefits', 'process', 'whyChooseUs', 'faq'].includes(activeTab) && (
         <div className="space-y-6">
+          {/* Snapshots Section Visibility Toggle Banner */}
+          {activeTab === 'portfolio' && (
+            <div className="p-4 sm:p-5 rounded-2xl border border-white/10 bg-gradient-to-r from-emerald-950/40 via-zinc-950/70 to-zinc-950 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-md">
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border transition-all ${data.showSnapshots !== false ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 shadow-[0_0_15px_rgba(82,164,54,0.15)]' : 'bg-red-500/10 text-red-400 border-red-500/30'}`}>
+                  <Eye className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <h4 className="text-sm font-bold text-foreground">Website Snapshots Showcase Section</h4>
+                    <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${data.showSnapshots !== false ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-red-500/15 text-red-400 border-red-500/30'}`}>
+                      {data.showSnapshots !== false ? '● ACTIVE (VISIBLE ON PAGE)' : '○ DISABLED (HIDDEN ON PAGE)'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {data.showSnapshots !== false 
+                      ? 'This section is currently ON and will display the top 3 cards with auto-scroll on hover.' 
+                      : 'This section is currently OFF and will NOT be shown on this service detail page.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+                {(!data.portfolio || data.portfolio.length === 0) && (
+                  <button
+                    type="button"
+                    onClick={handleLoadTemplateSnapshots}
+                    className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/15 transition-all flex items-center gap-1.5 shadow-sm hover:border-emerald-500/40"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Load 3 Templates</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newStatus = data.showSnapshots === false ? true : false;
+                    const updated = { ...data, showSnapshots: newStatus };
+                    setData(updated);
+                    handleSaveAll(updated);
+                  }}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm ${data.showSnapshots !== false ? 'bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/30' : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-950/40'}`}
+                >
+                  {data.showSnapshots !== false ? 'Turn OFF Section' : 'Turn ON Section'}
+                </button>
+              </div>
+            </div>
+          )}
+
           <TableToolbar
             search={search}
             onSearchChange={setSearch}
@@ -936,12 +1082,14 @@ export default function ServiceCMSPage() {
             onBulkDelete={() => setConfirmModal({ isOpen: true, type: 'bulk', id: null })}
             bulkDeleting={false}
             onAdd={() => {
+              if (activeTab === 'portfolio') openCreate('portfolio', { name: '', category: 'Corporate Enterprise', tech: 'Next.js, Tailwind', desc: '', image: '', link: 'https://' });
               if (activeTab === 'benefits') openCreate('benefits', { title: '', desc: '' });
               if (activeTab === 'process') openCreate('process', { step: String((data.process?.length || 0) + 1).padStart(2, '0'), title: '', desc: '' });
               if (activeTab === 'whyChooseUs') openCreate('whyChooseUs', { title: '', desc: '', icon: '' });
               if (activeTab === 'faq') openCreate('faq', { question: '', answer: '' });
             }}
             addLabel={
+              activeTab === 'portfolio' ? 'Add Website Snapshot' :
               activeTab === 'benefits' ? 'Add Benefit' :
               activeTab === 'process' ? 'Add Step' :
               activeTab === 'whyChooseUs' ? 'Add Advantage' : 'Add FAQ'
@@ -971,7 +1119,7 @@ export default function ServiceCMSPage() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <DialogTitle style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
-              {modal === 'new' ? `Add ${modalType}` : `Edit ${modalType}`}
+              {modal === 'new' ? `Add ${modalType === 'portfolio' ? 'Website Snapshot' : modalType}` : `Edit ${modalType === 'portfolio' ? 'Website Snapshot' : modalType}`}
             </DialogTitle>
             <p style={{ color: '#94a3b8', fontSize: '14px', margin: 0 }}>
               {modal === 'new' ? `Create a new item in the service configuration.` : `Modify item details and content.`}
@@ -979,6 +1127,96 @@ export default function ServiceCMSPage() {
           </DialogHeader>
 
           <form onSubmit={handleSaveModalItem} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+            {modalType === 'portfolio' && (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-emerald-400" />
+                    Website Snapshot Image *
+                  </label>
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                    {form.image ? (
+                      <div className="relative group">
+                        <img
+                          src={form.image}
+                          alt="Snapshot Preview"
+                          className="w-40 h-24 object-cover rounded-xl border border-white/15 shadow-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setForm(prev => ({ ...prev, image: '' }))}
+                          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow transition-colors"
+                          title="Remove image"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-40 h-24 rounded-xl border border-dashed border-white/20 bg-white/[0.02] flex items-center justify-center text-xs text-muted-foreground">
+                        No image uploaded
+                      </div>
+                    )}
+                    <div className="flex-1 space-y-2 w-full">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploadingImage}
+                        onChange={(e) => handleModalImageUpload(e, 'image')}
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 disabled:opacity-50 cursor-pointer text-xs text-muted-foreground"
+                      />
+                      {uploadingImage && <span className="text-xs text-emerald-400 font-medium animate-pulse block">Uploading snapshot image...</span>}
+                      <FloatingInput
+                        label="Or Image URL / Path"
+                        value={form.image || ''}
+                        onChange={(e) => setForm({ ...form, image: e.target.value })}
+                        placeholder="e.g. /images/clients/snapshots/blsworldschool.jpg or https://..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FloatingInput
+                    label="Website / Project Name *"
+                    required
+                    value={form.name || ''}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="e.g. BLS World School Campus Platform"
+                  />
+                  <FloatingInput
+                    label="Category / Industry *"
+                    value={form.category || ''}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    placeholder="e.g. Educational Portal, Corporate, E-Commerce"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FloatingInput
+                    label="Live Website URL"
+                    value={form.link || ''}
+                    onChange={(e) => setForm({ ...form, link: e.target.value })}
+                    placeholder="https://example.com"
+                    rightElement={<ExternalLink className="w-4 h-4 text-slate-500" />}
+                  />
+                  <FloatingInput
+                    label="Tech Stack / Tags"
+                    value={form.tech || ''}
+                    onChange={(e) => setForm({ ...form, tech: e.target.value })}
+                    placeholder="e.g. Next.js, Tailwind, Node.js"
+                  />
+                </div>
+
+                <FloatingTextarea
+                  label="Project Description / Scope"
+                  value={form.desc || ''}
+                  onChange={(e) => setForm({ ...form, desc: e.target.value })}
+                  rows={3}
+                  placeholder="Brief overview of features delivered for this client website..."
+                />
+              </>
+            )}
 
 
             {modalType === 'benefits' && (

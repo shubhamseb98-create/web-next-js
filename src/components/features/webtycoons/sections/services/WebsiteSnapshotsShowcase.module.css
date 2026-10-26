@@ -1,0 +1,547 @@
+/* ── Compact & Ultra-Modern Website Snapshots Showcase ── */
+.snapshotsSection {
+  position: relative;
+  background: radial-gradient(circle at 50% 0%, rgba(82, 164, 54, 0.08) 0%, rgba(10, 15, 10, 0.98) 70%, #080c08 100%);
+  padding: clamp(60px, 7vw, 90px) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+/* Ambient subtle glow */
+.snapshotsSection::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(280px, 50vw, 700px);
+  height: 240px;
+  background: radial-gradient(ellipse, rgba(82, 164, 54, 0.14) 0%, transparent 70%);
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Compact Section Header */
+.sectionHeader {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 30px auto;
+}
+
+.eyebrowBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 9999px;
+  background: rgba(82, 164, 54, 0.12);
+  border: 1px solid rgba(82, 164, 54, 0.28);
+  color: #72cc52;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #52a436;
+  box-shadow: 0 0 8px #52a436;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.sectionTitle {
+  font-size: clamp(24px, 3.2vw, 36px);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
+}
+
+.sectionTitleGradient {
+  background: linear-gradient(135deg, #ffffff 40%, #72cc52 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sectionSubtitle {
+  font-size: clamp(13px, 1.5vw, 14.5px);
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── 3 Decreased Width Columns Grid (285px each) ── */
+.snapshotsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 285px));
+  justify-content: center;
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .snapshotsGrid {
+    grid-template-columns: repeat(2, minmax(0, 300px));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .snapshotsGrid {
+    grid-template-columns: minmax(0, 320px);
+    gap: 16px;
+  }
+}
+
+/* ── Sleek Card Frame ── */
+.snapshotCard {
+  background: linear-gradient(180deg, #111712 0%, #0a0f0b 100%);
+  border: 1px solid rgba(82, 164, 54, 0.2);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.snapshotCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(82, 164, 54, 0.5);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(82, 164, 54, 0.18);
+}
+
+/* ── Compact Mac Browser Bar ── */
+.browserHeader {
+  background: #141b14;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 8px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.browserDots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.browserDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.3);
+}
+
+.dotRed { background: #ff5f56; }
+.dotYellow { background: #ffbd2e; }
+.dotGreen { background: #27c93f; }
+
+.browserAddressBar {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 2.5px 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  max-width: 180px;
+  overflow: hidden;
+}
+
+.addressText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lockIcon {
+  color: #52a436;
+  width: 10.5px;
+  height: 10.5px;
+  flex-shrink: 0;
+}
+
+.browserMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.liveIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #72cc52;
+  letter-spacing: 0.05em;
+  background: rgba(82, 164, 54, 0.12);
+  padding: 1.5px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(82, 164, 54, 0.22);
+}
+
+.pulseDotSm {
+  width: 4.5px;
+  height: 4.5px;
+  border-radius: 50%;
+  background-color: #52a436;
+  box-shadow: 0 0 5px #52a436;
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+.browserExtBtn {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.browserExtBtn:hover {
+  color: #72cc52;
+  transform: scale(1.15);
+}
+
+/* ── Auto-Scrolling Viewport Window (Height: 340px) ── */
+.imageViewport {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  overflow: hidden;
+  background: #080c08;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .imageViewport {
+    height: 280px;
+  }
+}
+
+.snapshotImage {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+  will-change: transform;
+  transform: translateY(0);
+}
+
+/* Fallback pure CSS hover scroll */
+.snapshotCard:hover .snapshotImage {
+  transform: translateY(calc(-100% + 340px));
+}
+
+/* ── Minimalist Floating Auto-Scroll Badge ── */
+.scrollIndicatorPill {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 6;
+  padding: 3.5px 9px;
+  border-radius: 9999px;
+  background: rgba(10, 15, 10, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(82, 164, 54, 0.3);
+  color: #72cc52;
+  font-size: 9.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.scrollIndicatorActive {
+  background: rgba(82, 164, 54, 0.95);
+  color: #ffffff;
+  border-color: #52a436;
+  box-shadow: 0 3px 12px rgba(82, 164, 54, 0.4);
+}
+
+.scrollPulseGlow {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 0 6px #ffffff;
+  animation: pulse 1s infinite ease-in-out;
+}
+
+/* ── Viewport Hover Overlay ── */
+.viewportOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(9, 13, 9, 0.9) 0%, rgba(9, 13, 9, 0.2) 60%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.viewportOverlayVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.enlargeBtn {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.enlargeBtn:hover {
+  background: #52a436;
+  border-color: #52a436;
+  color: #ffffff;
+  transform: translateY(-1.5px);
+}
+
+.visitDirectBtn {
+  background: #52a436;
+  border: 1px solid #52a436;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.visitDirectBtn:hover {
+  background: #438a2c;
+  transform: translateY(-1.5px);
+}
+
+/* ── Compact Card Content / Footer ── */
+.cardContent {
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  background: #0d130e;
+}
+
+.cardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.categoryBadge {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2.5px 7px;
+  border-radius: 4px;
+  background: rgba(82, 164, 54, 0.14);
+  color: #72cc52;
+  border: 1px solid rgba(82, 164, 54, 0.25);
+}
+
+.techTagMini {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #64748b;
+  font-family: ui-monospace, monospace;
+}
+
+.projectName {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+  transition: color 0.2s ease;
+}
+
+.snapshotCard:hover .projectName {
+  color: #72cc52;
+}
+
+.projectDesc {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: auto;
+}
+
+.techTags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #64748b;
+  font-family: ui-monospace, monospace;
+  max-width: 65%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.directVisitLink {
+  color: #52a436;
+  font-size: 11.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.directVisitLink:hover {
+  color: #72cc52;
+  transform: translateX(2px);
+}
+
+/* ── Lightbox Modal ── */
+.lightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lightboxCard {
+  background: #0f1610;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.lightboxCloseBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.lightboxCloseBtn:hover {
+  background: #ff5f56;
+  border-color: #ff5f56;
+}
+
+.lightboxImageWrapper {
+  width: 100%;
+  background: #000000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.lightboxImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.lightboxInfo {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

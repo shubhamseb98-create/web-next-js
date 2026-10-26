@@ -17,6 +17,7 @@ const HeaderMenuItemSchema = new mongoose.Schema({
   openInNewTab: { type: Boolean, default: false },
   isSpecialCta: { type: Boolean, default: false },
   ctaAction: { type: String, enum: ['link', 'modal'], default: 'link' },
+  tier: { type: String, enum: ['topNav', 'servicesNav'], default: 'servicesNav' },
   subItems: [SubItemSchema],
 }, { timestamps: true });
 

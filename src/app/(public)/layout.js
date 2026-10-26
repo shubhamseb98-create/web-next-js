@@ -11,25 +11,13 @@ import 'swiper/css';
 import { connectDB } from "src/app/lib/config";
 import GlobalSetting from "src/app/models/GlobalSetting";
 import { HeaderMenuItem, HeaderConfig } from "src/app/models/HeaderMenu";
+import { DEFAULT_HEADER_ITEMS } from "src/data/headerMenuDefaults";
 
 // ISR: rebuild layout data every 5 minutes (revalidated on updates)
 export const revalidate = 300;
 
 // Fallback base navigation structure if DB empty
-const BASE_NAV = [
-  { id: 1, title: "Home", slug: "/", children: [] },
-  { id: 2, title: "About", slug: "/about", children: [] },
-  {
-    id: 3,        
-    title: "Services",
-    slug: "/services",
-    children: [],
-  },
-  { id: 4, title: "Projects", slug: "/projects", children: [] },
-  { id: 5, title: "Products", slug: "/products", children: [] },
-  { id: 6, title: "Blog", slug: "/blog", children: [] },
-  { id: 7, title: "Contact Us", slug: "/contact", children: [] },
-];
+const BASE_NAV = DEFAULT_HEADER_ITEMS;
 
 export default async function PublicLayout({ children }) {
   let globalSettings = null;

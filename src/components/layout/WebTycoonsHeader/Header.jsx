@@ -231,9 +231,8 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
         {/* ── Tier 1: Top Utility & Corporate Bar (Desktop Only) ── */}
         <div className={`${styles.topUtilityBar} ${isScrolled ? styles.topUtilityBarHidden : ''}`}>
           <div className={`container-fluid-px h-100 d-flex align-items-center justify-content-between ${styles.topBarInner}`}>
-            {/* Left: Contact Info & Heritage Badge */}
+            {/* Left: Contact Info */}
             <div className={styles.topBarContact}>
-              <span className={styles.heritageBadge}>Since 2010</span>
               <a href="tel:+918527458950" className={styles.topContactItem} title="Call Us">
                 <FaPhoneAlt className={styles.topContactIcon} />
                 <span>(+91) - 8527458950</span>

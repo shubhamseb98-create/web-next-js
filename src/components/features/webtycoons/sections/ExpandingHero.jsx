@@ -369,7 +369,7 @@ const ExpandingHero = ({ bannerData }) => {
           >
             {/* Eyebrow / Wordmark */}
             <motion.div variants={childVariants} className="d-flex justify-content-center" style={{ marginBottom: '8px' }}>
-              <span className={`section-label ${styles.heroBadge}`} style={{ marginBottom: 0 }}>
+              <span className="section-label" style={{ marginBottom: 0 }}>
                 {currentSlide.badge}
               </span>
             </motion.div>

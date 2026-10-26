@@ -59,25 +59,6 @@
   margin-block: auto;
 }
 
-/* Eyebrow badge pill */
-.heroBadge {
-  font-size: clamp(0.72rem, 0.88vw, 0.82rem) !important;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 4px 14px;
-  border-radius: 9999px;
-  background: rgba(82, 164, 54, 0.12);
-  border: 1px solid rgba(82, 164, 54, 0.35);
-  color: #6edb4a !important;
-  box-shadow: 0 0 15px rgba(82, 164, 54, 0.15);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.heroBadge::before {
-  display: none !important;
-}
 
 .heroTitle {
   font-family: var(--font-heading, 'Inter', sans-serif);

@@ -19,6 +19,7 @@ import {
   RotateCcw,
   Sparkles,
   Layers,
+  Globe,
   CheckCircle2,
   Eye,
   EyeOff,
@@ -925,32 +926,139 @@ export default function HeaderManagementPage() {
           <form onSubmit={handleSaveTab} style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Navigation Tier Selector (Which Navbar?) */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Navigation Tier (Which Navbar?)</label>
-                <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                    Navigation Tier (Which Navbar?) <span className="text-red-400">*</span>
+                  </label>
+                  <span className="text-[11px] text-slate-400">Click a card to select</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Tier 1 Option */}
                   <button
                     type="button"
                     onClick={() => setTabForm({ ...tabForm, tier: 'topNav' })}
-                    className={`p-3 rounded-xl border text-left transition-all ${
+                    className={`group relative p-3.5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                       tabForm.tier === 'topNav'
-                        ? 'bg-sky-500/15 border-sky-500 text-white shadow-md shadow-sky-500/20'
-                        : 'bg-black/30 border-white/10 text-slate-400 hover:border-white/20'
+                        ? 'bg-gradient-to-br from-sky-500/20 via-sky-500/10 to-sky-950/40 border-sky-400 text-white shadow-lg shadow-sky-500/20 ring-1 ring-sky-400/50'
+                        : 'bg-black/40 border-white/10 text-slate-400 hover:border-sky-400/50 hover:bg-sky-500/[0.05] hover:text-slate-200'
                     }`}
                   >
-                    <div className="text-xs font-bold text-sky-400">Tier 1: Corporate Top Bar</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5">Home, Brand Story, Projects, Blog, Contact</div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                            tabForm.tier === 'topNav'
+                              ? 'bg-sky-500 text-white shadow-sm shadow-sky-500/50'
+                              : 'bg-white/5 text-slate-400 group-hover:text-sky-400 group-hover:bg-sky-500/10'
+                          }`}
+                        >
+                          <Globe className="w-4 h-4" />
+                        </div>
+                        <span
+                          className={`text-xs font-bold transition-colors ${
+                            tabForm.tier === 'topNav' ? 'text-sky-300' : 'text-slate-300 group-hover:text-sky-300'
+                          }`}
+                        >
+                          Tier 1: Corporate Top Bar
+                        </span>
+                      </div>
+
+                      {/* Radio / Selection Indicator */}
+                      <div
+                        className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          tabForm.tier === 'topNav'
+                            ? 'bg-sky-500 text-white shadow-md shadow-sky-500/50 scale-105'
+                            : 'border-2 border-slate-600 bg-black/40 group-hover:border-sky-400/60'
+                        }`}
+                      >
+                        {tabForm.tier === 'topNav' ? (
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        ) : (
+                          <div className="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-sky-400/40" />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-slate-400 leading-snug pl-9">
+                      Home, Brand Story, Projects, Blog, Contact
+                    </div>
+
+                    <div className="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] pl-9">
+                      <span className="text-slate-500">Corporate utility links</span>
+                      {tabForm.tier === 'topNav' ? (
+                        <span className="inline-flex items-center gap-1 font-semibold text-sky-400">
+                          <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="text-slate-500 group-hover:text-slate-400">Click to choose</span>
+                      )}
+                    </div>
                   </button>
+
+                  {/* Tier 2 Option */}
                   <button
                     type="button"
                     onClick={() => setTabForm({ ...tabForm, tier: 'servicesNav' })}
-                    className={`p-3 rounded-xl border text-left transition-all ${
+                    className={`group relative p-3.5 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                       tabForm.tier === 'servicesNav'
-                        ? 'bg-emerald-500/15 border-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                        : 'bg-black/30 border-white/10 text-slate-400 hover:border-white/20'
+                        ? 'bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-emerald-950/40 border-emerald-400 text-white shadow-lg shadow-emerald-500/20 ring-1 ring-emerald-400/50'
+                        : 'bg-black/40 border-white/10 text-slate-400 hover:border-emerald-400/50 hover:bg-emerald-500/[0.05] hover:text-slate-200'
                     }`}
                   >
-                    <div className="text-xs font-bold text-emerald-400">Tier 2: Services Navbar</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5">Website Designing, Social Media, etc.</div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${
+                            tabForm.tier === 'servicesNav'
+                              ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/50'
+                              : 'bg-white/5 text-slate-400 group-hover:text-emerald-400 group-hover:bg-emerald-500/10'
+                          }`}
+                        >
+                          <Layers className="w-4 h-4" />
+                        </div>
+                        <span
+                          className={`text-xs font-bold transition-colors ${
+                            tabForm.tier === 'servicesNav' ? 'text-emerald-300' : 'text-slate-300 group-hover:text-emerald-300'
+                          }`}
+                        >
+                          Tier 2: Services Navbar
+                        </span>
+                      </div>
+
+                      {/* Radio / Selection Indicator */}
+                      <div
+                        className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          tabForm.tier === 'servicesNav'
+                            ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/50 scale-105'
+                            : 'border-2 border-slate-600 bg-black/40 group-hover:border-emerald-400/60'
+                        }`}
+                      >
+                        {tabForm.tier === 'servicesNav' ? (
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        ) : (
+                          <div className="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-emerald-400/40" />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-slate-400 leading-snug pl-9">
+                      Website Designing, Social Media, etc.
+                    </div>
+
+                    <div className="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between text-[10px] pl-9">
+                      <span className="text-slate-500">Main services links</span>
+                      {tabForm.tier === 'servicesNav' ? (
+                        <span className="inline-flex items-center gap-1 font-semibold text-emerald-400">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="text-slate-500 group-hover:text-slate-400">Click to choose</span>
+                      )}
+                    </div>
                   </button>
                 </div>
               </div>

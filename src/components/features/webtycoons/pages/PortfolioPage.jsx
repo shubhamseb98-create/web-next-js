@@ -86,10 +86,63 @@ const faqs = [
     question: "What kind of post-deployment support do you provide?",
     answer: "We provide extensive maintenance packs including performance monitoring, security patching, feature scaling, and dedicated engineering support."
   }
-]
+];
+
+const SERVICES = [
+  'Website Designing',
+  'Software Development',
+  'E-Commerce Development',
+  'Mobile App Development',
+  'Digital Marketing & SEO',
+  'Social Media Marketing',
+  'Domain & Hosting',
+  'UI/UX Design',
+  'Maintenance & Support'
+];
 
 const PortfolioPage = () => {
   const [openFaq, setOpenFaq] = useState(0)
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    service: '',
+    message: ''
+  })
+  const [formLoading, setFormLoading] = useState(false)
+  const [formSuccess, setFormSuccess] = useState(false)
+  const [formError, setFormError] = useState('')
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+    setFormLoading(true)
+    setFormError('')
+    setFormSuccess(false)
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setFormSuccess(true)
+        setFormData({ name: '', email: '', phone: '', service: '', message: '' })
+      } else {
+        setFormError(data.message || 'Something went wrong. Please try again.')
+      }
+    } catch (err) {
+      setFormError('Failed to send message. Please try again later.')
+    } finally {
+      setFormLoading(false)
+    }
+  }
 
   useEffect(() => {
     document.title = 'Projects | WebTycoons'
@@ -223,46 +276,92 @@ const PortfolioPage = () => {
                 <h3 className={styles.formCardTitle}>Send Us a Message</h3>
                 <p className={styles.formCardSubtitle}>Fill out the form below and we'll be in touch shortly.</p>
                 
-                <form className={styles.contactForm} onSubmit={(e) => e.preventDefault()}>
+                <form className={styles.contactForm} onSubmit={handleFormSubmit}>
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>FULL NAME *</label>
-                      <input type="text" placeholder="John Doe" className={styles.inputCardField} />
+                      <input 
+                        type="text" 
+                        name="name"
+                        value={formData.name}
+                        onChange={handleFormChange}
+                        required
+                        placeholder="John Doe" 
+                        className={styles.inputCardField} 
+                      />
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>EMAIL ADDRESS *</label>
-                      <input type="email" placeholder="john@example.com" className={styles.inputCardField} />
+                      <input 
+                        type="email" 
+                        name="email"
+                        value={formData.email}
+                        onChange={handleFormChange}
+                        required
+                        placeholder="john@example.com" 
+                        className={styles.inputCardField} 
+                      />
                     </div>
                   </div>
                   
                   <div className={styles.formRow}>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>PHONE NUMBER</label>
-                      <input type="tel" placeholder="+91 8527458950" className={styles.inputCardField} />
+                      <input 
+                        type="tel" 
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleFormChange}
+                        placeholder="+91 8527458950" 
+                        className={styles.inputCardField} 
+                      />
                     </div>
                     <div className={styles.formGroup}>
                       <label className={styles.formLabel}>SERVICE INTERESTED IN *</label>
-                      <select className={styles.selectCardField}>
-                        <option>Select a service...</option>
+                      <select 
+                        name="service"
+                        value={formData.service}
+                        onChange={handleFormChange}
+                        required
+                        className={styles.selectCardField}
+                      >
+                        <option value="" style={{ background: '#1a1c18', color: '#888' }}>Select a service...</option>
+                        {SERVICES.map((s) => (
+                          <option key={s} value={s} style={{ background: '#1a1c18', color: '#fff' }}>
+                            {s}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
                   
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>ESTIMATED BUDGET</label>
-                    <select className={styles.selectCardField}>
-                      <option>Select a budget range...</option>
-                    </select>
-                  </div>
-                  
-                  <div className={styles.formGroup}>
                     <label className={styles.formLabel}>TELL US ABOUT YOUR PROJECT *</label>
-                    <textarea placeholder="Describe your project goals, timeline, and any specific requirements..." className={styles.textCardArea} rows="4"></textarea>
+                    <textarea 
+                      name="message"
+                      value={formData.message}
+                      onChange={handleFormChange}
+                      required
+                      placeholder="Describe your project goals, timeline, and any specific requirements..." 
+                      className={styles.textCardArea} 
+                      rows="4"
+                    ></textarea>
                   </div>
                   
-                  <button type="submit" className={styles.submitBtnFull}>
-                    <FaPaperPlane /> Send Message
+                  <button type="submit" disabled={formLoading} className={styles.submitBtnFull}>
+                    {formLoading ? 'Sending...' : <><FaPaperPlane /> Send Message</>}
                   </button>
+
+                  {formSuccess && (
+                    <div style={{ padding: '12px 16px', background: 'rgba(0, 255, 136, 0.1)', border: '1px solid #00ff88', borderRadius: '8px', color: '#00ff88', fontSize: '14px', marginTop: '12px', textAlign: 'center' }}>
+                      ✓ Thank you! Your message has been sent successfully. We will get back to you shortly.
+                    </div>
+                  )}
+                  {formError && (
+                    <div style={{ padding: '12px 16px', background: 'rgba(255, 92, 92, 0.1)', border: '1px solid #ff5c5c', borderRadius: '8px', color: '#ff5c5c', fontSize: '14px', marginTop: '12px', textAlign: 'center' }}>
+                      {formError}
+                    </div>
+                  )}
                 </form>
               </div>
             </div>

@@ -47,14 +47,20 @@ const contactInfo = [
 ]
 
 const services = [
-  'Static Website', 'Dynamic Website', 'E-Commerce Store',
-  'Mobile App', 'SEO & Marketing', 'UI/UX Design',
-  'Cloud Solutions', 'Maintenance & Support'
+  'Website Designing',
+  'Software Development',
+  'E-Commerce Development',
+  'Mobile App Development',
+  'Digital Marketing & SEO',
+  'Social Media Marketing',
+  'Domain & Hosting',
+  'UI/UX Design',
+  'Maintenance & Support'
 ]
 
 export default function ContactPageClient({ initialData = {}, globalSettings = {} }) {
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', service: '', budget: '', message: ''
+    name: '', email: '', phone: '', service: '', message: ''
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -217,7 +223,7 @@ export default function ContactPageClient({ initialData = {}, globalSettings = {
                   <FaCheckCircle className={styles.successIcon} />
                   <h3>Message Sent!</h3>
                   <p>Thank you for reaching out. Our team will get back to you within 24 hours.</p>
-                  <button className="btnPrimary mt-4" onClick={() => { setSubmitted(false); setFormData({ name:'', email:'', phone:'', service:'', budget:'', message:'' }) }}>
+                  <button className="btnPrimary mt-4" onClick={() => { setSubmitted(false); setFormData({ name:'', email:'', phone:'', service:'', message:'' }) }}>
                     Send Another Message
                   </button>
                 </motion.div>
@@ -252,17 +258,6 @@ export default function ContactPageClient({ initialData = {}, globalSettings = {
                           {services.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </div>
-                    </div>
-                    
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>ESTIMATED BUDGET</label>
-                      <select className={styles.selectField} name="budget" value={formData.budget} onChange={handleChange}>
-                        <option value="">Select a budget range...</option>
-                        <option value="Under ₹25,000">Under ₹25,000</option>
-                        <option value="₹25,000 – ₹75,000">₹25,000 – ₹75,000</option>
-                        <option value="₹75,000 – ₹2,00,000">₹75,000 – ₹2,00,000</option>
-                        <option value="₹2,00,000+">₹2,00,000+</option>
-                      </select>
                     </div>
                     
                     <div className={styles.formGroup}>

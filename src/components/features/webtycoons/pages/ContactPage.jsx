@@ -40,7 +40,7 @@ const services = [
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', service: '', budget: '', message: ''
+    name: '', email: '', phone: '', service: '', message: ''
   })
   const [submitted, setSubmitted] = useState(false)
 
@@ -143,7 +143,7 @@ const ContactPage = () => {
                   <FaCheckCircle className={styles.successIcon} />
                   <h3>Message Sent!</h3>
                   <p>Thank you for reaching out. Our team will get back to you within 24 hours.</p>
-                  <button className="btnPrimary mt-4" onClick={() => { setSubmitted(false); setFormData({ name:'', email:'', phone:'', service:'', budget:'', message:'' }) }}>
+                  <button className="btnPrimary mt-4" onClick={() => { setSubmitted(false); setFormData({ name:'', email:'', phone:'', service:'', message:'' }) }}>
                     Send Another Message
                   </button>
                 </motion.div>
@@ -177,17 +177,6 @@ const ContactPage = () => {
                         {services.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </div>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label htmlFor="budget">Estimated Budget</label>
-                    <select id="budget" name="budget" value={formData.budget} onChange={handleChange}>
-                      <option value="">Select a budget range...</option>
-                      <option>Below ₹25,000</option>
-                      <option>₹25,000 – ₹75,000</option>
-                      <option>₹75,000 – ₹2,00,000</option>
-                      <option>₹2,00,000+</option>
-                    </select>
                   </div>
 
                   <div className={styles.formGroup}>

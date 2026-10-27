@@ -294,7 +294,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
             </Link>
 
             {/* Desktop Services Navigation Bar */}
-            <nav className={`align-items-center ${styles.desktopNav}`} aria-label="Services Navigation">
+            <nav className={`align-items-center mx-auto ${styles.desktopNav}`} aria-label="Services Navigation">
               {serviceLinks.map((link) => {
                 const key = link.id || link.name;
                 const isDropdownVisible = hoveredDropdown === key;

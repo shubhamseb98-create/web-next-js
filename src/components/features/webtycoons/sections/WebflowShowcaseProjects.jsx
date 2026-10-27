@@ -212,28 +212,36 @@ const WebflowShowcaseProjects = ({ portfolioData, sectionData }) => {
     }
   }, [selectedProject])
 
-  // Use DB data with placeholderProjects custom overrides taking priority
-  const rawProjects = (portfolioData && portfolioData.length > 0)
-    ? portfolioData.map((p) => {
+  // Filter for featured items if provided and marked
+  const featuredOnly = portfolioData?.filter((p) => Boolean(p.isFeatured));
+  const sourceProjects = (featuredOnly && featuredOnly.length > 0) ? featuredOnly : (portfolioData || []);
+
+  // Use DB data with placeholderProjects fallback overrides
+  const rawProjects = (sourceProjects && sourceProjects.length > 0)
+    ? sourceProjects.map((p) => {
         const matched = placeholderProjects.find(
           (ph) => ph.slug === p.slug || (ph.title && p.title && (ph.title.toLowerCase().includes(p.title.toLowerCase()) || p.title.toLowerCase().includes(ph.title.toLowerCase())))
         );
         return {
-          id: p._id,
-          title: matched?.title || p.title,
-          clientName: matched?.clientName || p.clientName || p.title,
-          category: matched?.category || p.category || 'Website',
-          image: matched?.image || p.image || '/assets/img/service/featured-projects.png',
+          id: p._id || p.id,
+          title: p.title || matched?.title,
+          clientName: p.clientName || matched?.clientName || p.title,
+          category: p.category || matched?.category || 'Website',
+          image: p.image || matched?.image || '/assets/img/service/featured-projects.png',
           slug: p.slug,
           link: `/projects/${p.slug}`,
+          isFeatured: Boolean(p.isFeatured),
         };
       })
     : placeholderProjects;
 
-  // Ensure we have at least 8 items for a rich continuous ribbon
-  const baseProjects = rawProjects.length < 8
-    ? [...rawProjects, ...placeholderProjects]
-    : rawProjects;
+  // Ensure we have at least 8 items for a rich continuous ribbon by repeating user projects
+  let baseProjects = rawProjects;
+  if (baseProjects.length > 0 && baseProjects.length < 8) {
+    while (baseProjects.length < 8) {
+      baseProjects = [...baseProjects, ...rawProjects];
+    }
+  }
 
   // Quadruplicate for unbreakable 3D infinite continuous wrap buffer
   const streamProjects = [...baseProjects, ...baseProjects, ...baseProjects, ...baseProjects];

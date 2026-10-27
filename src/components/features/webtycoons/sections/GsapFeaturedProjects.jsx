@@ -68,14 +68,20 @@ const featuredProjects = [
 ]
 
 const GsapFeaturedProjects = ({ portfolioData, sectionData }) => {
+  // Filter for featured items if marked, or use all provided
+  const featuredOnly = portfolioData?.filter((p) => Boolean(p.isFeatured));
+  const sourceProjects = (featuredOnly && featuredOnly.length > 0) ? featuredOnly : (portfolioData || []);
+
   // Use DB data if available, otherwise fall back to static placeholder data
-  const projects = (portfolioData && portfolioData.length > 0)
-    ? portfolioData.map((p, i) => ({
-        id: p._id,
+  const projects = (sourceProjects && sourceProjects.length > 0)
+    ? sourceProjects.map((p, i) => ({
+        id: p._id || p.id,
         title: p.title,
         category: p.category || 'Website',
         desc: p.shortDesc || p.description?.replace(/<[^>]+>/g, '').slice(0, 200) || '',
-        tech: p.technologies || [],
+        tech: Array.isArray(p.technologies)
+          ? p.technologies
+          : (typeof p.technologies === 'string' ? p.technologies.split(/[\s,]+/).filter(Boolean) : []),
         image: p.image || '/assets/img/service/featured-projects.png',
         link: `/projects/${p.slug}`,
         gradient: p.themeColor || featuredProjects[i % featuredProjects.length]?.gradient || 'linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)',

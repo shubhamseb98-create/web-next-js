@@ -294,7 +294,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
             </Link>
 
             {/* Desktop Services Navigation Bar */}
-            <nav className={`d-none d-lg-flex align-items-center ${styles.desktopNav}`} aria-label="Services Navigation">
+            <nav className={`align-items-center ${styles.desktopNav}`} aria-label="Services Navigation">
               {serviceLinks.map((link) => {
                 const key = link.id || link.name;
                 const isDropdownVisible = hoveredDropdown === key;
@@ -355,13 +355,13 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
             </nav>
 
             {/* Right: CTA Button & Mobile Toggle */}
-            <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center gap-2 gap-sm-3">
               {ctaConfig.showCtaButton && (
                 ctaConfig.ctaButtonAction === 'modal' ? (
                   <button
                     type="button"
                     onClick={() => setIsContactModalOpen(true)}
-                    className={`d-none d-lg-flex ${styles.ctaButton}`}
+                    className={styles.ctaButton}
                     aria-label="Open contact modal"
                   >
                     {ctaConfig.ctaButtonText}
@@ -369,7 +369,7 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                 ) : (
                   <Link
                     href={ctaConfig.ctaButtonLink || '/contact'}
-                    className={`d-none d-lg-flex ${styles.ctaButton}`}
+                    className={styles.ctaButton}
                     aria-label={ctaConfig.ctaButtonText}
                   >
                     {ctaConfig.ctaButtonText}
@@ -377,9 +377,9 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
                 )
               )}
 
-              {/* Hamburger Button for Mobile */}
+              {/* Hamburger Button for Mobile / Tablet */}
               <button
-                className={`d-flex d-lg-none ${styles.mobileToggle}`}
+                className={styles.mobileToggle}
                 onClick={() => setIsMenuOpen(v => !v)}
                 aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
               >
@@ -415,11 +415,10 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
           Segmented Side Drawer Menu (Mobile & Tablet)
       ════════════════════════════════════════════ */}
       <nav
-        className={`${styles.sideDrawerMenu} ${isMenuOpen ? styles.glFloat : ''}`}
+        className={`${styles.sideDrawerMenu} ${isMenuOpen ? styles.drawerOpen : ''}`}
         data-open={isMenuOpen ? 'true' : 'false'}
         data-lenis-prevent="true"
         aria-hidden={!isMenuOpen}
-        inert={!isMenuOpen}
       >
         {/* Floating Shapes Background Decoration */}
         <div className={styles.header__shapes}>

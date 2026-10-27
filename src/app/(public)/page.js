@@ -68,7 +68,7 @@ export default async function WebTycoonsHomePage() {
   const [seoData, blogs, portfolio, testimonials, settings, homeAboutArr, services, ctaArr, banners, homeExtraArr, clients, achievements, technologies, teamMembers, featuredProjectsSection, whyChooses, founderSection] = await Promise.all([
     getHomeSeo(),
     Blog.find({ isPublished: true }).sort({ publishedAt: -1, createdAt: -1 }).limit(5).lean(),
-    Portfolio.find({ status: 'active' }).sort({ isFeatured: -1, sort: 1 }).lean(),
+    Portfolio.find({ status: 'active', isFeatured: true }).sort({ sort: 1, createdAt: -1 }).lean(),
     Testimonial.find({ isActive: true }).sort({ sort: 1 }).lean(),
     GlobalSetting.findOne().lean(),
     // New dynamic queries

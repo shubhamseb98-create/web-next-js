@@ -46,9 +46,10 @@
   pointer-events: none !important;
   border-bottom-color: transparent !important;
   transform: translateY(-100%);
+  border-bottom: 0;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
   .topUtilityBar {
     display: none !important;
   }
@@ -61,8 +62,16 @@
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  padding-left: clamp(1rem, 2.5vw, 3rem) !important;
-  padding-right: clamp(1rem, 2.5vw, 3rem) !important;
+  padding-left: clamp(1rem, 2.2vw, 2.5rem) !important;
+  padding-right: clamp(1rem, 2.2vw, 2.5rem) !important;
+}
+
+@media (max-width: 1380px) {
+  .topBarInner,
+  .headerInner {
+    padding-left: clamp(0.75rem, 1.5vw, 1.25rem) !important;
+    padding-right: clamp(0.75rem, 1.5vw, 1.25rem) !important;
+  }
 }
 
 .topBarContact {
@@ -190,7 +199,7 @@
     0 0 20px -5px rgba(82, 164, 54, 0.2);
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
   .mainServicesBar {
     height: 70px;
   }
@@ -231,15 +240,23 @@
   object-fit: contain !important;
 }
 
+@media (max-width: 1380px) {
+  .logoImg {
+    height: 33px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .logoImg {
-    height: 32px !important;
+    height: 30px !important;
   }
 }
 
 /* ── Desktop Services Nav ── */
 .desktopNav {
-  gap: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
   margin-inline: auto 1.25rem;
 }
 
@@ -247,6 +264,21 @@
   .desktopNav {
     gap: 1.15rem;
     margin-inline: auto 1.75rem;
+  }
+}
+
+/* Compact scaling for 1200px - 1399px so desktop nav comfortably fits */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .desktopNav {
+    gap: 0.42rem;
+    margin-inline: auto 0.65rem;
+  }
+}
+
+/* Collapse desktop navigation below 1200px */
+@media (max-width: 1199px) {
+  .desktopNav {
+    display: none !important;
   }
 }
 
@@ -276,6 +308,15 @@
   .navLink {
     font-size: 0.88rem;
     gap: 0.35rem;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .navLink {
+    font-size: 0.78rem !important;
+    padding: 0.35rem 0.12rem !important;
+    gap: 0.2rem !important;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -472,6 +513,26 @@
   flex-shrink: 0;
 }
 
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .ctaButton {
+    padding: 0.45rem 1.05rem !important;
+    font-size: 0.82rem !important;
+  }
+}
+
+@media (max-width: 1199px) {
+  .ctaButton {
+    padding: 0.45rem 1.15rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .ctaButton {
+    display: none !important;
+  }
+}
+
 .ctaButton:hover {
   background: #52a436;
   color: #ffffff;
@@ -479,24 +540,25 @@
   box-shadow: 0 8px 22px rgba(82, 164, 54, 0.45);
 }
 
-/* ── Hamburger ── */
+/* ── Hamburger / Mobile Toggle ── */
 .mobileToggle {
   background: none;
   border: none;
   color: #ffffff;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   padding: 0.5rem;
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
 }
 
-@media (min-width: 992px) {
+@media (max-width: 1199px) {
   .mobileToggle {
-    display: none !important;
+    display: flex !important;
   }
 }
 
@@ -511,7 +573,7 @@
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: calc(var(--z-header, 100) + 18);
+  z-index: 10001;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.35s ease;
@@ -530,7 +592,7 @@
   bottom: 0;
   width: 100%;
   max-width: 440px;
-  z-index: calc(var(--z-header, 100) + 20);
+  z-index: 10002;
   background: #0f140e;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: -15px 0 50px rgba(0, 0, 0, 0.85);
@@ -545,10 +607,11 @@
   transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.38s ease;
 }
 
-.sideDrawerMenu[data-open="true"] {
-  transform: translateX(0);
-  visibility: visible;
-  pointer-events: auto;
+.sideDrawerMenu[data-open="true"],
+.sideDrawerMenu.drawerOpen {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 /* ── Ambient Glow Shapes ── */

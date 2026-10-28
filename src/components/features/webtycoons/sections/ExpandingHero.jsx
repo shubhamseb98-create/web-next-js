@@ -162,12 +162,12 @@ const ExpandingHero = ({ bannerData }) => {
       if (caption) gsap.set(caption, { opacity: 0, y: 35, pointerEvents: 'none' })
       if (scrollHint) gsap.set(scrollHint, { opacity: 1 })
 
-      // Relaxed, smooth scroll distance: slightly slower pacing with comfortable breathing room
+      // Slower, more gradual cinematic scroll distance: gives more runway and relaxed pacing
       const scrollDistance = isMobile
-        ? Math.round(window.innerHeight * 0.58)
+        ? Math.round(window.innerHeight * 0.95)
         : isTablet
-        ? Math.round(window.innerHeight * 0.68)
-        : Math.round(window.innerHeight * 0.82)
+        ? Math.round(window.innerHeight * 1.15)
+        : Math.round(window.innerHeight * 1.35)
 
       const scrollTl = gsap.timeline({
         scrollTrigger: {
@@ -177,7 +177,7 @@ const ExpandingHero = ({ bannerData }) => {
           end: () => `+=${scrollDistance}`,
           pin: true,
           pinSpacing: true,
-          scrub: 0.5,
+          scrub: 0.75,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         }
@@ -186,15 +186,15 @@ const ExpandingHero = ({ bannerData }) => {
       // Smooth top copy fade out on initial scroll
       scrollTl.to(copy, {
         opacity: 0,
-        y: -30,
+        y: -35,
         ease: 'power1.out',
-        duration: 0.30,
+        duration: 0.35,
       }, 0)
 
       if (scrollHint) {
         scrollTl.to(scrollHint, {
           opacity: 0,
-          duration: 0.20,
+          duration: 0.22,
           ease: 'power1.out',
         }, 0)
       }
@@ -206,7 +206,7 @@ const ExpandingHero = ({ bannerData }) => {
         {
           clipPath: 'inset(0% 0% 0% 0% round 0px)',
           ease: 'power1.inOut',
-          duration: 0.85,
+          duration: 1.1,
         },
         0
       )
@@ -215,35 +215,35 @@ const ExpandingHero = ({ bannerData }) => {
         scrollTl.fromTo(
           mediaInner,
           { scale: 1.08 },
-          { scale: 1.0, ease: 'none', duration: 0.85 },
+          { scale: 1.0, ease: 'none', duration: 1.1 },
           0
         )
       }
 
       if (frame) {
-        scrollTl.to(frame, { opacity: 0, duration: 0.30, ease: 'power1.out' }, 0.05)
+        scrollTl.to(frame, { opacity: 0, duration: 0.35, ease: 'power1.out' }, 0.05)
       }
 
       if (shade) {
         scrollTl.fromTo(
           shade,
           { opacity: 0 },
-          { opacity: 0.65, duration: 0.50, ease: 'power1.out' },
-          0.32
+          { opacity: 0.65, duration: 0.60, ease: 'power1.out' },
+          0.40
         )
       }
 
       if (caption) {
         scrollTl.fromTo(
           caption,
-          { opacity: 0, y: 25, pointerEvents: 'none' },
-          { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.50, ease: 'power1.out' },
-          0.38
+          { opacity: 0, y: 28, pointerEvents: 'none' },
+          { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.60, ease: 'power1.out' },
+          0.48
         )
       }
 
-      // Gentle pause at full expansion so user can comfortably view banner before next section smoothly appears
-      scrollTl.to({}, { duration: 0.28 })
+      // Comfortable pause at full expansion so user can comfortably view banner before next section smoothly appears
+      scrollTl.to({}, { duration: 0.45 })
     })
 
     return () => {

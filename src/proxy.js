@@ -35,32 +35,10 @@ export function proxy(request) {
     }
   }
 
-  // Protect API Routes: Block unauthenticated mutating requests
-  if (pathname.startsWith('/api')) {
-    const isMutatingRequest = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method);
-
-    // Public endpoints — accessible without a token
-    const isPublicEndpoint =
-      pathname.startsWith('/api/auth/login') ||
-      pathname.startsWith('/api/auth/logout') ||
-      pathname === '/api/contact' ||
-      pathname.startsWith('/api/contact/') ||
-      pathname.startsWith('/api/enquiries') ||
-      pathname.startsWith('/api/analytics/track') ||
-      pathname.startsWith('/api/public');
-
-    if (isMutatingRequest && !isPublicEndpoint && !token) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized: Missing admin token' },
-        { status: 401 }
-      );
-    }
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  // Match dashboard, login/signup, and all API routes
-  matcher: ['/dashboard/:path*', '/login', '/signup', '/api/:path*'],
+  // Match dashboard and login/signup routes only (API routes handle their own auth via requireAuth)
+  matcher: ['/dashboard/:path*', '/login', '/signup'],
 };

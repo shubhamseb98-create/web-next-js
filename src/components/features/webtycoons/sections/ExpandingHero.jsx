@@ -162,42 +162,51 @@ const ExpandingHero = ({ bannerData }) => {
       if (caption) gsap.set(caption, { opacity: 0, y: 35, pointerEvents: 'none' })
       if (scrollHint) gsap.set(scrollHint, { opacity: 1 })
 
+      // Relaxed, smooth scroll distance: slightly slower pacing with comfortable breathing room
+      const scrollDistance = isMobile
+        ? Math.round(window.innerHeight * 0.58)
+        : isTablet
+        ? Math.round(window.innerHeight * 0.68)
+        : Math.round(window.innerHeight * 0.82)
+
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           id: 'heroPinTrigger',
           trigger: section,
           start: 'top top',
-          end: () => `+=${window.innerHeight * 2.8}`,
+          end: () => `+=${scrollDistance}`,
           pin: true,
           pinSpacing: true,
-          scrub: 1.2,
+          scrub: 0.5,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         }
       })
 
+      // Smooth top copy fade out on initial scroll
       scrollTl.to(copy, {
         opacity: 0,
-        y: -45,
+        y: -30,
         ease: 'power1.out',
-        duration: 0.7,
+        duration: 0.30,
       }, 0)
 
       if (scrollHint) {
         scrollTl.to(scrollHint, {
           opacity: 0,
-          duration: 0.3,
+          duration: 0.20,
           ease: 'power1.out',
         }, 0)
       }
 
+      // Smooth, cinematic card expansion to full screen edge-to-edge
       scrollTl.fromTo(
         media,
         { clipPath: initialClip },
         {
           clipPath: 'inset(0% 0% 0% 0% round 0px)',
-          ease: 'none',
-          duration: 1.8,
+          ease: 'power1.inOut',
+          duration: 0.85,
         },
         0
       )
@@ -205,35 +214,36 @@ const ExpandingHero = ({ bannerData }) => {
       if (mediaInner) {
         scrollTl.fromTo(
           mediaInner,
-          { scale: 1.12 },
-          { scale: 1.0, ease: 'none', duration: 1.8 },
+          { scale: 1.08 },
+          { scale: 1.0, ease: 'none', duration: 0.85 },
           0
         )
       }
 
       if (frame) {
-        scrollTl.to(frame, { opacity: 0, duration: 0.5, ease: 'power1.out' }, 0.1)
+        scrollTl.to(frame, { opacity: 0, duration: 0.30, ease: 'power1.out' }, 0.05)
       }
 
       if (shade) {
         scrollTl.fromTo(
           shade,
           { opacity: 0 },
-          { opacity: 0.65, duration: 0.8, ease: 'power1.inOut' },
-          1.0
+          { opacity: 0.65, duration: 0.50, ease: 'power1.out' },
+          0.32
         )
       }
 
       if (caption) {
         scrollTl.fromTo(
           caption,
-          { opacity: 0, y: 30, pointerEvents: 'none' },
-          { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.7, ease: 'power1.out' },
-          1.2
+          { opacity: 0, y: 25, pointerEvents: 'none' },
+          { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.50, ease: 'power1.out' },
+          0.38
         )
       }
 
-      scrollTl.to({}, { duration: 1.1 })
+      // Gentle pause at full expansion so user can comfortably view banner before next section smoothly appears
+      scrollTl.to({}, { duration: 0.28 })
     })
 
     return () => {
@@ -556,8 +566,26 @@ const ExpandingHero = ({ bannerData }) => {
         </div>
       </div>
 
-      {/* ── Scroll To Expand Indicator ── */}
-      <div ref={scrollRef} className={styles.heroScroll} aria-hidden="true">
+      {/* ── Scroll To Expand Indicator (clickable to auto-expand) ── */}
+      <div
+        ref={scrollRef}
+        className={styles.heroScroll}
+        style={{ cursor: 'pointer' }}
+        onClick={() => {
+          const trigger = ScrollTrigger.getById('heroPinTrigger')
+          if (trigger) {
+            const targetPos = trigger.end + 20
+            if (window.lenis?.scrollTo) {
+              window.lenis.scrollTo(targetPos, { duration: 1.0 })
+            } else {
+              window.scrollTo({ top: targetPos, behavior: 'smooth' })
+            }
+          }
+        }}
+        aria-label="Scroll to explore banner"
+        role="button"
+        tabIndex={0}
+      >
         <span>Scroll to explore</span>
         <FiChevronDown className={styles.scrollArrow} size={18} />
       </div>

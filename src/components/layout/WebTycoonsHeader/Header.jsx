@@ -110,11 +110,16 @@ const Header = ({ initialNavData, initialGlobalSettings, initialHeaderConfig }) 
     async function fetchMenu() {
       try {
         const res = await fetch('/api/header-menu')
-        const json = await res.json()
-        if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
-          setNavLinks(formatInitialNav(json.data))
-          if (json.config) {
-            setCtaConfig(json.config)
+        if (res.ok) {
+          const ct = res.headers.get('content-type')
+          if (ct && ct.includes('application/json')) {
+            const json = await res.json()
+            if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+              setNavLinks(formatInitialNav(json.data))
+              if (json.config) {
+                setCtaConfig(json.config)
+              }
+            }
           }
         }
       } catch (err) {
